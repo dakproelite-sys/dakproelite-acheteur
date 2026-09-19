@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAKBOT - Assistant Virtuel Premium DAKPROELITE</title>
+  <style>
+    :root {
+      --bg-main: #07090e;
+      --bg-card: #121620;
+      --accent-gold: #d4af37;
+      --accent-gold-hover: #f3cf55;
+      --green-emerald: #10b981;
+      --whatsapp-green: #25d366;
+      --text-light: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-color: rgba(212, 175, 55, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-light);
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 480px;
+      height: 92vh;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* En-tête */
+    .chat-header {
+      background: linear-gradient(135deg, #0e121a, #201907);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+
+    .bot-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar-container {
+      position: relative;
+    }
+
+    .bot-avatar {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #d4af37, #8a6d1c);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    }
+
+    .online-indicator {
+      width: 11px;
+      height: 11px;
+      background: var(--green-emerald);
+      border: 2px solid var(--bg-card);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    .header-text h2 {
+      font-size: 1rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-text p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .whatsapp-head-btn {
+      background: var(--whatsapp-green);
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.2s;
+    }
+
+    .whatsapp-head-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .auth-btn {
+      background: transparent;
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .auth-btn:hover {
+      background: var(--accent-gold);
+      color: #000;
+    }
+
+    /* Zone des messages */
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: #090c12;
+      scroll-behavior: smooth;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: #202736;
+      border-radius: 10px;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      word-break: break-word;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.bot {
+      background: #181f2e;
+      color: var(--text-light);
+      align-self: flex-start;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message.user {
+      background: linear-gradient(135deg, #d4af37, #b89320);
+      color: #000;
+      font-weight: 500;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message .time {
+      font-size: 0.68rem;
+      opacity: 0.65;
+      margin-top: 6px;
+      text-align: right;
+    }
+
+    /* Cartes Produits / Carrousel */
+    .cards-carousel {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 6px 0;
+      margin-top: 6px;
+    }
+
+    .product-card {
+      min-width: 180px;
+      max-width: 200px;
+      background: #0d1118;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .product-card .title {
+      font-weight: bold;
+      font-size: 0.85rem;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .price-promo {
+      color: var(--green-emerald);
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    .card-btn {
+      background: var(--accent-gold);
+      color: #000;
+      border: none;
+      padding: 6px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.75rem;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+
+    .card-btn:hover {
+      background: var(--accent-gold-hover);
+    }
+
+    .profile-card {
+      background: #121824;
+      border: 1px solid var(--accent-gold);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .profile-card h4 {
+      color: var(--accent-gold);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .profile-card p {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+
+    /* Animation d'écriture */
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      background: #181f2e;
+      padding: 10px 16px;
+      border-radius: 16px;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin: 8px 16px;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .typing-dots span {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-gold);
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dots span:nth-child(1) { animation-delay: 0s; }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* Quick Menu horizontal de défilement */
+    .quick-menu {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      background: #0d1117;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      white-space: nowrap;
+    }
+
+    .quick-menu::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .quick-menu::-webkit-scrollbar-thumb {
+      background: var(--accent-gold);
+      border-radius: 10px;
+    }
+
+    .menu-btn {
+      background: #1a202c;
+      color: #e2e8f0;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 8px 14px;
+      border-radius: 18px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .menu-btn:hover {
+      background: var(--accent-gold);
+      color: #000;
+      border-color: var(--accent-gold);
+    }
+
+    /* Zone de saisie */
+    .chat-input-area {
+      display: flex;
+      padding: 12px;
+      background: #0d1117;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #232d3f;
+      border-radius: 24px;
+      outline: none;
+      background: #05070a;
+      color: #fff;
+      font-size: 0.88rem;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input-area input:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .send-btn {
+      background: var(--accent-gold);
+      color: #000;
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Modal Connexion / Inscription */
+    .modal {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal-content {
+      background: #121620;
+      border: 1px solid var(--accent-gold);
+      padding: 24px;
+      border-radius: 20px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    .modal-content h3 {
+      color: var(--accent-gold);
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    .modal-content label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .modal-content input, .modal-content select {
+      padding: 10px 12px;
+      border: 1px solid #2a3447;
+      border-radius: 8px;
+      outline: none;
+      background: #07090e;
+      color: #fff;
+      font-size: 0.85rem;
+    }
+
+    .phone-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 6px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .close-modal {
+      background: #2a3447;
+      color: #fff;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .tab-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      background: #07090e;
+      border: 1px solid #2a3447;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      border-color: var(--accent-gold);
+      background: #201907;
+      color: var(--accent-gold);
+      font-weight: bold;
+    }
+
+    .contact-footer {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 6px;
+      background: #07090e;
+      border-top: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .contact-footer a {
+      color: var(--accent-gold);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <!-- Header Chat -->
+    <div class="chat-header">
+      <div class="bot-info">
+        <div class="avatar-container">
+          <div class="bot-avatar">🤖</div>
+          <div class="online-indicator"></div>
+        </div>
+        <div class="header-text">
+          <h2>DAKBOT <span style="font-size: 0.65rem; background: var(--accent-gold); color:#000; padding:2px 6px; border-radius:8px;" id="statusBadge">Visiteur</span></h2>
+          <p>DAKPROELITE • En ligne</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="https://wa.me/2290197455309?text=Bonjour%20DAKPROELITE,%20j'ai%20une%20question" target="_blank" class="whatsapp-head-btn" title="Contacter sur WhatsApp">
+          📱 WhatsApp
+        </a>
+        <button class="auth-btn" id="authBtn" onclick="toggleAuthModal()">Connexion</button>
+      </div>
+    </div>
+
+    <!-- Zone des Messages -->
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot">
+        Bonjour ! Je suis <b>DAKBOT</b>, l'assistant virtuel officiel de <b>DAKPROELITE</b>.<br><br>
+        • Cliquez sur l'un des menus au bas de votre écran pour charger les données directement depuis Realtime Database !<br>
+        • Support Email : <a href="mailto:contact@dakproelite.com" style="color:var(--accent-gold);">contact@dakproelite.com</a><br>
+        • WhatsApp Direct : <a href="https://wa.me/2290197455309" target="_blank" style="color:var(--whatsapp-green);">+229 01 97 45 53 09</a>
+        <div class="time">Instant</div>
+      </div>
+    </div>
+
+    <!-- Indicateur d'écriture -->
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="typing-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- Menu Horizontal Fixe des Nœuds Realtime Database -->
+    <div class="quick-menu" id="quickMenu">
+      <button class="menu-btn" onclick="sendQuickQuery('panier')">🛍️ Panier</button>
+      <button class="menu-btn" onclick="sendQuickQuery('annonces')">📢 Annonces</button>
+      <button class="menu-btn" onclick="sendQuickQuery('bannieres')">🖼️ Bannières</button>
+      <button class="menu-btn" onclick="sendQuickQuery('commandes')">📦 Commandes</button>
+      <button class="menu-btn" onclick="sendQuickQuery('configuration')">⚙️ Configuration</button>
+      <button class="menu-btn" onclick="sendQuickQuery('contenu')">📝 Contenu</button>
+      <button class="menu-btn" onclick="sendQuickQuery('messages')">💬 Messages</button>
+      <button class="menu-btn" onclick="sendQuickQuery('publications')">🛒 Publications</button>
+      <button class="menu-btn" onclick="sendQuickQuery('transactions')">💳 Transactions</button>
+      <button class="menu-btn" onclick="sendQuickQuery('users')">👤 Users</button>
+      <button class="menu-btn" onclick="sendQuickQuery('support')">💬 Support</button>
+    </div>
+
+    <!-- Zone d'entrée de message -->
+    <div class="chat-input-area">
+      <input type="text" id="userInput" placeholder="Ecrivez votre message ou recherchez..." onkeypress="handleKeyPress(event)">
+      <button class="send-btn" onclick="sendMessage()">➔</button>
+    </div>
+
+    <div class="contact-footer">
+      Support officiel : <a href="mailto:contact@dakproelite.com">contact@dakproelite.com</a> | <a href="https://wa.me/2290197455309" target="_blank">WhatsApp Assistant</a>
+    </div>
+
+    <!-- Modal d'authentification -->
+    <div class="modal" id="authModal">
+      <div class="modal-content">
+        <div class="tab-toggle">
+          <button class="tab-btn active" id="tabLogin" onclick="switchAuthTab('login')">Se connecter</button>
+          <button class="tab-btn" id="tabRegister" onclick="switchAuthTab('register')">S'inscrire</button>
+        </div>
+
+        <h3 id="modalTitle">Connexion DAKPROELITE</h3>
+
+        <div id="registerFields" style="display: none; flex-direction: column; gap: 8px;">
+          <div>
+            <label>Nom complet</label>
+            <input type="text" id="authName" placeholder="Votre nom complet">
+          </div>
+          <div>
+            <label>Pays & Téléphone</label>
+            <div class="phone-row">
+              <select id="authCountryCode">
+                <option value="+229" selected>🇧🇯 Bénin (+229)</option>
+                <option value="+93">🇦🇫 Afghanistan (+93)</option>
+                <option value="+355">🇦🇱 Albanie (+355)</option>
+                <option value="+213">🇩🇿 Algérie (+213)</option>
+                <option value="+49">🇩🇪 Allemagne (+49)</option>
+                <option value="+376">🇦🇩 Andorre (+376)</option>
+                <option value="+244">🇦🇴 Angola (+244)</option>
+                <option value="+1268">🇦🇬 Antigua-et-Barbuda (+1268)</option>
+                <option value="+966">🇸🇦 Arabie saoudite (+966)</option>
+                <option value="+54">🇦🇷 Argentine (+54)</option>
+                <option value="+374">🇦🇲 Arménie (+374)</option>
+                <option value="+61">🇦🇺 Australie (+61)</option>
+                <option value="+43">🇦🇹 Autriche (+43)</option>
+                <option value="+994">🇦🇿 Azerbaïdjan (+994)</option>
+                <option value="+1242">🇧🇸 Bahamas (+1242)</option>
+                <option value="+973">🇧🇭 Bahreïn (+973)</option>
+                <option value="+880">🇧🇩 Bangladesh (+880)</option>
+                <option value="+1246">🇧🇧 Barbade (+1246)</option>
+                <option value="+32">🇧🇪 Belgique (+32)</option>
+                <option value="+501">🇧🇿 Belize (+501)</option>
+                <option value="+229">🇧🇯 Bénin (+229)</option>
+                <option value="+975">🇧🇹 Bhoutan (+975)</option>
+                <option value="+375">🇧🇾 Biélorussie (+375)</option>
+                <option value="+95">🇲🇲 Birmanie (+95)</option>
+                <option value="+591">🇧🇴 Bolivie (+591)</option>
+                <option value="+387">🇧🇦 Bosnie-Herzégovine (+387)</option>
+                <option value="+267">🇧🇼 Botswana (+267)</option>
+                <option value="+55">🇧🇷 Brésil (+55)</option>
+                <option value="+673">🇧🇳 Brunei (+673)</option>
+                <option value="+359">🇧🇬 Bulgarie (+359)</option>
+                <option value="+226">🇧🇫 Burkina Faso (+226)</option>
+                <option value="+257">🇧🇮 Burundi (+257)</option>
+                <option value="+855">🇰🇭 Cambodge (+855)</option>
+                <option value="+237">🇨🇲 Cameroun (+237)</option>
+                <option value="+1">🇨🇦 Canada (+1)</option>
+                <option value="+238">🇨🇻 Cap-Vert (+238)</option>
+                <option value="+236">🇨🇫 Centrafrique (+236)</option>
+                <option value="+56">🇨🇱 Chili (+56)</option>
+                <option value="+86">🇨🇳 Chine (+86)</option>
+                <option value="+357">🇨🇾 Chypre (+357)</option>
+                <option value="+57">🇨🇴 Colombie (+57)</option>
+                <option value="+269">🇰🇲 Comores (+269)</option>
+                <option value="+242">🇨🇬 Congo-Brazzaville (+242)</option>
+                <option value="+243">🇨🇩 Congo-Kinshasa (+243)</option>
+                <option value="+850">🇰🇵 Corée du Nord (+850)</option>
+                <option value="+82">🇰🇷 Corée du Sud (+82)</option>
+                <option value="+506">🇨🇷 Costa Rica (+506)</option>
+                <option value="+225">🇨🇮 Côte d'Ivoire (+225)</option>
+                <option value="+385">🇭🇷 Croatie (+385)</option>
+                <option value="+53">🇨🇺 Cuba (+53)</option>
+                <option value="+45">🇩🇰 Danemark (+45)</option>
+                <option value="+253">🇩🇯 Djibouti (+253)</option>
+                <option value="+1767">🇩🇲 Dominique (+1767)</option>
+                <option value="+20">🇪🇬 Égypte (+20)</option>
+                <option value="+971">🇦🇪 Émirats arabes unis (+971)</option>
+                <option value="+593">🇪🇨 Équateur (+593)</option>
+                <option value="+291">🇪🇷 Érythrée (+291)</option>
+                <option value="+34">🇪🇸 Espagne (+34)</option>
+                <option value="+372">🇪🇪 Estonie (+372)</option>
+                <option value="+1737">🇺🇸 États-Unis (+1)</option>
+                <option value="+251">🇪🇹 Éthiopie (+251)</option>
+                <option value="+679">🇫🇯 Fidji (+679)</option>
+                <option value="+358">🇫🇮 Finlande (+358)</option>
+                <option value="+33">🇫🇷 France (+33)</option>
+                <option value="+241">🇬🇦 Gabon (+241)</option>
+                <option value="+220">🇬🇲 Gambie (+220)</option>
+                <option value="+995">🇬🇪 Géorgie (+995)</option>
+                <option value="+233">🇬🇭 Ghana (+233)</option>
+                <option value="+30">🇬🇷 Grèce (+30)</option>
+                <option value="+1473">🇬🇩 Grenade (+1473)</option>
+                <option value="+502">🇬🇹 Guatemala (+502)</option>
+                <option value="+224">🇬🇳 Guinée (+224)</option>
+                <option value="+245">🇬🇼 Guinée-Bissau (+245)</option>
+                <option value="+240">🇬🇶 Guinée équatoriale (+240)</option>
+                <option value="+592">🇬🇾 Guyana (+592)</option>
+                <option value="+509">🇭🇹 Haïti (+509)</option>
+                <option value="+504">🇭🇳 Honduras (+504)</option>
+                <option value="+36">🇭🇺 Hongrie (+36)</option>
+                <option value="+91">🇮🇳 Inde (+91)</option>
+                <option value="+62">🇮🇩 Indonésie (+62)</option>
+                <option value="+964">🇮🇶 Irak (+964)</option>
+                <option value="+98">🇮🇷 Iran (+98)</option>
+                <option value="+353">🇮🇪 Irlande (+353)</option>
+                <option value="+354">🇮🇸 Islande (+354)</option>
+                <option value="+972">🇮🇱 Israël (+972)</option>
+                <option value="+39">🇮🇹 Italie (+39)</option>
+                <option value="+1876">🇯🇲 Jamaïque (+1876)</option>
+                <option value="+81">🇯🇵 Japon (+81)</option>
+                <option value="+962">🇯🇴 Jordanie (+962)</option>
+                <option value="+7">🇰🇿 Kazakhstan (+7)</option>
+                <option value="+254">🇰🇪 Kenya (+254)</option>
+                <option value="+996">🇰🇬 Kirghizistan (+996)</option>
+                <option value="+686">🇰🇮 Kiribati (+686)</option>
+                <option value="+965">🇰🇼 Koweït (+965)</option>
+                <option value="+856">🇱🇦 Laos (+856)</option>
+                <option value="+266">🇱🇸 Lesotho (+266)</option>
+                <option value="+371">🇱🇻 Lettonie (+371)</option>
+                <option value="+961">🇱🇧 Liban (+961)</option>
+                <option value="+231">🇱🇷 Libéria (+231)</option>
+                <option value="+218">🇱🇾 Libye (+218)</option>
+                <option value="+423">🇱🇮 Liechtenstein (+423)</option>
+                <option value="+370">🇱🇹 Lituanie (+370)</option>
+                <option value="+352">🇱🇺 Luxembourg (+352)</option>
+                <option value="+389">🇲🇰 Macédoine du Nord (+389)</option>
+                <option value="+261">🇲🇬 Madagascar (+261)</option>
+                <option value="+60">🇲🇾 Malaisie (+60)</option>
+                <option value="+265">🇲🇼 Malawi (+265)</option>
+                <option value="+960">🇲🇻 Maldives (+960)</option>
+                <option value="+223">🇲🇱 Mali (+223)</option>
+                <option value="+356">🇲🇹 Malte (+356)</option>
+                <option value="+212">🇲🇦 Maroc (+212)</option>
+                <option value="+230">🇲🇺 Maurice (+230)</option>
+                <option value="+222">🇲🇷 Mauritanie (+222)</option>
+                <option value="+52">🇲🇽 Mexique (+52)</option>
+                <option value="+691">🇫🇲 Micronésie (+691)</option>
+                <option value="+373">🇲🇩 Moldavie (+373)</option>
+                <option value="+377">🇲🇨 Monaco (+377)</option>
+                <option value="+976">🇲🇳 Mongolie (+976)</option>
+                <option value="+382">🇲🇪 Monténégro (+382)</option>
+                <option value="+258">🇲🇿 Mozambique (+258)</option>
+                <option value="+264">🇳🇦 Namibie (+264)</option>
+                <option value="+674">🇳🇷 Nauru (+674)</option>
+                <option value="+977">🇳🇵 Népal (+977)</option>
+                <option value="+505">🇳🇮 Nicaragua (+505)</option>
+                <option value="+227">🇳🇪 Niger (+227)</option>
+                <option value="+234">🇳🇬 Nigeria (+234)</option>
+                <option value="+47">🇳🇴 Norvège (+47)</option>
+                <option value="+64">🇳🇿 Nouvelle-Zélande (+64)</option>
+                <option value="+968">🇴🇲 Oman (+968)</option>
+                <option value="+92">🇵🇰 Pakistan (+92)</option>
+                <option value="+680">🇵🇼 Palaos (+680)</option>
+                <option value="+970">🇵🇸 Palestine (+970)</option>
+                <option value="+507">🇵🇦 Panama (+507)</option>
+                <option value="+675">🇵🇬 Papouasie-Nouvelle-Guinée (+675)</option>
+                <option value="+595">🇵🇾 Paraguay (+595)</option>
+                <option value="+31">🇳🇱 Pays-Bas (+31)</option>
+                <option value="+51">🇵🇪 Pérou (+51)</option>
+                <option value="+63">🇵🇭 Philippines (+63)</option>
+                <option value="+48">🇵🇱 Pologne (+48)</option>
+                <option value="+351">🇵🇹 Portugal (+351)</option>
+                <option value="+974">🇶🇦 Qatar (+974)</option>
+                <option value="+40">🇷🇴 Roumanie (+40)</option>
+                <option value="+44">🇬🇧 Royaume-Uni (+44)</option>
+                <option value="+7">🇷🇺 Russie (+7)</option>
+                <option value="+250">🇷🇼 Rwanda (+250)</option>
+                <option value="+1869">🇰🇳 Saint-Christophe-et-Niévès (+1869)</option>
+                <option value="+378">🇸🇲 Saint-Marin (+378)</option>
+                <option value="+1758">🇱🇨 Sainte-Lucie (+1758)</option>
+                <option value="+1784">🇻🇨 Saint-Vincent-et-les-Grenadines (+1784)</option>
+                <option value="+677">🇸🇧 Salomon (+677)</option>
+                <option value="+503">🇸🇻 Salvador (+503)</option>
+                <option value="+684">🇼🇸 Samoa (+684)</option>
+                <option value="+239">🇸🇹 Sao Tomé-et-Principe (+239)</option>
+                <option value="+221">🇸🇳 Sénégal (+221)</option>
+                <option value="+381">🇷🇸 Serbie (+381)</option>
+                <option value="+248">🇸🇨 Seychelles (+248)</option>
+                <option value="+232">🇸🇱 Sierra Leone (+232)</option>
+                <option value="+65">🇸🇬 Singapour (+65)</option>
+                <option value="+421">🇸🇰 Slovaquie (+421)</option>
+                <option value="+386">🇸🇮 Slovénie (+386)</option>
+                <option value="+252">🇸🇴 Somalie (+252)</option>
+                <option value="+249">🇸🇩 Soudan (+249)</option>
+                <option value="+211">🇸🇸 Soudan du Sud (+211)</option>
+                <option value="+94">🇱🇰 Sri Lanka (+94)</option>
+                <option value="+46">🇸🇪 Suède (+46)</option>
+                <option value="+41">🇨🇭 Suisse (+41)</option>
+                <option value="+597">🇸🇷 Suriname (+597)</option>
+                <option value="+268">🇸🇿 Eswatini (+268)</option>
+                <option value="+963">🇸🇾 Syrie (+963)</option>
+                <option value="+992">🇹🇯 Tadjikistan (+992)</option>
+                <option value="+886">🇹🇼 Taïwan (+886)</option>
+                <option value="+255">🇹🇿 Tanzanie (+255)</option>
+                <option value="+235">🇹🇩 Tchad (+235)</option>
+                <option value="+420">🇨🇿 République tchèque (+420)</option>
+                <option value="+66">🇹🇭 Thaïlande (+66)</option>
+                <option value="+670">🇹🇱 Timor oriental (+670)</option>
+                <option value="+228">🇹🇬 Togo (+228)</option>
+                <option value="+676">🇹🇴 Tonga (+676)</option>
+                <option value="+1868">🇹🇹 Trinité-et-Tobago (+1868)</option>
+                <option value="+216">🇹🇳 Tunisie (+216)</option>
+                <option value="+993">🇹🇲 Turkménistan (+993)</option>
+                <option value="+90">🇹🇷 Turquie (+90)</option>
+                <option value="+688">🇹🇻 Tuvalu (+688)</option>
+                <option value="+380">🇺🇦 Ukraine (+380)</option>
+                <option value="+598">🇺🇾 Uruguay (+598)</option>
+                <option value="+678">🇻🇺 Vanuatu (+678)</option>
+                <option value="+39">🇻🇦 Vatican (+39)</option>
+                <option value="+58">🇻🇪 Venezuela (+58)</option>
+                <option value="+84">🇻🇳 Viêt Nam (+84)</option>
+                <option value="+967">🇾🇪 Yémen (+967)</option>
+                <option value="+260">🇿🇲 Zambie (+260)</option>
+                <option value="+263">🇿🇼 Zimbabwe (+263)</option>
+              </select>
+              <input type="tel" id="authPhone" placeholder="Numéro">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label>Adresse e-mail</label>
+          <input type="email" id="authEmail" placeholder="votre@email.com">
+        </div>
+        <div>
+          <label>Mot de passe</label>
+          <input type="password" id="authPassword" placeholder="••••••••">
+        </div>
+
+        <div class="modal-actions">
+          <button id="authSubmitBtn" style="background: var(--accent-gold); color: #000;" onclick="submitAuth()">Se connecter</button>
+        </div>
+        <button class="close-modal" onclick="toggleAuthModal()">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase v10 SDK via CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, onValue, set, get, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // -------------------------------------------------------------
+    // CONFIGURATION FIREBASE DAKPROELITE
+    // -------------------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
+      authDomain: "dakproelite.firebaseapp.com",
+      databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
+      projectId: "dakproelite",
+      storageBucket: "dakproelite.firebasestorage.app",
+      messagingSenderId: "580591769206",
+      appId: "1:580591769206:web:859724d4b2dbf904087157"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    let dbData = {};
+    let currentUser = null;
+    let userProfileData = null;
+    let currentAuthMode = 'login';
+    let userCart = [];
+
+    // Fonctions globales
+    window.toggleAuthModal = toggleAuthModal;
+    window.switchAuthTab = switchAuthTab;
+    window.submitAuth = submitAuth;
+    window.sendMessage = sendMessage;
+    window.sendQuickQuery = sendQuickQuery;
+    window.handleKeyPress = handleKeyPress;
+    window.addToCart = addToCart;
+    window.checkoutCart = checkoutCart;
+    window.escalateToHuman = escalateToHuman;
+
+    // -------------------------------------------------------------
+    // ÉCOUTE TEMPS RÉEL DE LA RACINE DE REALTIME DATABASE
+    // -------------------------------------------------------------
+    function startDatabaseListeners() {
+      const rootRef = ref(db, '/');
+      onValue(rootRef, (snapshot) => {
+        dbData = snapshot.val() || {};
+      }, (err) => {
+        console.warn("Erreur d'accès Firebase:", err.message);
+      });
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      const authBtn = document.getElementById("authBtn");
+      const badge = document.getElementById("statusBadge");
+
+      currentUser = user;
+      startDatabaseListeners();
+
+      if (user) {
+        authBtn.textContent = "Déconnexion";
+        badge.textContent = "Connecté";
+        badge.style.background = "#10b981";
+
+        const userRef = ref(db, `users/${user.uid}`);
+        const userSnap = await get(userRef);
+        if (userSnap.exists()) {
+          userProfileData = userSnap.val();
+        }
+
+        appendMessage(`Bienvenue <b>${userProfileData?.nom || user.email}</b> ! Vous pouvez naviguer sur le bot, consulter l'ensemble des rubriques et passer vos commandes.`, "bot");
+      } else {
+        userProfileData = null;
+        authBtn.textContent = "Connexion";
+        badge.textContent = "Visiteur";
+        badge.style.background = "#d4af37";
+      }
+    });
+
+    // -------------------------------------------------------------
+    // EXTRACTION DYNAMIQUE DES DONNÉES DE DAKPROELITE
+    // -------------------------------------------------------------
+    function extractObjects(data) {
+      if (!data) return [];
+      let results = [];
+      if (Array.isArray(data)) {
+        data.forEach(item => {
+          if (item && typeof item === 'object') results = results.concat(extractObjects(item));
+        });
+      } else if (typeof data === 'object') {
+        const keys = Object.keys(data);
+        const hasKnownKey = keys.some(k => 
+          ['titre', 'nom', 'name', 'prix', 'price', 'email', 'texte', 'message', 'statut', 'code', 'url', 'image', 'photo', 'description', 'valeur', 'type'].includes(k.toLowerCase())
+        );
+        if (hasKnownKey) {
+          results.push(data);
+        } else {
+          Object.values(data).forEach(val => {
+            if (val && typeof val === 'object') {
+              results = results.concat(extractObjects(val));
+            }
+          });
+        }
+      }
+      return results;
+    }
+
+    // -------------------------------------------------------------
+    // PANIER ET COMMANDES
+    // -------------------------------------------------------------
+    function addToCart(title, price) {
+      userCart.push({ titre: title, prix: Number(price) });
+      appendMessage(`✅ <b>${title}</b> a été ajouté à votre panier !<br>Nombre d'articles: <b>${userCart.length}</b>.`, "bot");
+    }
+
+    async function checkoutCart() {
+      if (!currentUser) {
+        toggleAuthModal();
+        appendMessage("Veuillez vous connecter pour valider votre commande.", "bot");
+        return;
+      }
+
+      if (userCart.length === 0) {
+        appendMessage("Votre panier est vide.", "bot");
+        return;
+      }
+
+      const total = userCart.reduce((acc, curr) => acc + curr.prix, 0);
+      const commandeId = "CMD-" + Date.now().toString().slice(-6);
+
+      const orderData = {
+        idCommande: commandeId,
+        uidClient: currentUser.uid,
+        clientNom: userProfileData?.nom || currentUser.email,
+        clientPhone: userProfileData?.telephone || "Non renseigné",
+        articles: userCart,
+        montantTotal: total,
+        statut: "En attente",
+        createdAt: Date.now()
+      };
+
+      const transData = {
+        idCommande: commandeId,
+        uidClient: currentUser.uid,
+        montant: total,
+        type: "Achat Direct Bot",
+        statut: "En cours",
+        createdAt: Date.now()
+      };
+
+      try {
+        await push(ref(db, "commandes"), orderData);
+        await push(ref(db, "transactions"), transData);
+
+        userCart = [];
+        appendMessage(`🎉 <b>Commande enregistrée !</b><br>
+                       • N° de Commande: <b>${commandeId}</b><br>
+                       • Montant Total: <b>${total.toLocaleString()} CFA</b><br>
+                       • Statut: <b>En attente</b><br><br>
+                       Contactez le support WhatsApp au <a href="https://wa.me/2290197455309?text=Commande%20${commandeId}" target="_blank" style="color:#25d366; font-weight:bold;">+229 01 97 45 53 09</a> pour la prise en charge.`, "bot");
+      } catch (err) {
+        appendMessage("Erreur lors de la validation: " + err.message, "bot");
+      }
+    }
+
+    async function escalateToHuman() {
+      if (!currentUser) {
+        toggleAuthModal();
+        return;
+      }
+
+      const ticketData = {
+        uid: currentUser.uid,
+        nom: userProfileData?.nom || currentUser.email,
+        email: currentUser.email,
+        message: "Demande d'assistance directe auprès d'un conseiller humain.",
+        createdAt: Date.now(),
+        statut: "Ouvert"
+      };
+
+      await push(ref(db, "messages"), ticketData);
+      appendMessage(`📩 <b>Ticket de support transmis.</b> Un conseiller DAKPROELITE vous recontactera à <b>${currentUser.email}</b> ou sur WhatsApp.`, "bot");
+    }
+
+    // -------------------------------------------------------------
+    // RENDER LISIBLE TEXTUEL / GRAPHIQUE PAR NŒUD EXACT
+    // -------------------------------------------------------------
+    function generateDakbotResponse(query) {
+      const q = query.toLowerCase().trim();
+
+      // Panier
+      if (q === "panier" || q.includes("panier")) {
+        if (userCart.length === 0) return "Votre panier DAKPROELITE est vide pour le moment.";
+        let total = userCart.reduce((acc, curr) => acc + curr.prix, 0);
+        let res = `🛒 <b>Contenu de votre Panier :</b><br><br>`;
+        userCart.forEach((item, index) => {
+          res += `${index + 1}. <b>${item.titre}</b> - ${item.prix.toLocaleString()} CFA<br>`;
+        });
+        res += `<br><b>Total : ${total.toLocaleString()} CFA</b><br><br>`;
+        res += `<button class="card-btn" onclick="checkoutCart()" style="width:100%; padding:10px;">🛍️ Valider et Payer la Commande</button>`;
+        return res;
+      }
+
+      // Support
+      if (q === "support" || q.includes("support")) {
+        return `💬 <b>Support Client DAKPROELITE</b><br><br>
+                • 📱 <b>WhatsApp Direct :</b> <a href="https://wa.me/2290197455309" target="_blank" style="color:var(--whatsapp-green);">+229 01 97 45 53 09</a><br>
+                • 📧 <b>Email :</b> <a href="mailto:contact@dakproelite.com" style="color:var(--accent-gold);">contact@dakproelite.com</a><br><br>
+                <button class="card-btn" onclick="escalateToHuman()">🎟️ Créer un Ticket de support</button>`;
+      }
+
+      // Publications
+      if (q === "publications" || q.includes("publication")) {
+        const list = extractObjects(dbData.publications);
+        if (list.length === 0) return "La rubrique <b>publications</b> ne contient aucun produit actuellement.";
+
+        let html = `🛒 <b>Produits disponibles dans Publications :</b><div class="cards-carousel">`;
+        list.forEach(item => {
+          const titre = item.titre || item.nom || "Article DAKPROELITE";
+          const prix = item.prixPromo || item.prix || item.price || 0;
+          const image = item.image || item.photo || "https://via.placeholder.com/150";
+
+          html += `
+            <div class="product-card">
+              <img src="${image}" alt="${titre}" onerror="this.src='https://via.placeholder.com/150'">
+              <div class="title">${titre}</div>
+              <div class="price-promo">${Number(prix).toLocaleString()} CFA</div>
+              <button class="card-btn" onclick="addToCart('${titre.replace(/'/g, "\\'")}', ${prix})">➕ Ajouter</button>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        return html;
+      }
+
+      // Bannieres
+      if (q === "bannieres" || q.includes("banniere")) {
+        const list = extractObjects(dbData.bannieres);
+        if (list.length === 0) return "Aucune bannière active dans la base de données.";
+        let html = `🖼️ <b>Bannières enregistrées :</b><div class="cards-carousel">`;
+        list.forEach(b => {
+          const img = b.url || b.image || b.photo || "https://via.placeholder.com/200x100";
+          const txt = b.titre || b.texte || b.nom || "Bannière DAKPROELITE";
+          html += `
+            <div class="product-card">
+              <img src="${img}" alt="${txt}" onerror="this.src='https://via.placeholder.com/200x100'">
+              <div class="title">${txt}</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        return html;
+      }
+
+      // Annonces
+      if (q === "annonces" || q.includes("annonce")) {
+        const list = extractObjects(dbData.annonces);
+        if (list.length === 0) return "📢 Aucune annonce enregistrée.";
+        let res = `📢 <b>Données du nœud ANNONCES :</b><br><br>`;
+        list.forEach((a, i) => {
+          res += `${i + 1}. <b>${a.titre || 'Annonce'}</b>: ${a.texte || a.message || a.description || 'Pas de détail'}<br>`;
+        });
+        return res;
+      }
+
+      // Commandes
+      if (q === "commandes" || q.includes("commande")) {
+        const list = extractObjects(dbData.commandes);
+        if (list.length === 0) return "📦 Aucune commande enregistrée.";
+        let res = `📦 <b>Données du nœud COMMANDES :</b><br><br>`;
+        list.forEach((o, i) => {
+          res += `${i + 1}. <b>${o.idCommande || 'Commande'}</b> - Client: ${o.clientNom || 'Anonyme'} - Statut: <span style="color:var(--accent-gold);">${o.statut || 'En attente'}</span> - Total: <b>${(o.montantTotal || o.montant || 0).toLocaleString()} CFA</b><br>`;
+        });
+        return res;
+      }
+
+      // Configuration
+      if (q === "configuration" || q.includes("configuration")) {
+        const data = dbData.configuration;
+        if (!data) return "⚙️ Aucune configuration définie.";
+        let res = `⚙️ <b>Données du nœud CONFIGURATION :</b><br><br>`;
+        if (typeof data === 'object') {
+          Object.entries(data).forEach(([key, val]) => {
+            res += `• <b>${key}</b> : ${typeof val === 'object' ? JSON.stringify(val) : val}<br>`;
+          });
+        } else {
+          res += `${data}`;
+        }
+        return res;
+      }
+
+      // Contenu
+      if (q === "contenu" || q.includes("contenu")) {
+        const list = extractObjects(dbData.contenu);
+        if (list.length === 0) return "📝 Aucun contenu textuel répertorié.";
+        let res = `📝 <b>Données du nœud CONTENU :</b><br><br>`;
+        list.forEach((c, i) => {
+          res += `${i + 1}. <b>${c.titre || c.nom || 'Contenu'}</b>: ${c.texte || c.description || c.valeur || ''}<br>`;
+        });
+        return res;
+      }
+
+      // Messages
+      if (q === "messages" || q.includes("message")) {
+        const list = extractObjects(dbData.messages);
+        if (list.length === 0) return "💬 Aucun message enregistré dans la base.";
+        let res = `💬 <b>Données du nœud MESSAGES :</b><br><br>`;
+        list.forEach((m, i) => {
+          res += `${i + 1}. <b>${m.nom || m.email || 'Expéditeur'}</b>: ${m.message || m.texte || 'Message vide'}<br>`;
+        });
+        return res;
+      }
+
+      // Transactions
+      if (q === "transactions" || q.includes("transaction")) {
+        const list = extractObjects(dbData.transactions);
+        if (list.length === 0) return "💳 Aucune transaction dans la base.";
+        let res = `💳 <b>Données du nœud TRANSACTIONS :</b><br><br>`;
+        list.forEach((t, i) => {
+          res += `${i + 1}. <b>${t.idCommande || 'Tx'}</b> - Montant: <b>${(t.montant || 0).toLocaleString()} CFA</b> - Statut: ${t.statut || 'En cours'}<br>`;
+        });
+        return res;
+      }
+
+      // Users
+      if (q === "users" || q.includes("user") || q.includes("utilisateur")) {
+        const list = extractObjects(dbData.users);
+        if (list.length === 0) return "👤 Aucun utilisateur enregistré.";
+        let res = `👤 <b>Données du nœud USERS :</b><br><br>`;
+        list.forEach((u, i) => {
+          res += `${i + 1}. <b>${u.nom || u.email || 'Utilisateur'}</b> - Téléphone: ${u.telephone || 'Non renseigné'} - Rôle: ${u.role || 'Client'}<br>`;
+        });
+        return res;
+      }
+
+      // Recherche libre si l'utilisateur saisit du texte
+      for (const nodeKey of Object.keys(dbData)) {
+        if (q.includes(nodeKey)) {
+          const list = extractObjects(dbData[nodeKey]);
+          if (list.length === 0) return `Le nœud <b>${nodeKey}</b> ne contient aucune donnée.`;
+
+          let res = `📂 <b>Données trouvées dans ${nodeKey.toUpperCase()} :</b><br><br>`;
+          list.slice(0, 5).forEach((item, index) => {
+            const title = item.titre || item.nom || item.name || item.code || `Élément ${index + 1}`;
+            const detail = item.description || item.texte || item.message || item.statut || item.email || '';
+            res += `• <b>${title}</b> ${detail ? ': ' + detail : ''}<br>`;
+          });
+          return res;
+        }
+      }
+
+      return `Veuillez sélectionner un nœud dans le menu horizontal en bas ou formuler une demande spécifique concernant vos achats.`;
+    }
+
+    // -------------------------------------------------------------
+    // INTERFACE ET SCRIPT D'ACTION
+    // -------------------------------------------------------------
+    function toggleAuthModal() {
+      const modal = document.getElementById("authModal");
+      if (currentUser) {
+        signOut(auth).then(() => appendMessage("Vous êtes déconnecté.", "bot"));
+      } else {
+        modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
+      }
+    }
+
+    function switchAuthTab(mode) {
+      currentAuthMode = mode;
+      const tabLogin = document.getElementById("tabLogin");
+      const tabRegister = document.getElementById("tabRegister");
+      const regFields = document.getElementById("registerFields");
+      const modalTitle = document.getElementById("modalTitle");
+      const submitBtn = document.getElementById("authSubmitBtn");
+
+      if (mode === 'login') {
+        tabLogin.classList.add("active");
+        tabRegister.classList.remove("active");
+        regFields.style.display = "none";
+        modalTitle.textContent = "Connexion DAKPROELITE";
+        submitBtn.textContent = "Se connecter";
+      } else {
+        tabRegister.classList.add("active");
+        tabLogin.classList.remove("active");
+        regFields.style.display = "flex";
+        modalTitle.textContent = "Créer un compte Client";
+        submitBtn.textContent = "Créer mon compte";
+      }
+    }
+
+    async function submitAuth() {
+      const email = document.getElementById("authEmail").value.trim().toLowerCase();
+      const password = document.getElementById("authPassword").value;
+
+      if (!email || !password) {
+        alert("Saisissez un email et un mot de passe.");
+        return;
+      }
+
+      if (currentAuthMode === 'login') {
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          toggleAuthModal();
+        } catch (err) {
+          alert("Erreur de connexion : " + err.message);
+        }
+      } else {
+        const name = document.getElementById("authName").value.trim();
+        const code = document.getElementById("authCountryCode").value;
+        const phone = document.getElementById("authPhone").value.trim();
+
+        if (!name || !phone) {
+          alert("Veuillez renseigner votre nom et votre numéro de téléphone.");
+          return;
+        }
+
+        try {
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          await updateProfile(cred.user, { displayName: name });
+
+          const userData = {
+            uid: cred.user.uid,
+            nom: name,
+            email: email,
+            telephone: code + phone,
+            role: "acheteur",
+            createdAt: Date.now()
+          };
+
+          await set(ref(db, `users/${cred.user.uid}`), userData);
+          toggleAuthModal();
+        } catch (err) {
+          alert("Erreur d'inscription : " + err.message);
+        }
+      }
+    }
+
+    function showTypingIndicator(show) {
+      const typingIndicator = document.getElementById("typingIndicator");
+      const chatMessages = document.getElementById("chatMessages");
+      typingIndicator.style.display = show ? "block" : "none";
+      if (show) chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function appendMessage(text, sender) {
+      const chatMessages = document.getElementById("chatMessages");
+      const msgDiv = document.createElement("div");
+      msgDiv.classList.add("message", sender);
+
+      const now = new Date();
+      const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+      msgDiv.innerHTML = `${text}<div class="time">${timeStr}</div>`;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const query = input.value.trim();
+      if (!query) return;
+
+      appendMessage(query, "user");
+      input.value = "";
+
+      showTypingIndicator(true);
+
+      setTimeout(() => {
+        showTypingIndicator(false);
+        const response = generateDakbotResponse(query);
+        appendMessage(response, "bot");
+      }, 400);
+    }
+
+    function sendQuickQuery(nodeName) {
+      appendMessage(`Consultation du nœud : <b>${nodeName}</b>`, "user");
+      showTypingIndicator(true);
+      setTimeout(() => {
+        showTypingIndicator(false);
+        const response = generateDakbotResponse(nodeName);
+        appendMessage(response, "bot");
+      }, 300);
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === "Enter") sendMessage();
+    }
+  </script>
+</body>
+</html>

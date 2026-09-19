@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Détail du Produit & Commande</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{min-height:100vh;background:#050505;color:#fff;font-family:Arial,sans-serif;display:flex;flex-direction:column;}
+
+  .container{flex:1;max-width:1100px;margin:30px auto;padding:20px;width:100%;}
+  .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-bottom:30px;}
+  .card{background:#12161f;border:1px solid #222;border-radius:12px;padding:20px;}
+
+  .product-image{width:100%;height:350px;object-fit:cover;border-radius:10px;border:1px solid #d4af37;margin-bottom:15px;}
+  .product-title{color:#d4af37;font-size:24px;font-weight:bold;margin-bottom:10px;}
+  .product-desc{color:#ccc;font-size:14px;line-height:1.6;margin-bottom:15px;}
+  
+  .price-box{display:flex;align-items:center;gap:15px;margin-bottom:15px;background:#0a0d14;padding:12px;border-radius:8px;border:1px solid #333;}
+  .price-promo{color:#70e090;font-size:24px;font-weight:bold;}
+  .price-old{color:#888;text-decoration:line-through;font-size:16px;}
+  .badge-discount{background:#e74c3c;color:#fff;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:bold;}
+
+  .field{margin-bottom:12px;}
+  label{display:block;font-size:12px;color:#aaa;margin-bottom:5px;}
+  input, select{width:100%;padding:10px;border:1px solid #333;border-radius:6px;background:#000;color:#fff;font-size:13px;outline:none;}
+  input:focus, select:focus{border-color:#d4af37;}
+
+  .affiliate-box{background:#0a0d14;border:1px dashed #d4af37;padding:12px;border-radius:8px;margin-top:15px;}
+  .btn-action{background:#d4af37;color:#000;font-weight:bold;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:14px;width:100%;margin-top:10px;transition:0.3s;}
+  .btn-action:hover{background:#f3e5ab;}
+  .btn-cart{background:#3498db;color:#fff;font-weight:bold;padding:12px;border:none;border-radius:8px;cursor:pointer;font-size:14px;width:100%;margin-top:10px;transition:0.3s;}
+  .btn-cart:hover{background:#5dade2;}
+
+  .receipt-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:15px;}
+  .receipt-box{background:#fff;color:#000;width:100%;max-width:450px;border-radius:12px;padding:25px;border:3px solid #d4af37;box-shadow:0 10px 30px rgba(0,0,0,0.5);}
+  .receipt-header{text-align:center;border-bottom:2px dashed #ccc;padding-bottom:15px;margin-bottom:15px;}
+  .receipt-title{color:#000;font-size:18px;font-weight:bold;}
+  .receipt-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;}
+  .qr-container{display:flex;justify-content:center;margin:15px 0;}
+
+  @media (max-width:768px){
+    .product-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="product-grid">
+    
+    <div class="card">
+      <img id="productImg" class="product-image" src="https://via.placeholder.com/400x320/12161f/d4af37?text=Chargement..." alt="Produit">
+      <h1 id="productTitle" class="product-title">Chargement du titre...</h1>
+      
+      <div class="price-box">
+        <span id="promoPrice" class="price-promo">0,00 €</span>
+        <span id="normalPrice" class="price-old">0,00 €</span>
+        <span id="discountBadge" class="badge-discount">-0%</span>
+      </div>
+
+      <p id="productDesc" class="product-desc">Chargement des détails du produit...</p>
+
+      <div class="affiliate-box">
+        <label style="color:#d4af37; font-weight:bold;">🔗 Votre Lien d'Affiliation :</label>
+        <input type="text" id="affiliateLink" readonly style="margin-bottom:8px; font-size:11px;">
+        <button class="btn-action" id="btnCopyAffiliate" style="padding:8px; font-size:12px;">Copier le lien d'affiliation</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:#d4af37; margin-bottom:15px; border-bottom:1px solid #222; padding-bottom:8px;">📝 Passer la Commande</h3>
+      
+      <form id="checkoutForm">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div class="field">
+            <label for="clientNom">Nom *</label>
+            <input type="text" id="clientNom" required placeholder="Votre nom">
+          </div>
+          <div class="field">
+            <label for="clientPrenom">Prénom *</label>
+            <input type="text" id="clientPrenom" required placeholder="Votre prénom">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div class="field">
+            <label for="clientTel">Téléphone *</label>
+            <input type="tel" id="clientTel" required placeholder="+33 000000000">
+          </div>
+          <div class="field">
+            <label for="clientWhatsapp">Numéro WhatsApp *</label>
+            <input type="tel" id="clientWhatsapp" required placeholder="+33 000000000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="clientAdresse">Adresse de livraison complète *</label>
+          <input type="text" id="clientAdresse" required placeholder="Rue, Ville, Code Postal, Pays">
+        </div>
+
+        <div class="field">
+          <label for="productQuantity">Quantité *</label>
+          <input type="number" id="productQuantity" value="1" min="1" max="10000" required>
+        </div>
+
+        <div style="background:#0a0d14; padding:12px; border-radius:8px; margin:15px 0;">
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+            <span>Prix unitaire :</span>
+            <span id="summaryUnitPrice">0,00 €</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+            <span>Quantité sélectionnée :</span>
+            <span id="summaryQuantity">1</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:bold; color:#d4af37; border-top:1px solid #333; padding-top:8px;">
+            <span>Total Général :</span>
+            <span id="summaryTotalPrice">0,00 €</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-cart" id="btnAddToCart">🛒 Ajouter au Panier & Voir le Panier</button>
+        <button type="submit" class="btn-action" id="btnProcessPayment" style="background:#70e090;">💳 Payer Directement</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<div class="receipt-modal" id="receiptModal">
+  <div class="receipt-box">
+    <div class="receipt-header">
+      <div class="receipt-title">REÇU OFFICIEL DE PAIEMENT</div>
+    </div>
+    
+    <div class="receipt-row"><span>N° Transaction :</span><b id="recTxId">#000000</b></div>
+    <div class="receipt-row"><span>Client :</span><b id="recClientName">Non défini</b></div>
+    <div class="receipt-row"><span>Contact :</span><span id="recClientContact">-</span></div>
+    <div class="receipt-row"><span>Produit :</span><b id="recProductName">-</b></div>
+    <div class="receipt-row"><span>Quantité :</span><span id="recQuantity">1</span></div>
+    <div class="receipt-row" style="border-top:1px solid #ccc; padding-top:5px; font-size:14px;">
+      <span>Total Payé :</span><b id="recTotal" style="color:#27ae60;">0,00 €</b>
+    </div>
+
+    <div class="qr-container">
+      <div id="qrcode"></div>
+    </div>
+
+    <button class="btn-action" onclick="document.getElementById('receiptModal').style.display='none'">Fermer</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getDatabase, ref, get, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
+  authDomain: "dakproelite.firebaseapp.com",
+  databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
+  projectId: "dakproelite",
+  storageBucket: "dakproelite.firebasestorage.app",
+  messagingSenderId: "580591769206",
+  appId: "1:580591769206:web:859724d4b2dbf904087157"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let currentUser = null;
+let productData = null;
+let paymentKeys = {};
+let referrerId = null;
+
+window.addEventListener("DOMContentLoaded", async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  referrerId = urlParams.get('ref');
+
+  await loadProductData();
+  await loadPaymentKeys();
+});
+
+// Chargement Dynamique du Produit depuis la table 'publications'
+async function loadProductData() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get('id') || "pub_001";
+
+  try {
+    const snap = await get(ref(db, `publications/${productId}`));
+    if (snap.exists()) {
+      productData = snap.val();
+      productData.id = productId;
+    } else {
+      productData = {
+        id: productId,
+        nom: "Plan d'Architecture Moderne Élite",
+        description: "Fichiers complets d'architecture, plans 2D/3D et nomenclature d'ingénierie prêt pour construction.",
+        prixNormal: 250.00,
+        prixPromo: 150.00,
+        image: "https://via.placeholder.com/400x320/12161f/d4af37?text=Produit",
+        commissionAffilie: 15.00
+      };
+    }
+    updateProductDisplay();
+  } catch (e) {
+    console.error("Erreur lors du chargement de la publication :", e);
+  }
+}
+
+async function loadPaymentKeys() {
+  try {
+    const snap = await get(ref(db, "config/paiement"));
+    if (snap.exists()) {
+      paymentKeys = snap.val();
+    }
+  } catch (e) {
+    console.error("Erreur lors du chargement des clés de paiement :", e);
+  }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    const currentUrl = window.location.href.split('?')[0];
+    document.getElementById("affiliateLink").value = `${currentUrl}?id=${productData ? productData.id : ''}&ref=${user.uid}`;
+
+    const userSnap = await get(ref(db, `users/${user.uid}`));
+    if (userSnap.exists()) {
+      const u = userSnap.val();
+      if (u.nom) document.getElementById("clientNom").value = u.nom;
+      if (u.prenom) document.getElementById("clientPrenom").value = u.prenom;
+      if (u.telephone) document.getElementById("clientTel").value = u.telephone;
+      if (u.whatsapp) document.getElementById("clientWhatsapp").value = u.whatsapp;
+      if (u.adresse) document.getElementById("clientAdresse").value = u.adresse;
+    }
+  }
+});
+
+function updateProductDisplay() {
+  if (!productData) return;
+
+  document.getElementById("productTitle").textContent = productData.nom;
+  document.getElementById("productDesc").textContent = productData.description;
+  document.getElementById("productImg").src = productData.image;
+
+  const promoEUR = Number(productData.prixPromo).toFixed(2);
+  const normalEUR = Number(productData.prixNormal).toFixed(2);
+
+  document.getElementById("promoPrice").textContent = `${promoEUR} €`;
+  document.getElementById("normalPrice").textContent = `${normalEUR} €`;
+  
+  const discount = Math.round(((productData.prixNormal - productData.prixPromo) / productData.prixNormal) * 100);
+  document.getElementById("discountBadge").textContent = `-${discount}%`;
+
+  recalculateTotal();
+}
+
+function recalculateTotal() {
+  if (!productData) return;
+  const qty = parseInt(document.getElementById("productQuantity").value) || 1;
+  const grandTotal = (productData.prixPromo * qty).toFixed(2);
+
+  document.getElementById("summaryUnitPrice").textContent = `${Number(productData.prixPromo).toFixed(2)} €`;
+  document.getElementById("summaryQuantity").textContent = qty;
+  document.getElementById("summaryTotalPrice").textContent = `${grandTotal} €`;
+}
+
+document.getElementById("productQuantity").addEventListener("input", recalculateTotal);
+
+document.getElementById("btnCopyAffiliate").addEventListener("click", () => {
+  const affInput = document.getElementById("affiliateLink");
+  if (!affInput.value) {
+    alert("Veuillez vous connecter pour obtenir votre lien d'affiliation.");
+    return;
+  }
+  affInput.select();
+  document.execCommand("copy");
+  alert("Lien d'affiliation copié !");
+});
+
+// Ajouter au Panier et Rediriger vers panier.html
+document.getElementById("btnAddToCart").addEventListener("click", async () => {
+  if (!currentUser) {
+    alert("Veuillez vous connecter pour ajouter des articles au panier.");
+    window.location.href = "inscription.html";
+    return;
+  }
+
+  const qty = parseInt(document.getElementById("productQuantity").value) || 1;
+
+  try {
+    await set(ref(db, `users/${currentUser.uid}/panier/${productData.id}`), {
+      produitId: productData.id,
+      nom: productData.nom,
+      prixUnitaire: productData.prixPromo,
+      quantite: qty,
+      total: (productData.prixPromo * qty),
+      image: productData.image,
+      timestamp: Date.now()
+    });
+
+    window.location.href = "panier.html";
+  } catch (err) {
+    console.error("Erreur panier :", err);
+    alert("Impossible d'ajouter le produit au panier.");
+  }
+});
+
+// Paiement Direct
+document.getElementById("checkoutForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!currentUser) {
+    alert("Veuillez vous connecter pour procéder au paiement.");
+    window.location.href = "inscription.html";
+    return;
+  }
+
+  const qty = parseInt(document.getElementById("productQuantity").value) || 1;
+  const totalAmount = (productData.prixPromo * qty).toFixed(2);
+  const transactionId = "TX-" + Date.now().toString().slice(-8);
+
+  const clientInfo = {
+    nom: document.getElementById("clientNom").value,
+    prenom: document.getElementById("clientPrenom").value,
+    telephone: document.getElementById("clientTel").value,
+    whatsapp: document.getElementById("clientWhatsapp").value,
+    adresse: document.getElementById("clientAdresse").value
+  };
+
+  const btn = document.getElementById("btnProcessPayment");
+  btn.disabled = true;
+  btn.textContent = "Traitement du paiement...";
+
+  try {
+    await set(ref(db, `transactions/${transactionId}`), {
+      uid: currentUser.uid,
+      client: clientInfo,
+      produitId: productData.id,
+      produitNom: productData.nom,
+      prixUnitaire: productData.prixPromo,
+      quantite: qty,
+      total: totalAmount,
+      statut: "Succès",
+      parrain: referrerId || "aucun",
+      timestamp: Date.now()
+    });
+
+    if (referrerId && referrerId !== currentUser.uid) {
+      const commission = ((productData.commissionAffilie || (productData.prixPromo * 0.1)) * qty).toFixed(2);
+      const affiliateRef = ref(db, `users/${referrerId}/soldeAffiliation`);
+      
+      await runTransaction(affiliateRef, (currentBalance) => {
+        return Number((Number(currentBalance || 0) + Number(commission)).toFixed(2));
+      });
+
+      await set(ref(db, `commissions/${referrerId}/${transactionId}`), {
+        acheteur: `${clientInfo.prenom} ${clientInfo.nom}`,
+        produit: productData.nom,
+        montant: commission,
+        timestamp: Date.now()
+      });
+    }
+
+    document.getElementById("recTxId").textContent = `#${transactionId}`;
+    document.getElementById("recClientName").textContent = `${clientInfo.prenom} ${clientInfo.nom}`;
+    document.getElementById("recClientContact").textContent = `${clientInfo.telephone} / WA: ${clientInfo.whatsapp}`;
+    document.getElementById("recProductName").textContent = productData.nom;
+    document.getElementById("recQuantity").textContent = qty;
+    document.getElementById("recTotal").textContent = `${totalAmount} €`;
+
+    document.getElementById("qrcode").innerHTML = "";
+    new QRCode(document.getElementById("qrcode"), {
+      text: `TX:${transactionId}|CLIENT:${clientInfo.nom} ${clientInfo.prenom}|TOTAL:${totalAmount}EUR`,
+      width: 120,
+      height: 120
+    });
+
+    document.getElementById("receiptModal").style.display = "flex";
+
+  } catch (err) {
+    console.error("Erreur paiement :", err);
+    alert("Une erreur s'est produite lors de la validation du paiement.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "💳 Payer Directement";
+  }
+});
+</script>
+
+</body>
+</html>

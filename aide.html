@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre d'Aide - DAKPRO ÉLITE</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:Segoe UI, sans-serif; }
+        body { background:#050505; color:#fff; }
+        .container { max-width:600px; margin:auto; padding:20px; }
+        .logo { text-align:center; font-size:60px; margin-top:10px; }
+        h1 { text-align:center; color:#d4af37; font-size:32px; margin-top:10px; }
+        .subtitle { text-align:center; color:#bbb; margin:10px 0 30px; font-size:15px; }
+        .menu-item {
+            display:flex; justify-content:space-between; align-items:center;
+            background:#151515; border:1px solid #2d2d2d; border-radius:12px;
+            padding:16px; margin-bottom:15px; cursor:pointer; transition:.3s;
+        }
+        .menu-item:hover { border-color:#d4af37; background:#202020; }
+        .left { display:flex; align-items:center; gap:15px; }
+        .icon { font-size:28px; }
+        .title { font-size:18px; font-weight:bold; color:#d4af37; }
+        .arrow { font-size:24px; color:#fff; }
+        .footer { margin-top:35px; }
+        .btn { width:100%; padding:15px; border:none; border-radius:10px; font-size:17px; font-weight:bold; cursor:pointer; margin-top:12px; }
+        .close { background:#444; color:white; }
+        .logout { background:#8B0000; color:white; }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="logo">🛡️</div>
+    <h1>Centre d'Aide<br>DAKPRO ÉLITE</h1>
+    <p class="subtitle">Choisissez une rubrique pour consulter toutes les informations.</p>
+
+    <div class="menu-item" onclick="location.href='reglement-interieur.html'">
+        <div class="left">
+            <div class="icon">📜</div>
+            <div class="title">Règlement Intérieur</div>
+        </div>
+        <div class="arrow">➜</div>
+    </div>
+
+    <div class="menu-item" onclick="location.href='politique-confidentialite.html'">
+        <div class="left">
+            <div class="icon">🛡️</div>
+            <div class="title">Politique de Confidentialité</div>
+        </div>
+        <div class="arrow">➜</div>
+    </div>
+
+    <div class="menu-item" onclick="location.href='programme-ambassadeur.html'">
+        <div class="left">
+            <div class="icon">📦</div>
+            <div class="title">Programme Ambassadeur</div>
+        </div>
+        <div class="arrow">➜</div>
+    </div>
+
+    <div class="menu-item" onclick="window.open('https://wa.me/2290197455309','_blank')">
+        <div class="left">
+            <div class="icon">💬</div>
+            <div class="title">Contacter l'assistance</div>
+        </div>
+        <div class="arrow">➜</div>
+    </div>
+
+    <div class="footer">
+        <button class="btn close" onclick="history.back()">Fermer</button>
+        <!-- Appel de la fonction de déconnexion Firebase -->
+        <button class="btn logout" onclick="deconnecter()">Déconnexion</button>
+    </div>
+</div>
+
+<script type="module">
+    import { auth } from "./firebase-config.js";
+    import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    window.deconnecter = () => {
+        signOut(auth).then(() => {
+            alert("Déconnexion réussie.");
+            window.location.href = "connexion.html";
+        }).catch((error) => {
+            alert("Erreur lors de la déconnexion : " + error.message);
+        });
+    };
+</script>
+</body>
+</html>
