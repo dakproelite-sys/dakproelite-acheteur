@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espace Acheteur VIP</title>
+    <title>Espace Acheteur VIP - DAKPROÉLITE</title>
     <style>
         * {
             box-sizing: border-box;
@@ -82,7 +82,7 @@
         }
         @media(min-width: 768px) {
             .navigation-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr);
             }
         }
         @media(min-width: 1024px) {
@@ -105,6 +105,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-decoration: none;
         }
         .nav-card:hover, .nav-card.active {
             border-color: #d4af37;
@@ -163,10 +164,6 @@
                 <div class="nav-icon">🛍️</div>
                 <div class="nav-name">Catalogue Produits</div>
             </div>
-            <div class="nav-card" data-module="panier">
-                <div class="nav-icon">🛒</div>
-                <div class="nav-name">Mon Panier</div>
-            </div>
             <div class="nav-card" data-module="paiement">
                 <div class="nav-icon">💳</div>
                 <div class="nav-name">Paiement Sécurisé</div>
@@ -174,6 +171,10 @@
             <div class="nav-card" data-module="commandes">
                 <div class="nav-icon">📦</div>
                 <div class="nav-name">Mes Commandes</div>
+            </div>
+            <div class="nav-card" data-module="support">
+                <div class="nav-icon">💬</div>
+                <div class="nav-name">Support Rapide</div>
             </div>
             <div class="nav-card" data-module="profil">
                 <div class="nav-icon">👤</div>
@@ -190,7 +191,7 @@
     </main>
 
     <footer>
-        &copy; 2026 Tous droits réservés — Espace Client Sécurisé
+        &copy; 2026 Tous droits réservés — DAKPROÉLITE Espace Client Sécurisé
     </footer>
 
     <script type="module">
@@ -214,16 +215,17 @@
 
         let currentUserId = null;
 
+        // Table de correspondance exacte des sous-modules JS
         const modulesFiles = {
             'dashboard': './acheteur-dashboard.js',
             'produits': './acheteur-produits.js',
-            'panier': './panier.js',
             'paiement': './paiement.js',
             'commandes': './acheteur-commandes.js',
+            'support': './support-rapide.js',
             'profil': './acheteur-profil.js'
         };
 
-        // Chargement sécurisé de module
+        // Chargement dynamique de module JavaScript
         async function chargerModule(nomModule, elementClique) {
             if (elementClique) {
                 document.querySelectorAll('.nav-card').forEach(card => card.classList.remove('active'));
@@ -243,13 +245,14 @@
                     module.init(container, db, auth, currentUserId);
                 } else {
                     container.innerHTML = `<div style="color: #ff8585; text-align: center; padding: 40px;">
-                        Le module <b>${nomModule}</b> ne possède pas de fonction <code>init()</code> valide.
+                        Le module <b>${nomModule}</b> ne contient pas la fonction <code>export function init(...)</code>.
                     </div>`;
                 }
             } catch (error) {
                 console.error(`Erreur lors du chargement de ${nomModule}:`, error);
                 container.innerHTML = `<div style="color: #ff8585; text-align: center; padding: 40px;">
-                    Échec du chargement du fichier <code>${filePath}</code>. Assurez-vous qu'il est présent sur le serveur.
+                    <p>Impossible de charger le fichier <code>${filePath}</code>.</p>
+                    <p style="font-size: 12px; color: #aaa; margin-top: 10px;">Vérifiez que le fichier existe bien à la racine de votre projet sur le serveur.</p>
                 </div>`;
             }
         }
@@ -271,7 +274,7 @@
 
             currentUserId = user.uid;
 
-            // Écoute temps réel des infos de l'utilisateur sous `users/{uid}`
+            // Écoute en temps réel des informations utilisateur sous `users/{uid}`
             const userRef = ref(db, `users/${user.uid}`);
             onValue(userRef, (snapshot) => {
                 if (snapshot.exists()) {
@@ -283,16 +286,15 @@
                 }
             });
 
-            // Lancement initial du module Tableau de bord
+            // Lancement du module par défaut (Tableau de bord)
             const defaultCard = document.querySelector('.nav-card[data-module="dashboard"]');
             chargerModule('dashboard', defaultCard);
         });
 
-        // Gestion de la déconnexion
+        // Déconnexion
         document.getElementById("btnLogout").addEventListener("click", async () => {
             try {
                 await signOut(auth);
-                // La redirection vers connexion.html sera automatiquement déclenchée par onAuthStateChanged
             } catch (error) {
                 console.error("Erreur lors de la déconnexion :", error);
             }
