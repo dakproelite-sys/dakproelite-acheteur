@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<title>DAKPRO ÉLITE | La Référence</title>
+<title>DAKPRO ÉLITE | La Référence Marketplace</title>
 
 <link rel="manifest" href="manifest.json">
 
@@ -20,7 +20,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-
 :root{
 --gold:#d4af37;
 --gold-light:#f3e5ab;
@@ -71,31 +70,9 @@ a{
 color:inherit;
 }
 
-#google_translate_element{
-display:none!important;
-}
-
-.goog-te-banner-frame,
-.goog-te-banner-frame.skiptranslate,
-.goog-te-gadget-icon,
-.goog-tooltip,
-.goog-tooltip:hover{
-display:none!important;
-}
-
-.goog-te-gadget{
-font-size:0!important;
-}
-
-.goog-text-highlight{
-background:none!important;
-box-shadow:none!important;
-}
-
 /* =====================================================
    HEADER
 ===================================================== */
-
 .header{
 position:sticky;
 top:0;
@@ -196,10 +173,27 @@ line-height:18px;
 color:var(--gold);
 }
 
-/* =====================================================
-   INSTALLATION
-===================================================== */
+/* MACARON RED DOT / BADGE DU PANIER */
+.cart-badge {
+position: absolute;
+top: -4px;
+right: 2px;
+background: var(--red);
+color: #fff;
+font-size: 10px;
+font-weight: 700;
+border-radius: 10px;
+padding: 1px 5px;
+min-width: 16px;
+text-align: center;
+line-height: 1.2;
+display: none;
+border: 1px solid var(--black);
+}
 
+/* =====================================================
+   INSTALLATION PWA
+===================================================== */
 #btnInstall{
 display:none;
 width:calc(100% - 30px);
@@ -219,7 +213,6 @@ font-weight:600;
 /* =====================================================
    BANNIÈRE
 ===================================================== */
-
 .banner-container{
 display:none;
 position:relative;
@@ -297,9 +290,8 @@ background:var(--gold);
 }
 
 /* =====================================================
-   CATEGORIES
+   CATÉGORIES
 ===================================================== */
-
 .cat-scroll{
 width:100%;
 display:flex;
@@ -323,6 +315,7 @@ color:#fff;
 cursor:pointer;
 white-space:nowrap;
 font-size:12px;
+transition:background 0.2s, color 0.2s;
 }
 
 .cat-btn.active{
@@ -332,40 +325,39 @@ font-weight:700;
 }
 
 /* =====================================================
-   PRODUITS (GRID CSS ÉQUILIBRÉE ET ADAPTATIVE)
+   PRODUITS (STYLE MARKETPLACE E-COMMERCE ALIBABA / ALIEXPRESS)
 ===================================================== */
-
 .products{
 width:100%;
 max-width:1800px;
 margin:0 auto;
 padding:10px;
 display: grid;
-grid-template-columns: repeat(2, 1fr); /* 2 Colonnes par défaut (Mobile) */
-gap: 10px;
+grid-template-columns: repeat(2, 1fr);
+gap: 12px;
 flex:1;
 }
 
 @media(min-width:700px){
 .products{
-grid-template-columns: repeat(4, 1fr); /* 4 Colonnes (Tablettes) */
-gap: 12px;
+grid-template-columns: repeat(4, 1fr);
+gap: 14px;
 padding: 15px;
 }
 }
 
 @media(min-width:1001px){
 .products{
-grid-template-columns: repeat(6, 1fr); /* 6 Colonnes (Ordinateurs) */
-gap: 12px;
+grid-template-columns: repeat(6, 1fr);
+gap: 16px;
 padding: 20px;
 }
 }
 
 @media(min-width:1651px){
 .products{
-grid-template-columns: repeat(8, 1fr); /* 8 Colonnes (Grands écrans) */
-gap: 14px;
+grid-template-columns: repeat(8, 1fr);
+gap: 16px;
 }
 }
 
@@ -375,43 +367,85 @@ display:flex;
 flex-direction:column;
 justify-content:space-between;
 width:100%;
-padding:8px;
+padding:10px;
 background:var(--card);
 border:1px solid var(--border);
-border-radius:10px;
-box-shadow:0 3px 8px rgba(0,0,0,.3);
-transition:transform .2s ease,border-color .2s ease;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,.4);
+transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+overflow:hidden;
 }
 
 .card:hover{
-transform:translateY(-2px);
+transform:translateY(-3px);
 border-color:var(--gold);
+box-shadow:0 6px 16px rgba(212,175,55,.2);
 }
 
-/* CADRE PHOTO/VIDÉO ADAPTATIF AUTOMATIQUE */
+/* Badges Produits moderne */
+.badge-discount{
+position:absolute;
+top:8px;
+right:8px;
+z-index:5;
+padding:3px 6px;
+background:var(--red);
+color:#fff;
+border-radius:4px;
+font-size:9px;
+font-weight:800;
+box-shadow:0 2px 4px rgba(0,0,0,0.5);
+}
+
+.badge-boost{
+position:absolute;
+top:8px;
+left:8px;
+z-index:5;
+padding:3px 6px;
+background:linear-gradient(45deg, #e00000, #ff5252);
+color:#fff;
+border-radius:4px;
+font-size:8px;
+font-weight:800;
+box-shadow:0 2px 4px rgba(0,0,0,0.5);
+text-transform:uppercase;
+}
+
+.media-container {
+width: 100%;
+height: 150px;
+position: relative;
+border-radius: 8px;
+overflow: hidden;
+background: #080b10;
+display: flex;
+align-items: center;
+justify-content: center;
+margin-bottom: 8px;
+}
+
 .card img,
 .card video{
-display:block;
 width:100%;
-height:auto;
-max-height:220px;
-object-fit:contain;
+height:100%;
+object-fit:cover;
 border-radius:8px;
-background:#080b10;
-margin:0 auto;
+transition: transform 0.3s ease;
+}
+
+.card:hover img {
+transform: scale(1.04);
 }
 
 .product-no-image{
 width:100%;
-min-height:120px;
-padding:15px 5px;
+height:100%;
 display:flex;
 align-items:center;
 justify-content:center;
 flex-direction:column;
-border-radius:8px;
 background:#080b10;
-border:1px solid #252a33;
 color:#777;
 font-size:10px;
 text-align:center;
@@ -428,13 +462,12 @@ display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
-min-height:120px;
+width:100%;
+height:100%;
 background:#111;
-border:1px solid #333;
 color:var(--gold);
 text-decoration:none;
 padding:10px 5px;
-border-radius:8px;
 text-align:center;
 }
 
@@ -450,23 +483,24 @@ word-break:break-all;
 }
 
 .card h3{
-margin:6px 0 4px;
-font-size:11px;
+margin:4px 0;
+font-size:12px;
 font-weight:600;
-line-height:1.2;
+line-height:1.3;
 word-break:break-word;
 color:#fff;
 display:-webkit-box;
 -webkit-line-clamp:2;
 -webkit-box-orient:vertical;
 overflow:hidden;
+min-height:31px;
 }
 
 .card .description-complete{
 font-size:10px;
-color:#ccc;
+color:#aaa;
 line-height:1.3;
-margin-bottom:6px;
+margin-bottom:8px;
 display:-webkit-box;
 -webkit-line-clamp:2;
 -webkit-box-orient:vertical;
@@ -474,41 +508,59 @@ overflow:hidden;
 word-break:break-word;
 }
 
+/* Statuts d'offres style AliExpress */
+.market-tags {
+display: flex;
+gap: 4px;
+margin-bottom: 6px;
+flex-wrap: wrap;
+}
+
+.tag-express {
+background: rgba(34, 197, 94, 0.15);
+color: #22c55e;
+border: 1px solid rgba(34, 197, 94, 0.3);
+font-size: 8px;
+padding: 1px 4px;
+border-radius: 3px;
+font-weight: 600;
+}
+
 .price-container{
 display:flex;
 align-items:baseline;
-gap:4px;
+gap:6px;
 flex-wrap:wrap;
-margin:4px 0 6px;
+margin:4px 0 8px;
 }
 
 .price{
 color:var(--gold);
-font-size:12px;
+font-size:14px;
 font-weight:800;
 }
 
 .price-old{
 text-decoration:line-through;
-color:#888;
-font-size:9px;
+color:#777;
+font-size:10px;
 font-weight:400;
 }
 
 .card-actions-row {
 display: flex;
-gap: 4px;
+gap: 6px;
 margin-top: auto;
 }
 
 .btn-action {
 flex: 1;
-padding: 6px 2px;
+padding: 7px 4px;
 border: 1px solid var(--border);
 border-radius: 6px;
 color: #fff;
-font-size: 9px;
-font-weight: 600;
+font-size: 10px;
+font-weight: 700;
 text-align: center;
 text-decoration: none;
 cursor: pointer;
@@ -526,7 +578,7 @@ transform: scale(0.96);
 .btn-cart {
 background: #166534;
 color: #fff;
-border-color: rgba(34,197,94,.4);
+border-color: rgba(34,197,94,.5);
 }
 
 .btn-cart:hover {
@@ -536,7 +588,7 @@ background: #15803d;
 .btn-copy {
 background: var(--blue);
 color: #fff;
-border-color: rgba(0,123,255,.4);
+border-color: rgba(0,123,255,.5);
 }
 
 .btn-copy:hover {
@@ -559,35 +611,22 @@ border-radius:4px;
 font-size:8px;
 }
 
-.badge-boost{
-position:absolute;
-top:10px;
-left:10px;
-z-index:5;
-padding:2px 5px;
-background:#e00000;
-color:#fff;
-border-radius:3px;
-font-size:7px;
-font-weight:700;
-}
-
 .skeleton-card {
 background: #151c28;
-border-radius: 10px;
-padding: 8px;
+border-radius: 12px;
+padding: 10px;
 animation: pulse 1.5s infinite ease-in-out;
 }
 .skeleton-media {
 width: 100%;
-height: 130px;
+height: 150px;
 background: #222b3a;
 border-radius: 8px;
 }
 .skeleton-text {
 height: 10px;
 background: #222b3a;
-margin: 6px 0;
+margin: 8px 0;
 border-radius: 4px;
 }
 @keyframes pulse {
@@ -599,9 +638,8 @@ border-radius: 4px;
 /* =====================================================
    FOOTER
 ===================================================== */
-
 .app-footer{
-margin-top:25px;
+margin-top:30px;
 background:#131921;
 border-top:2px solid var(--gold);
 color:#ddd;
@@ -740,25 +778,26 @@ padding:0 11px;
 font-size:11px;
 }
 }
-
 </style>
 </head>
 
 <body>
 
 <header class="header">
-<div class="logo-container notranslate" id="logoButton">
+<div class="logo-container" id="logoButton">
 <img class="logo" id="appLogo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPRO ÉLITE">
 <span class="fallback-logo" id="fallbackLogo" style="display:none">DP</span>
 </div>
 
 <div class="search-container">
-<input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher un produit...">
+<input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits sur DAKPRO ÉLITE...">
 </div>
 
 <div class="nav-icons">
-<a href="profil-acheteur.html#panier" class="nav-item" id="navCartLink">
+<!-- REDIRECTION VERS PANIER.HTML -->
+<a href="panier.html" class="nav-item" id="navCartLink">
 <span>🛒</span>
+<span class="cart-badge" id="cartBadge">0</span>
 <span>Panier</span>
 </a>
 <a href="profil-acheteur.html" class="nav-item">
@@ -772,8 +811,6 @@ font-size:11px;
 Installer l'application sur l'appareil
 </div>
 
-<div id="google_translate_element"></div>
-
 <!-- BANNIÈRES -->
 <section class="banner-container" id="bannerContainer">
 <div class="banner-track" id="bannerTrack"></div>
@@ -783,8 +820,10 @@ Installer l'application sur l'appareil
 <!-- CATÉGORIES -->
 <nav class="cat-scroll" id="catMenu"></nav>
 
-<!-- PRODUITS -->
+<!-- PRODUITS MARKETPLACE -->
 <main class="products" id="products">
+  <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
+  <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
   <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
   <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
 </main>
@@ -863,42 +902,6 @@ Installer l'application sur l'appareil
 </div>
 </footer>
 
-<script>
-function googleTranslateElementInit(){
-new google.translate.TranslateElement({
-pageLanguage:"fr",
-autoDisplay:false
-},"google_translate_element");
-}
-
-function triggerGoogleTranslate(langCode){
-var select=document.querySelector(".goog-te-combo");
-if(select){
-select.value=langCode;
-select.dispatchEvent(new Event("change"));
-}
-}
-
-document.addEventListener("DOMContentLoaded",()=>{
-const selector=document.getElementById("worldLangSelector");
-if(selector){
-selector.addEventListener("change",e=>{
-const selectedLang=e.target.value;
-localStorage.setItem("dakpro_lang",selectedLang);
-triggerGoogleTranslate(selectedLang);
-});
-
-const savedLang=localStorage.getItem("dakpro_lang");
-if(savedLang){
-selector.value=savedLang;
-setTimeout(()=>{triggerGoogleTranslate(savedLang);},1000);
-}
-}
-});
-</script>
-
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
 <!-- FIREBASE INTEGRATION -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -932,9 +935,42 @@ let currentIndex = 0;
 let totalSlides = 0;
 let autoPlay = null;
 
+// Écoute de l'état utilisateur & Mise à jour du badge du panier en temps réel
 onAuthStateChanged(auth, user => {
   siteContext.currentUser = user || null;
+  if(user) {
+    listenToCartBadge(user.uid);
+  } else {
+    updateCartBadgeDisplay(0);
+  }
 });
+
+function updateCartBadgeDisplay(count) {
+  const badge = document.getElementById("cartBadge");
+  if(!badge) return;
+  if(count > 0) {
+    badge.textContent = count;
+    badge.style.display = "inline-block";
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+function listenToCartBadge(uid) {
+  const cartRef = ref(db, `users/${uid}/panier`);
+  onValue(cartRef, snapshot => {
+    const data = snapshot.val();
+    if(!data || typeof data !== "object") {
+      updateCartBadgeDisplay(0);
+      return;
+    }
+    let totalItems = 0;
+    Object.values(data).forEach(item => {
+      totalItems += parseInt(item.quantite || 1, 10);
+    });
+    updateCartBadgeDisplay(totalItems);
+  });
+}
 
 function escapeHTML(value){
 return String(value??"")
@@ -960,7 +996,7 @@ appLogo.style.display = "none";
 if(fallbackLogo) fallbackLogo.style.display = "block";
 });
 
-/* RECUPERATION EXCLUSIVE ET COMPLETE DEPUIS "publications" */
+/* RECUPERATION DEPUIS "PUBLICATIONS" */
 function loadProducts(){
 try {
   const cachedProducts = localStorage.getItem("dakpro_cached_publications");
@@ -1042,7 +1078,7 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* RENDU DES IMAGES DE PRODUITS DEPUIS REAL DATABASE "PUBLICATIONS" */
+/* RENDU DES CARTES PRODUITS (STYLE ALIBABA / ALIEXPRESS) */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
 const affiliateURL = new URL(`index.html?pid=${id}`, window.location.href).href + `&ref=${encodeURIComponent(uid||"")}`;
@@ -1056,9 +1092,16 @@ const rawDesc = String(product.description || "");
 const shortDesc = rawDesc.length > 70 ? rawDesc.substring(0, 70) + "..." : rawDesc;
 const safeShortDesc = escapeHTML(shortDesc);
 
-const priceVal = product.prix !== undefined ? product.prix : (product.price !== undefined ? product.price : 0);
-const promoVal = product.prixPromo !== undefined ? product.prixPromo : product.promoPrice;
-const hasPromo = promoVal !== undefined && promoVal !== null && String(promoVal).trim() !== "";
+const priceVal = parseFloat(product.prix !== undefined ? product.prix : (product.price !== undefined ? product.price : 0));
+const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : (product.promoPrice !== undefined ? parseFloat(product.promoPrice) : null);
+const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
+
+// Calcul du pourcentage de réduction
+let discountBadgeHTML = "";
+if(hasPromo && priceVal > 0) {
+    const discountPercent = Math.round(((priceVal - promoVal) / priceVal) * 100);
+    discountBadgeHTML = `<span class="badge-discount">-${discountPercent}%</span>`;
+}
 
 const displayPrice = hasPromo ? escapeHTML(promoVal) : escapeHTML(priceVal);
 const currencySymbol = escapeHTML(product.devise || product.currency || "FCFA");
@@ -1080,9 +1123,17 @@ mediaHTML = `<div class="product-no-image"><strong>📦</strong><span>Image indi
 
 return `
 <article class="card" data-product-id="${escapeAttribute(product.id||"")}">
-${product.boost ? `<span class="badge-boost">BOOST</span>` : ""}
-<div>
+${product.boost ? `<span class="badge-boost">🔥 HOT</span>` : ""}
+${discountBadgeHTML}
+
+<div class="media-container">
 ${mediaHTML}
+</div>
+
+<div>
+<div class="market-tags">
+  <span class="tag-express">⚡ Livraison Rapide</span>
+</div>
 <h3>${safeName}</h3>
 ${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : ""}
 </div>
@@ -1118,6 +1169,7 @@ return;
 const uid = siteContext.currentUser?.uid || "";
 container.innerHTML = list.map(product => generateCardHTML(product, uid)).join("");
 
+// Copie du lien d'affiliation
 container.querySelectorAll(".btn-copy").forEach(button => {
 button.addEventListener("click", async event => {
 event.stopPropagation();
@@ -1147,7 +1199,7 @@ setTimeout(() => { button.textContent = oldText; }, 1800);
 });
 });
 
-/* INTEGRATION EXCLUSIVE DU PANIER CENTRALISÉ VIA REALTIME DATABASE (Dossier /panier) */
+/* CALCUL DU PANIER ET PERSISTANCE FIREBASE */
 container.querySelectorAll(".btn-cart").forEach(button => {
 button.addEventListener("click", async event => {
 event.stopPropagation();
@@ -1175,11 +1227,13 @@ if(product) {
     const unitPrice = parseFloat(product.prixPromo || product.prix || product.price || 0);
     const nameVal = product.nom || product.title || product.name || "Produit";
     const imgVal = product.image || product.imageUrl || product.photo || "";
+    const devVal = product.devise || product.currency || "FCFA";
 
     await update(itemRef, {
       id: product.id,
       nom: nameVal,
       prixUnitaire: unitPrice,
+      devise: devVal,
       image: imgVal,
       quantite: currentQty,
       total: parseFloat((currentQty * unitPrice).toFixed(2)),
