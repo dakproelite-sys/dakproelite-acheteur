@@ -133,8 +133,8 @@ body {
 }
 
 .btn-qty {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
   border: 1px solid var(--gold);
   background: transparent;
@@ -146,18 +146,25 @@ body {
   justify-content: center;
 }
 
+.btn-qty:active {
+  background: var(--gold);
+  color: #000;
+}
+
 .qty-val {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
+  min-width: 20px;
+  text-align: center;
 }
 
 .btn-remove {
   background: transparent;
   border: none;
   color: var(--red);
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   margin-left: 8px;
 }
 
@@ -273,14 +280,165 @@ body {
   </div>
 </main>
 
-<!-- INCLUSION DU SCRIPT DE PAIEMENT & LOGIQUE PANIER -->
-<script type="module" src="paiement.js"></script>
-
+<!-- SCRIPT PANIER & REALTIME DATABASE -->
 <script type="module">
-  // Écoute de la redirection vers la page de paiement
-  document.getElementById("btnGoToPayment")?.addEventListener("click", () => {
-    window.location.href = "paiement.html";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
+  authDomain: "dakproelite.firebaseapp.com",
+  databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
+  projectId: "dakproelite",
+  storageBucket: "dakproelite.firebasestorage.app",
+  messagingSenderId: "580591769206",
+  appId: "1:580591769206:web:4f67f8aadbf3d051087157"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+
+// Vérification de la connexion de l'utilisateur
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    document.getElementById("cartList").innerHTML = `
+      <div class="empty-state">
+        <h3>Vous n'êtes pas connecté</h3>
+        <p>Veuillez vous connecter pour voir votre panier.</p>
+        <a href="profil-acheteur.html" class="btn-home">Se connecter</a>
+      </div>`;
+    document.getElementById("cartSummary").style.display = "none";
+    return;
+  }
+
+  currentUser = user;
+  ecouterPanier(user.uid);
+});
+
+// Écoute en temps réel des modifications dans Realtime Database
+function ecouterPanier(uid) {
+  const cartRef = ref(db, `users/${uid}/panier`);
+
+  onValue(cartRef, snapshot => {
+    const data = snapshot.val();
+    const cartList = document.getElementById("cartList");
+    const cartSummary = document.getElementById("cartSummary");
+
+    if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
+      cartList.innerHTML = `
+        <div class="empty-state">
+          <h3>Votre panier est vide 🛒</h3>
+          <p>Découvrez nos offres sur la boutique !</p>
+          <a href="index.html" class="btn-home">Explorer la boutique</a>
+        </div>`;
+      cartSummary.style.display = "none";
+      return;
+    }
+
+    let itemsHTML = "";
+    let totalArticles = 0;
+    let grandTotal = 0;
+    let mainCurrency = "FCFA";
+
+    Object.entries(data).forEach(([productId, item]) => {
+      const qty = parseInt(item.quantite || 1, 10);
+      const price = parseFloat(item.prixUnitaire || 0);
+      const itemTotal = qty * price;
+      const currency = item.devise || "FCFA";
+      mainCurrency = currency;
+
+      totalArticles += qty;
+      grandTotal += itemTotal;
+
+      const imgUrl = item.image || "https://via.placeholder.com/70";
+
+      itemsHTML += `
+        <div class="cart-item" data-id="${productId}">
+          <img src="${imgUrl}" alt="${item.nom || 'Produit'}" class="cart-item-img" onerror="this.src='https://via.placeholder.com/70'">
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.nom || 'Produit'}</div>
+            <div class="cart-item-price">${price} ${currency}</div>
+            <div class="qty-controls">
+              <button class="btn-qty btn-minus" data-id="${productId}" data-qty="${qty}" data-price="${price}">-</button>
+              <span class="qty-val">${qty}</span>
+              <button class="btn-qty btn-plus" data-id="${productId}" data-qty="${qty}" data-price="${price}">+</button>
+            </div>
+          </div>
+          <button class="btn-remove" data-id="${productId}">🗑️</button>
+        </div>
+      `;
+    });
+
+    cartList.innerHTML = itemsHTML;
+    document.getElementById("totalItemsCount").textContent = totalArticles;
+    document.getElementById("grandTotal").textContent = `${grandTotal.toFixed(2)} ${mainCurrency}`;
+    cartSummary.style.display = "block";
+
+    attacherEvenements(uid);
   });
+}
+
+// Attachement des événements de mise à jour / suppression en temps réel dans Firebase
+function attacherEvenements(uid) {
+  // Bouton Plus +
+  document.querySelectorAll(".btn-plus").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      const newQty = parseInt(btn.dataset.qty, 10) + 1;
+      const unitPrice = parseFloat(btn.dataset.price);
+
+      update(ref(db, `users/${uid}/panier/${id}`), {
+        quantite: newQty,
+        total: parseFloat((newQty * unitPrice).toFixed(2)),
+        updatedAt: Date.now()
+      });
+    });
+  });
+
+  // Bouton Moins -
+  document.querySelectorAll(".btn-minus").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      const currentQty = parseInt(btn.dataset.qty, 10);
+      const unitPrice = parseFloat(btn.dataset.price);
+
+      if (currentQty > 1) {
+        const newQty = currentQty - 1;
+        update(ref(db, `users/${uid}/panier/${id}`), {
+          quantite: newQty,
+          total: parseFloat((newQty * unitPrice).toFixed(2)),
+          updatedAt: Date.now()
+        });
+      } else {
+        remove(ref(db, `users/${uid}/panier/${id}`));
+      }
+    });
+  });
+
+  // Bouton Supprimer 🗑️
+  document.querySelectorAll(".btn-remove").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      remove(ref(db, `users/${uid}/panier/${id}`));
+    });
+  });
+}
+
+// Vider tout le panier
+document.getElementById("btnClearCart")?.addEventListener("click", () => {
+  if (currentUser && confirm("Voulez-vous vraiment vider l'ensemble de votre panier ?")) {
+    remove(ref(db, `users/${currentUser.uid}/panier`));
+  }
+});
+
+// Redirection vers la page de paiement avec les données Firebase synchronisées
+document.getElementById("btnGoToPayment")?.addEventListener("click", () => {
+  window.location.href = "paiement.html";
+});
 </script>
 
 </body>
