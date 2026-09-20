@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <meta name="theme-color" content="#d4af37">
-<meta name="application-name" content="DAKPRO ÉLITE">
-<meta name="apple-mobile-web-app-title" content="DAKPRO ÉLITE">
+<meta name="application-name" content="DAKPROÉLITE">
+<meta name="apple-mobile-web-app-title" content="DAKPROÉLITE">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<title>DAKPRO ÉLITE | La Référence Marketplace</title>
+<title>DAKPROÉLITE | La Référence Marketplace</title>
 
 <link rel="manifest" href="manifest.json">
 
@@ -325,7 +325,7 @@ font-weight:700;
 }
 
 /* =====================================================
-   PRODUITS (STYLE MARKETPLACE E-COMMERCE ALIBABA / ALIEXPRESS)
+   PRODUITS (ADAPTATION AUTOMATIQUE DES IMAGES)
 ===================================================== */
 .products{
 width:100%;
@@ -382,7 +382,6 @@ border-color:var(--gold);
 box-shadow:0 6px 16px rgba(212,175,55,.2);
 }
 
-/* Badges Produits moderne */
 .badge-discount{
 position:absolute;
 top:8px;
@@ -414,7 +413,7 @@ text-transform:uppercase;
 
 .media-container {
 width: 100%;
-height: 150px;
+height: 160px;
 position: relative;
 border-radius: 8px;
 overflow: hidden;
@@ -425,13 +424,20 @@ justify-content: center;
 margin-bottom: 8px;
 }
 
-.card img,
+.card img{
+width:100%;
+height:100%;
+object-fit:contain; /* S'adapte automatiquement à l'image sans déformer */
+background:#080b10;
+border-radius:8px;
+transition: transform 0.3s ease;
+}
+
 .card video{
 width:100%;
 height:100%;
 object-fit:cover;
 border-radius:8px;
-transition: transform 0.3s ease;
 }
 
 .card:hover img {
@@ -508,7 +514,6 @@ overflow:hidden;
 word-break:break-word;
 }
 
-/* Statuts d'offres style AliExpress */
 .market-tags {
 display: flex;
 gap: 4px;
@@ -635,6 +640,25 @@ border-radius: 4px;
 100% { opacity: 0.6; }
 }
 
+/* Modal Produit Partagé */
+.modal-overlay {
+position: fixed;
+top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(0, 0, 0, 0.85);
+display: flex; justify-content: center; align-items: center;
+z-index: 10000; padding: 15px;
+}
+.modal-content {
+background: #0a0d14;
+border: 1px solid var(--gold);
+border-radius: 14px;
+padding: 20px;
+max-width: 520px;
+width: 100%;
+max-height: 90vh;
+overflow-y: auto;
+}
+
 /* =====================================================
    FOOTER
 ===================================================== */
@@ -699,32 +723,6 @@ text-decoration:none;
 color:var(--gold);
 }
 
-.footer-lang-selector-section{
-padding:20px;
-background:#06090c;
-border-top:1px solid #222;
-text-align:center;
-}
-
-.footer-lang-selector-section label{
-display:block;
-margin-bottom:8px;
-color:var(--gold);
-font-size:13px;
-font-weight:600;
-}
-
-.footer-lang-selector-section select{
-width:100%;
-max-width:320px;
-padding:10px 15px;
-background:#000;
-color:#fff;
-border:2px solid var(--gold);
-border-radius:10px;
-outline:none;
-}
-
 .footer-bottom-bar{
 padding:15px;
 background:#000;
@@ -785,16 +783,15 @@ font-size:11px;
 
 <header class="header">
 <div class="logo-container" id="logoButton">
-<img class="logo" id="appLogo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPRO ÉLITE">
+<img class="logo" id="appLogo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE">
 <span class="fallback-logo" id="fallbackLogo" style="display:none">DP</span>
 </div>
 
 <div class="search-container">
-<input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits sur DAKPRO ÉLITE...">
+<input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits sur DAKPROÉLITE...">
 </div>
 
 <div class="nav-icons">
-<!-- REDIRECTION VERS PANIER.HTML -->
 <a href="panier.html" class="nav-item" id="navCartLink">
 <span>🛒</span>
 <span class="cart-badge" id="cartBadge">0</span>
@@ -828,11 +825,13 @@ Installer l'application sur l'appareil
   <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
 </main>
 
+<div id="productModalContainer"></div>
+
 <!-- FOOTER -->
 <footer class="app-footer">
 <section class="footer-announcement">
 <h4 id="fayaBuzzTitle">⚡ Annonce Officielle</h4>
-<p id="fayaBuzzText">Bienvenue sur DAKPRO ÉLITE, votre plateforme de référence !</p>
+<p id="fayaBuzzText">Bienvenue sur DAKPROÉLITE, votre plateforme de référence !</p>
 </section>
 
 <div class="footer-links-grid">
@@ -871,41 +870,15 @@ Installer l'application sur l'appareil
 </div>
 </div>
 
-<div class="footer-lang-selector-section">
-<label for="worldLangSelector">🌐 Choisir votre langue</label>
-<select id="worldLangSelector">
-<option value="fr">🇫🇷 Français</option>
-<option value="en">🇬🇧 English</option>
-<option value="es">🇪🇸 Español</option>
-<option value="de">🇩🇪 Deutsch</option>
-<option value="it">🇮🇹 Italiano</option>
-<option value="pt">🇵🇹 Português</option>
-<option value="zh-CN">🇨🇳 中文</option>
-<option value="hi">🇮🇳 हिन्दी</option>
-<option value="ar">🇸🇦 العربية</option>
-<option value="ja">🇯🇵 日本語</option>
-<option value="ko">🇰🇷 한국어</option>
-<option value="ru">🇷🇺 Русский</option>
-<option value="nl">🇳🇱 Nederlands</option>
-<option value="tr">🇹🇷 Türkçe</option>
-<option value="vi">🇻🇳 Tiếng Việt</option>
-<option value="pl">🇵🇱 Polski</option>
-<option value="uk">🇺🇦 Українська</option>
-<option value="id">🇮🇩 Bahasa Indonesia</option>
-<option value="sw">🇹ℤ Kiswahili</option>
-<option value="yo">🇳🇬 Yorùbá</option>
-</select>
-</div>
-
 <div class="footer-bottom-bar">
-© 2026 DAKPRO ÉLITE / DAKPRO NEXUS. Tous droits réservés.
+© 2026 DAKPROÉLITE / DAKPRO NEXUS. Tous droits réservés.
 </div>
 </footer>
 
 <!-- FIREBASE INTEGRATION -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, onValue, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, onValue, get, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -1032,6 +1005,7 @@ try {
 
 buildCategories();
 filterProducts();
+checkUrlForSharedProduct();
 }, error => {
 console.error("Erreur publications:", error);
 if(!window.allProductsData.length) {
@@ -1078,10 +1052,11 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* RENDU DES CARTES PRODUITS (STYLE ALIBABA / ALIEXPRESS) */
+/* RENDU DES CARTES PRODUITS */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
-const affiliateURL = new URL(`index.html?pid=${id}`, window.location.href).href + `&ref=${encodeURIComponent(uid||"")}`;
+const siteBase = "https://dakproelite-acheteur.vercel.app";
+const affiliateURL = `${siteBase}/api/share?id=${id}${uid ? '&ref=' + encodeURIComponent(uid) : ''}`;
 
 const image = product.image || product.imageUrl || product.photo || product.img || "";
 const video = product.video || product.videoUrl || "";
@@ -1096,7 +1071,6 @@ const priceVal = parseFloat(product.prix !== undefined ? product.prix : (product
 const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : (product.promoPrice !== undefined ? parseFloat(product.promoPrice) : null);
 const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
 
-// Calcul du pourcentage de réduction
 let discountBadgeHTML = "";
 if(hasPromo && priceVal > 0) {
     const discountPercent = Math.round(((priceVal - promoVal) / priceVal) * 100);
@@ -1169,7 +1143,6 @@ return;
 const uid = siteContext.currentUser?.uid || "";
 container.innerHTML = list.map(product => generateCardHTML(product, uid)).join("");
 
-// Copie du lien d'affiliation
 container.querySelectorAll(".btn-copy").forEach(button => {
 button.addEventListener("click", async event => {
 event.stopPropagation();
@@ -1199,11 +1172,16 @@ setTimeout(() => { button.textContent = oldText; }, 1800);
 });
 });
 
-/* CALCUL DU PANIER ET PERSISTANCE FIREBASE */
 container.querySelectorAll(".btn-cart").forEach(button => {
 button.addEventListener("click", async event => {
 event.stopPropagation();
 const productId = button.dataset.id;
+ajouterAuPanierDirect(productId, button);
+});
+});
+}
+
+async function ajouterAuPanierDirect(productId, buttonEl) {
 const user = auth.currentUser;
 
 if(!user) {
@@ -1217,6 +1195,7 @@ const product = window.allProductsData.find(p => String(p.id) === String(product
 if(product) {
   try {
     const itemRef = ref(db, `users/${user.uid}/panier/${product.id}`);
+    const gsItemRef = ref(db, `users/${user.uid}/gs/cart/${product.id}`);
     const snapshot = await get(itemRef);
     
     let currentQty = 1;
@@ -1228,28 +1207,96 @@ if(product) {
     const nameVal = product.nom || product.title || product.name || "Produit";
     const imgVal = product.image || product.imageUrl || product.photo || "";
     const devVal = product.devise || product.currency || "FCFA";
+    const totalPrice = parseFloat((currentQty * unitPrice).toFixed(2));
 
-    await update(itemRef, {
+    const payload = {
       id: product.id,
       nom: nameVal,
       prixUnitaire: unitPrice,
       devise: devVal,
       image: imgVal,
       quantite: currentQty,
-      total: parseFloat((currentQty * unitPrice).toFixed(2)),
+      total: totalPrice,
       updatedAt: Date.now()
-    });
+    };
 
-    const oldText = button.textContent;
-    button.textContent = "✅ Ajouté !";
-    setTimeout(() => { button.textContent = oldText; }, 1500);
+    const updates = {};
+    updates[`users/${user.uid}/panier/${product.id}`] = payload;
+    updates[`users/${user.uid}/gs/cart/${product.id}`] = payload;
+    await update(ref(db), updates);
+
+    // Recalcul du total /gs/total
+    const allGsCartSnap = await get(ref(db, `users/${user.uid}/gs/cart`));
+    let globalTotal = 0;
+    if (allGsCartSnap.exists()) {
+        Object.values(allGsCartSnap.val()).forEach(item => {
+            globalTotal += parseFloat(item.total || 0);
+        });
+    }
+    await set(ref(db, `users/${user.uid}/gs/total`), globalTotal);
+
+    if (buttonEl) {
+      const oldText = buttonEl.textContent;
+      buttonEl.textContent = "✅ Ajouté !";
+      setTimeout(() => { buttonEl.textContent = oldText; }, 1500);
+    }
   } catch(error) {
     console.error("Erreur d'ajout au panier:", error);
     alert("Impossible d'ajouter le produit au panier.");
   }
 }
-});
-});
+}
+
+/* OUVERTURE ET AFFICHAGE AUTOMATIQUE DU PRODUIT PARTAGÉ VIA URL */
+function checkUrlForSharedProduct() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('pid') || urlParams.get('id');
+    if (!productId) return;
+
+    const product = window.allProductsData.find(p => String(p.id) === String(productId));
+    if (!product) return;
+
+    const modalContainer = document.getElementById("productModalContainer");
+    if (!modalContainer) return;
+
+    const priceVal = parseFloat(product.prix !== undefined ? product.prix : (product.price !== undefined ? product.price : 0));
+    const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : (product.promoPrice !== undefined ? parseFloat(product.promoPrice) : null);
+    const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
+
+    const effectivePrice = hasPromo ? promoVal : priceVal;
+    const currencySymbol = escapeHTML(product.devise || product.currency || "FCFA");
+
+    modalContainer.innerHTML = `
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <img src="${escapeAttribute(product.image || product.imageUrl || '')}" alt="${escapeHTML(product.nom || 'Produit')}" style="width:100%; height:220px; object-fit:contain; background:#080b10; border-radius:10px; margin-bottom:12px; border:1px solid #333;">
+                <h2 style="color: var(--gold); margin-bottom: 8px; font-size: 18px;">${escapeHTML(product.nom || product.title || 'Produit DAKPROÉLITE')}</h2>
+                
+                <div class="price-container" style="margin-bottom: 12px;">
+                    <span class="price" style="font-size: 18px;">${effectivePrice} ${currencySymbol}</span>
+                    ${hasPromo ? `<span class="price-old">${priceVal}${currencySymbol}</span>` : ''}
+                </div>
+
+                <div style="background:#12161f; padding:12px; border-radius:8px; border:1px solid #222; margin-bottom:15px;">
+                    <h4 style="color:#fff; font-size:12px; margin-bottom:4px;">Description :</h4>
+                    <p style="color:#ccc; font-size:13px; line-height:1.5; white-space:pre-line;">${escapeHTML(product.description || 'Aucune description disponible.')}</p>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-action btn-cart" id="btnModalAddToCart" style="padding:10px;">💳 SHOP NOW (Acheter)</button>
+                    <button class="btn-action" id="btnModalClose" style="background: #222; color: #fff; border-color:#444;">Fermer</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById("btnModalAddToCart")?.addEventListener("click", () => {
+        ajouterAuPanierDirect(productId, document.getElementById("btnModalAddToCart"));
+    });
+
+    document.getElementById("btnModalClose")?.addEventListener("click", () => {
+        modalContainer.innerHTML = "";
+    });
 }
 
 /* BANNIERES */
@@ -1338,12 +1385,12 @@ if(!title || !text) return;
 
 if(!data || data.actif === false){
 title.textContent = "⚡ Annonce Officielle";
-text.textContent = "Bienvenue sur DAKPRO ÉLITE, votre plateforme de référence !";
+text.textContent = "Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
 return;
 }
 
 title.textContent = data.titre || "⚡ Annonce Officielle";
-text.textContent = data.texte || data.text || "Bienvenue sur DAKPRO ÉLITE, votre plateforme de référence !";
+text.textContent = data.texte || data.text || "Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
 });
 }
 

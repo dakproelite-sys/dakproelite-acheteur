@@ -1,4 +1,3 @@
-import { ref, onValue, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 /**
  * Helper d'échappement anti-XSS
@@ -280,15 +279,15 @@ export function init(container, db, auth, userId) {
 }
 
 /**
- * Génère et copie le lien d'affiliation propre au produit
+ * Génère et copie le lien d'affiliation qui passe par l'API Serverless Vercel pour l'aperçu dynamique
  */
 function partagerLienAffilie(pubId, title, currentUid) {
-    const baseUrl = window.location.origin + window.location.pathname.replace("index.html", "");
-    const affiliateUrl = `${baseUrl}produit.html?id=${pubId}${currentUid ? '&ref=' + currentUid : ''}`;
+    const siteBase = "https://dakproelite-acheteur.vercel.app";
+    const affiliateUrl = `${siteBase}/api/share?id=${pubId}${currentUid ? '&ref=' + currentUid : ''}`;
 
     if (navigator.clipboard) {
         navigator.clipboard.writeText(affiliateUrl).then(() => {
-            alert(`✅ Lien d'affiliation copié pour "${title}" !\n\nPartagez-le sur vos réseaux sociaux, WhatsApp ou sites partenaires.\n\nLien : ${affiliateUrl}`);
+            alert(`✅ Lien d'affiliation copié pour "${title}" !\n\nPartagez-le sur vos réseaux sociaux, WhatsApp ou sites partenaires pour afficher l'aperçu complet du produit.\n\nLien : ${affiliateUrl}`);
         }).catch(console.error);
     } else {
         prompt("Copiez votre lien d'affiliation :", affiliateUrl);
