@@ -1,3 +1,4 @@
+import { ref, onValue, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 /**
  * Helper d'échappement anti-XSS
@@ -85,20 +86,33 @@ export function init(container, db, auth, userId) {
                 border-color: #d4af37; 
                 transform: translateY(-2px);
             }
+            .media-wrapper {
+                width: 100%;
+                height: 160px;
+                border-radius: 6px;
+                background: #080b10;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                margin-bottom: 8px;
+            }
             .product-img {
                 width: 100%;
-                height: 150px;
-                object-fit: cover;
-                border-radius: 6px;
-                background: #12161f;
+                height: 100%;
+                object-fit: contain;
                 display: block;
+            }
+            .product-video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
             .product-info-body {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                padding-top: 8px;
             }
             .product-title { 
                 font-size: 13px; 
@@ -117,7 +131,6 @@ export function init(container, db, auth, userId) {
                 color: #aaa; 
                 margin-bottom: 8px; 
                 line-height: 1.3; 
-                white-space: pre-line;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
@@ -130,7 +143,7 @@ export function init(container, db, auth, userId) {
                 margin-bottom: 8px; 
                 flex-wrap: wrap; 
             }
-            .price-promo { color: #22c55e; font-weight: 800; font-size: 14px; }
+            .price-promo { color: #d4af37; font-weight: 800; font-size: 14px; }
             .price-normal { color: #777; font-size: 11px; text-decoration: line-through; }
             .badge-reduction { background: #ef4444; color: #fff; font-size: 9px; padding: 2px 4px; border-radius: 4px; font-weight: 700; }
             
@@ -163,8 +176,8 @@ export function init(container, db, auth, userId) {
             .btn-share:hover { background: #38bdf8; color: #000; }
             .btn-order {
                 width: 100%;
-                background: #d4af37;
-                color: #000;
+                background: #22c55e;
+                color: #fff;
                 border: none;
                 padding: 8px;
                 border-radius: 6px;
@@ -173,7 +186,7 @@ export function init(container, db, auth, userId) {
                 font-size: 11px;
                 transition: 0.2s;
             }
-            .btn-order:hover { background: #f3e5ab; }
+            .btn-order:hover { background: #16a34a; }
 
             /* Modal Détails Produit */
             .modal-overlay {
@@ -181,7 +194,7 @@ export function init(container, db, auth, userId) {
                 top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0, 0, 0, 0.85);
                 display: flex; justify-content: center; align-items: center;
-                z-index: 1000; padding: 15px;
+                z-index: 10000; padding: 15px;
             }
             .modal-content {
                 background: #0a0d14;
@@ -196,7 +209,7 @@ export function init(container, db, auth, userId) {
         </style>
 
         <div class="catalog-header">
-            <div class="catalog-title">🛍️ Catalogue des Produits DAKPROELITE</div>
+            <div class="catalog-title">🛍️ Catalogue des Produits DAKPROÉLITE</div>
         </div>
 
         <div id="productsGrid" class="products-grid">
@@ -222,22 +235,36 @@ export function init(container, db, auth, userId) {
 
             Object.keys(products).forEach((pubId) => {
                 const item = products[pubId];
+                if (!item || item.actif === false) return;
                 
-                const prixNormal = parseFloat(item.prixNormal || item.prix || 0);
-                const prixPromo = parseFloat(item.prixPromo || 0);
+                const prixNormal = parseFloat(item.prixNormal || item.prix || item.price || 0);
+                const prixPromo = parseFloat(item.prixPromo || item.promoPrice || 0);
                 
                 const effectivePrice = (prixPromo > 0 && prixPromo < prixNormal) ? prixPromo : prixNormal;
                 const isPromo = (prixPromo > 0 && prixPromo < prixNormal);
                 const reduction = isPromo ? Math.round(((prixNormal - prixPromo) / prixNormal) * 100) : 0;
 
-                const title = item.nom || item.titre || item.title || "Produit DAKPROELITE";
+                const title = item.nom || item.titre || item.title || "Produit DAKPROÉLITE";
                 const description = item.description || "Aucune description disponible.";
                 const image = item.image || item.imageUrl || (Array.isArray(item.images) ? item.images[0] : fallbackImage);
+                const video = item.video || item.videoUrl || "";
+
+                const isVideo = Boolean(video) || /\.(mp4|webm|ogg)(\?|$)/i.test(image);
+                const mediaSrc = video || image;
+                let mediaHTML = "";
+
+                if (isVideo && mediaSrc) {
+                    mediaHTML = `<video src="${escapeHTML(mediaSrc)}" class="product-video" controls preload="metadata"></video>`;
+                } else {
+                    mediaHTML = `<img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" class="product-img" onerror="this.onerror=null; this.src='${fallbackImage}';">`;
+                }
 
                 const card = document.createElement("div");
                 card.className = "product-card";
                 card.innerHTML = `
-                    <img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" class="product-img" onerror="this.onerror=null; this.src='${fallbackImage}';">
+                    <div class="media-wrapper">
+                        ${mediaHTML}
+                    </div>
                     <div class="product-info-body">
                         <div>
                             <div class="product-title">${escapeHTML(title)}</div>
@@ -251,7 +278,7 @@ export function init(container, db, auth, userId) {
                             <div class="card-actions">
                                 <button class="btn-view" id="btn-view-${pubId}">👁️ Aperçu</button>
                                 <button class="btn-share" id="btn-share-${pubId}">🔗 Lien Affiliation</button>
-                                <button class="btn-order" id="btn-add-${pubId}">🛒 SHOP NOW</button>
+                                <button class="btn-order" id="btn-add-${pubId}">🛒 Ajouter au Panier</button>
                             </div>
                         </div>
                     </div>
@@ -260,15 +287,15 @@ export function init(container, db, auth, userId) {
                 gridContainer.appendChild(card);
 
                 // Événements
-                card.querySelector(`#btn-view-${pubId}`).addEventListener("click", () => {
+                card.querySelector(`#btn-view-${pubId}`)?.addEventListener("click", () => {
                     afficherDetailsProduit(pubId, db, currentUid);
                 });
 
-                card.querySelector(`#btn-share-${pubId}`).addEventListener("click", () => {
+                card.querySelector(`#btn-share-${pubId}`)?.addEventListener("click", () => {
                     partagerLienAffilie(pubId, title, currentUid);
                 });
 
-                card.querySelector(`#btn-add-${pubId}`).addEventListener("click", () => {
+                card.querySelector(`#btn-add-${pubId}`)?.addEventListener("click", () => {
                     ajouterAuPanierGS(pubId, db, currentUid);
                 });
             });
@@ -279,36 +306,38 @@ export function init(container, db, auth, userId) {
 }
 
 /**
- * Génère et copie le lien d'affiliation qui passe par l'API Serverless Vercel pour l'aperçu dynamique
+ * Génère et copie le lien d'affiliation Serverless Vercel
  */
 function partagerLienAffilie(pubId, title, currentUid) {
     const siteBase = "https://dakproelite-acheteur.vercel.app";
-    const affiliateUrl = `${siteBase}/api/share?id=${pubId}${currentUid ? '&ref=' + currentUid : ''}`;
+    const affiliateUrl = `${siteBase}/api/share?id=${pubId}${currentUid ? '&ref=' + encodeURIComponent(currentUid) : ''}`;
 
-    if (navigator.clipboard) {
+    if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(affiliateUrl).then(() => {
-            alert(`✅ Lien d'affiliation copié pour "${title}" !\n\nPartagez-le sur vos réseaux sociaux, WhatsApp ou sites partenaires pour afficher l'aperçu complet du produit.\n\nLien : ${affiliateUrl}`);
-        }).catch(console.error);
+            alert(`✅ Lien d'affiliation copié pour "${title}" !\n\nPartagez-le sur WhatsApp ou vos réseaux sociaux pour afficher l'aperçu dynamique du produit.\n\nLien : ${affiliateUrl}`);
+        }).catch(() => {
+            prompt("Copiez votre lien d'affiliation :", affiliateUrl);
+        });
     } else {
         prompt("Copiez votre lien d'affiliation :", affiliateUrl);
     }
 }
 
 /**
- * Affiche la fenêtre modale de détail d'un produit
+ * Modale de détails du produit
  */
 async function afficherDetailsProduit(productId, db, userId) {
     const pubSnap = await get(ref(db, `publications/${productId}`));
     if (!pubSnap.exists()) return alert("Produit introuvable dans la base de données.");
     
     const product = pubSnap.val();
-    const prixNormal = parseFloat(product.prixNormal || product.prix || 0);
-    const prixPromo = parseFloat(product.prixPromo || 0);
+    const prixNormal = parseFloat(product.prixNormal || product.prix || product.price || 0);
+    const prixPromo = parseFloat(product.prixPromo || product.promoPrice || 0);
     const unitPrice = (prixPromo > 0 && prixPromo < prixNormal) ? prixPromo : prixNormal;
     const isPromo = (prixPromo > 0 && prixPromo < prixNormal);
     const reduction = isPromo ? Math.round(((prixNormal - prixPromo) / prixNormal) * 100) : 0;
 
-    const title = product.nom || product.titre || "Produit DAKPROELITE";
+    const title = product.nom || product.titre || product.title || "Produit DAKPROÉLITE";
     const description = product.description || "Aucune description détaillée disponible.";
     const fallbackImage = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='190' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.5'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M21 16l-5-5-4 5-3-3-4 4'/><circle cx='8.5' cy='8.5' r='1.5'/></svg>";
     const image = product.image || product.imageUrl || (Array.isArray(product.images) ? product.images[0] : fallbackImage);
@@ -317,7 +346,7 @@ async function afficherDetailsProduit(productId, db, userId) {
     modalEl.innerHTML = `
         <div class="modal-overlay">
             <div class="modal-content">
-                <img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" style="width:100%; height:220px; object-fit:cover; border-radius:10px; margin-bottom:12px; border:1px solid #333;" onerror="this.onerror=null; this.src='${fallbackImage}';">
+                <img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" style="width:100%; height:220px; object-fit:contain; background:#080b10; border-radius:10px; margin-bottom:12px; border:1px solid #333;" onerror="this.onerror=null; this.src='${fallbackImage}';">
                 <h2 style="color: #d4af37; margin-bottom: 8px; font-size: 18px;">${escapeHTML(title)}</h2>
                 
                 <div class="price-container" style="margin-bottom: 12px;">
@@ -331,28 +360,28 @@ async function afficherDetailsProduit(productId, db, userId) {
                 </div>
 
                 <div style="display: flex; gap: 10px;">
-                    <button class="btn-order" id="btn-modal-add">💳 SHOP NOW (Acheter)</button>
+                    <button class="btn-order" id="btn-modal-add" style="flex:1;">💳 SHOP NOW (Acheter)</button>
                     <button class="btn-view" id="btn-modal-close" style="background: #222; color: #fff; border-color:#444;">Fermer</button>
                 </div>
             </div>
         </div>
     `;
 
-    document.getElementById("btn-modal-add").addEventListener("click", () => {
+    document.getElementById("btn-modal-add")?.addEventListener("click", () => {
         ajouterAuPanierGS(productId, db, userId);
     });
 
-    document.getElementById("btn-modal-close").addEventListener("click", () => {
+    document.getElementById("btn-modal-close")?.addEventListener("click", () => {
         modalEl.innerHTML = "";
     });
 }
 
 /**
- * Ajoute un produit au panier synchronisé /gs et répercute le montant en FCFA
+ * Ajout synchronisé du produit au panier et calcul du total global FCFA
  */
 async function ajouterAuPanierGS(productId, db, userId) {
     if (!userId) {
-        alert("Veuillez vous connecter pour commander sur DAKPROELITE.");
+        alert("Veuillez vous connecter pour commander sur DAKPROÉLITE.");
         return;
     }
 
@@ -369,10 +398,10 @@ async function ajouterAuPanierGS(productId, db, userId) {
         if (!pubSnap.exists()) return alert("Produit introuvable.");
 
         const product = pubSnap.val();
-        const prixNormal = parseFloat(product.prixNormal || product.prix || 0);
-        const prixPromo = parseFloat(product.prixPromo || 0);
+        const prixNormal = parseFloat(product.prixNormal || product.prix || product.price || 0);
+        const prixPromo = parseFloat(product.prixPromo || product.promoPrice || 0);
         const unitPrice = (prixPromo > 0 && prixPromo < prixNormal) ? prixPromo : prixNormal;
-        const title = product.nom || product.titre || "Produit DAKPROELITE";
+        const title = product.nom || product.titre || product.title || "Produit DAKPROÉLITE";
         const image = product.image || product.imageUrl || (Array.isArray(product.images) ? product.images[0] : "");
 
         const gsCartItemRef = ref(db, `users/${userId}/gs/cart/${productId}`);
@@ -390,6 +419,7 @@ async function ajouterAuPanierGS(productId, db, userId) {
             prixUnitaire: unitPrice,
             total: unitPrice * newQty,
             image: image,
+            devise: "FCFA",
             dateAjout: Date.now()
         };
 
@@ -424,9 +454,9 @@ async function ajouterAuPanierGS(productId, db, userId) {
         alert("❌ Une erreur est survenue lors de l'ajout au panier.");
         if (btn) {
             btn.disabled = false;
-            btn.textContent = "🛒 SHOP NOW";
-            btn.style.background = "#d4af37";
-            btn.style.color = "#000";
+            btn.textContent = "🛒 Ajouter au Panier";
+            btn.style.background = "#22c55e";
+            btn.style.color = "#fff";
         }
     }
 }
