@@ -175,16 +175,6 @@ export function init(container, db, auth, userId) {
         margin-bottom: 8px;
         font-size: 13px;
       }
-      .qty-btn {
-        background: #d4af37;
-        color: #000;
-        border: none;
-        width: 22px;
-        height: 22px;
-        border-radius: 4px;
-        font-weight: bold;
-        cursor: pointer;
-      }
       .summary-row {
         display: flex;
         justify-content: space-between;
@@ -210,14 +200,14 @@ export function init(container, db, auth, userId) {
     </div>
 
     <div class="pay-grid">
-      <!-- Colonne 1 : Enregistrement des Passerelles -->
+      <!-- Colonne 1 : Enregistrement des Passerelles Client -->
       <div class="pay-box">
-        <div class="sub-title">⚙️ Enregistrer une passerelle de paiement</div>
+        <div class="sub-title">⚙️ Enregistrer un compte de paiement</div>
         
         <div class="form-group">
           <label>Type de paiement</label>
           <select id="payType" class="form-select">
-            <option value="momo">Mobile Money Afrique (MTN / Moov / Wave / Orange / Celtiis / Airtel / Tigo)</option>
+            <option value="momo">Mobile Money Afrique (Moov / MTN / Wave / Orange / Celtiis / Airtel)</option>
             <option value="card">Carte Bancaire (Visa / Mastercard)</option>
           </select>
         </div>
@@ -236,13 +226,12 @@ export function init(container, db, auth, userId) {
           <div class="form-group">
             <label>Opérateur Mobile Money</label>
             <select id="momoOperator" class="form-select">
-              <option value="MTN">MTN Mobile Money</option>
               <option value="MOOV">Moov Money (Flooz)</option>
+              <option value="MTN">MTN Mobile Money</option>
               <option value="WAVE">Wave</option>
               <option value="ORANGE">Orange Money</option>
               <option value="CELTIIS">Celtiis Cash</option>
               <option value="AIRTEL">Airtel Money</option>
-              <option value="TIGO">Tigo Cash / Tigo</option>
             </select>
           </div>
         </div>
@@ -265,10 +254,10 @@ export function init(container, db, auth, userId) {
           </div>
         </div>
 
-        <button class="btn-action" id="btnSavePaymentMethod">💾 Enregistrer cette passerelle</button>
+        <button class="btn-action" id="btnSavePaymentMethod">💾 Enregistrer cette méthode</button>
 
         <div style="margin-top: 25px;">
-          <div class="sub-title">📱 Mes passerelles enregistrées</div>
+          <div class="sub-title">📱 Mes comptes enregistrés</div>
           <div id="savedMethodsList">
             <div style="color:#888; font-size:12px;">Chargement de vos méthodes...</div>
           </div>
@@ -318,7 +307,7 @@ export function init(container, db, auth, userId) {
 
         <div style="margin-top: 15px;">
           <label style="font-size: 12px; color: #aaa; display: block; margin-bottom: 8px;">
-            Sélectionnez la passerelle pour le paiement :
+            Sélectionnez la méthode pour le débit :
           </label>
           <div id="checkoutMethodsSelect">
             <div style="color: #888; font-size: 12px;">Aucun moyen enregistré. Veuillez en ajouter un à gauche.</div>
@@ -361,7 +350,7 @@ export function init(container, db, auth, userId) {
     document.getElementById("cardFields").style.display = (type === "card") ? "block" : "none";
   });
 
-  // 2. Écoute dynamique des passerelles enregistrées
+  // 2. Écoute dynamique des passerelles enregistrées par l'utilisateur
   const methodsRef = ref(db, `users/${currentUid}/moyensPaiement`);
   onValue(methodsRef, (snapshot) => {
     const listContainer = document.getElementById("savedMethodsList");
@@ -428,7 +417,7 @@ export function init(container, db, auth, userId) {
     }
   });
 
-  // 3. Écoute & synchronisation du panier depuis 'users/uid/gs/cart' et 'users/uid/panier'
+  // 3. Écoute & synchronisation du panier depuis 'users/uid/gs/cart'
   const cartRef = ref(db, `users/${currentUid}/gs/cart`);
   onValue(cartRef, async (snapshot) => {
     currentCartTotalFCFA = 0;
@@ -450,7 +439,6 @@ export function init(container, db, auth, userId) {
 
         let realPrice = parseFloat(item.prixUnitaire || item.prix || item.prixNormal || 0);
 
-        // Vérification dynamique du prix officiel dans 'publications'
         try {
           const pubSnap = await get(ref(db, `publications/${prodId}`));
           if (pubSnap.exists()) {
@@ -460,7 +448,7 @@ export function init(container, db, auth, userId) {
             realPrice = (pPromo > 0 && pPromo < pNormal) ? pPromo : pNormal;
           }
         } catch (e) {
-          console.warn("Erreur de vérification prix publication :", e);
+          console.warn("Erreur de vérification du prix :", e);
         }
 
         const subtotal = realPrice * qty;
@@ -475,7 +463,6 @@ export function init(container, db, auth, userId) {
           total: subtotal
         };
 
-        // Rendu de l'élément dans la liste
         if (itemsContainer) {
           const row = document.createElement("div");
           row.className = "cart-item-row";
@@ -525,7 +512,7 @@ export function init(container, db, auth, userId) {
     });
   }
 
-  // 5. Enregistrement d'une nouvelle passerelle
+  // 5. Enregistrement d'un moyen de paiement client
   document.getElementById("btnSavePaymentMethod")?.addEventListener("click", async () => {
     const type = payTypeSelect.value;
     const holder = document.getElementById("payHolder").value.trim();
@@ -570,7 +557,7 @@ export function init(container, db, auth, userId) {
     try {
       const newMethodRef = push(ref(db, `users/${currentUid}/moyensPaiement`));
       await set(newMethodRef, paymentData);
-      alert("✅ Passerelle de paiement enregistrée avec succès !");
+      alert("✅ Moyen de paiement enregistré avec succès !");
 
       document.getElementById("payHolder").value = "";
       document.getElementById("momoNumber").value = "";
@@ -583,7 +570,7 @@ export function init(container, db, auth, userId) {
     }
   });
 
-  // 6. Exécution du paiement et nettoyage du panier
+  // 6. EXECUTION DU PAIEMENT REEL & DECLENCHEMENT PASSERELLE
   document.getElementById("btnExecutePayment")?.addEventListener("click", async () => {
     const msgEl = document.getElementById("payStatusMessage");
 
@@ -604,7 +591,7 @@ export function init(container, db, auth, userId) {
     const shipCountry = document.getElementById("shippingCountry").value.trim();
 
     if (!shipName || !shipPhone || !shipAddress) {
-      alert("Veuillez remplir au moins le nom, le téléphone et l'adresse de livraison.");
+      alert("Veuillez remplir le nom, le téléphone et l'adresse de livraison.");
       return;
     }
 
@@ -612,11 +599,30 @@ export function init(container, db, auth, userId) {
       if (msgEl) {
         msgEl.style.display = "block";
         msgEl.style.color = "#d4af37";
-        msgEl.textContent = "Traitement sécurisé du paiement en cours...";
+        msgEl.textContent = "Initialisation de la passerelle de paiement réel...";
       }
 
+      // Récupérer les détails de la méthode sélectionnée par l'utilisateur
       const methodSnap = await get(ref(db, `users/${currentUid}/moyensPaiement/${selectedMethodKey}`));
       const methodDetails = methodSnap.exists() ? methodSnap.val() : {};
+      const operatorName = (methodDetails.operator || 'moov').toLowerCase();
+
+      // =========================================================================
+      // DÉCLENCHEMENT DYNAMIQUE DE LA PASSERELLE D'ADMINISTRATEUR (EX: MOOV / MTN)
+      // =========================================================================
+      const adminPaySnap = await get(ref(db, `paiements/${operatorName}`));
+      
+      let codeUSSDFormate = null;
+      let nomMarchandAdmin = "DAKPROELITE";
+
+      if (adminPaySnap.exists()) {
+        const adminPayData = adminPaySnap.val();
+        if (adminPayData.actif && adminPayData.code_ussd) {
+          nomMarchandAdmin = adminPayData.nom_marchand || nomMarchandAdmin;
+          // Remplacement du montant réel dans la chaîne USSD (ex: *855*4*342612*5000#)
+          codeUSSDFormate = adminPayData.code_ussd.replace('{MONTANT}', Math.round(currentCartTotalFCFA));
+        }
+      }
 
       const orderId = "ORD-" + Date.now();
 
@@ -630,8 +636,9 @@ export function init(container, db, auth, userId) {
         moyenPaiement: {
           key: selectedMethodKey,
           type: methodDetails.type || "momo",
-          operator: methodDetails.operator || "Card",
-          holder: methodDetails.holder || shipName
+          operator: methodDetails.operator || "MOOV",
+          holder: methodDetails.holder || shipName,
+          numeroUtilise: methodDetails.number || shipPhone
         },
         livraison: {
           destinataire: shipName,
@@ -640,39 +647,54 @@ export function init(container, db, auth, userId) {
           ville: shipCity,
           pays: shipCountry
         },
-        statut: "Payé",
+        statut: "En attente de règlement",
         statutLivraison: "En cours de traitement",
         date: Date.now()
       };
 
-      // 1. Sauvegarde de la commande
+      // 1. Enregistrement de la commande dans la base de données
       await set(ref(db, `commandes/${currentUid}/${orderId}`), orderPayload);
 
-      // 2. Nettoyage atomique des nœuds du panier dans Firebase Realtime Database
+      // 2. Nettoyage du panier
       const updates = {};
       updates[`users/${currentUid}/panier`] = null;
       updates[`users/${currentUid}/gs/cart`] = null;
       updates[`users/${currentUid}/gs/total`] = 0;
       await update(ref(db), updates);
 
-      if (msgEl) {
-        msgEl.style.color = "#70e090";
-        msgEl.textContent = `✅ Paiement de ${formatCFA(currentCartTotalFCFA)} réussi ! Commande ${orderId} validée.`;
-      }
-
-      setTimeout(() => {
-        if (typeof window.chargerModule === 'function') {
-          window.chargerModule('commandes');
-        } else {
-          window.location.reload();
+      // 3. Déclenchement du paiement réel
+      if (codeUSSDFormate) {
+        if (msgEl) {
+          msgEl.style.color = "#70e090";
+          msgEl.textContent = `✅ Redirection vers la passerelle ${operatorName.toUpperCase()} (${nomMarchandAdmin})...`;
         }
-      }, 1500);
+
+        // Lancement de l'appel USSD direct pour payer le montant réel
+        setTimeout(() => {
+          window.location.href = `tel:${encodeURIComponent(codeUSSDFormate)}`;
+        }, 1000);
+
+      } else {
+        // En cas d'absence de configuration USSD directe ou si paiement par Carte
+        if (msgEl) {
+          msgEl.style.color = "#70e090";
+          msgEl.textContent = `✅ Commande ${orderId} enregistrée ! Redirection vers la validation...`;
+        }
+
+        setTimeout(() => {
+          if (typeof window.chargerModule === 'function') {
+            window.chargerModule('commandes');
+          } else {
+            window.location.reload();
+          }
+        }, 1500);
+      }
 
     } catch (error) {
       console.error("Erreur exécution paiement :", error);
       if (msgEl) {
         msgEl.style.color = "#ff8585";
-        msgEl.textContent = "❌ Échec du paiement. Veuillez réessayer.";
+        msgEl.textContent = "❌ Échec de la procédure de paiement. Veuillez réessayer.";
       }
     }
   });
