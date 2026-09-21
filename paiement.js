@@ -4,13 +4,9 @@ import {
   get, 
   set, 
   push, 
-  update, 
-  remove 
+  update 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-/**
- * Helper d'échappement anti-XSS
- */
 function escapeHTML(str) {
   return String(str ?? "")
     .replace(/&/g, "&amp;")
@@ -20,20 +16,10 @@ function escapeHTML(str) {
     .replace(/'/g, "&#039;");
 }
 
-/**
- * Formateur monétaire pour Franc CFA (FCFA)
- */
 export function formatCFA(amount) {
   return new Intl.NumberFormat('fr-FR').format(Math.round(amount || 0)) + " FCFA";
 }
 
-/**
- * Initialisation du module de Paiement et Passerelles pour DAKPROELITE
- * @param {HTMLElement} container - Élément DOM parent (#dashboard-container)
- * @param {Database} db - Instance Realtime Database
- * @param {Auth} auth - Instance Firebase Auth
- * @param {string} userId - UID de l'utilisateur connecté
- */
 export function init(container, db, auth, userId) {
   if (!container || !db) return;
 
@@ -48,7 +34,6 @@ export function init(container, db, auth, userId) {
     return;
   }
 
-  // Injection du style CSS et de la structure HTML
   container.innerHTML = `
     <style>
       .pay-title {
@@ -100,9 +85,6 @@ export function init(container, db, auth, userId) {
         outline: none;
         font-size: 13px;
       }
-      .form-input:focus, .form-select:focus {
-        border-color: #d4af37;
-      }
       .btn-action {
         background: #d4af37;
         color: #000;
@@ -115,9 +97,6 @@ export function init(container, db, auth, userId) {
         margin-top: 10px;
         transition: 0.3s;
       }
-      .btn-action:hover {
-        background: #f3e5ab;
-      }
       .btn-clear-cart {
         background: transparent;
         color: #ef4444;
@@ -127,10 +106,6 @@ export function init(container, db, auth, userId) {
         border-radius: 6px;
         cursor: pointer;
         font-size: 12px;
-        transition: 0.2s;
-      }
-      .btn-clear-cart:hover {
-        background: rgba(239, 68, 68, 0.1);
       }
       .btn-pay-now {
         background: #22c55e;
@@ -145,10 +120,6 @@ export function init(container, db, auth, userId) {
         margin-top: 15px;
         transition: 0.3s;
       }
-      .btn-pay-now:hover {
-        background: #16a34a;
-        color: #fff;
-      }
       .saved-method-item {
         background: #12161f;
         border: 1px solid #2a2a32;
@@ -159,7 +130,6 @@ export function init(container, db, auth, userId) {
         align-items: center;
         gap: 10px;
         cursor: pointer;
-        transition: 0.2s;
       }
       .saved-method-item.selected {
         border-color: #22c55e;
@@ -200,7 +170,6 @@ export function init(container, db, auth, userId) {
     </div>
 
     <div class="pay-grid">
-      <!-- Colonne 1 : Enregistrement des Passerelles Client -->
       <div class="pay-box">
         <div class="sub-title">⚙️ Enregistrer un compte de paiement</div>
         
@@ -217,7 +186,6 @@ export function init(container, db, auth, userId) {
           <input type="text" id="payHolder" class="form-input" placeholder="Ex: Jean Dupont">
         </div>
 
-        <!-- Champs Mobile Money Afrique -->
         <div id="momoFields">
           <div class="form-group">
             <label>Numéro Mobile Money (avec indicatif)</label>
@@ -236,7 +204,6 @@ export function init(container, db, auth, userId) {
           </div>
         </div>
 
-        <!-- Champs Carte Bancaire -->
         <div id="cardFields" style="display: none;">
           <div class="form-group">
             <label>Numéro de Carte Bancaire</label>
@@ -264,7 +231,6 @@ export function init(container, db, auth, userId) {
         </div>
       </div>
 
-      <!-- Colonne 2 : Adresse de Livraison, Contenu du Panier & Règlement -->
       <div class="pay-box">
         <div class="sub-title">📍 Informations de Livraison</div>
 
@@ -278,7 +244,7 @@ export function init(container, db, auth, userId) {
         </div>
         <div class="form-group">
           <label>Adresse exacte de livraison</label>
-          <input type="text" id="shippingAddress" class="form-input" placeholder="Quartier, Rue, Maison, Bâtiment...">
+          <input type="text" id="shippingAddress" class="form-input" placeholder="Quartier, Rue, Maison...">
         </div>
         <div style="display: flex; gap: 10px;">
           <div class="form-group" style="flex: 1;">
@@ -324,7 +290,6 @@ export function init(container, db, auth, userId) {
   let currentCartTotalFCFA = 0;
   let currentCartItems = {};
 
-  // 1. Pré-remplissage du profil utilisateur
   get(ref(db, `users/${currentUid}`)).then((snapshot) => {
     if (snapshot.exists()) {
       const u = snapshot.val();
@@ -342,7 +307,6 @@ export function init(container, db, auth, userId) {
     }
   });
 
-  // Bascule Mobile Money / Carte
   const payTypeSelect = document.getElementById("payType");
   payTypeSelect.addEventListener("change", () => {
     const type = payTypeSelect.value;
@@ -350,7 +314,6 @@ export function init(container, db, auth, userId) {
     document.getElementById("cardFields").style.display = (type === "card") ? "block" : "none";
   });
 
-  // 2. Écoute dynamique des passerelles enregistrées par l'utilisateur
   const methodsRef = ref(db, `users/${currentUid}/moyensPaiement`);
   onValue(methodsRef, (snapshot) => {
     const listContainer = document.getElementById("savedMethodsList");
@@ -377,7 +340,6 @@ export function init(container, db, auth, userId) {
 
         const isSelected = (selectedMethodKey === key);
 
-        // Liste de gauche
         const leftItem = document.createElement("div");
         leftItem.className = "saved-method-item";
         leftItem.innerHTML = `
@@ -389,7 +351,6 @@ export function init(container, db, auth, userId) {
         `;
         listContainer.appendChild(leftItem);
 
-        // Sélection de droite
         const rightItem = document.createElement("div");
         rightItem.className = `saved-method-item ${isSelected ? 'selected' : ''}`;
         rightItem.innerHTML = `
@@ -417,7 +378,6 @@ export function init(container, db, auth, userId) {
     }
   });
 
-  // 3. Écoute & synchronisation du panier depuis 'users/uid/gs/cart'
   const cartRef = ref(db, `users/${currentUid}/gs/cart`);
   onValue(cartRef, async (snapshot) => {
     currentCartTotalFCFA = 0;
@@ -491,7 +451,6 @@ export function init(container, db, auth, userId) {
     if (btnPay) btnPay.textContent = `⚡ Payer maintenant (${formatCFA(currentCartTotalFCFA)})`;
   });
 
-  // 4. Action : Vider le panier
   const clearCartBtn = document.getElementById("btnClearCart");
   if (clearCartBtn) {
     clearCartBtn.addEventListener("click", async () => {
@@ -512,7 +471,6 @@ export function init(container, db, auth, userId) {
     });
   }
 
-  // 5. Enregistrement d'un moyen de paiement client
   document.getElementById("btnSavePaymentMethod")?.addEventListener("click", async () => {
     const type = payTypeSelect.value;
     const holder = document.getElementById("payHolder").value.trim();
@@ -570,7 +528,7 @@ export function init(container, db, auth, userId) {
     }
   });
 
-  // 6. EXECUTION DU PAIEMENT REEL & DECLENCHEMENT PASSERELLE
+  // EXECUTION DU PAIEMENT
   document.getElementById("btnExecutePayment")?.addEventListener("click", async () => {
     const msgEl = document.getElementById("payStatusMessage");
 
@@ -599,17 +557,13 @@ export function init(container, db, auth, userId) {
       if (msgEl) {
         msgEl.style.display = "block";
         msgEl.style.color = "#d4af37";
-        msgEl.textContent = "Initialisation de la passerelle de paiement réel...";
+        msgEl.textContent = "Initialisation du règlement...";
       }
 
-      // Récupérer les détails de la méthode sélectionnée par l'utilisateur
       const methodSnap = await get(ref(db, `users/${currentUid}/moyensPaiement/${selectedMethodKey}`));
       const methodDetails = methodSnap.exists() ? methodSnap.val() : {};
       const operatorName = (methodDetails.operator || 'moov').toLowerCase();
 
-      // =========================================================================
-      // DÉCLENCHEMENT DYNAMIQUE DE LA PASSERELLE D'ADMINISTRATEUR (EX: MOOV / MTN)
-      // =========================================================================
       const adminPaySnap = await get(ref(db, `paiements/${operatorName}`));
       
       let codeUSSDFormate = null;
@@ -619,7 +573,6 @@ export function init(container, db, auth, userId) {
         const adminPayData = adminPaySnap.val();
         if (adminPayData.actif && adminPayData.code_ussd) {
           nomMarchandAdmin = adminPayData.nom_marchand || nomMarchandAdmin;
-          // Remplacement du montant réel dans la chaîne USSD (ex: *855*4*342612*5000#)
           codeUSSDFormate = adminPayData.code_ussd.replace('{MONTANT}', Math.round(currentCartTotalFCFA));
         }
       }
@@ -652,33 +605,81 @@ export function init(container, db, auth, userId) {
         date: Date.now()
       };
 
-      // 1. Enregistrement de la commande dans la base de données
       await set(ref(db, `commandes/${currentUid}/${orderId}`), orderPayload);
 
-      // 2. Nettoyage du panier
       const updates = {};
       updates[`users/${currentUid}/panier`] = null;
       updates[`users/${currentUid}/gs/cart`] = null;
       updates[`users/${currentUid}/gs/total`] = 0;
       await update(ref(db), updates);
 
-      // 3. Déclenchement du paiement réel
       if (codeUSSDFormate) {
         if (msgEl) {
           msgEl.style.color = "#70e090";
-          msgEl.textContent = `✅ Redirection vers la passerelle ${operatorName.toUpperCase()} (${nomMarchandAdmin})...`;
+          msgEl.textContent = `✅ Commande ${orderId} créée ! En attente de validation.`;
         }
 
-        // Lancement de l'appel USSD direct pour payer le montant réel
+        // Construction du résumé des articles pour la boîte de dialogue
+        let articlesHTML = "";
+        Object.values(currentCartItems).forEach(art => {
+          articlesHTML += `
+            <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px; color:#ccc;">
+              <span>• ${escapeHTML(art.nom)} (x${art.quantite})</span>
+              <span>${formatCFA(art.total)}</span>
+            </div>
+          `;
+        });
+
+        // Conversion correcte du caractère # pour URL tel:
+        const telUrl = `tel:${codeUSSDFormate.replace(/#/g, '%23')}`;
+
+        // Modale d'instructions claire et personnalisée
+        const promptContainer = document.createElement('div');
+        promptContainer.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px;";
+        promptContainer.innerHTML = `
+          <div style="background:#12161f; border:2px solid #d4af37; border-radius:12px; padding:20px; text-align:left; max-width:420px; width:100%; color:#fff; font-family:sans-serif;">
+            <h3 style="color:#d4af37; margin-top:0; text-align:center;">🛒 Confirmation de commande</h3>
+            <p style="font-size:13px; color:#aaa; margin-bottom:10px;">
+              Vous êtes sur le point d'acheter les articles suivants sur <strong>${escapeHTML(nomMarchandAdmin)}</strong> :
+            </p>
+            <div style="background:#0a0d14; padding:10px; border-radius:8px; border:1px solid #222; margin-bottom:15px; max-height:120px; overflow-y:auto;">
+              ${articlesHTML}
+            </div>
+            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px; color:#22c55e; margin-bottom:15px; border-top:1px dashed #333; padding-top:8px;">
+              <span>Total à régler :</span>
+              <span>${formatCFA(currentCartTotalFCFA)}</span>
+            </div>
+            <div style="background:#102417; border:1px solid #22c55e; padding:10px; border-radius:8px; margin-bottom:15px;">
+              <p style="font-size:12px; color:#70e090; margin:0;">
+                📲 <strong>Procédure Mobile Money :</strong> Composez le code ci-dessous et <strong>saisissez votre code secret (PIN) Mobile Money</strong> pour finaliser votre paiement.
+              </p>
+            </div>
+            <a href="${telUrl}" id="btnTriggerUSSD" style="display:block; text-align:center; background:#22c55e; color:#000; font-weight:bold; padding:12px; border-radius:8px; text-decoration:none; margin-bottom:10px; font-size:15px;">
+              📞 Valider et composer (${codeUSSDFormate})
+            </a>
+            <button id="closePayModal" style="width:100%; background:transparent; border:1px solid #666; color:#aaa; padding:8px; border-radius:6px; cursor:pointer; font-size:12px;">Fermer</button>
+          </div>
+        `;
+        document.body.appendChild(promptContainer);
+
+        // Lancement de l'appel direct après court délai
         setTimeout(() => {
-          window.location.href = `tel:${encodeURIComponent(codeUSSDFormate)}`;
-        }, 1000);
+          window.location.href = telUrl;
+        }, 500);
+
+        document.getElementById("closePayModal")?.addEventListener("click", () => {
+          promptContainer.remove();
+          if (typeof window.chargerModule === 'function') {
+            window.chargerModule('commandes');
+          } else {
+            window.location.reload();
+          }
+        });
 
       } else {
-        // En cas d'absence de configuration USSD directe ou si paiement par Carte
         if (msgEl) {
           msgEl.style.color = "#70e090";
-          msgEl.textContent = `✅ Commande ${orderId} enregistrée ! Redirection vers la validation...`;
+          msgEl.textContent = `✅ Commande ${orderId} enregistrée ! Redirection...`;
         }
 
         setTimeout(() => {
