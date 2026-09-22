@@ -10,11 +10,8 @@
 
 <title>Mon Panier | DAKPRO ÉLITE</title>
 
-<link rel="icon" type="image/png"
-href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-rel="stylesheet">
+<link rel="icon" type="image/png" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -44,6 +41,7 @@ body {
   flex-direction: column;
 }
 
+/* HEADER */
 .header {
   position: sticky;
   top: 0;
@@ -66,8 +64,13 @@ body {
   color: #fff;
   text-decoration: none;
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
 }
 
+/* CONTAINER */
 .container {
   flex: 1;
   width: 100%;
@@ -139,6 +142,14 @@ body {
   color: var(--gold);
   font-weight: bold;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-qty:active {
+  background: var(--gold);
+  color: #000;
 }
 
 .qty-val {
@@ -155,6 +166,7 @@ body {
   font-size: 20px;
   cursor: pointer;
   padding: 6px;
+  margin-left: 8px;
 }
 
 .cart-summary {
@@ -191,17 +203,19 @@ body {
   width: 100%;
   padding: 14px;
   background: var(--green);
-  color: #fff;
+  color: #000;
   border: none;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: 0.3s;
 }
 
-.btn-checkout:disabled {
-  opacity: .6;
-  cursor: not-allowed;
+.btn-checkout:hover {
+  background: #16a34a;
 }
 
 .btn-clear {
@@ -236,28 +250,7 @@ body {
   font-weight: 700;
   border-radius: 8px;
   text-decoration: none;
-}
-
-.error-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: #ff7777;
-}
-
-@media (max-width: 500px) {
-
-  .header-title {
-    font-size: 15px;
-  }
-
-  .cart-item {
-    padding: 9px;
-  }
-
-  .cart-item-img {
-    width: 60px;
-    height: 60px;
-  }
+  cursor: pointer;
 }
 </style>
 </head>
@@ -265,86 +258,221 @@ body {
 <body>
 
 <header class="header">
-
-  <a href="index.html" class="btn-back">
-    ⬅️ Boutique
-  </a>
-
-  <h1 class="header-title">
-    🛒 Votre Panier
-  </h1>
-
-  <div style="width:60px;"></div>
-
+  <a href="index.html" class="btn-back" id="btnBackHome">⬅️ Boutique</a>
+  <h1 class="header-title">🛒 Votre Panier</h1>
+  <div style="width: 60px;"></div>
 </header>
 
-
 <main class="container">
-
+  <!-- LISTE DES ARTICLES -->
   <div id="cartList" class="cart-items-list">
-
-    <div class="empty-state">
-      Chargement du panier...
-    </div>
-
+    <div class="empty-state">Chargement du panier DAKPRO ÉLITE...</div>
   </div>
 
-
-  <div id="cartSummary"
-       class="cart-summary"
-       style="display:none;">
-
+  <!-- RÉSUMÉ DU PANIER -->
+  <div id="cartSummary" class="cart-summary" style="display: none;">
     <div class="summary-row">
-
       <span>Nombre d'articles :</span>
-
-      <span id="totalItemsCount">
-        0
-      </span>
-
+      <span id="totalItemsCount">0</span>
     </div>
-
-
     <div class="summary-row total">
-
       <span>Total à payer :</span>
-
-      <span id="grandTotal">
-        0 FCFA
-      </span>
-
+      <span id="grandTotal">0 FCFA</span>
     </div>
-
 
     <div class="actions-group">
-
-      <button
-        type="button"
-        class="btn-checkout"
-        id="btnGoToPayment">
-
-        💳 Aller au paiement
-
-      </button>
-
-
-      <button
-        type="button"
-        class="btn-clear"
-        id="btnClearCart">
-
-        🗑️ Vider le panier
-
-      </button>
-
+      <button type="button" class="btn-checkout" id="btnGoToPayment">💳 Passer au paiement</button>
+      <button type="button" class="btn-clear" id="btnClearCart">🗑️ Vider le panier</button>
     </div>
-
   </div>
-
 </main>
 
+<!-- SCRIPT PANIER & REALTIME DATABASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-<script type="module" src="./panier.js"></script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
+  authDomain: "dakproelite.firebaseapp.com",
+  databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
+  projectId: "dakproelite",
+  storageBucket: "dakproelite.firebasestorage.app",
+  messagingSenderId: "580591769206",
+  appId: "1:580591769206:web:4f67f8aadbf3d051087157"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+
+// Vérification de la connexion de l'utilisateur
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    document.getElementById("cartList").innerHTML = `
+      <div class="empty-state">
+        <h3>Vous n'êtes pas connecté</h3>
+        <p>Veuillez vous connecter pour voir votre panier DAKPRO ÉLITE.</p>
+        <a href="javascript:void(0)" onclick="redirigerVers('profil-acheteur')" class="btn-home">Se connecter</a>
+      </div>`;
+    document.getElementById("cartSummary").style.display = "none";
+    return;
+  }
+
+  currentUser = user;
+  ecouterPanier(user.uid);
+});
+
+// Navigation sécurisée pour éviter les pages blanches sur Vercel/Netlify
+window.redirigerVers = function(moduleOuPage) {
+  if (typeof window.chargerModule === 'function') {
+    window.chargerModule(moduleOuPage);
+  } else {
+    window.location.href = moduleOuPage.endsWith('.html') ? moduleOuPage : moduleOuPage + '.html';
+  }
+};
+
+document.getElementById("btnBackHome")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  window.redirigerVers('index');
+});
+
+// Écoute en temps réel des modifications dans Realtime Database
+function ecouterPanier(uid) {
+  const cartRef = ref(db, `users/${uid}/panier`);
+
+  onValue(cartRef, snapshot => {
+    const data = snapshot.val();
+    const cartList = document.getElementById("cartList");
+    const cartSummary = document.getElementById("cartSummary");
+
+    if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
+      cartList.innerHTML = `
+        <div class="empty-state">
+          <h3>Votre panier est vide 🛒</h3>
+          <p>Découvrez nos offres sur la boutique DAKPRO ÉLITE !</p>
+          <a href="javascript:void(0)" onclick="redirigerVers('index')" class="btn-home">Explorer la boutique</a>
+        </div>`;
+      cartSummary.style.display = "none";
+      return;
+    }
+
+    let itemsHTML = "";
+    let totalArticles = 0;
+    let grandTotal = 0;
+    let mainCurrency = "FCFA";
+
+    Object.entries(data).forEach(([productId, item]) => {
+      const qty = parseInt(item.quantite || 1, 10);
+      const price = parseFloat(item.prixUnitaire || item.prix || 0);
+      const itemTotal = qty * price;
+      const currency = item.devise || "FCFA";
+      mainCurrency = currency;
+
+      totalArticles += qty;
+      grandTotal += itemTotal;
+
+      const imgUrl = item.image || "https://via.placeholder.com/70";
+
+      itemsHTML += `
+        <div class="cart-item" data-id="${productId}">
+          <img src="${imgUrl}" alt="${item.nom || 'Produit'}" class="cart-item-img" onerror="this.src='https://via.placeholder.com/70'">
+          <div class="cart-item-info">
+            <div class="cart-item-title">${item.nom || 'Produit DAKPRO ÉLITE'}</div>
+            <div class="cart-item-price">${price.toLocaleString('fr-FR')} ${currency}</div>
+            <div class="qty-controls">
+              <button class="btn-qty btn-minus" data-id="${productId}" data-qty="${qty}" data-price="${price}">-</button>
+              <span class="qty-val">${qty}</span>
+              <button class="btn-qty btn-plus" data-id="${productId}" data-qty="${qty}" data-price="${price}">+</button>
+            </div>
+          </div>
+          <button class="btn-remove" data-id="${productId}">🗑️</button>
+        </div>
+      `;
+    });
+
+    cartList.innerHTML = itemsHTML;
+    document.getElementById("totalItemsCount").textContent = totalArticles;
+    document.getElementById("grandTotal").textContent = `${grandTotal.toLocaleString('fr-FR')} ${mainCurrency}`;
+    cartSummary.style.display = "block";
+
+    attacherEvenements(uid);
+  });
+}
+
+// Attachement des événements de mise à jour / suppression
+function attacherEvenements(uid) {
+  document.querySelectorAll(".btn-plus").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      const newQty = parseInt(btn.dataset.qty, 10) + 1;
+      const unitPrice = parseFloat(btn.dataset.price);
+
+      update(ref(db, `users/${uid}/panier/${id}`), {
+        quantite: newQty,
+        total: parseFloat((newQty * unitPrice).toFixed(2)),
+        updatedAt: Date.now()
+      });
+      
+      // Duplication sur la branche gs/cart pour maintenir la synchronisation globale
+      update(ref(db, `users/${uid}/gs/cart/${id}`), {
+        quantite: newQty,
+        qty: newQty
+      });
+    });
+  });
+
+  document.querySelectorAll(".btn-minus").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      const currentQty = parseInt(btn.dataset.qty, 10);
+      const unitPrice = parseFloat(btn.dataset.price);
+
+      if (currentQty > 1) {
+        const newQty = currentQty - 1;
+        update(ref(db, `users/${uid}/panier/${id}`), {
+          quantite: newQty,
+          total: parseFloat((newQty * unitPrice).toFixed(2)),
+          updatedAt: Date.now()
+        });
+        update(ref(db, `users/${uid}/gs/cart/${id}`), {
+          quantite: newQty,
+          qty: newQty
+        });
+      } else {
+        remove(ref(db, `users/${uid}/panier/${id}`));
+        remove(ref(db, `users/${uid}/gs/cart/${id}`));
+      }
+    });
+  });
+
+  document.querySelectorAll(".btn-remove").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      remove(ref(db, `users/${uid}/panier/${id}`));
+      remove(ref(db, `users/${uid}/gs/cart/${id}`));
+    });
+  });
+}
+
+// Vider tout le panier manuellement si demandé
+document.getElementById("btnClearCart")?.addEventListener("click", () => {
+  if (currentUser && confirm("Voulez-vous vraiment vider l'ensemble de votre panier ?")) {
+    remove(ref(db, `users/${currentUser.uid}/panier`));
+    remove(ref(db, `users/${currentUser.uid}/gs/cart`));
+    update(ref(db, `users/${currentUser.uid}/gs`), { total: 0 });
+  }
+});
+
+// Redirection sécurisée vers la section de paiement (SANS vider le panier à ce stade)
+document.getElementById("btnGoToPayment")?.addEventListener("click", () => {
+  // Le panier reste INTTACT dans Firebase pendant la redirection
+  window.redirigerVers('profil-acheteur');
+});
+</script>
 
 </body>
 </html>
