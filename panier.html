@@ -1,557 +1,350 @@
 <!DOCTYPE html>
-<html lang="fr">
-
+<html lang="fr" dir="ltr">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
->
+<meta name="theme-color" content="#d4af37">
+<meta name="application-name" content="DAKPRO ÉLITE">
+<meta name="apple-mobile-web-app-title" content="DAKPRO ÉLITE">
 
-<meta
-  name="theme-color"
-  content="#d4af37"
->
+<title>Mon Panier | DAKPRO ÉLITE</title>
 
-<title>Paiement | DAKPRO ÉLITE</title>
+<link rel="icon" type="image/png"
+href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 
-<link
-  rel="icon"
-  type="image/png"
-  href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png"
->
-
-<link
-  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-  rel="stylesheet"
->
-
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
 
 <style>
+:root {
+  --gold: #d4af37;
+  --black: #050505;
+  --soft-dark: #12161f;
+  --card: #1a2230;
+  --green: #22c55e;
+  --red: #ef4444;
+  --white: #fff;
+  --gray: #aaa;
+  --border: rgba(212, 175, 55, 0.3);
+}
 
 * {
-
-  box-sizing:border-box;
-
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-
-
-html,
-body {
-
-  margin:0;
-
-  min-height:100%;
-
-}
-
 
 body {
-
-  min-height:100vh;
-
-  background:
-    radial-gradient(
-      circle at top,
-      #151a24,
-      #050505 55%
-    );
-
-  color:#fff;
-
-  font-family:'Poppins',sans-serif;
-
+  min-height: 100vh;
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
-
-.payment-header {
-
-  position:sticky;
-
-  top:0;
-
-  z-index:100;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:space-between;
-
-  padding:13px 16px;
-
-  background:
-    linear-gradient(
-      to bottom,
-      #131921,
-      #050505
-    );
-
-  border-bottom:2px solid #d4af37;
-
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(to bottom, #131921, #050505);
+  border-bottom: 2px solid var(--gold);
 }
 
-
-.payment-header a {
-
-  color:#fff;
-
-  text-decoration:none;
-
-  font-size:13px;
-
+.header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gold);
 }
 
-
-.payment-header a:hover {
-
-  color:#d4af37;
-
+.btn-back {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
 }
 
-
-.payment-title {
-
-  color:#d4af37;
-
-  font-size:17px;
-
-  font-weight:800;
-
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
-
-.payment-container {
-
-  width:100%;
-
-  max-width:1050px;
-
-  margin:0 auto;
-
-  padding:20px 15px 40px;
-
+.cart-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-
-#paymentModuleContainer {
-
-  width:100%;
-
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
 }
 
-
-.loading-box {
-
-  min-height:300px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  align-items:center;
-
-  justify-content:center;
-
-  text-align:center;
-
-  color:#aaa;
-
+.cart-item-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #080b10;
+  flex-shrink: 0;
 }
 
-
-.loading-spinner {
-
-  width:42px;
-
-  height:42px;
-
-  border-radius:50%;
-
-  border:3px solid #292d37;
-
-  border-top-color:#d4af37;
-
-  animation:
-    dakSpin 1s linear infinite;
-
-  margin-bottom:15px;
-
+.cart-item-info {
+  flex: 1;
+  min-width: 0;
 }
 
+.cart-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-@keyframes dakSpin {
+.cart-item-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+}
 
-  to {
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
 
-    transform:rotate(360deg);
+.btn-qty {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-weight: bold;
+  cursor: pointer;
+}
 
+.qty-val {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.btn-remove {
+  background: transparent;
+  border: none;
+  color: var(--red);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.cart-summary {
+  background: var(--soft-dark);
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.summary-row.total {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--gold);
+  border-top: 1px dashed var(--border);
+  padding-top: 12px;
+  margin-bottom: 20px;
+}
+
+.actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-checkout {
+  width: 100%;
+  padding: 14px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-checkout:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.btn-clear {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--gray);
+}
+
+.empty-state h3 {
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.btn-home {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: var(--gold);
+  color: #000;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.error-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #ff7777;
+}
+
+@media (max-width: 500px) {
+
+  .header-title {
+    font-size: 15px;
   }
 
-}
-
-
-.error-box {
-
-  background:#0a0d14;
-
-  border:1px solid #ef4444;
-
-  border-radius:12px;
-
-  padding:25px;
-
-  text-align:center;
-
-  color:#ff8585;
-
-}
-
-
-.error-box h3 {
-
-  color:#fff;
-
-  margin:0 0 10px;
-
-}
-
-
-.error-box p {
-
-  color:#aaa;
-
-  font-size:13px;
-
-  line-height:1.6;
-
-}
-
-
-.btn-return {
-
-  display:inline-block;
-
-  margin-top:15px;
-
-  padding:10px 18px;
-
-  border-radius:8px;
-
-  background:#d4af37;
-
-  color:#000;
-
-  text-decoration:none;
-
-  font-weight:700;
-
-}
-
-
-@media(max-width:600px) {
-
-  .payment-title {
-
-    font-size:15px;
-
+  .cart-item {
+    padding: 9px;
   }
 
-  .payment-header a {
-
-    font-size:12px;
-
+  .cart-item-img {
+    width: 60px;
+    height: 60px;
   }
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
+<header class="header">
 
-<header class="payment-header">
-
-  <a href="panier.html">
-    ⬅️ Retour au panier
+  <a href="index.html" class="btn-back">
+    ⬅️ Boutique
   </a>
 
-
-  <div class="payment-title">
-    🔒 Paiement sécurisé
-  </div>
-
+  <h1 class="header-title">
+    🛒 Votre Panier
+  </h1>
 
   <div style="width:60px;"></div>
 
 </header>
 
 
+<main class="container">
 
-<main class="payment-container">
+  <div id="cartList" class="cart-items-list">
 
-
-  <div
-    id="paymentModuleContainer"
-  >
-
-    <div class="loading-box">
-
-      <div class="loading-spinner"></div>
-
-      <div>
-        Préparation de votre paiement...
-      </div>
-
+    <div class="empty-state">
+      Chargement du panier...
     </div>
 
   </div>
 
 
-</main>
+  <div id="cartSummary"
+       class="cart-summary"
+       style="display:none;">
 
+    <div class="summary-row">
 
+      <span>Nombre d'articles :</span>
 
-<script type="module">
-
-/* ============================================================
-   DAKPRO ÉLITE — paiement.html
-   Charge paiement.js sans créer de page blanche
-   ============================================================ */
-
-
-const container =
-  document.getElementById(
-    "paymentModuleContainer"
-  );
-
-
-function showError(title, message) {
-
-  container.innerHTML = `
-
-    <div class="error-box">
-
-      <h3>
-        ${title}
-      </h3>
-
-      <p>
-        ${message}
-      </p>
-
-      <a
-        href="panier.html"
-        class="btn-return"
-      >
-        ⬅️ Retour au panier
-      </a>
+      <span id="totalItemsCount">
+        0
+      </span>
 
     </div>
 
-  `;
 
-}
+    <div class="summary-row total">
 
+      <span>Total à payer :</span>
 
-try {
+      <span id="grandTotal">
+        0 FCFA
+      </span>
 
+    </div>
 
-  /* ========================================================
-     1. CHARGER CONFIGURATION FIREBASE
-     ======================================================== */
 
-  const config =
-    await import(
-      "./firebase-config.js"
-    );
+    <div class="actions-group">
 
+      <button
+        type="button"
+        class="btn-checkout"
+        id="btnGoToPayment">
 
-  /* ========================================================
-     2. RÉCUPÉRER APP / DB / AUTH
-     ======================================================== */
+        💳 Aller au paiement
 
-  let app =
-    config.app ||
-    config.firebaseApp ||
-    null;
+      </button>
 
 
-  let db =
-    config.db ||
-    config.database ||
-    null;
+      <button
+        type="button"
+        class="btn-clear"
+        id="btnClearCart">
 
+        🗑️ Vider le panier
 
-  let auth =
-    config.auth ||
-    null;
+      </button>
 
+    </div>
 
-  /*
-   * Si firebase-config.js exporte seulement app,
-   * on construit db/auth à partir de cette app.
-   */
+  </div>
 
-  if (!db && app) {
+</main>
 
-    const firebaseDatabase =
-      await import(
-        "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
-      );
 
-    db =
-      firebaseDatabase.getDatabase(
-        app
-      );
-
-  }
-
-
-  if (!auth && app) {
-
-    const firebaseAuth =
-      await import(
-        "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"
-      );
-
-    auth =
-      firebaseAuth.getAuth(
-        app
-      );
-
-  }
-
-
-  if (!db || !auth) {
-
-    throw new Error(
-      "firebase-config.js ne fournit pas correctement Firebase."
-    );
-
-  }
-
-
-  /* ========================================================
-     3. ATTENDRE L'UTILISATEUR FIREBASE
-     ======================================================== */
-
-  const {
-    onAuthStateChanged
-  } =
-    await import(
-      "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"
-    );
-
-
-  const user =
-    await new Promise(
-      resolve => {
-
-        let resolved =
-          false;
-
-
-        const unsubscribe =
-          onAuthStateChanged(
-            auth,
-            currentUser => {
-
-              if (!resolved) {
-
-                resolved =
-                  true;
-
-                unsubscribe();
-
-                resolve(
-                  currentUser
-                );
-
-              }
-
-            }
-          );
-
-      }
-    );
-
-
-  if (!user) {
-
-    showError(
-      "Connexion nécessaire",
-      "Vous devez être connecté pour accéder au paiement DAKPRO ÉLITE."
-    );
-
-    throw new Error(
-      "Utilisateur non connecté."
-    );
-
-  }
-
-
-  /* ========================================================
-     4. CHARGER LE MODULE PAIEMENT
-     ======================================================== */
-
-  const paiementModule =
-    await import(
-      "./paiement.js"
-    );
-
-
-  if (
-    !paiementModule ||
-    typeof paiementModule.init !==
-      "function"
-  ) {
-
-    throw new Error(
-      "La fonction init() de paiement.js est introuvable."
-    );
-
-  }
-
-
-  /* ========================================================
-     5. INITIALISER LE PAIEMENT
-     ======================================================== */
-
-  paiementModule.init(
-    container,
-    db,
-    auth,
-    user.uid
-  );
-
-
-} catch (error) {
-
-  console.error(
-    "Erreur paiement.html :",
-    error
-  );
-
-
-  /*
-   * Ne jamais laisser une page blanche.
-   */
-
-  showError(
-    "Impossible de charger le paiement",
-    "Une erreur est survenue pendant l'ouverture de l'espace de paiement. Votre panier n'a pas été supprimé. Revenez au panier et réessayez."
-  );
-
-}
-
-</script>
+<script type="module" src="./panier.js"></script>
 
 </body>
-
 </html>

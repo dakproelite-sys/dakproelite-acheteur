@@ -2,24 +2,16 @@
    DAKPRO ÉLITE — paiement.js
    ============================================================
 
-   SYSTÈME DE PAIEMENT :
-   FedaPay Checkout — LIVE
-
-   CLÉ PUBLIQUE :
-   pk_live_DUGntocyIWTtfHBOvFpPtq54
-
-   FIREBASE :
-   - users/{uid}/gs/cart
-   - users/{uid}/gs/total
-   - users/{uid}/panier
-   - publications/{publicationId}
-   - commandes/{uid}/{orderId}
+   PAIEMENT :
+   FedaPay Checkout LIVE
 
    IMPORTANT :
+   - La clé PUBLIQUE peut être dans ce fichier.
    - AUCUNE clé secrète FedaPay ici.
    - AUCUN PIN Mobile Money ici.
-   - AUCUN USSD Moov ici.
    - AUCUN CVC/CVV enregistré.
+   - Le paiement définitif est confirmé côté serveur/webhook.
+   - Le panier n'est vidé qu'après confirmation réelle.
    ============================================================ */
 
 import {
@@ -32,24 +24,37 @@ import {
 
 
 /* ============================================================
-   CONFIGURATION FEDAPAY
+   CONFIGURATION
    ============================================================ */
 
 const FEDAPAY_PUBLIC_KEY =
   "pk_live_DUGntocyIWTtfHBOvFpPtq54";
 
-const FEDAPAY_ENVIRONMENT = "live";
+const FEDAPAY_ENVIRONMENT =
+  "live";
 
 const FEDAPAY_SCRIPT_URL =
   "https://cdn.fedapay.com/checkout.js?v=1.1.7";
+
+
+/*
+ * Endpoint Netlify à créer pour confirmer
+ * définitivement les paiements.
+ *
+ * Exemple :
+ * /.netlify/functions/fedapay-webhook
+ */
+const PAYMENT_WEBHOOK_PATH =
+  "/.netlify/functions/fedapay-webhook";
 
 
 /* ============================================================
    OUTILS
    ============================================================ */
 
-function escapeHTML(str) {
-  return String(str ?? "")
+function escapeHTML(value) {
+
+  return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -58,95 +63,20 @@ function escapeHTML(str) {
 }
 
 
-/**
- * Formateur FCFA
- */
 export function formatCFA(amount) {
+
   return (
-    new Intl.NumberFormat("fr-FR").format(
-      Math.round(Number(amount) || 0)
-    ) + " FCFA"
+    new Intl.NumberFormat("fr-FR")
+      .format(
+        Math.round(
+          Number(amount) || 0
+        )
+      )
+    + " FCFA"
   );
 }
 
 
-/**
- * Charge Checkout.js de FedaPay une seule fois.
- */
-function loadFedaPayScript() {
-  return new Promise((resolve, reject) => {
-
-    if (window.FedaPay) {
-      resolve(window.FedaPay);
-      return;
-    }
-
-    const existingScript = document.querySelector(
-      'script[data-dakpro-fedapay="true"]'
-    );
-
-    if (existingScript) {
-
-      const checkLoaded = setInterval(() => {
-
-        if (window.FedaPay) {
-          clearInterval(checkLoaded);
-          resolve(window.FedaPay);
-        }
-
-      }, 100);
-
-      setTimeout(() => {
-        clearInterval(checkLoaded);
-
-        if (!window.FedaPay) {
-          reject(
-            new Error(
-              "FedaPay Checkout n'a pas pu être chargé."
-            )
-          );
-        }
-      }, 15000);
-
-      return;
-    }
-
-    const script = document.createElement("script");
-
-    script.src = FEDAPAY_SCRIPT_URL;
-    script.async = true;
-    script.dataset.dakproFedapay = "true";
-
-    script.onload = () => {
-
-      if (window.FedaPay) {
-        resolve(window.FedaPay);
-      } else {
-        reject(
-          new Error(
-            "FedaPay est chargé mais l'objet FedaPay est introuvable."
-          )
-        );
-      }
-
-    };
-
-    script.onerror = () => {
-      reject(
-        new Error(
-          "Impossible de charger le formulaire FedaPay."
-        )
-      );
-    };
-
-    document.head.appendChild(script);
-  });
-}
-
-
-/**
- * Génère un identifiant de commande unique.
- */
 function generateOrderId() {
 
   const random =
@@ -159,39 +89,42 @@ function generateOrderId() {
 }
 
 
-/**
- * Génère une référence lisible pour FedaPay.
- */
 function generatePaymentReference(orderId) {
 
   return String(orderId)
-    .replace(/[^A-Za-z0-9]/g, "")
+    .replace(
+      /[^A-Za-z0-9]/g,
+      ""
+    )
     .substring(0, 25);
 }
 
 
-/**
- * Récupère prénom/nom de manière raisonnable
- * à partir du nom complet.
- */
 function splitName(fullName) {
 
-  const value = String(fullName || "").trim();
+  const value =
+    String(fullName || "")
+      .trim();
 
   if (!value) {
+
     return {
       firstname: "Client",
       lastname: "DAKPRO"
     };
+
   }
 
-  const parts = value.split(/\s+/);
+  const parts =
+    value.split(/\s+/);
 
   if (parts.length === 1) {
+
     return {
       firstname: parts[0],
       lastname: "DAKPRO"
     };
+
   }
 
   return {
@@ -201,39 +134,138 @@ function splitName(fullName) {
 }
 
 
-/**
- * Nettoyage téléphone pour FedaPay.
- */
 function cleanPhone(phone) {
 
   return String(phone || "")
     .trim()
-    .replace(/[^\d+]/g, "");
+    .replace(
+      /[^\d+]/g,
+      ""
+    );
 }
 
 
-/**
- * Vérifie qu'un retour FedaPay correspond
- * à une transaction approuvée.
- */
-function isFedaPayApproved(transaction) {
+/* ============================================================
+   CHARGEMENT FEDAPAY
+   ============================================================ */
 
-  if (!transaction) return false;
+function loadFedaPayScript() {
 
-  const status = String(
-    transaction.status || ""
-  ).toLowerCase();
+  return new Promise(
+    (resolve, reject) => {
 
-  return (
-    status === "approved" ||
-    status === "approuvé" ||
-    status === "approved_paid"
+      if (window.FedaPay) {
+
+        resolve(
+          window.FedaPay
+        );
+
+        return;
+      }
+
+
+      const existing =
+        document.querySelector(
+          'script[data-dakpro-fedapay="true"]'
+        );
+
+
+      if (existing) {
+
+        let elapsed = 0;
+
+        const timer =
+          setInterval(() => {
+
+            if (window.FedaPay) {
+
+              clearInterval(timer);
+
+              resolve(
+                window.FedaPay
+              );
+
+              return;
+            }
+
+            elapsed += 100;
+
+            if (elapsed >= 15000) {
+
+              clearInterval(timer);
+
+              reject(
+                new Error(
+                  "FedaPay Checkout n'a pas pu être chargé."
+                )
+              );
+
+            }
+
+          }, 100);
+
+        return;
+      }
+
+
+      const script =
+        document.createElement(
+          "script"
+        );
+
+
+      script.src =
+        FEDAPAY_SCRIPT_URL;
+
+      script.async = true;
+
+      script.dataset.dakproFedapay =
+        "true";
+
+
+      script.onload = () => {
+
+        if (window.FedaPay) {
+
+          resolve(
+            window.FedaPay
+          );
+
+        } else {
+
+          reject(
+            new Error(
+              "FedaPay est chargé mais indisponible."
+            )
+          );
+
+        }
+
+      };
+
+
+      script.onerror = () => {
+
+        reject(
+          new Error(
+            "Impossible de charger FedaPay Checkout."
+          )
+        );
+
+      };
+
+
+      document.head.appendChild(
+        script
+      );
+
+    }
   );
 }
 
 
 /* ============================================================
-   INITIALISATION
+   INTERFACE
    ============================================================ */
 
 export function init(
@@ -243,7 +275,15 @@ export function init(
   userId
 ) {
 
-  if (!container || !db) return;
+  if (!container || !db) {
+
+    console.error(
+      "DAKPRO : paiement impossible à initialiser."
+    );
+
+    return;
+  }
+
 
   const currentUid =
     userId ||
@@ -255,46 +295,40 @@ export function init(
     );
 
 
-  /* ==========================================================
-     UTILISATEUR NON CONNECTÉ
-     ========================================================== */
-
   if (!currentUid) {
 
     container.innerHTML = `
+
       <div style="
+        padding:45px 20px;
         text-align:center;
-        padding:50px 20px;
-        color:#ff8585;
-        font-family:Poppins,sans-serif;
         background:#0a0d14;
         border-radius:15px;
+        color:#fff;
+        font-family:Poppins,Arial,sans-serif;
       ">
 
         <div style="
-          font-size:45px;
+          font-size:48px;
           margin-bottom:15px;
         ">
           🔐
         </div>
 
-        <h3 style="
+        <h2 style="
           color:#d4af37;
-          margin-bottom:10px;
         ">
           Connexion nécessaire
-        </h3>
+        </h2>
 
         <p style="
-          color:#bbb;
-          font-size:14px;
+          color:#aaa;
         ">
-          Veuillez vous connecter pour accéder
-          au panier et effectuer votre paiement
-          sur DAKPRO ÉLITE.
+          Connectez-vous pour effectuer votre paiement.
         </p>
 
       </div>
+
     `;
 
     return;
@@ -302,285 +336,248 @@ export function init(
 
 
   /* ==========================================================
-     INTERFACE
+     INTERFACE COMPLETE
      ========================================================== */
 
   container.innerHTML = `
 
     <style>
 
-      .dak-pay-wrapper {
+      .dak-payment {
         width:100%;
-        font-family:'Poppins',Arial,sans-serif;
         color:#fff;
+        font-family:Poppins,Arial,sans-serif;
       }
 
-      .pay-title {
-        color:#d4af37;
-        font-size:20px;
-        font-weight:700;
-        margin-bottom:20px;
-        border-bottom:1px solid #2a2a32;
-        padding-bottom:12px;
-
+      .dak-payment-title {
         display:flex;
         justify-content:space-between;
         align-items:center;
         gap:15px;
         flex-wrap:wrap;
-      }
 
-      .pay-subtitle {
+        padding-bottom:14px;
+        margin-bottom:20px;
+
+        border-bottom:1px solid #292d37;
+
         color:#d4af37;
-        font-size:16px;
-        font-weight:700;
-        margin-bottom:15px;
-        border-bottom:1px solid #222;
-        padding-bottom:9px;
+        font-size:21px;
+        font-weight:800;
       }
 
-      .pay-grid {
+      .dak-payment-grid {
         display:grid;
         grid-template-columns:
-          minmax(280px,0.85fr)
-          minmax(320px,1.15fr);
+          minmax(280px,0.9fr)
+          minmax(320px,1.1fr);
+
         gap:20px;
       }
 
-      .pay-box {
+      .dak-box {
         background:#0a0d14;
-        border:1px solid #222;
-        border-radius:14px;
+        border:1px solid #252932;
+        border-radius:15px;
         padding:20px;
         box-shadow:
-          0 8px 25px rgba(0,0,0,.15);
+          0 10px 35px rgba(0,0,0,.18);
       }
 
-      .payment-provider {
+      .dak-box-title {
+        color:#d4af37;
+        font-weight:800;
+        font-size:16px;
+        padding-bottom:10px;
+        margin-bottom:15px;
+        border-bottom:1px solid #242832;
+      }
+
+      .dak-label {
+        display:block;
+        color:#aaa;
+        font-size:12px;
+        margin-bottom:6px;
+      }
+
+      .dak-input {
+        width:100%;
+        box-sizing:border-box;
+
+        padding:12px;
+
+        border-radius:8px;
+        border:1px solid #333;
+
+        background:#12161f;
+        color:#fff;
+
+        outline:none;
+      }
+
+      .dak-input:focus {
+        border-color:#d4af37;
+      }
+
+      .dak-field {
+        margin-bottom:13px;
+      }
+
+      .dak-provider {
         background:
           linear-gradient(
             135deg,
-            #11151e,
+            #151922,
             #080a0f
           );
 
         border:1px solid #333;
         border-radius:12px;
-        padding:18px;
+        padding:17px;
         margin-bottom:18px;
       }
 
-      .fedapay-logo-text {
-        font-size:22px;
-        font-weight:800;
-        color:#fff;
-        letter-spacing:.5px;
+      .dak-provider-name {
+        font-size:24px;
+        font-weight:900;
       }
 
-      .fedapay-logo-text span {
+      .dak-provider-name span {
         color:#d4af37;
       }
 
-      .fedapay-description {
+      .dak-provider-text {
         color:#aaa;
         font-size:12px;
         line-height:1.6;
         margin-top:8px;
       }
 
-      .secure-line {
-        margin-top:14px;
+      .dak-secure {
+        margin-top:13px;
         padding:10px;
+
         background:rgba(34,197,94,.08);
         border:1px solid rgba(34,197,94,.25);
+
+        border-radius:8px;
+
         color:#70e090;
-        border-radius:8px;
         font-size:12px;
       }
 
-      .form-group {
-        margin-bottom:13px;
-      }
-
-      .form-group label {
-        display:block;
-        font-size:12px;
-        color:#aaa;
-        margin-bottom:6px;
-      }
-
-      .form-input {
-        width:100%;
-        box-sizing:border-box;
-        padding:11px;
-        background:#12161f;
-        border:1px solid #333;
-        border-radius:8px;
-        color:#fff;
-        outline:none;
-        font-size:13px;
-      }
-
-      .form-input:focus {
-        border-color:#d4af37;
-      }
-
-      .cart-list {
-        max-height:230px;
+      .dak-cart {
+        max-height:300px;
         overflow-y:auto;
         margin-bottom:15px;
       }
 
-      .cart-item-row {
+      .dak-cart-item {
         display:flex;
-        align-items:center;
         justify-content:space-between;
+        align-items:center;
         gap:12px;
 
         background:#12161f;
-        padding:10px 12px;
-        border-radius:7px;
+        border-radius:8px;
+
+        padding:11px;
         margin-bottom:8px;
+
         font-size:13px;
       }
 
-      .summary-row {
+      .dak-summary {
         display:flex;
         justify-content:space-between;
-        align-items:center;
-        margin-bottom:10px;
-        font-size:14px;
+
         color:#ccc;
+        margin-bottom:10px;
       }
 
-      .summary-row.total {
-        border-top:1px dashed #333;
+      .dak-total {
+        display:flex;
+        justify-content:space-between;
+
         padding-top:14px;
         margin-top:12px;
 
+        border-top:1px dashed #333;
+
         color:#d4af37;
-        font-size:19px;
-        font-weight:800;
+        font-size:20px;
+        font-weight:900;
       }
 
-      .btn-pay-now {
+      .dak-pay-button {
+        width:100%;
+
+        margin-top:18px;
+
+        padding:15px;
+
+        border:0;
+        border-radius:9px;
+
         background:#d4af37;
         color:#000;
-        font-weight:800;
-        padding:15px;
-        border:none;
-        border-radius:9px;
-        cursor:pointer;
-        width:100%;
+
         font-size:16px;
-        margin-top:17px;
-        transition:.25s;
-      }
+        font-weight:900;
 
-      .btn-pay-now:hover {
-        background:#f3e5ab;
-        transform:translateY(-1px);
-      }
-
-      .btn-pay-now:disabled {
-        opacity:.6;
-        cursor:not-allowed;
-        transform:none;
-      }
-
-      .btn-clear-cart {
-        background:transparent;
-        color:#ef4444;
-        border:1px solid #ef4444;
-        font-weight:600;
-        padding:8px 12px;
-        border-radius:6px;
         cursor:pointer;
-        font-size:12px;
       }
 
-      .info-card {
+      .dak-pay-button:hover {
+        background:#f3e5ab;
+      }
+
+      .dak-pay-button:disabled {
+        opacity:.55;
+        cursor:not-allowed;
+      }
+
+      .dak-clear {
+        border:1px solid #ef4444;
+        background:transparent;
+
+        color:#ef4444;
+
+        padding:8px 12px;
+        border-radius:7px;
+
+        cursor:pointer;
+      }
+
+      .dak-status {
+        display:none;
+
+        margin-top:15px;
+        padding:12px;
+
+        border-radius:8px;
+
+        font-size:13px;
+        line-height:1.5;
+      }
+
+      .dak-help {
         background:#12161f;
         border:1px solid #292d37;
+
         border-radius:10px;
+
         padding:13px;
-        margin-bottom:12px;
-      }
 
-      .info-card strong {
-        color:#d4af37;
-      }
-
-      .payment-status {
-        display:none;
-        margin-top:14px;
-        padding:12px;
-        border-radius:8px;
-        font-size:13px;
-        text-align:center;
-      }
-
-      .fedapay-modal {
-        position:fixed;
-        inset:0;
-        z-index:999999;
-
-        display:flex;
-        align-items:center;
-        justify-content:center;
-
-        padding:18px;
-
-        background:
-          rgba(0,0,0,.78);
-
-        backdrop-filter:blur(5px);
-      }
-
-      .fedapay-modal-box {
-        width:min(520px,100%);
-        max-height:90vh;
-        overflow:auto;
-
-        background:#080b11;
-        border:1px solid #333;
-        border-radius:16px;
-        padding:20px;
-
-        box-shadow:
-          0 20px 60px rgba(0,0,0,.55);
-      }
-
-      .fedapay-modal-header {
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:15px;
-
-        border-bottom:1px solid #252832;
-        padding-bottom:12px;
-        margin-bottom:15px;
-      }
-
-      .fedapay-close {
-        background:#222;
-        color:#fff;
-        border:0;
-        width:34px;
-        height:34px;
-        border-radius:50%;
-        cursor:pointer;
-        font-size:18px;
+        color:#aaa;
+        font-size:12px;
+        line-height:1.6;
       }
 
       @media(max-width:850px) {
 
-        .pay-grid {
+        .dak-payment-grid {
           grid-template-columns:1fr;
-        }
-
-        .pay-title {
-          font-size:17px;
         }
 
       }
@@ -588,17 +585,17 @@ export function init(
     </style>
 
 
-    <div class="dak-pay-wrapper">
+    <div class="dak-payment">
 
-      <div class="pay-title">
+      <div class="dak-payment-title">
 
         <span>
-          💳 DAKPRO ÉLITE — Paiement
+          💳 DAKPRO ÉLITE — Paiement sécurisé
         </span>
 
         <button
-          class="btn-clear-cart"
           id="btnClearCart"
+          class="dak-clear"
         >
           🗑️ Vider le panier
         </button>
@@ -606,173 +603,165 @@ export function init(
       </div>
 
 
-      <div class="pay-grid">
+      <div class="dak-payment-grid">
 
 
-        <!-- =================================================
-             INFORMATIONS CLIENT / FEDAPAY
-             ================================================= -->
+        <!-- CLIENT -->
 
-        <div class="pay-box">
+        <div class="dak-box">
 
-          <div class="pay-subtitle">
+          <div class="dak-box-title">
             👤 Informations du client
           </div>
 
 
-          <div class="payment-provider">
+          <div class="dak-provider">
 
-            <div class="fedapay-logo-text">
+            <div class="dak-provider-name">
               Feda<span>Pay</span>
             </div>
 
-            <div class="fedapay-description">
+            <div class="dak-provider-text">
 
-              Le paiement de votre commande sera effectué
-              directement avec le formulaire sécurisé
-              FedaPay.
+              Après validation de cette page,
+              FedaPay ouvrira son interface sécurisée.
+
+              Vous pourrez alors choisir le moyen de
+              paiement disponible pour votre transaction.
 
               <br><br>
 
-              FedaPay vous permettra de choisir le moyen
-              de paiement disponible pour votre transaction.
+              Le montant affiché dans FedaPay correspondra
+              au montant réel de la commande.
 
             </div>
 
-            <div class="secure-line">
+            <div class="dak-secure">
               🔒 Paiement traité par FedaPay
             </div>
 
           </div>
 
 
-          <div class="form-group">
+          <div class="dak-field">
 
-            <label>
+            <label class="dak-label">
               Nom complet
             </label>
 
             <input
-              type="text"
               id="payCustomerName"
-              class="form-input"
-              placeholder="Ex : Jean Dupont"
+              class="dak-input"
+              type="text"
+              placeholder="Jean Dupont"
             >
 
           </div>
 
 
-          <div class="form-group">
+          <div class="dak-field">
 
-            <label>
+            <label class="dak-label">
               Adresse e-mail
             </label>
 
             <input
-              type="email"
               id="payCustomerEmail"
-              class="form-input"
-              placeholder="Ex : client@email.com"
+              class="dak-input"
+              type="email"
+              placeholder="client@email.com"
             >
 
           </div>
 
 
-          <div class="form-group">
+          <div class="dak-field">
 
-            <label>
+            <label class="dak-label">
               Téléphone
             </label>
 
             <input
-              type="tel"
               id="payCustomerPhone"
-              class="form-input"
+              class="dak-input"
+              type="tel"
               placeholder="+229 90 00 00 00"
             >
 
           </div>
 
 
-          <div class="info-card">
+          <div class="dak-help">
 
-            <strong>ℹ️ Comment ça fonctionne ?</strong>
+            <strong style="color:#d4af37;">
+              Comment ça fonctionne ?
+            </strong>
 
-            <p style="
-              color:#aaa;
-              font-size:12px;
-              line-height:1.6;
-              margin:8px 0 0;
-            ">
+            <br><br>
 
-              1. Vérifiez votre commande.<br>
-              2. Cliquez sur « Payer maintenant ».<br>
-              3. Le formulaire FedaPay s'ouvre.<br>
-              4. Choisissez votre moyen de paiement.<br>
-              5. Suivez les instructions de FedaPay.<br>
-              6. Une fois le paiement validé,
-                 votre commande est enregistrée.
-
-            </p>
+            1️⃣ Vérifiez vos informations.<br>
+            2️⃣ Vérifiez le montant total.<br>
+            3️⃣ Cliquez sur « Payer maintenant ».<br>
+            4️⃣ FedaPay s'ouvre.<br>
+            5️⃣ Choisissez votre moyen de paiement.<br>
+            6️⃣ Effectuez le paiement.<br>
+            7️⃣ FedaPay confirme la transaction.<br>
+            8️⃣ DAKPRO ÉLITE met ensuite la commande à jour.
 
           </div>
 
         </div>
 
 
-        <!-- =================================================
-             LIVRAISON + PANIER
-             ================================================= -->
+        <!-- LIVRAISON -->
 
-        <div class="pay-box">
+        <div class="dak-box">
 
-          <div class="pay-subtitle">
-            📍 Informations de livraison
+          <div class="dak-box-title">
+            📍 Livraison
           </div>
 
 
-          <div class="form-group">
+          <div class="dak-field">
 
-            <label>
-              Nom complet du destinataire
+            <label class="dak-label">
+              Nom du destinataire
             </label>
 
             <input
-              type="text"
               id="shippingName"
-              class="form-input"
-              placeholder="Ex : Jean Dupont"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Téléphone de joignabilité
-            </label>
-
-            <input
-              type="tel"
-              id="shippingPhone"
-              class="form-input"
-              placeholder="+229 97 00 00 00"
-            >
-
-          </div>
-
-
-          <div class="form-group">
-
-            <label>
-              Adresse exacte de livraison
-            </label>
-
-            <input
+              class="dak-input"
               type="text"
+            >
+
+          </div>
+
+
+          <div class="dak-field">
+
+            <label class="dak-label">
+              Téléphone
+            </label>
+
+            <input
+              id="shippingPhone"
+              class="dak-input"
+              type="tel"
+            >
+
+          </div>
+
+
+          <div class="dak-field">
+
+            <label class="dak-label">
+              Adresse exacte
+            </label>
+
+            <input
               id="shippingAddress"
-              class="form-input"
+              class="dak-input"
+              type="text"
               placeholder="Quartier, rue, maison..."
             >
 
@@ -785,18 +774,18 @@ export function init(
           ">
 
             <div
-              class="form-group"
+              class="dak-field"
               style="flex:1;"
             >
 
-              <label>
+              <label class="dak-label">
                 Ville
               </label>
 
               <input
-                type="text"
                 id="shippingCity"
-                class="form-input"
+                class="dak-input"
+                type="text"
                 placeholder="Cotonou"
               >
 
@@ -804,19 +793,19 @@ export function init(
 
 
             <div
-              class="form-group"
+              class="dak-field"
               style="flex:1;"
             >
 
-              <label>
+              <label class="dak-label">
                 Pays
               </label>
 
               <input
-                type="text"
                 id="shippingCountry"
-                class="form-input"
-                placeholder="Bénin"
+                class="dak-input"
+                type="text"
+                value="Bénin"
               >
 
             </div>
@@ -824,45 +813,38 @@ export function init(
           </div>
 
 
-          <div class="pay-subtitle" style="
-            margin-top:20px;
-          ">
-            🛒 Votre panier
+          <div class="dak-box-title"
+            style="margin-top:20px;"
+          >
+            🛒 Récapitulatif
           </div>
 
 
           <div
             id="cartItemsContainer"
-            class="cart-list"
+            class="dak-cart"
           >
-
-            <div style="
-              color:#888;
-              font-size:12px;
-            ">
-              Chargement du panier...
-            </div>
-
+            Chargement du panier...
           </div>
 
 
-          <div class="summary-row">
+          <div class="dak-summary">
 
             <span>
-              Nombre d'articles :
+              Nombre d'articles
             </span>
 
-            <span id="checkoutItemsCount">
+            <strong id="checkoutItemsCount">
               0
-            </span>
+            </strong>
 
           </div>
 
 
-          <div class="summary-row total">
+          <div class="dak-total">
 
             <span>
-              Total à payer :
+              Total
             </span>
 
             <span id="checkoutTotalAmount">
@@ -873,16 +855,16 @@ export function init(
 
 
           <button
-            class="btn-pay-now"
             id="btnExecutePayment"
+            class="dak-pay-button"
           >
-            ⚡ Payer maintenant (0 FCFA)
+            ⚡ Payer maintenant
           </button>
 
 
           <div
             id="payStatusMessage"
-            class="payment-status"
+            class="dak-status"
           ></div>
 
         </div>
@@ -890,6 +872,7 @@ export function init(
       </div>
 
     </div>
+
   `;
 
 
@@ -905,11 +888,9 @@ export function init(
 
   let paymentInProgress = false;
 
-  let lastCreatedOrderId = null;
-
 
   /* ==========================================================
-     RÉFÉRENCES DOM
+     DOM
      ========================================================== */
 
   const customerName =
@@ -979,134 +960,199 @@ export function init(
 
 
   /* ==========================================================
-     1. CHARGEMENT DU PROFIL
+     MESSAGE
      ========================================================== */
 
-  get(
-    ref(db, `users/${currentUid}`)
-  )
-    .then((snapshot) => {
+  function showStatus(
+    message,
+    type = "info"
+  ) {
 
-      if (!snapshot.exists()) return;
+    if (!payStatusMessage) return;
 
-      const u = snapshot.val() || {};
-
-
-      const fullName =
-        u.nom ||
-        u.displayName ||
-        u.name ||
-        "";
+    payStatusMessage.style.display =
+      "block";
 
 
-      const email =
-        u.email ||
-        (
-          auth &&
-          auth.currentUser
-            ? auth.currentUser.email
-            : ""
-        ) ||
-        "";
+    if (type === "success") {
+
+      payStatusMessage.style.background =
+        "rgba(34,197,94,.08)";
+
+      payStatusMessage.style.border =
+        "1px solid rgba(34,197,94,.3)";
+
+      payStatusMessage.style.color =
+        "#70e090";
+
+    } else if (type === "error") {
+
+      payStatusMessage.style.background =
+        "rgba(239,68,68,.08)";
+
+      payStatusMessage.style.border =
+        "1px solid rgba(239,68,68,.3)";
+
+      payStatusMessage.style.color =
+        "#ff8585";
+
+    } else {
+
+      payStatusMessage.style.background =
+        "rgba(212,175,55,.08)";
+
+      payStatusMessage.style.border =
+        "1px solid rgba(212,175,55,.25)";
+
+      payStatusMessage.style.color =
+        "#d4af37";
+
+    }
 
 
-      const phone =
-        u.telephone ||
-        u.phone ||
-        "";
-
-
-      if (
-        customerName &&
-        !customerName.value
-      ) {
-        customerName.value = fullName;
-      }
-
-
-      if (
-        customerEmail &&
-        !customerEmail.value
-      ) {
-        customerEmail.value = email;
-      }
-
-
-      if (
-        customerPhone &&
-        !customerPhone.value
-      ) {
-        customerPhone.value = phone;
-      }
-
-
-      if (
-        shippingName &&
-        !shippingName.value
-      ) {
-        shippingName.value = fullName;
-      }
-
-
-      if (
-        shippingPhone &&
-        !shippingPhone.value
-      ) {
-        shippingPhone.value = phone;
-      }
-
-
-      if (
-        shippingAddress &&
-        u.adresse
-      ) {
-        shippingAddress.value =
-          u.adresse;
-      }
-
-
-      if (
-        shippingCity &&
-        u.ville
-      ) {
-        shippingCity.value =
-          u.ville;
-      }
-
-
-      if (
-        shippingCountry &&
-        u.pays
-      ) {
-        shippingCountry.value =
-          u.pays;
-      }
-
-    })
-    .catch((error) => {
-
-      console.warn(
-        "Impossible de charger le profil :",
-        error
-      );
-
-    });
+    payStatusMessage.textContent =
+      message;
+  }
 
 
   /* ==========================================================
-     2. SURVEILLANCE DU PANIER
+     1 — PROFIL UTILISATEUR
      ========================================================== */
 
-  const cartRef =
+  get(
     ref(
       db,
-      `users/${currentUid}/gs/cart`
+      `users/${currentUid}`
+    )
+  )
+    .then(
+      snapshot => {
+
+        if (!snapshot.exists())
+          return;
+
+
+        const user =
+          snapshot.val() || {};
+
+
+        const fullName =
+          user.nom ||
+          user.displayName ||
+          user.name ||
+          "";
+
+
+        const email =
+          user.email ||
+          (
+            auth &&
+            auth.currentUser
+              ? auth.currentUser.email
+              : ""
+          ) ||
+          "";
+
+
+        const phone =
+          user.telephone ||
+          user.phone ||
+          "";
+
+
+        if (
+          customerName &&
+          !customerName.value
+        )
+          customerName.value =
+            fullName;
+
+
+        if (
+          customerEmail &&
+          !customerEmail.value
+        )
+          customerEmail.value =
+            email;
+
+
+        if (
+          customerPhone &&
+          !customerPhone.value
+        )
+          customerPhone.value =
+            phone;
+
+
+        if (
+          shippingName &&
+          !shippingName.value
+        )
+          shippingName.value =
+            fullName;
+
+
+        if (
+          shippingPhone &&
+          !shippingPhone.value
+        )
+          shippingPhone.value =
+            phone;
+
+
+        if (
+          shippingAddress &&
+          user.adresse
+        )
+          shippingAddress.value =
+            user.adresse;
+
+
+        if (
+          shippingCity &&
+          user.ville
+        )
+          shippingCity.value =
+            user.ville;
+
+
+        if (
+          shippingCountry &&
+          user.pays
+        )
+          shippingCountry.value =
+            user.pays;
+
+      }
+    )
+    .catch(
+      error =>
+        console.warn(
+          "Profil non chargé :",
+          error
+        )
+    );
+
+
+  /* ==========================================================
+     2 — PANIER
+     
+     SOURCE PRINCIPALE :
+     users/{uid}/panier
+
+     gs/cart reste accepté pour compatibilité.
+     ========================================================== */
+
+  const primaryCartRef =
+    ref(
+      db,
+      `users/${currentUid}/panier`
     );
 
 
   onValue(
-    cartRef,
-    async (snapshot) => {
+    primaryCartRef,
+    async snapshot => {
 
       currentCartTotalFCFA = 0;
 
@@ -1115,23 +1161,26 @@ export function init(
       currentCartCount = 0;
 
 
-      if (!cartItemsContainer) return;
+      if (!cartItemsContainer)
+        return;
 
 
-      cartItemsContainer.innerHTML = "";
+      cartItemsContainer.innerHTML =
+        "";
 
 
       if (!snapshot.exists()) {
 
         cartItemsContainer.innerHTML = `
+
           <div style="
-            color:#888;
-            font-size:12px;
+            padding:18px;
             text-align:center;
-            padding:15px;
+            color:#888;
           ">
             🛒 Votre panier est vide.
           </div>
+
         `;
 
         updateCartSummary();
@@ -1140,18 +1189,20 @@ export function init(
       }
 
 
-      const cartData =
+      const cart =
         snapshot.val() || {};
 
 
       const keys =
-        Object.keys(cartData);
+        Object.keys(cart);
 
 
-      for (const key of keys) {
+      for (
+        const key of keys
+      ) {
 
         const item =
-          cartData[key] || {};
+          cart[key] || {};
 
 
         const prodId =
@@ -1173,12 +1224,14 @@ export function init(
           !Number.isFinite(qty) ||
           qty < 1
         ) {
+
           qty = 1;
+
         }
 
 
         let realPrice =
-          parseFloat(
+          Number(
             item.prixUnitaire ||
             item.prix ||
             item.prixNormal ||
@@ -1186,10 +1239,13 @@ export function init(
           );
 
 
-        /* ---------------------------------------------
-           Vérification du prix officiel
-           dans publications
-           --------------------------------------------- */
+        let publication =
+          null;
+
+
+        /* -------------------------------------------
+           PRIX OFFICIEL
+           ------------------------------------------- */
 
         try {
 
@@ -1204,36 +1260,38 @@ export function init(
 
           if (pubSnap.exists()) {
 
-            const pubData =
+            publication =
               pubSnap.val() || {};
 
 
-            const pNormal =
-              parseFloat(
-                pubData.prixNormal ||
-                pubData.prix ||
+            const normal =
+              Number(
+                publication.prixNormal ||
+                publication.prix ||
                 0
               );
 
 
-            const pPromo =
-              parseFloat(
-                pubData.prixPromo ||
+            const promo =
+              Number(
+                publication.prixPromo ||
                 0
               );
 
 
             if (
-              pPromo > 0 &&
-              pNormal > 0 &&
-              pPromo < pNormal
+              promo > 0 &&
+              normal > 0 &&
+              promo < normal
             ) {
 
-              realPrice = pPromo;
+              realPrice =
+                promo;
 
             } else {
 
-              realPrice = pNormal;
+              realPrice =
+                normal;
 
             }
 
@@ -1242,7 +1300,7 @@ export function init(
         } catch (error) {
 
           console.warn(
-            "Erreur vérification prix :",
+            "Prix publication non disponible :",
             error
           );
 
@@ -1253,7 +1311,9 @@ export function init(
           !Number.isFinite(realPrice) ||
           realPrice < 0
         ) {
+
           realPrice = 0;
+
         }
 
 
@@ -1271,12 +1331,22 @@ export function init(
 
         currentCartItems[key] = {
 
-          id: prodId,
+          id:
+            prodId,
 
           nom:
             item.nom ||
             item.title ||
+            publication?.nom ||
+            publication?.title ||
             "Produit DAKPRO ÉLITE",
+
+          image:
+            item.image ||
+            item.imageUrl ||
+            publication?.image ||
+            publication?.imageUrl ||
+            "",
 
           prixUnitaire:
             realPrice,
@@ -1290,10 +1360,6 @@ export function init(
         };
 
 
-        /* ---------------------------------------------
-           Affichage
-           --------------------------------------------- */
-
         const row =
           document.createElement(
             "div"
@@ -1301,18 +1367,18 @@ export function init(
 
 
         row.className =
-          "cart-item-row";
+          "dak-cart-item";
 
 
         row.innerHTML = `
 
-          <div style="flex:1;">
+          <div style="
+            flex:1;
+          ">
 
             <strong>
               ${escapeHTML(
-                item.nom ||
-                item.title ||
-                "Produit"
+                currentCartItems[key].nom
               )}
             </strong>
 
@@ -1328,13 +1394,13 @@ export function init(
 
           </div>
 
-          <div style="
-            font-weight:bold;
+
+          <strong style="
             color:#70e090;
             white-space:nowrap;
           ">
             ${formatCFA(subtotal)}
-          </div>
+          </strong>
 
         `;
 
@@ -1346,32 +1412,28 @@ export function init(
       }
 
 
-      if (
-        keys.length === 0
-      ) {
-
-        cartItemsContainer.innerHTML = `
-          <div style="
-            color:#888;
-            font-size:12px;
-            text-align:center;
-            padding:15px;
-          ">
-            🛒 Votre panier est vide.
-          </div>
-        `;
-
-      }
-
-
       updateCartSummary();
+
+    },
+    error => {
+
+      console.error(
+        "Erreur panier :",
+        error
+      );
+
+
+      showStatus(
+        "Impossible de charger votre panier.",
+        "error"
+      );
 
     }
   );
 
 
   /* ==========================================================
-     MISE À JOUR DU TOTAL
+     TOTAL
      ========================================================== */
 
   function updateCartSummary() {
@@ -1397,9 +1459,13 @@ export function init(
     if (executePaymentBtn) {
 
       executePaymentBtn.textContent =
-        `⚡ Payer maintenant (${formatCFA(
-          currentCartTotalFCFA
-        )})`;
+        currentCartTotalFCFA > 0
+
+          ? `⚡ Payer maintenant (${formatCFA(
+              currentCartTotalFCFA
+            )})`
+
+          : "⚡ Payer maintenant";
 
     }
 
@@ -1407,22 +1473,23 @@ export function init(
 
 
   /* ==========================================================
-     3. VIDER LE PANIER
+     3 — VIDER LE PANIER
      ========================================================== */
 
   document
-    .getElementById("btnClearCart")
+    .getElementById(
+      "btnClearCart"
+    )
     ?.addEventListener(
       "click",
       async () => {
 
-        const confirmation =
-          confirm(
-            "Voulez-vous vraiment vider tout votre panier ?"
-          );
-
-
-        if (!confirmation) return;
+        if (
+          !confirm(
+            "Voulez-vous vraiment vider votre panier ?"
+          )
+        )
+          return;
 
 
         try {
@@ -1451,21 +1518,21 @@ export function init(
           );
 
 
-          alert(
-            "✅ Votre panier a été vidé avec succès."
+          showStatus(
+            "✅ Panier vidé.",
+            "success"
           );
-
 
         } catch (error) {
 
           console.error(
-            "Erreur vidage panier :",
             error
           );
 
 
-          alert(
-            "❌ Impossible de vider le panier."
+          showStatus(
+            "❌ Impossible de vider le panier.",
+            "error"
           );
 
         }
@@ -1475,7 +1542,7 @@ export function init(
 
 
   /* ==========================================================
-     4. OUVERTURE DU FORMULAIRE FEDAPAY
+     4 — PAIEMENT
      ========================================================== */
 
   executePaymentBtn
@@ -1483,13 +1550,12 @@ export function init(
       "click",
       async () => {
 
-        if (paymentInProgress) {
+        if (paymentInProgress)
           return;
-        }
 
 
         /* ---------------------------------------------
-           Vérification panier
+           PANIER
            --------------------------------------------- */
 
         if (
@@ -1499,8 +1565,9 @@ export function init(
           ).length === 0
         ) {
 
-          alert(
-            "Votre panier DAKPRO ÉLITE est vide."
+          showStatus(
+            "Votre panier est vide.",
+            "error"
           );
 
           return;
@@ -1508,37 +1575,28 @@ export function init(
 
 
         /* ---------------------------------------------
-           Vérification livraison
+           LIVRAISON
            --------------------------------------------- */
 
         const shipName =
-          shippingName
-            ? shippingName.value.trim()
-            : "";
-
+          shippingName?.value.trim() ||
+          "";
 
         const shipPhone =
-          shippingPhone
-            ? shippingPhone.value.trim()
-            : "";
-
+          shippingPhone?.value.trim() ||
+          "";
 
         const shipAddress =
-          shippingAddress
-            ? shippingAddress.value.trim()
-            : "";
-
+          shippingAddress?.value.trim() ||
+          "";
 
         const shipCity =
-          shippingCity
-            ? shippingCity.value.trim()
-            : "";
-
+          shippingCity?.value.trim() ||
+          "";
 
         const shipCountry =
-          shippingCountry
-            ? shippingCountry.value.trim()
-            : "";
+          shippingCountry?.value.trim() ||
+          "Bénin";
 
 
         if (
@@ -1547,8 +1605,9 @@ export function init(
           !shipAddress
         ) {
 
-          alert(
-            "Veuillez remplir le nom, le téléphone et l'adresse de livraison."
+          showStatus(
+            "Veuillez renseigner le nom, le téléphone et l'adresse de livraison.",
+            "error"
           );
 
           return;
@@ -1556,41 +1615,41 @@ export function init(
 
 
         /* ---------------------------------------------
-           Informations client FedaPay
+           CLIENT
            --------------------------------------------- */
 
         const clientName =
-          customerName
-            ? customerName.value.trim()
-            : shipName;
-
+          customerName?.value.trim() ||
+          shipName;
 
         const clientEmail =
-          customerEmail
-            ? customerEmail.value.trim()
-            : "";
-
+          customerEmail?.value.trim() ||
+          "";
 
         const clientPhone =
-          customerPhone
-            ? customerPhone.value.trim()
-            : shipPhone;
-
-
-        if (!clientName) {
-
-          alert(
-            "Veuillez renseigner le nom du client."
-          );
-
-          return;
-        }
+          customerPhone?.value.trim() ||
+          shipPhone;
 
 
         if (!clientEmail) {
 
-          alert(
-            "Veuillez renseigner l'adresse e-mail du client."
+          showStatus(
+            "Veuillez renseigner une adresse e-mail.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        if (
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            .test(clientEmail)
+        ) {
+
+          showStatus(
+            "Adresse e-mail invalide.",
+            "error"
           );
 
           return;
@@ -1598,86 +1657,39 @@ export function init(
 
 
         /* ---------------------------------------------
-           Vérification e-mail
+           VERROUILLAGE
            --------------------------------------------- */
 
-        const emailValid =
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            .test(clientEmail);
-
-
-        if (!emailValid) {
-
-          alert(
-            "Veuillez saisir une adresse e-mail valide."
-          );
-
-          return;
-        }
-
-
-        /* ---------------------------------------------
-           Verrouillage bouton
-           --------------------------------------------- */
-
-        paymentInProgress = true;
-
+        paymentInProgress =
+          true;
 
         executePaymentBtn.disabled =
           true;
 
 
-        if (payStatusMessage) {
-
-          payStatusMessage.style.display =
-            "block";
-
-          payStatusMessage.style.background =
-            "rgba(212,175,55,.08)";
-
-          payStatusMessage.style.border =
-            "1px solid rgba(212,175,55,.25)";
-
-          payStatusMessage.style.color =
-            "#d4af37";
-
-          payStatusMessage.textContent =
-            "Préparation sécurisée de votre paiement FedaPay...";
-
-        }
+        showStatus(
+          "Préparation de votre paiement sécurisé...",
+          "info"
+        );
 
 
         try {
 
           /* -------------------------------------------
-             Charger FedaPay Checkout
+             FEDAPAY
              ------------------------------------------- */
 
           const FedaPay =
             await loadFedaPayScript();
 
 
-          /* -------------------------------------------
-             Préparation commande
-             ------------------------------------------- */
-
           const orderId =
             generateOrderId();
-
-
-          lastCreatedOrderId =
-            orderId;
 
 
           const paymentReference =
             generatePaymentReference(
               orderId
-            );
-
-
-          const nameParts =
-            splitName(
-              clientName
             );
 
 
@@ -1687,8 +1699,14 @@ export function init(
             );
 
 
+          const name =
+            splitName(
+              clientName
+            );
+
+
           /* -------------------------------------------
-             Création commande EN ATTENTE
+             COMMANDE PENDING
              ------------------------------------------- */
 
           const orderPayload = {
@@ -1711,21 +1729,8 @@ export function init(
             devise:
               "XOF",
 
-            moyenPaiement: {
-
-              fournisseur:
-                "FedaPay",
-
-              type:
-                "FedaPay Checkout",
-
-              environnement:
-                "live",
-
-              reference:
-                paymentReference
-
-            },
+            date:
+              Date.now(),
 
             client: {
 
@@ -1759,22 +1764,29 @@ export function init(
 
             },
 
-            statut:
-              "En attente de paiement",
-
-            statutPaiement:
-              "en_attente",
-
-            statutLivraison:
-              "En attente du paiement",
-
-            paiementFedaPay: {
+            moyenPaiement: {
 
               fournisseur:
                 "FedaPay",
 
+              type:
+                "Checkout",
+
               environnement:
                 "live",
+
+              reference:
+                paymentReference
+
+            },
+
+            paiement: {
+
+              fournisseur:
+                "FedaPay",
+
+              statut:
+                "pending",
 
               reference:
                 paymentReference,
@@ -1782,13 +1794,25 @@ export function init(
               transactionId:
                 null,
 
-              statut:
-                "pending"
+              verification:
+                "server",
+
+              creeLe:
+                Date.now()
 
             },
 
-            date:
-              Date.now()
+            statut:
+              "En attente de paiement",
+
+            statutPaiement:
+              "pending",
+
+            statutLivraison:
+              "En attente du paiement",
+
+            paiementConfirme:
+              false
 
           };
 
@@ -1803,7 +1827,7 @@ export function init(
 
 
           /* -------------------------------------------
-             Préparation du widget FedaPay
+             FEDAPAY CHECKOUT
              ------------------------------------------- */
 
           const widget =
@@ -1841,16 +1865,23 @@ export function init(
 
               },
 
+              currency: {
+
+                iso:
+                  "XOF"
+
+              },
+
               customer: {
 
                 email:
                   clientEmail,
 
                 firstname:
-                  nameParts.firstname,
+                  name.firstname,
 
                 lastname:
-                  nameParts.lastname,
+                  name.lastname,
 
                 phone_number: {
 
@@ -1867,202 +1898,31 @@ export function init(
               },
 
 
+              /* -----------------------------------------
+                 CALLBACK FRONTEND
+
+                 IMPORTANT :
+                 CE CALLBACK NE VALIDE PAS LE PAIEMENT.
+                 ----------------------------------------- */
+
               onComplete:
-                async (response) => {
+                async response => {
 
                   console.log(
-                    "Réponse FedaPay :",
+                    "FedaPay Checkout terminé :",
                     response
                   );
 
 
                   const transaction =
-                    response
-                      ? response.transaction
-                      : null;
+                    response?.transaction ||
+                    null;
 
 
-                  const approved =
-                    isFedaPayApproved(
-                      transaction
-                    );
+                  const transactionId =
+                    transaction?.id ||
+                    null;
 
-
-                  /* ===================================
-                     PAIEMENT APPROUVÉ
-                     =================================== */
-
-                  if (approved) {
-
-                    try {
-
-                      const transactionId =
-                        transaction &&
-                        transaction.id
-                          ? transaction.id
-                          : null;
-
-
-                      await update(
-                        ref(
-                          db,
-                          `commandes/${currentUid}/${orderId}`
-                        ),
-                        {
-
-                          statut:
-                            "Payé",
-
-                          statutPaiement:
-                            "payé",
-
-                          statutLivraison:
-                            "En cours de traitement",
-
-                          paiementFedaPay: {
-
-                            fournisseur:
-                              "FedaPay",
-
-                            environnement:
-                              "live",
-
-                            reference:
-                              paymentReference,
-
-                            transactionId:
-                              transactionId,
-
-                            statut:
-                              "approved",
-
-                            confirmeLe:
-                              Date.now()
-
-                          },
-
-                          paiementConfirmeLe:
-                            Date.now()
-
-                        }
-                      );
-
-
-                      /* ---------------------------------
-                         Panier vidé UNIQUEMENT
-                         après paiement approuvé
-                         --------------------------------- */
-
-                      const updates = {};
-
-
-                      updates[
-                        `users/${currentUid}/panier`
-                      ] = null;
-
-
-                      updates[
-                        `users/${currentUid}/gs/cart`
-                      ] = null;
-
-
-                      updates[
-                        `users/${currentUid}/gs/total`
-                      ] = 0;
-
-
-                      await update(
-                        ref(db),
-                        updates
-                      );
-
-
-                      if (payStatusMessage) {
-
-                        payStatusMessage.style.display =
-                          "block";
-
-                        payStatusMessage.style.background =
-                          "rgba(34,197,94,.08)";
-
-                        payStatusMessage.style.border =
-                          "1px solid rgba(34,197,94,.3)";
-
-                        payStatusMessage.style.color =
-                          "#70e090";
-
-                        payStatusMessage.textContent =
-                          `✅ Paiement confirmé. Commande ${orderId} validée.`;
-
-                      }
-
-
-                      paymentInProgress =
-                        false;
-
-
-                      executePaymentBtn.disabled =
-                        false;
-
-
-                      setTimeout(
-                        () => {
-
-                          if (
-                            typeof window.chargerModule ===
-                            "function"
-                          ) {
-
-                            window.chargerModule(
-                              "commandes"
-                            );
-
-                          }
-
-                        },
-                        1500
-                      );
-
-
-                    } catch (error) {
-
-                      console.error(
-                        "Erreur confirmation commande :",
-                        error
-                      );
-
-
-                      paymentInProgress =
-                        false;
-
-                      executePaymentBtn.disabled =
-                        false;
-
-
-                      if (payStatusMessage) {
-
-                        payStatusMessage.style.display =
-                          "block";
-
-                        payStatusMessage.style.color =
-                          "#ff8585";
-
-                        payStatusMessage.textContent =
-                          "Le paiement a été signalé par FedaPay, mais l'enregistrement de la commande a rencontré un problème. Contactez l'administration avec la référence " +
-                          paymentReference;
-
-                      }
-
-                    }
-
-
-                    return;
-                  }
-
-
-                  /* ===================================
-                     PAIEMENT NON CONFIRMÉ
-                     =================================== */
 
                   try {
 
@@ -2073,22 +1933,21 @@ export function init(
                       ),
                       {
 
-                        statutPaiement:
-                          "non_confirmé",
+                        "paiement/checkoutTermine":
+                          true,
 
-                        "paiementFedaPay/statut":
-                          "non_confirmé",
+                        "paiement/checkoutTermineLe":
+                          Date.now(),
 
-                        "paiementFedaPay/motif":
-                          response &&
-                          response.reason
+                        "paiement/transactionId":
+                          transactionId,
+
+                        "paiement/reponseFrontend":
+                          response?.reason
                             ? String(
                                 response.reason
                               )
-                            : "Paiement non finalisé",
-
-                        "paiementFedaPay/miseAJour":
-                          Date.now()
+                            : "checkout_termine"
 
                       }
                     );
@@ -2096,48 +1955,49 @@ export function init(
                   } catch (error) {
 
                     console.warn(
-                      "Impossible de mettre à jour le statut :",
+                      "Impossible d'enregistrer le retour Checkout :",
                       error
                     );
 
                   }
 
 
+                  showStatus(
+                    "⏳ Paiement transmis. Vérification sécurisée de la transaction en cours...",
+                    "info"
+                  );
+
+
+                  /*
+                   * NE PAS VIDER LE PANIER ICI.
+                   *
+                   * NE PAS mettre :
+                   * statut = Payé
+                   *
+                   * Le webhook/serveur doit confirmer.
+                   */
+
                   paymentInProgress =
                     false;
-
 
                   executePaymentBtn.disabled =
                     false;
 
 
-                  if (payStatusMessage) {
+                  /*
+                   * On écoute Firebase pendant quelques secondes
+                   * afin d'attendre la confirmation serveur.
+                   */
 
-                    payStatusMessage.style.display =
-                      "block";
-
-                    payStatusMessage.style.background =
-                      "rgba(239,68,68,.08)";
-
-                    payStatusMessage.style.border =
-                      "1px solid rgba(239,68,68,.25)";
-
-                    payStatusMessage.style.color =
-                      "#ff8585";
-
-                    payStatusMessage.textContent =
-                      `Paiement non finalisé. Votre commande ${orderId} reste enregistrée. Vous pouvez réessayer.`;
-
-                  }
+                  waitForServerConfirmation(
+                    currentUid,
+                    orderId
+                  );
 
                 }
 
             });
 
-
-          /* -------------------------------------------
-             Ouverture du formulaire FedaPay
-             ------------------------------------------- */
 
           if (
             !widget ||
@@ -2146,30 +2006,24 @@ export function init(
           ) {
 
             throw new Error(
-              "Impossible d'ouvrir FedaPay Checkout."
+              "FedaPay Checkout ne peut pas être ouvert."
             );
 
           }
 
 
-          if (payStatusMessage) {
-
-            payStatusMessage.style.color =
-              "#d4af37";
-
-            payStatusMessage.textContent =
-              `Ouverture du formulaire FedaPay pour ${formatCFA(amount)}...`;
-
-          }
+          showStatus(
+            `Ouverture de FedaPay — montant réel : ${formatCFA(amount)}`,
+            "info"
+          );
 
 
           widget.open();
 
-
         } catch (error) {
 
           console.error(
-            "Erreur FedaPay :",
+            "Erreur paiement :",
             error
           );
 
@@ -2177,33 +2031,13 @@ export function init(
           paymentInProgress =
             false;
 
-
           executePaymentBtn.disabled =
             false;
 
 
-          if (payStatusMessage) {
-
-            payStatusMessage.style.display =
-              "block";
-
-            payStatusMessage.style.background =
-              "rgba(239,68,68,.08)";
-
-            payStatusMessage.style.border =
-              "1px solid rgba(239,68,68,.25)";
-
-            payStatusMessage.style.color =
-              "#ff8585";
-
-            payStatusMessage.textContent =
-              "❌ Impossible d'ouvrir le paiement FedaPay. Vérifiez votre connexion et la configuration FedaPay.";
-
-          }
-
-
-          alert(
-            "Impossible d'ouvrir le formulaire de paiement FedaPay."
+          showStatus(
+            "❌ Impossible d'ouvrir FedaPay. Vérifiez votre connexion ou la configuration du paiement.",
+            "error"
           );
 
         }
@@ -2213,7 +2047,121 @@ export function init(
 
 
   /* ==========================================================
-     FIN INIT
+     ATTENTE CONFIRMATION SERVEUR
      ========================================================== */
+
+  function waitForServerConfirmation(
+    uid,
+    orderId
+  ) {
+
+    const orderRef =
+      ref(
+        db,
+        `commandes/${uid}/${orderId}`
+      );
+
+
+    let finished =
+      false;
+
+
+    const unsubscribe =
+      onValue(
+        orderRef,
+        snapshot => {
+
+          if (
+            finished ||
+            !snapshot.exists()
+          )
+            return;
+
+
+          const order =
+            snapshot.val() || {};
+
+
+          const status =
+            String(
+              order.paiement?.statut ||
+              order.statutPaiement ||
+              ""
+            )
+              .toLowerCase();
+
+
+          if (
+            status === "paid" ||
+            status === "approved" ||
+            status === "payé" ||
+            status === "payee"
+          ) {
+
+            finished =
+              true;
+
+
+            unsubscribe();
+
+
+            showStatus(
+              `✅ Paiement confirmé. Commande ${orderId} validée.`,
+              "success"
+            );
+
+
+            /*
+             * Le serveur doit normalement
+             * avoir déjà vidé le panier.
+             */
+
+            setTimeout(
+              () => {
+
+                if (
+                  typeof window.chargerModule ===
+                  "function"
+                ) {
+
+                  window.chargerModule(
+                    "commandes"
+                  );
+
+                }
+
+              },
+              1500
+            );
+
+          }
+
+        }
+      );
+
+
+    /*
+     * On arrête l'écoute après 2 minutes.
+     */
+
+    setTimeout(
+      () => {
+
+        if (!finished) {
+
+          unsubscribe();
+
+          showStatus(
+            "⏳ Le paiement est toujours en cours de vérification. Ne repayer pas immédiatement. Consultez votre commande dans quelques instants.",
+            "info"
+          );
+
+        }
+
+      },
+      120000
+    );
+
+  }
 
 }
