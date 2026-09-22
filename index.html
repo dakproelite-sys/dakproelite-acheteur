@@ -2,7 +2,7 @@
 <html lang="fr" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="theme-color" content="#d4af37">
 <meta name="application-name" content="DAKPROÉLITE">
@@ -17,6 +17,7 @@
 <link rel="icon" type="image/png" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 
+<link rel="preload" as="image" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -71,7 +72,7 @@ color:inherit;
 }
 
 /* =====================================================
-   HEADER
+   HEADER (AFFICHE IMMEDIATEMENT LE LOGO)
 ===================================================== */
 .header{
 position:sticky;
@@ -114,6 +115,7 @@ transform:scale(.94);
 width:100%;
 height:100%;
 object-fit:cover;
+display:block;
 }
 
 .fallback-logo{
@@ -325,7 +327,7 @@ font-weight:700;
 }
 
 /* =====================================================
-   PRODUITS (ADAPTATION AUTOMATIQUE DES IMAGES)
+   PRODUITS (CADRE QUI S'ADAPTE EXACTEMENT AU FORMAT DU PRODUIT)
 ===================================================== */
 .products{
 width:100%;
@@ -335,6 +337,7 @@ padding:10px;
 display: grid;
 grid-template-columns: repeat(2, 1fr);
 gap: 12px;
+align-items: start;
 flex:1;
 }
 
@@ -374,6 +377,7 @@ border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,.4);
 transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 overflow:hidden;
+height: 100%;
 }
 
 .card:hover{
@@ -411,13 +415,15 @@ box-shadow:0 2px 4px rgba(0,0,0,0.5);
 text-transform:uppercase;
 }
 
+/* LE MEDIA S'ADAPTE AUTOMATIQUEMENT SANS ESPACES BLANCS NI BORDURES INUTILES */
 .media-container {
 width: 100%;
-height: 160px;
+min-height: 130px;
+max-height: 260px;
 position: relative;
 border-radius: 8px;
 overflow: hidden;
-background: #080b10;
+background: transparent;
 display: flex;
 align-items: center;
 justify-content: center;
@@ -426,27 +432,30 @@ margin-bottom: 8px;
 
 .card img{
 width:100%;
-height:100%;
-object-fit:contain; /* S'adapte automatiquement à l'image sans déformer */
-background:#080b10;
+height:auto;
+max-height:260px;
+object-fit:cover;
 border-radius:8px;
+display:block;
 transition: transform 0.3s ease;
 }
 
 .card video{
 width:100%;
-height:100%;
+height:auto;
+max-height:260px;
 object-fit:cover;
 border-radius:8px;
+display:block;
 }
 
 .card:hover img {
-transform: scale(1.04);
+transform: scale(1.03);
 }
 
 .product-no-image{
 width:100%;
-height:100%;
+height:140px;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -455,6 +464,7 @@ background:#080b10;
 color:#777;
 font-size:10px;
 text-align:center;
+border-radius:8px;
 }
 
 .product-no-image strong{
@@ -469,12 +479,13 @@ flex-direction:column;
 align-items:center;
 justify-content:center;
 width:100%;
-height:100%;
+height:140px;
 background:#111;
 color:var(--gold);
 text-decoration:none;
 padding:10px 5px;
 text-align:center;
+border-radius:8px;
 }
 
 .doc-box span{
@@ -783,7 +794,7 @@ font-size:11px;
 
 <header class="header">
 <div class="logo-container" id="logoButton">
-<img class="logo" id="appLogo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE">
+<img class="logo" id="appLogo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" loading="eager">
 <span class="fallback-logo" id="fallbackLogo" style="display:none">DP</span>
 </div>
 
@@ -908,6 +919,18 @@ let currentIndex = 0;
 let totalSlides = 0;
 let autoPlay = null;
 
+// CHARGEMENT IMMEDIAT DEPUIS LE CACHE POUR UN AFFICHAGE EN 0 MILLISECONDE
+(function chargerCacheImmediat(){
+  try {
+    const cachedProducts = localStorage.getItem("dakpro_cached_publications");
+    if(cachedProducts) {
+      window.allProductsData = JSON.parse(cachedProducts);
+      buildCategories();
+      filterProducts();
+    }
+  } catch(e) {}
+})();
+
 // Écoute de l'état utilisateur & Mise à jour du badge du panier en temps réel
 onAuthStateChanged(auth, user => {
   siteContext.currentUser = user || null;
@@ -969,22 +992,13 @@ appLogo.style.display = "none";
 if(fallbackLogo) fallbackLogo.style.display = "block";
 });
 
-/* RECUPERATION DEPUIS "PUBLICATIONS" */
+/* RECUPERATION EN TEMPS REEL DEPUIS "PUBLICATIONS" */
 function loadProducts(){
-try {
-  const cachedProducts = localStorage.getItem("dakpro_cached_publications");
-  if(cachedProducts) {
-    window.allProductsData = JSON.parse(cachedProducts);
-    buildCategories();
-    filterProducts();
-  }
-} catch(e) {}
-
 onValue(ref(db, "publications"), snapshot => {
 const data = snapshot.val();
-window.allProductsData = [];
 
 if(!data || typeof data !== "object"){
+window.allProductsData = [];
 buildCategories();
 renderProducts([]);
 return;
@@ -1052,7 +1066,7 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* RENDU DES CARTES PRODUITS */
+/* RENDU DYNAMIQUE DE LA CARTE AVEC ADAPTATION DE CADRE PARFAITE */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
 const siteBase = "https://dakproelite-acheteur.vercel.app";
@@ -1269,7 +1283,7 @@ function checkUrlForSharedProduct() {
     modalContainer.innerHTML = `
         <div class="modal-overlay">
             <div class="modal-content">
-                <img src="${escapeAttribute(product.image || product.imageUrl || '')}" alt="${escapeHTML(product.nom || 'Produit')}" style="width:100%; height:220px; object-fit:contain; background:#080b10; border-radius:10px; margin-bottom:12px; border:1px solid #333;">
+                <img src="${escapeAttribute(product.image || product.imageUrl || '')}" alt="${escapeHTML(product.nom || 'Produit')}" style="width:100%; height:auto; max-height:280px; object-fit:contain; background:#080b10; border-radius:10px; margin-bottom:12px; border:1px solid #333;">
                 <h2 style="color: var(--gold); margin-bottom: 8px; font-size: 18px;">${escapeHTML(product.nom || product.title || 'Produit DAKPROÉLITE')}</h2>
                 
                 <div class="price-container" style="margin-bottom: 12px;">
