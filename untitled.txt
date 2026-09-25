@@ -1,20 +1,855 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+/**
+ * DAKPRO ÉLITE
+ * Vercel + FedaPay Webhook
+ *
+ * URL finale :
+ * https://TON-DOMAINE.com/api/fedapay-webhook
+ *
+ * IMPORTANT :
+ * - Aucune clé secrète dans le frontend.
+ * - La clé FedaPay est dans Vercel.
+ * - Le secret du webhook est dans Vercel.
+ * - Le paiement est vérifié directement auprès de FedaPay.
+ * - La commande n'est confirmée qu'après vérification réelle.
+ */
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
-  authDomain: "dakproelite.firebaseapp.com",
-  databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
-  projectId: "dakproelite",
-  storageBucket: "dakproelite.firebasestorage.app",
-  messagingSenderId: "580591769206",
-  appId: "1:580591769206:web:859724d4b2dbf904087157"
+const crypto = require("crypto");
+const admin = require("firebase-admin");
+
+
+// ============================================================
+// FIREBASE ADMIN
+// ============================================================
+
+if (!admin.apps.length) {
+
+  const serviceAccount =
+    JSON.parse(
+      process.env.FIREBASE_SERVICE_ACCOUNT_JSON
+    );
+
+  admin.initializeApp({
+    credential:
+      admin.credential.cert(serviceAccount),
+
+    databaseURL:
+      process.env.FIREBASE_DATABASE_URL
+  });
+}
+
+const db =
+  admin.database();
+
+
+// ============================================================
+// VERCEL
+// Garder le body brut pour vérifier la signature.
+// ============================================================
+
+module.exports.config = {
+  api: {
+    bodyParser: false
+  }
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
 
-export { app };
+// ============================================================
+// LECTURE DU BODY BRUT
+// ============================================================
+
+function readRawBody(req) {
+
+  return new Promise(
+    (resolve, reject) => {
+
+      let data = "";
+
+      req.on(
+        "data",
+        chunk => {
+          data += chunk;
+        }
+      );
+
+      req.on(
+        "end",
+        () => resolve(data)
+      );
+
+      req.on(
+        "error",
+        reject
+      );
+
+    }
+  );
+}
+
+
+// ============================================================
+// VÉRIFICATION SIGNATURE FEDAPAY
+// ============================================================
+
+function verifyFedaPaySignature(
+  rawBody,
+  receivedSignature,
+  secret
+) {
+
+  if (
+    !rawBody ||
+    !receivedSignature ||
+    !secret
+  ) {
+    return false;
+  }
+
+  const expectedSignature =
+    crypto
+      .createHmac(
+        "sha256",
+        secret
+      )
+      .update(
+        rawBody,
+        "utf8"
+      )
+      .digest("hex");
+
+
+  const received =
+    String(
+      receivedSignature
+    ).trim()
+    .replace(
+      /^sha256=/i,
+      ""
+    );
+
+
+  if (
+    received.length !==
+    expectedSignature.length
+  ) {
+    return false;
+  }
+
+
+  return crypto.timingSafeEqual(
+    Buffer.from(received),
+    Buffer.from(expectedSignature)
+  );
+}
+
+
+// ============================================================
+// EXTRACTION DES DONNÉES
+// ============================================================
+
+function extractEvent(data) {
+
+  const eventName =
+    data?.name ||
+    data?.event ||
+    data?.type ||
+    "";
+
+  const entity =
+    data?.entity ||
+    data?.data?.entity ||
+    data?.data ||
+    data?.transaction ||
+    {};
+
+
+  return {
+    name:
+      String(eventName),
+
+    entity:
+      entity || {}
+  };
+}
+
+
+// ============================================================
+// TRANSACTION FEDAPAY
+// Vérification indépendante auprès de l'API.
+// ============================================================
+
+async function getFedaPayTransaction(
+  transactionId
+) {
+
+  if (!transactionId) {
+    throw new Error(
+      "ID transaction FedaPay manquant."
+    );
+  }
+
+
+  const response =
+    await fetch(
+      `https://api.fedapay.com/v1/transactions/${encodeURIComponent(
+        transactionId
+      )}`,
+      {
+        method: "GET",
+
+        headers: {
+          "Authorization":
+            `Bearer ${process.env.FEDAPAY_SECRET_KEY}`,
+
+          "Content-Type":
+            "application/json"
+        }
+      }
+    );
+
+
+  const text =
+    await response.text();
+
+
+  let data = {};
+
+  try {
+    data =
+      JSON.parse(text);
+  } catch {
+    data = {
+      raw: text
+    };
+  }
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      `FedaPay API ${response.status}: ${text}`
+    );
+
+  }
+
+
+  return (
+    data?.v1?.transaction ||
+    data?.transaction ||
+    data?.data ||
+    data
+  );
+}
+
+
+// ============================================================
+// STATUTS ACCEPTÉS
+// ============================================================
+
+function isApproved(status) {
+
+  return [
+    "approved",
+    "paid",
+    "payé",
+    "payee"
+  ].includes(
+    String(status || "")
+      .toLowerCase()
+  );
+
+}
+
+
+function isFailed(status) {
+
+  return [
+    "declined",
+    "canceled",
+    "cancelled",
+    "failed",
+    "refunded"
+  ].includes(
+    String(status || "")
+      .toLowerCase()
+  );
+
+}
+
+
+// ============================================================
+// HANDLER
+// ============================================================
+
+module.exports = async function handler(
+  req,
+  res
+) {
+
+  // ----------------------------------------------------------
+  // MÉTHODE
+  // ----------------------------------------------------------
+
+  if (
+    req.method !== "POST"
+  ) {
+
+    return res
+      .status(405)
+      .json({
+        success: false,
+        message:
+          "Méthode non autorisée."
+      });
+
+  }
+
+
+  // ----------------------------------------------------------
+  // VARIABLES OBLIGATOIRES
+  // ----------------------------------------------------------
+
+  if (
+    !process.env.FEDAPAY_SECRET_KEY ||
+    !process.env.FEDAPAY_WEBHOOK_SECRET ||
+    !process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
+    !process.env.FIREBASE_DATABASE_URL
+  ) {
+
+    console.error(
+      "Variables Vercel manquantes."
+    );
+
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message:
+          "Configuration serveur incomplète."
+      });
+
+  }
+
+
+  try {
+
+    // --------------------------------------------------------
+    // BODY BRUT
+    // --------------------------------------------------------
+
+    const rawBody =
+      await readRawBody(req);
+
+
+    // --------------------------------------------------------
+    // SIGNATURE
+    // --------------------------------------------------------
+
+    const signature =
+      req.headers[
+        "x-fedapay-signature"
+      ];
+
+
+    const validSignature =
+      verifyFedaPaySignature(
+        rawBody,
+        signature,
+        process.env.FEDAPAY_WEBHOOK_SECRET
+      );
+
+
+    if (!validSignature) {
+
+      console.error(
+        "Signature FedaPay invalide."
+      );
+
+      return res
+        .status(401)
+        .json({
+          success: false,
+          message:
+            "Signature webhook invalide."
+        });
+
+    }
+
+
+    // --------------------------------------------------------
+    // JSON
+    // --------------------------------------------------------
+
+    let payload;
+
+    try {
+
+      payload =
+        JSON.parse(rawBody);
+
+    } catch {
+
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message:
+            "JSON webhook invalide."
+        });
+
+    }
+
+
+    const event =
+      extractEvent(payload);
+
+
+    console.log(
+      "FedaPay event :",
+      event.name
+    );
+
+
+    const entity =
+      event.entity || {};
+
+
+    // --------------------------------------------------------
+    // TRANSACTION ID
+    // --------------------------------------------------------
+
+    const transactionId =
+      entity.id ||
+      entity.transaction_id ||
+      payload?.transaction?.id ||
+      null;
+
+
+    if (!transactionId) {
+
+      console.warn(
+        "Webhook reçu sans ID transaction."
+      );
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          ignored: true,
+          message:
+            "Événement sans transaction."
+        });
+
+    }
+
+
+    // --------------------------------------------------------
+    // MÉTADONNÉES
+    // --------------------------------------------------------
+
+    const metadata =
+      entity.custom_metadata ||
+      entity.metadata ||
+      payload?.custom_metadata ||
+      {};
+
+
+    const orderId =
+      metadata.commandeId ||
+      metadata.commandeID ||
+      metadata.orderId ||
+      metadata.orderID ||
+      null;
+
+
+    const uid =
+      metadata.acheteurId ||
+      metadata.uid ||
+      metadata.userId ||
+      null;
+
+
+    // --------------------------------------------------------
+    // SI PAS DE COMMANDE DAKPRO
+    // --------------------------------------------------------
+
+    if (!orderId || !uid) {
+
+      console.warn(
+        "Transaction FedaPay sans métadonnées DAKPRO.",
+        {
+          transactionId,
+          metadata
+        }
+      );
+
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          ignored: true,
+          message:
+            "Transaction sans commande DAKPRO."
+        });
+
+    }
+
+
+    // --------------------------------------------------------
+    // RÉCUPÉRATION COMMANDE
+    // --------------------------------------------------------
+
+    const orderRef =
+      db.ref(
+        `commandes/${uid}/${orderId}`
+      );
+
+
+    const orderSnapshot =
+      await orderRef.once(
+        "value"
+      );
+
+
+    if (
+      !orderSnapshot.exists()
+    ) {
+
+      console.error(
+        "Commande introuvable :",
+        uid,
+        orderId
+      );
+
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          ignored: true,
+          message:
+            "Commande introuvable."
+        });
+
+    }
+
+
+    const order =
+      orderSnapshot.val() || {};
+
+
+    // --------------------------------------------------------
+    // IDEMPOTENCE
+    // Si déjà confirmé, ne rien refaire.
+    // --------------------------------------------------------
+
+    if (
+      order.paiementConfirme === true ||
+      String(
+        order.paiement?.statut || ""
+      ).toLowerCase() ===
+        "approved"
+    ) {
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          alreadyProcessed: true
+        });
+
+    }
+
+
+    // --------------------------------------------------------
+    // VÉRIFICATION DIRECTE FEDAPAY
+    // --------------------------------------------------------
+
+    const transaction =
+      await getFedaPayTransaction(
+        transactionId
+      );
+
+
+    const realStatus =
+      String(
+        transaction?.status ||
+        entity?.status ||
+        ""
+      ).toLowerCase();
+
+
+    const realAmount =
+      Number(
+        transaction?.amount ??
+        entity?.amount ??
+        0
+      );
+
+
+    const orderAmount =
+      Number(
+        order.montantTotal || 0
+      );
+
+
+    // --------------------------------------------------------
+    // VÉRIFICATION MONTANT
+    // --------------------------------------------------------
+
+    if (
+      realAmount !==
+      orderAmount
+    ) {
+
+      console.error(
+        "Montant différent !",
+        {
+          orderAmount,
+          realAmount,
+          orderId,
+          transactionId
+        }
+      );
+
+
+      await orderRef.update({
+
+        "paiement/statut":
+          "amount_mismatch",
+
+        "paiement/transactionId":
+          transactionId,
+
+        "paiement/verification":
+          "server_amount_mismatch",
+
+        "paiement/verifieLe":
+          Date.now(),
+
+        statutPaiement:
+          "amount_mismatch",
+
+        paiementConfirme:
+          false
+
+      });
+
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          status:
+            "amount_mismatch"
+        });
+
+    }
+
+
+    // --------------------------------------------------------
+    // PAIEMENT APPROUVÉ
+    // --------------------------------------------------------
+
+    if (
+      isApproved(realStatus)
+    ) {
+
+      await orderRef.update({
+
+        "paiement/statut":
+          "approved",
+
+        "paiement/transactionId":
+          transactionId,
+
+        "paiement/referenceFedaPay":
+          transaction?.reference ||
+          entity?.reference ||
+          null,
+
+        "paiement/statutFedaPay":
+          realStatus,
+
+        "paiement/verification":
+          "server_verified",
+
+        "paiement/verifieLe":
+          Date.now(),
+
+        "paiementConfirme":
+          true,
+
+        statut:
+          "Payée",
+
+        statutPaiement:
+          "paid",
+
+        statutLivraison:
+          "En attente de livraison"
+
+      });
+
+
+      // ------------------------------------------------------
+      // VIDAGE PANIER UNIQUEMENT APRÈS PAIEMENT CONFIRMÉ
+      // ------------------------------------------------------
+
+      await db.ref(
+        `users/${uid}/panier`
+      ).remove();
+
+
+      await db.ref(
+        `users/${uid}/gs/cart`
+      ).remove();
+
+
+      await db.ref(
+        `users/${uid}/gs/total`
+      ).set(0);
+
+
+      console.log(
+        "✅ Paiement confirmé :",
+        {
+          uid,
+          orderId,
+          transactionId,
+          amount: realAmount
+        }
+      );
+
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          paid: true,
+          orderId,
+          transactionId
+        });
+
+    }
+
+
+    // --------------------------------------------------------
+    // PAIEMENT ÉCHOUÉ / ANNULÉ
+    // --------------------------------------------------------
+
+    if (
+      isFailed(realStatus)
+    ) {
+
+      await orderRef.update({
+
+        "paiement/statut":
+          realStatus,
+
+        "paiement/transactionId":
+          transactionId,
+
+        "paiement/statutFedaPay":
+          realStatus,
+
+        "paiement/verification":
+          "server_verified",
+
+        "paiement/verifieLe":
+          Date.now(),
+
+        paiementConfirme:
+          false,
+
+        statutPaiement:
+          realStatus,
+
+        statut:
+          "Paiement non confirmé"
+
+      });
+
+
+      console.log(
+        "Paiement non confirmé :",
+        realStatus
+      );
+
+
+      return res
+        .status(200)
+        .json({
+          success: true,
+          paid: false,
+          status:
+            realStatus
+        });
+
+    }
+
+
+    // --------------------------------------------------------
+    // ENCORE EN ATTENTE
+    // --------------------------------------------------------
+
+    await orderRef.update({
+
+      "paiement/statut":
+        "pending",
+
+      "paiement/transactionId":
+        transactionId,
+
+      "paiement/statutFedaPay":
+        realStatus,
+
+      "paiement/verification":
+        "server_pending",
+
+      "paiement/verifieLe":
+        Date.now(),
+
+      paiementConfirme:
+        false,
+
+      statutPaiement:
+        "pending"
+
+    });
+
+
+    return res
+      .status(200)
+      .json({
+        success: true,
+        paid: false,
+        status:
+          realStatus
+      });
+
+
+  } catch (error) {
+
+    console.error(
+      "Erreur webhook FedaPay :",
+      error
+    );
+
+
+    /*
+     * Retour 500 afin que FedaPay puisse
+     * retenter la notification si nécessaire.
+     */
+
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message:
+          "Erreur interne webhook."
+      });
+
+  }
+
+};

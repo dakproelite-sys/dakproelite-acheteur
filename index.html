@@ -841,7 +841,7 @@ Installer l'application sur l'appareil
 <div class="footer-column">
 <h5>Navigation & Aide</h5>
 <ul>
-<li><a href="support-rapide.html">Support Rapide</a></li>
+<li><a href="#" class="btn-load-support">Support Rapide</a></li>
 <li><a href="aide.html">Centre d'aide général</a></li>
 <li><a href="profil-acheteur.html">Mon Compte</a></li>
 </ul>
@@ -860,7 +860,7 @@ Installer l'application sur l'appareil
 <ul>
 <li><a href="programme-ambassadeur.html">Programme Ambassadeur</a></li>
 <li><a href="programme-ambassadeur.html">Affiliation</a></li>
-<li><a href="devenir-vendeur.html">Devenir Vendeur</a></li>
+<li><a href="#" class="btn-load-support">Devenir Vendeur</a></li>
 </ul>
 </div>
 
@@ -868,7 +868,7 @@ Installer l'application sur l'appareil
 <h5>Sécurité & Service</h5>
 <ul>
 <li><a href="paiement-securise.html">Paiement Sécurisé</a></li>
-<li><a href="support-rapide.html">Contacter l'assistance</a></li>
+<li><a href="#" class="btn-load-support">Contacter l'assistance</a></li>
 </ul>
 </div>
 </div>
@@ -1400,6 +1400,28 @@ text.textContent = data.texte || data.text || "Bienvenue sur DAKPROÉLITE, votre
 });
 }
 
+/* REDIRECTION DYNAMIQUE VERS SUPPORT-RAPIDE.JS */
+function initSupportRedirects() {
+  document.querySelectorAll(".btn-load-support").forEach(element => {
+    element.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (window.loadSupportScript) {
+        window.loadSupportScript();
+      } else {
+        const script = document.createElement("script");
+        script.src = "support-rapide.js";
+        script.onload = () => {
+          if (window.loadSupportScript) window.loadSupportScript();
+        };
+        script.onerror = () => {
+          console.error("Erreur lors du chargement de support-rapide.js");
+        };
+        document.body.appendChild(script);
+      }
+    });
+  });
+}
+
 /* PWA INSTALLATION */
 let deferredPrompt = null;
 window.addEventListener("beforeinstallprompt", event => {
@@ -1420,6 +1442,7 @@ document.getElementById("btnInstall").style.display = "none";
 loadProducts();
 loadBanners();
 loadAnnouncement();
+initSupportRedirects();
 </script>
 
 </body>
