@@ -215,32 +215,6 @@
       text-decoration: underline;
     }
 
-    .password-rules {
-      background: #f8fafc;
-      border: 1px solid var(--border-color);
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 10px;
-      font-size: 12px;
-    }
-
-    .password-rules ul {
-      list-style: none;
-    }
-
-    .password-rules li {
-      margin-bottom: 6px;
-      color: var(--danger-color);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 500;
-    }
-
-    .password-rules li.valid {
-      color: var(--success-color);
-    }
-
     .terms-group {
       display: flex;
       align-items: flex-start;
@@ -309,7 +283,7 @@
 
     /* SECTION PROFIL VENDEUR (Affichée après connexion) */
     .profile-card {
-      display: none; /* Masqué par défaut */
+      display: none;
       background: var(--card-bg);
       width: 100%;
       max-width: 550px;
@@ -486,19 +460,10 @@
       </div>
 
       <div class="form-group">
-        <label for="regPassword">Créer un mot de passe sécurisé</label>
+        <label for="regPassword">Créer un mot de passe</label>
         <div class="input-wrapper">
-          <input type="password" id="regPassword" placeholder="Saisissez votre mot de passe" oninput="validatePassword()" required>
+          <input type="password" id="regPassword" placeholder="Saisissez votre mot de passe (min. 6 caractères)" required minlength="6">
           <i class="fa-solid fa-eye toggle-password" onclick="togglePasswordVisibility('regPassword', this)"></i>
-        </div>
-
-        <div class="password-rules">
-          <ul>
-            <li id="ruleLength"><i class="fa-solid fa-xmark"></i> Au moins 6 caractères</li>
-            <li id="ruleUpper"><i class="fa-solid fa-xmark"></i> Au moins une lettre majuscule (A-Z)</li>
-            <li id="ruleLower"><i class="fa-solid fa-xmark"></i> Au moins une lettre minuscule (a-z)</li>
-            <li id="ruleNumber"><i class="fa-solid fa-xmark"></i> Au moins un chiffre (0-9)</li>
-          </ul>
         </div>
       </div>
 
@@ -582,9 +547,9 @@
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // Remplacez ces valeurs par vos clés Firebase réelles
+    // ⚠️ ATTENTION : Remplacer ces valeurs par les clés réelles de votre projet Firebase
     const firebaseConfig = {
-      apiKey: "VOTRE_API_KEY",
+      apiKey: "VOTRE_API_KEY_REELLE",
       authDomain: "votre-app.firebaseapp.com",
       databaseURL: "https://votre-app-default-rtdb.firebaseio.com",
       projectId: "votre-app-id",
@@ -597,7 +562,7 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
-    // ÉCOUTEUR D'ÉTAT D'AUTHENTIFICATION (Gère la vue profil / connexion)
+    // ÉCOUTEUR D'ÉTAT D'AUTHENTIFICATION
     onAuthStateChanged(auth, async (user) => {
       const authSection = document.getElementById('authSection');
       const profileSection = document.getElementById('profileSection');
@@ -605,14 +570,12 @@
       const heroSubtitle = document.getElementById('heroSubtitle');
 
       if (user) {
-        // L'utilisateur est connecté -> Masquer la connexion et Afficher le Profil
         authSection.style.display = 'none';
         profileSection.style.display = 'block';
 
         heroTitle.innerText = "Bienvenue dans votre Espace Vendeur";
         heroSubtitle.innerText = "Gérez les informations de votre boutique et accédez à l'ensemble de vos outils vendeurs.";
 
-        // Charger les informations vendeurs depuis la base de données
         try {
           const snapshot = await get(ref(database, 'users/' + user.uid));
           if (snapshot.exists()) {
@@ -634,7 +597,6 @@
         }
 
       } else {
-        // Aucun utilisateur connecté -> Afficher les formulaires de connexion / inscription
         authSection.style.display = 'block';
         profileSection.style.display = 'none';
 
@@ -659,11 +621,6 @@
         return;
       }
 
-      if (!checkAllPasswordRules(password)) {
-        alert("Veuillez respecter toutes les exigences requises pour le mot de passe.");
-        return;
-      }
-
       try {
         btn.innerText = "Création du compte...";
         btn.disabled = true;
@@ -671,7 +628,7 @@
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Sauvegarder les informations dans Firebase Realtime Database
+        // Sauvegarde dans la base de données Firebase avec le rôle "vendeur"
         await set(ref(database, 'users/' + user.uid), {
           uid: user.uid,
           nomBoutique: name,
@@ -681,7 +638,6 @@
           dateInscription: new Date().toISOString()
         });
 
-        // La redirection vers le profil se fait automatiquement via onAuthStateChanged
       } catch (error) {
         console.error("Erreur d'inscription:", error);
         alert("Erreur d'inscription : " + error.message);
@@ -703,7 +659,6 @@
         btn.disabled = true;
 
         await signInWithEmailAndPassword(auth, email, password);
-        // La redirection vers le profil se fait automatiquement via onAuthStateChanged
 
       } catch (error) {
         console.error("Erreur de connexion:", error);
@@ -739,7 +694,7 @@
     };
   </script>
 
-  <!-- Script d'interaction UI -->
+  <!-- Script UI -->
   <script>
     function switchTab(tab) {
       const loginForm = document.getElementById('loginForm');
@@ -780,35 +735,6 @@
         icon.classList.remove("fa-eye-slash");
         icon.classList.add("fa-eye");
       }
-    }
-
-    function validatePassword() {
-      const pwd = document.getElementById('regPassword').value;
-
-      const hasLength = pwd.length >= 6;
-      const hasUpper = /[A-Z]/.test(pwd);
-      const hasLower = /[a-z]/.test(pwd);
-      const hasNumber = /[0-9]/.test(pwd);
-
-      updateRule('ruleLength', hasLength);
-      updateRule('ruleUpper', hasUpper);
-      updateRule('ruleLower', hasLower);
-      updateRule('ruleNumber', hasNumber);
-    }
-
-    function updateRule(elementId, isValid) {
-      const el = document.getElementById(elementId);
-      if (isValid) {
-        el.classList.add('valid');
-        el.querySelector('i').className = "fa-solid fa-check";
-      } else {
-        el.classList.remove('valid');
-        el.querySelector('i').className = "fa-solid fa-xmark";
-      }
-    }
-
-    function checkAllPasswordRules(pwd) {
-      return pwd.length >= 6 && /[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /[0-9]/.test(pwd);
     }
   </script>
 </body>
