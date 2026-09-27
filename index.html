@@ -694,7 +694,7 @@ font-size:11px;
 
 .footer-links-grid{
 display:grid;
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:repeat(3,1fr);
 gap:20px;
 width:100%;
 max-width:1000px;
@@ -748,9 +748,9 @@ font-size:13px;
 color:#ff8080;
 }
 
-@media(min-width:700px){
+@media(max-width:700px){
 .footer-links-grid{
-grid-template-columns:repeat(4,1fr);
+grid-template-columns:repeat(2,1fr);
 }
 }
 
@@ -777,6 +777,9 @@ font-size:15px;
 height:38px;
 padding:0 11px;
 font-size:11px;
+}
+.footer-links-grid{
+grid-template-columns:1fr;
 }
 }
 </style>
@@ -860,15 +863,7 @@ Installer l'application sur l'appareil
 <ul>
 <li><a href="programme-ambassadeur.html">Programme Ambassadeur</a></li>
 <li><a href="programme-ambassadeur.html">Affiliation</a></li>
-<li><a href="#" class="btn-load-support">Devenir Vendeur</a></li>
-</ul>
-</div>
-
-<div class="footer-column">
-<h5>Sécurité & Service</h5>
-<ul>
-<li><a href="paiement-securise.html">Paiement Sécurisé</a></li>
-<li><a href="#" class="btn-load-support">Contacter l'assistance</a></li>
+<li><a href="vendeur.html">Devenir Vendeur</a></li>
 </ul>
 </div>
 </div>
@@ -877,6 +872,9 @@ Installer l'application sur l'appareil
 © 2026 DAKPROÉLITE / DAKPRO NEXUS. Tous droits réservés.
 </div>
 </footer>
+
+<!-- CHARGEMENT DU FICHIER SUPPORT RAPIDE -->
+<script src="support-rapide.js"></script>
 
 <!-- FIREBASE INTEGRATION -->
 <script type="module">
@@ -1405,13 +1403,13 @@ function initSupportRedirects() {
   document.querySelectorAll(".btn-load-support").forEach(element => {
     element.addEventListener("click", (e) => {
       e.preventDefault();
-      if (window.loadSupportScript) {
+      if (typeof window.loadSupportScript === "function") {
         window.loadSupportScript();
       } else {
         const script = document.createElement("script");
         script.src = "support-rapide.js";
         script.onload = () => {
-          if (window.loadSupportScript) window.loadSupportScript();
+          if (typeof window.loadSupportScript === "function") window.loadSupportScript();
         };
         script.onerror = () => {
           console.error("Erreur lors du chargement de support-rapide.js");

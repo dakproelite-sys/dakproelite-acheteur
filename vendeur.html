@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAKPRO ÉLITE - ESPACE VENDEUR INTERNATIONAL</title>
+  
+  <!-- FontAwesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-gold: #d4af37;
+      --secondary-gold: #f39c12;
+      --dark-gray: #121212;
+      --card-gray: #1e1e1e;
+      --light-bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-main: #2c3e50;
+      --text-muted: #7f8c8d;
+      --border-color: #e2e8f0;
+      --success-color: #2ecc71;
+      --danger-color: #e74c3c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px 15px;
+    }
+
+    /* En-tête Premium */
+    .header-container {
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      margin-bottom: 24px;
+    }
+
+    .vendeur-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 28px 20px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--primary-gold);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .vendeur-hero h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 10px;
+    }
+
+    .vendeur-hero p {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #94a3b8;
+    }
+
+    .vendeur-hero .badges {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary-gold);
+    }
+
+    .vendeur-hero .badges span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    /* Carte Authentification */
+    .auth-card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 480px;
+      padding: 32px 28px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--border-color);
+    }
+
+    /* Onglets de Basculement */
+    .auth-tabs {
+      display: flex;
+      background-color: #f1f5f9;
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-radius: 8px;
+    }
+
+    .tab-btn.active {
+      background-color: var(--card-bg);
+      color: var(--dark-gray);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Formulaires */
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 12px 42px 12px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      background-color: #f8fafc;
+      transition: all 0.2s ease;
+      color: var(--text-main);
+    }
+
+    .input-wrapper input:focus {
+      border-color: var(--secondary-gold);
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      cursor: pointer;
+      color: #94a3b8;
+      font-size: 15px;
+      user-select: none;
+    }
+
+    .toggle-password:hover {
+      color: var(--dark-gray);
+    }
+
+    .forgot-link-container {
+      text-align: right;
+      margin-top: -6px;
+      margin-bottom: 18px;
+    }
+
+    .forgot-link-container a {
+      font-size: 12px;
+      color: var(--secondary-gold);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .forgot-link-container a:hover {
+      text-decoration: underline;
+    }
+
+    .password-rules {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    .password-rules ul {
+      list-style: none;
+    }
+
+    .password-rules li {
+      margin-bottom: 6px;
+      color: var(--danger-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .password-rules li.valid {
+      color: var(--success-color);
+    }
+
+    .terms-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 22px;
+      font-size: 12.5px;
+      color: #475569;
+      line-height: 1.4;
+    }
+
+    .terms-group input {
+      margin-top: 2px;
+      accent-color: var(--secondary-gold);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .terms-group a {
+      color: var(--secondary-gold);
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      background-color: var(--dark-gray);
+      color: var(--primary-gold);
+      border: 1px solid var(--primary-gold);
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #000000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .switch-text {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .switch-text a {
+      color: var(--secondary-gold);
+      text-decoration: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .info-box {
+      background: #f0f7ff;
+      border-left: 4px solid var(--secondary-gold);
+      padding: 12px;
+      font-size: 12.5px;
+      color: #1e293b;
+      margin-bottom: 18px;
+      border-radius: 6px;
+    }
+
+    /* SECTION PROFIL VENDEUR (Affichée après connexion) */
+    .profile-card {
+      display: none; /* Masqué par défaut */
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 550px;
+      padding: 32px 28px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border-color);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .profile-avatar {
+      width: 64px;
+      height: 64px;
+      background: #0f172a;
+      color: var(--primary-gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      border: 2px solid var(--primary-gold);
+    }
+
+    .profile-title-box h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--dark-gray);
+    }
+
+    .profile-title-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .profile-badge {
+      display: inline-block;
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .info-item {
+      background: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid #edf2f7;
+    }
+
+    .info-item span.label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .info-item span.value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-gray);
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #ef4444;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .logout-btn:hover {
+      background-color: #dc2626;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- En-tête -->
+  <div class="header-container">
+    <div class="vendeur-hero">
+      <div class="brand-title">DAKPRO ÉLITE</div>
+      <h1 id="heroTitle">Espace Vendeur International</h1>
+      <p id="heroSubtitle">Développez votre commerce à l'international. Déposez vos produits, gérez vos commandes et vendez auprès de milliers d'acheteurs actifs.</p>
+      <div class="badges">
+        <span><i class="fa-solid fa-earth-americas"></i> Marché Global</span>
+        <span><i class="fa-solid fa-boxes-packing"></i> Expédition Simple</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOC 1 : Formulaires d'authentification -->
+  <div class="auth-card" id="authSection">
+    
+    <div class="auth-tabs" id="tabsHeader">
+      <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Se connecter</button>
+      <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">Créer un compte</button>
+    </div>
+
+    <!-- Formulaire 1 : Connexion -->
+    <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="loginEmail">Adresse E-mail</label>
+        <div class="input-wrapper">
+          <input type="email" id="loginEmail" placeholder="vendeur@exemple.com" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Mot de passe</label>
+        <div class="input-wrapper">
+          <input type="password" id="loginPassword" placeholder="••••••••" required>
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePasswordVisibility('loginPassword', this)"></i>
+        </div>
+      </div>
+
+      <div class="forgot-link-container">
+        <a onclick="switchTab('forgot')">Mot de passe oublié ?</a>
+      </div>
+
+      <button type="submit" class="submit-btn" id="loginBtn">Se connecter à mon Espace</button>
+      
+      <p class="switch-text">
+        Nouveau vendeur ? <a onclick="switchTab('register')">S'inscrire gratuitement</a>
+      </p>
+    </form>
+
+    <!-- Formulaire 2 : Inscription Vendeur -->
+    <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label for="regName">Nom complet / Nom de la Boutique</label>
+        <div class="input-wrapper">
+          <input type="text" id="regName" placeholder="Ex: Boutique Élite International" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="regEmail">Adresse E-mail</label>
+        <div class="input-wrapper">
+          <input type="email" id="regEmail" placeholder="vendeur@exemple.com" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="regPhone">Numéro de Téléphone / WhatsApp</label>
+        <div class="input-wrapper">
+          <input type="tel" id="regPhone" placeholder="+229 01 00 00 00 00" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="regPassword">Créer un mot de passe sécurisé</label>
+        <div class="input-wrapper">
+          <input type="password" id="regPassword" placeholder="Saisissez votre mot de passe" oninput="validatePassword()" required>
+          <i class="fa-solid fa-eye toggle-password" onclick="togglePasswordVisibility('regPassword', this)"></i>
+        </div>
+
+        <div class="password-rules">
+          <ul>
+            <li id="ruleLength"><i class="fa-solid fa-xmark"></i> Au moins 6 caractères</li>
+            <li id="ruleUpper"><i class="fa-solid fa-xmark"></i> Au moins une lettre majuscule (A-Z)</li>
+            <li id="ruleLower"><i class="fa-solid fa-xmark"></i> Au moins une lettre minuscule (a-z)</li>
+            <li id="ruleNumber"><i class="fa-solid fa-xmark"></i> Au moins un chiffre (0-9)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="terms-group">
+        <input type="checkbox" id="acceptTerms" required>
+        <label for="acceptTerms">J'accepte les <a href="#">conditions d'utilisation</a> et la politique de confidentialité de DAKPRO ÉLITE.</label>
+      </div>
+
+      <button type="submit" class="submit-btn" id="registerBtn">Valider et Créer mon Compte</button>
+
+      <p class="switch-text">
+        Déjà un compte ? <a onclick="switchTab('login')">Se connecter</a>
+      </p>
+    </form>
+
+    <!-- Formulaire 3 : Mot de passe oublié -->
+    <form id="forgotForm" class="auth-form" onsubmit="handleForgotPassword(event)">
+      <div class="info-box">
+        Saisissez l'adresse e-mail de votre compte. Vous recevrez un lien de réinitialisation sécurisé.
+      </div>
+
+      <div class="form-group">
+        <label for="forgotEmail">Adresse E-mail du compte</label>
+        <div class="input-wrapper">
+          <input type="email" id="forgotEmail" placeholder="vendeur@exemple.com" required>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">Envoyer l'e-mail</button>
+
+      <p class="switch-text">
+        Vous vous en souvenez ? <a onclick="switchTab('login')">Retour à la connexion</a>
+      </p>
+    </form>
+
+  </div>
+
+  <!-- BLOC 2 : PROFIL VENDEUR (Affiché automatiquement une fois connecté) -->
+  <div class="profile-card" id="profileSection">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <i class="fa-solid fa-store"></i>
+      </div>
+      <div class="profile-title-box">
+        <h2 id="viewBoutiqueName">Chargement...</h2>
+        <p id="viewEmail">...</p>
+        <span class="profile-badge" id="viewRole">Vendeur Officiel</span>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="label">Identifiant unique (UID)</span>
+        <span class="value" id="viewUid">-</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Numéro de Téléphone / WhatsApp</span>
+        <span class="value" id="viewPhone">-</span>
+      </div>
+      <div class="info-item">
+        <span class="label">Statut du compte</span>
+        <span class="value" style="color: var(--success-color);"><i class="fa-solid fa-circle-check"></i> Actif / Vérifié</span>
+      </div>
+    </div>
+
+    <button type="button" class="logout-btn" onclick="handleLogout()">
+      <i class="fa-solid fa-right-from-bracket"></i> Se déconnecter
+    </button>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      sendPasswordResetEmail,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // Remplacez ces valeurs par vos clés Firebase réelles
+    const firebaseConfig = {
+      apiKey: "VOTRE_API_KEY",
+      authDomain: "votre-app.firebaseapp.com",
+      databaseURL: "https://votre-app-default-rtdb.firebaseio.com",
+      projectId: "votre-app-id",
+      storageBucket: "votre-app.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    // ÉCOUTEUR D'ÉTAT D'AUTHENTIFICATION (Gère la vue profil / connexion)
+    onAuthStateChanged(auth, async (user) => {
+      const authSection = document.getElementById('authSection');
+      const profileSection = document.getElementById('profileSection');
+      const heroTitle = document.getElementById('heroTitle');
+      const heroSubtitle = document.getElementById('heroSubtitle');
+
+      if (user) {
+        // L'utilisateur est connecté -> Masquer la connexion et Afficher le Profil
+        authSection.style.display = 'none';
+        profileSection.style.display = 'block';
+
+        heroTitle.innerText = "Bienvenue dans votre Espace Vendeur";
+        heroSubtitle.innerText = "Gérez les informations de votre boutique et accédez à l'ensemble de vos outils vendeurs.";
+
+        // Charger les informations vendeurs depuis la base de données
+        try {
+          const snapshot = await get(ref(database, 'users/' + user.uid));
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            document.getElementById('viewBoutiqueName').innerText = data.nomBoutique || "Boutique Vendeur";
+            document.getElementById('viewEmail').innerText = data.email || user.email;
+            document.getElementById('viewPhone').innerText = data.telephone || "Non renseigné";
+            document.getElementById('viewRole').innerText = (data.role || "vendeur").toUpperCase();
+            document.getElementById('viewUid').innerText = user.uid;
+          } else {
+            document.getElementById('viewBoutiqueName').innerText = "Compte Vendeur";
+            document.getElementById('viewEmail').innerText = user.email;
+            document.getElementById('viewUid').innerText = user.uid;
+          }
+        } catch (err) {
+          console.error("Erreur de récupération des données :", err);
+          document.getElementById('viewEmail').innerText = user.email;
+          document.getElementById('viewUid').innerText = user.uid;
+        }
+
+      } else {
+        // Aucun utilisateur connecté -> Afficher les formulaires de connexion / inscription
+        authSection.style.display = 'block';
+        profileSection.style.display = 'none';
+
+        heroTitle.innerText = "Espace Vendeur International";
+        heroSubtitle.innerText = "Développez votre commerce à l'international. Déposez vos produits, gérez vos commandes et vendez auprès de milliers d'acheteurs actifs.";
+      }
+    });
+
+    // INSCRIPTION VENDEUR
+    window.handleRegister = async function(event) {
+      event.preventDefault();
+      const btn = document.getElementById('registerBtn');
+
+      const name = document.getElementById('regName').value;
+      const email = document.getElementById('regEmail').value;
+      const phone = document.getElementById('regPhone').value;
+      const password = document.getElementById('regPassword').value;
+      const termsAccepted = document.getElementById('acceptTerms').checked;
+
+      if (!termsAccepted) {
+        alert("Vous devez accepter les conditions d'utilisation.");
+        return;
+      }
+
+      if (!checkAllPasswordRules(password)) {
+        alert("Veuillez respecter toutes les exigences requises pour le mot de passe.");
+        return;
+      }
+
+      try {
+        btn.innerText = "Création du compte...";
+        btn.disabled = true;
+
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Sauvegarder les informations dans Firebase Realtime Database
+        await set(ref(database, 'users/' + user.uid), {
+          uid: user.uid,
+          nomBoutique: name,
+          email: email,
+          telephone: phone,
+          role: "vendeur",
+          dateInscription: new Date().toISOString()
+        });
+
+        // La redirection vers le profil se fait automatiquement via onAuthStateChanged
+      } catch (error) {
+        console.error("Erreur d'inscription:", error);
+        alert("Erreur d'inscription : " + error.message);
+      } finally {
+        btn.innerText = "Valider et Créer mon Compte";
+        btn.disabled = false;
+      }
+    };
+
+    // CONNEXION
+    window.handleLogin = async function(event) {
+      event.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        btn.innerText = "Connexion en cours...";
+        btn.disabled = true;
+
+        await signInWithEmailAndPassword(auth, email, password);
+        // La redirection vers le profil se fait automatiquement via onAuthStateChanged
+
+      } catch (error) {
+        console.error("Erreur de connexion:", error);
+        alert("Erreur de connexion : Identifiants incorrects ou utilisateur introuvable.");
+      } finally {
+        btn.innerText = "Se connecter à mon Espace";
+        btn.disabled = false;
+      }
+    };
+
+    // MOT DE PASSE OUBLIÉ
+    window.handleForgotPassword = async function(event) {
+      event.preventDefault();
+      const email = document.getElementById('forgotEmail').value;
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        alert("Un e-mail de réinitialisation sécurisé a été envoyé à : " + email);
+        switchTab('login');
+      } catch (error) {
+        console.error("Erreur de réinitialisation:", error);
+        alert("Erreur : Impossible d'envoyer l'e-mail.");
+      }
+    };
+
+    // DÉCONNEXION
+    window.handleLogout = async function() {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("Erreur de déconnexion:", error);
+      }
+    };
+  </script>
+
+  <!-- Script d'interaction UI -->
+  <script>
+    function switchTab(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const forgotForm = document.getElementById('forgotForm');
+      const tabsHeader = document.getElementById('tabsHeader');
+      const tabLogin = document.getElementById('tabLogin');
+      const tabRegister = document.getElementById('tabRegister');
+
+      loginForm.classList.remove('active');
+      registerForm.classList.remove('active');
+      forgotForm.classList.remove('active');
+
+      if (tab === 'login') {
+        tabsHeader.style.display = 'flex';
+        loginForm.classList.add('active');
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+      } else if (tab === 'register') {
+        tabsHeader.style.display = 'flex';
+        registerForm.classList.add('active');
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+      } else if (tab === 'forgot') {
+        tabsHeader.style.display = 'none';
+        forgotForm.classList.add('active');
+      }
+    }
+
+    function togglePasswordVisibility(inputId, icon) {
+      const input = document.getElementById(inputId);
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    }
+
+    function validatePassword() {
+      const pwd = document.getElementById('regPassword').value;
+
+      const hasLength = pwd.length >= 6;
+      const hasUpper = /[A-Z]/.test(pwd);
+      const hasLower = /[a-z]/.test(pwd);
+      const hasNumber = /[0-9]/.test(pwd);
+
+      updateRule('ruleLength', hasLength);
+      updateRule('ruleUpper', hasUpper);
+      updateRule('ruleLower', hasLower);
+      updateRule('ruleNumber', hasNumber);
+    }
+
+    function updateRule(elementId, isValid) {
+      const el = document.getElementById(elementId);
+      if (isValid) {
+        el.classList.add('valid');
+        el.querySelector('i').className = "fa-solid fa-check";
+      } else {
+        el.classList.remove('valid');
+        el.querySelector('i').className = "fa-solid fa-xmark";
+      }
+    }
+
+    function checkAllPasswordRules(pwd) {
+      return pwd.length >= 6 && /[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /[0-9]/.test(pwd);
+    }
+  </script>
+</body>
+</html>
