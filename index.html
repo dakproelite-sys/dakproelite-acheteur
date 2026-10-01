@@ -14,13 +14,19 @@
 
 <link rel="manifest" href="manifest.json">
 
-<link rel="icon" type="image/png" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
-<link rel="apple-touch-icon" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
+<link rel="icon" type="image/png"
+href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 
-<link rel="preload" as="image" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
+<link rel="apple-touch-icon"
+href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
+
+<link rel="preload" as="image"
+href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+
 :root{
 --gold:#d4af37;
 --gold-light:#f3e5ab;
@@ -59,11 +65,15 @@ overflow-x:hidden;
 top:0!important;
 }
 
-button,input,select,textarea{
+button,
+input,
+select,
+textarea{
 font-family:inherit;
 }
 
-button,a{
+button,
+a{
 -webkit-tap-highlight-color:transparent;
 }
 
@@ -72,1375 +82,3994 @@ color:inherit;
 }
 
 /* =====================================================
-   HEADER (STABLE AVEC LOGO FIXE DYNAMIQUE)
+HEADER
 ===================================================== */
+
 .header{
 position:sticky;
 top:0;
 z-index:5000;
 width:100%;
 min-height:62px;
+
 display:flex;
 align-items:center;
+
 gap:10px;
-padding:9px max(10px,env(safe-area-inset-right)) 9px max(10px,env(safe-area-inset-left));
-background:linear-gradient(to bottom,#131921,#050505);
+
+padding:
+9px
+max(10px,env(safe-area-inset-right))
+9px
+max(10px,env(safe-area-inset-left));
+
+background:linear-gradient(
+to bottom,
+#131921,
+#050505
+);
+
 border-bottom:2px solid var(--gold);
 }
 
+/* =====================================================
+LOGO — STABLE ET SANS DÉFORMATION
+===================================================== */
+
 .logo-container{
+
 width:42px;
 height:42px;
+
+min-width:42px;
+min-height:42px;
+
 flex:0 0 42px;
+
 border-radius:50%;
+
 border:2px solid var(--gold);
+
 overflow:hidden;
+
 display:flex;
 align-items:center;
 justify-content:center;
+
 background:#000;
+
 cursor:pointer;
-flex-shrink:0;
+
+box-shadow:
+inset 0 0 0 1px rgba(255,255,255,.08),
+inset 0 0 7px rgba(0,0,0,.75),
+0 1px 3px rgba(0,0,0,.8);
+
+/* aucune animation */
+transform:none !important;
+transition:none !important;
+animation:none !important;
 }
+
+/* IMAGE DU LOGO */
 
 .logo{
+
+display:block;
+
 width:100%;
 height:100%;
-object-fit:cover;
-display:block;
+
+max-width:100%;
+max-height:100%;
+
+object-fit:contain;
+object-position:center;
+
+background:#000;
+
+transform:none !important;
+transition:none !important;
+animation:none !important;
+
+filter:none !important;
 }
+
+/* Aucun mouvement */
+
+.logo-container:hover,
+.logo-container:active,
+.logo-container:focus{
+
+transform:none !important;
+transition:none !important;
+animation:none !important;
+}
+
+.logo-container:hover .logo,
+.logo-container:active .logo,
+.logo-container:focus .logo{
+
+transform:none !important;
+transition:none !important;
+animation:none !important;
+
+filter:none !important;
+}
+
+/* Logo de secours */
 
 .fallback-logo{
+
 color:var(--gold);
+
 font-size:12px;
+
 font-weight:800;
+
 }
 
+/* =====================================================
+RECHERCHE
+===================================================== */
+
 .search-container{
+
 flex:1;
+
 min-width:0;
+
 }
 
 #searchBar{
+
 width:100%;
+
 height:40px;
+
 border:2px solid var(--gold);
+
 border-radius:24px;
+
 background:#000;
+
 color:#fff;
+
 padding:0 15px;
+
 outline:none;
+
 font-size:13px;
-box-shadow:0 0 10px rgba(212,175,55,.12);
+
+box-shadow:
+0 0 10px rgba(212,175,55,.12);
+
 }
 
 #searchBar::placeholder{
+
 color:#888;
+
 }
 
+/* =====================================================
+NAVIGATION
+===================================================== */
+
 .nav-icons{
+
 display:flex;
+
 align-items:center;
+
 gap:10px;
+
 flex-shrink:0;
+
 }
 
 .nav-item{
+
 position:relative;
+
 min-width:38px;
+
 display:flex;
+
 flex-direction:column;
+
 align-items:center;
+
 justify-content:center;
+
 color:#fff;
+
 text-decoration:none;
+
 font-size:9px;
+
 cursor:pointer;
+
 }
 
 .nav-item>span:first-child{
+
 font-size:17px;
+
 line-height:18px;
+
 }
 
 .nav-item:hover{
+
 color:var(--gold);
+
 }
 
-/* MACARON RED DOT / BADGE DU PANIER */
-.cart-badge {
-position: absolute;
-top: -4px;
-right: 2px;
-background: var(--red);
-color: #fff;
-font-size: 10px;
-font-weight: 700;
-border-radius: 10px;
-padding: 1px 5px;
-min-width: 16px;
-text-align: center;
-line-height: 1.2;
-display: none;
-border: 1px solid var(--black);
-}
+/* PANIER */
 
-/* =====================================================
-   INSTALLATION PWA
-===================================================== */
-#btnInstall{
-display:none;
-width:calc(100% - 30px);
-max-width:600px;
-margin:12px auto;
-padding:11px;
-background:#333;
-border:1px solid var(--gold);
-border-radius:10px;
-text-align:center;
+.cart-badge{
+
+position:absolute;
+
+top:-4px;
+right:2px;
+
+background:var(--red);
+
 color:#fff;
-cursor:pointer;
-font-size:13px;
-font-weight:600;
+
+font-size:10px;
+
+font-weight:700;
+
+border-radius:10px;
+
+padding:1px 5px;
+
+min-width:16px;
+
+text-align:center;
+
+line-height:1.2;
+
+display:none;
+
+border:1px solid var(--black);
+
 }
 
 /* =====================================================
-   BANNIÈRE
+INSTALLATION
 ===================================================== */
-.banner-container{
+
+#btnInstall{
+
 display:none;
-position:relative;
-width:94%;
-max-width:1400px;
-margin:15px auto;
-overflow:hidden;
+
+width:calc(100% - 30px);
+
+max-width:600px;
+
+margin:12px auto;
+
+padding:11px;
+
+background:#333;
+
 border:1px solid var(--gold);
+
+border-radius:10px;
+
+text-align:center;
+
+color:#fff;
+
+cursor:pointer;
+
+font-size:13px;
+
+font-weight:600;
+
+}
+
+/* =====================================================
+BANNIÈRES
+===================================================== */
+
+.banner-container{
+
+display:none;
+
+position:relative;
+
+width:94%;
+
+max-width:1400px;
+
+margin:15px auto;
+
+overflow:hidden;
+
+border:1px solid var(--gold);
+
 border-radius:15px;
+
 background:var(--soft-dark);
-box-shadow:0 5px 20px rgba(212,175,55,.15);
+
+box-shadow:
+0 5px 20px rgba(212,175,55,.15);
+
 }
 
 .banner-track{
+
 display:flex;
+
 width:100%;
+
 transition:transform .5s ease;
+
 }
 
 .banner-slide{
+
 position:relative;
+
 min-width:100%;
+
 }
 
 .banner-slide a{
+
 display:block;
+
 text-decoration:none;
+
 }
 
 .banner-slide img{
+
 width:100%;
+
 height:180px;
+
 display:block;
+
 object-fit:cover;
+
 }
 
 .banner-content{
+
 position:absolute;
+
 left:0;
 right:0;
 bottom:0;
+
 padding:15px;
-background:linear-gradient(to top,rgba(0,0,0,.92),transparent);
+
+background:
+linear-gradient(
+to top,
+rgba(0,0,0,.92),
+transparent
+);
+
 }
 
 .banner-content h3{
+
 color:var(--gold);
+
 font-size:15px;
+
 margin-bottom:3px;
+
 }
 
 .banner-content p{
+
 color:#ddd;
+
 font-size:11px;
+
 }
 
 .banner-dots{
+
 position:absolute;
+
 bottom:9px;
 right:12px;
+
 display:flex;
+
 gap:5px;
+
 }
 
 .dot{
+
 width:8px;
 height:8px;
+
 border-radius:50%;
+
 background:rgba(255,255,255,.4);
+
 cursor:pointer;
+
 }
 
 .dot.active{
+
 background:var(--gold);
+
 }
 
 /* =====================================================
-   CATÉGORIES
+CATÉGORIES
 ===================================================== */
+
 .cat-scroll{
+
 width:100%;
+
 display:flex;
+
 gap:9px;
+
 overflow-x:auto;
+
 padding:10px 15px 15px;
+
 scrollbar-width:none;
+
 }
 
 .cat-scroll::-webkit-scrollbar{
+
 display:none;
+
 }
 
 .cat-btn{
+
 flex:0 0 auto;
+
 padding:9px 17px;
+
 border:1px solid var(--gold);
+
 border-radius:22px;
+
 background:transparent;
+
 color:#fff;
+
 cursor:pointer;
+
 white-space:nowrap;
+
 font-size:12px;
-transition:background 0.2s, color 0.2s;
+
+transition:
+background .2s,
+color .2s;
+
 }
 
 .cat-btn.active{
+
 background:var(--gold);
+
 color:#000;
+
 font-weight:700;
+
 }
 
 /* =====================================================
-   PRODUITS (HAUTEUR ET TAILLE DES IMAGES STRICTEMENT LIMITÉES)
+PRODUITS
 ===================================================== */
+
 .products{
+
 width:100%;
+
 max-width:1800px;
+
 margin:0 auto;
+
 padding:10px;
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-gap: 12px;
-align-items: start;
+
+display:grid;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:12px;
+
+align-items:start;
+
 flex:1;
+
 }
 
 @media(min-width:700px){
+
 .products{
-grid-template-columns: repeat(4, 1fr);
-gap: 14px;
-padding: 15px;
+
+grid-template-columns:
+repeat(4,1fr);
+
+gap:14px;
+
+padding:15px;
+
 }
+
 }
 
 @media(min-width:1001px){
+
 .products{
-grid-template-columns: repeat(6, 1fr);
-gap: 16px;
-padding: 20px;
+
+grid-template-columns:
+repeat(6,1fr);
+
+gap:16px;
+
+padding:20px;
+
 }
+
 }
 
 @media(min-width:1651px){
+
 .products{
-grid-template-columns: repeat(8, 1fr);
-gap: 16px;
-}
+
+grid-template-columns:
+repeat(8,1fr);
+
+gap:16px;
+
 }
 
-.card{
-position:relative;
-display:flex;
-flex-direction:column;
-justify-content:space-between;
-width:100%;
-padding:10px;
-background:var(--card);
-border:1px solid var(--border);
-border-radius:12px;
-box-shadow:0 4px 12px rgba(0,0,0,.4);
-transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-overflow:hidden;
-height: 100%;
-}
-
-.card:hover{
-transform:translateY(-3px);
-border-color:var(--gold);
-box-shadow:0 6px 16px rgba(212,175,55,.2);
-}
-
-.badge-discount{
-position:absolute;
-top:8px;
-right:8px;
-z-index:5;
-padding:3px 6px;
-background:var(--red);
-color:#fff;
-border-radius:4px;
-font-size:9px;
-font-weight:800;
-box-shadow:0 2px 4px rgba(0,0,0,0.5);
-}
-
-.badge-boost{
-position:absolute;
-top:8px;
-left:8px;
-z-index:5;
-padding:3px 6px;
-background:linear-gradient(45deg, #e00000, #ff5252);
-color:#fff;
-border-radius:4px;
-font-size:8px;
-font-weight:800;
-box-shadow:0 2px 4px rgba(0,0,0,0.5);
-text-transform:uppercase;
-}
-
-/* TAMPON VISUEL POUR EMPÊCHER LES IMAGES TROP LONGUES */
-.media-container {
-width: 100%;
-height: 170px;
-max-height: 180px;
-position: relative;
-border-radius: 8px;
-overflow: hidden;
-background: #080b10;
-display: flex;
-align-items: center;
-justify-content: center;
-margin-bottom: 8px;
-}
-
-.card img{
-width:100%;
-height:100%;
-max-height:180px;
-object-fit:cover;
-border-radius:8px;
-display:block;
-transition: transform 0.3s ease;
-}
-
-.card video{
-width:100%;
-height:100%;
-max-height:180px;
-object-fit:cover;
-border-radius:8px;
-display:block;
-}
-
-.card:hover img {
-transform: scale(1.03);
-}
-
-.product-no-image{
-width:100%;
-height:100%;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-background:#080b10;
-color:#777;
-font-size:10px;
-text-align:center;
-border-radius:8px;
-}
-
-.product-no-image strong{
-font-size:24px;
-margin-bottom:3px;
-color:var(--gold);
-}
-
-.doc-box{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-width:100%;
-height:100%;
-background:#111;
-color:var(--gold);
-text-decoration:none;
-padding:10px 5px;
-text-align:center;
-border-radius:8px;
-}
-
-.doc-box span{
-font-size:24px;
-margin-bottom:3px;
-}
-
-.doc-box p{
-font-size:9px;
-color:#fff;
-word-break:break-all;
-}
-
-.card h3{
-margin:4px 0;
-font-size:12px;
-font-weight:600;
-line-height:1.3;
-word-break:break-word;
-color:#fff;
-display:-webkit-box;
--webkit-line-clamp:2;
--webkit-box-orient:vertical;
-overflow:hidden;
-min-height:31px;
-}
-
-.card .description-complete{
-font-size:10px;
-color:#aaa;
-line-height:1.3;
-margin-bottom:8px;
-display:-webkit-box;
--webkit-line-clamp:2;
--webkit-box-orient:vertical;
-overflow:hidden;
-word-break:break-word;
-}
-
-.market-tags {
-display: flex;
-gap: 4px;
-margin-bottom: 6px;
-flex-wrap: wrap;
-}
-
-.tag-express {
-background: rgba(34, 197, 94, 0.15);
-color: #22c55e;
-border: 1px solid rgba(34, 197, 94, 0.3);
-font-size: 8px;
-padding: 1px 4px;
-border-radius: 3px;
-font-weight: 600;
-}
-
-.price-container{
-display:flex;
-align-items:baseline;
-gap:6px;
-flex-wrap:wrap;
-margin:4px 0 8px;
-}
-
-.price{
-color:var(--gold);
-font-size:14px;
-font-weight:800;
-}
-
-.price-old{
-text-decoration:line-through;
-color:#777;
-font-size:10px;
-font-weight:400;
-}
-
-.card-actions-row {
-display: flex;
-gap: 6px;
-margin-top: auto;
-}
-
-.btn-action {
-flex: 1;
-padding: 7px 4px;
-border: 1px solid var(--border);
-border-radius: 6px;
-color: #fff;
-font-size: 10px;
-font-weight: 700;
-text-align: center;
-text-decoration: none;
-cursor: pointer;
-transition: background 0.2s, border-color 0.2s, transform 0.1s;
-display: flex;
-align-items: center;
-justify-content: center;
-white-space: nowrap;
-}
-
-.btn-action:active {
-transform: scale(0.96);
-}
-
-.btn-cart {
-background: #166534;
-color: #fff;
-border-color: rgba(34,197,94,.5);
-}
-
-.btn-cart:hover {
-background: #15803d;
-}
-
-.btn-copy {
-background: var(--blue);
-color: #fff;
-border-color: rgba(0,123,255,.5);
-}
-
-.btn-copy:hover {
-background: var(--blue-dark);
-}
-
-.affiliate-box{
-margin-top:4px;
-}
-
-.affiliate-input{
-display:none;
-width:100%;
-margin-top:4px;
-padding:4px;
-background:#000;
-color:#fff;
-border:1px solid #444;
-border-radius:4px;
-font-size:8px;
-}
-
-.skeleton-card {
-background: #151c28;
-border-radius: 12px;
-padding: 10px;
-animation: pulse 1.5s infinite ease-in-out;
-}
-.skeleton-media {
-width: 100%;
-height: 150px;
-background: #222b3a;
-border-radius: 8px;
-}
-.skeleton-text {
-height: 10px;
-background: #222b3a;
-margin: 8px 0;
-border-radius: 4px;
-}
-@keyframes pulse {
-0% { opacity: 0.6; }
-50% { opacity: 1; }
-100% { opacity: 0.6; }
-}
-
-/* Modal Produit Partagé */
-.modal-overlay {
-position: fixed;
-top: 0; left: 0; width: 100%; height: 100%;
-background: rgba(0, 0, 0, 0.85);
-display: flex; justify-content: center; align-items: center;
-z-index: 10000; padding: 15px;
-}
-.modal-content {
-background: #0a0d14;
-border: 1px solid var(--gold);
-border-radius: 14px;
-padding: 20px;
-max-width: 520px;
-width: 100%;
-max-height: 90vh;
-overflow-y: auto;
 }
 
 /* =====================================================
-   FOOTER
+CARTE
 ===================================================== */
-.app-footer{
-margin-top:30px;
-background:#131921;
-border-top:2px solid var(--gold);
-color:#ddd;
+
+.card{
+
+position:relative;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:space-between;
+
+width:100%;
+
+padding:10px;
+
+background:var(--card);
+
+border:1px solid var(--border);
+
+border-radius:12px;
+
+box-shadow:
+0 4px 12px rgba(0,0,0,.4);
+
+transition:
+transform .2s ease,
+border-color .2s ease,
+box-shadow .2s ease;
+
+overflow:hidden;
+
+height:100%;
+
+}
+
+.card:hover{
+
+transform:translateY(-3px);
+
+border-color:var(--gold);
+
+box-shadow:
+0 6px 16px rgba(212,175,55,.2);
+
+}
+
+.badge-discount{
+
+position:absolute;
+
+top:8px;
+right:8px;
+
+z-index:5;
+
+padding:3px 6px;
+
+background:var(--red);
+
+color:#fff;
+
+border-radius:4px;
+
+font-size:9px;
+
+font-weight:800;
+
+box-shadow:
+0 2px 4px rgba(0,0,0,.5);
+
+}
+
+.badge-boost{
+
+position:absolute;
+
+top:8px;
+left:8px;
+
+z-index:5;
+
+padding:3px 6px;
+
+background:
+linear-gradient(
+45deg,
+#e00000,
+#ff5252
+);
+
+color:#fff;
+
+border-radius:4px;
+
+font-size:8px;
+
+font-weight:800;
+
+box-shadow:
+0 2px 4px rgba(0,0,0,.5);
+
+text-transform:uppercase;
+
+}
+
+/* =====================================================
+MEDIA PRODUIT
+===================================================== */
+
+.media-container{
+
+width:100%;
+
+height:170px;
+
+max-height:180px;
+
+position:relative;
+
+border-radius:8px;
+
+overflow:hidden;
+
+background:#080b10;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+margin-bottom:8px;
+
+}
+
+.card img{
+
+width:100%;
+height:100%;
+
+max-height:180px;
+
+object-fit:cover;
+
+border-radius:8px;
+
+display:block;
+
+transition:
+transform .3s ease;
+
+}
+
+.card video{
+
+width:100%;
+height:100%;
+
+max-height:180px;
+
+object-fit:cover;
+
+border-radius:8px;
+
+display:block;
+
+}
+
+.card:hover img{
+
+transform:scale(1.03);
+
+}
+
+.product-no-image{
+
+width:100%;
+height:100%;
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+flex-direction:column;
+
+background:#080b10;
+
+color:#777;
+
+font-size:10px;
+
+text-align:center;
+
+border-radius:8px;
+
+}
+
+.product-no-image strong{
+
+font-size:24px;
+
+margin-bottom:3px;
+
+color:var(--gold);
+
+}
+
+.doc-box{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+justify-content:center;
+
+width:100%;
+height:100%;
+
+background:#111;
+
+color:var(--gold);
+
+text-decoration:none;
+
+padding:10px 5px;
+
+text-align:center;
+
+border-radius:8px;
+
+}
+
+.doc-box span{
+
+font-size:24px;
+
+margin-bottom:3px;
+
+}
+
+.doc-box p{
+
+font-size:9px;
+
+color:#fff;
+
+word-break:break-all;
+
+}
+
+/* =====================================================
+TEXTES PRODUITS
+===================================================== */
+
+.card h3{
+
+margin:4px 0;
+
 font-size:12px;
+
+font-weight:600;
+
+line-height:1.3;
+
+word-break:break-word;
+
+color:#fff;
+
+display:-webkit-box;
+
+-webkit-line-clamp:2;
+
+-webkit-box-orient:vertical;
+
+overflow:hidden;
+
+min-height:31px;
+
+}
+
+.card .description-complete{
+
+font-size:10px;
+
+color:#aaa;
+
+line-height:1.3;
+
+margin-bottom:8px;
+
+display:-webkit-box;
+
+-webkit-line-clamp:2;
+
+-webkit-box-orient:vertical;
+
+overflow:hidden;
+
+word-break:break-word;
+
+}
+
+.market-tags{
+
+display:flex;
+
+gap:4px;
+
+margin-bottom:6px;
+
+flex-wrap:wrap;
+
+}
+
+.tag-express{
+
+background:
+rgba(34,197,94,.15);
+
+color:#22c55e;
+
+border:
+1px solid rgba(34,197,94,.3);
+
+font-size:8px;
+
+padding:1px 4px;
+
+border-radius:3px;
+
+font-weight:600;
+
+}
+
+.price-container{
+
+display:flex;
+
+align-items:baseline;
+
+gap:6px;
+
+flex-wrap:wrap;
+
+margin:4px 0 8px;
+
+}
+
+.price{
+
+color:var(--gold);
+
+font-size:14px;
+
+font-weight:800;
+
+}
+
+.price-old{
+
+text-decoration:line-through;
+
+color:#777;
+
+font-size:10px;
+
+font-weight:400;
+
+}
+
+.card-actions-row{
+
+display:flex;
+
+gap:6px;
+
+margin-top:auto;
+
+}
+
+.btn-action{
+
+flex:1;
+
+padding:7px 4px;
+
+border:1px solid var(--border);
+
+border-radius:6px;
+
+color:#fff;
+
+font-size:10px;
+
+font-weight:700;
+
+text-align:center;
+
+text-decoration:none;
+
+cursor:pointer;
+
+transition:
+background .2s,
+border-color .2s,
+transform .1s;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+white-space:nowrap;
+
+}
+
+.btn-action:active{
+
+transform:scale(.96);
+
+}
+
+.btn-cart{
+
+background:#166534;
+
+color:#fff;
+
+border-color:
+rgba(34,197,94,.5);
+
+}
+
+.btn-cart:hover{
+
+background:#15803d;
+
+}
+
+.btn-copy{
+
+background:var(--blue);
+
+color:#fff;
+
+border-color:
+rgba(0,123,255,.5);
+
+}
+
+.btn-copy:hover{
+
+background:var(--blue-dark);
+
+}
+
+.affiliate-box{
+
+margin-top:4px;
+
+}
+
+.affiliate-input{
+
+display:none;
+
+width:100%;
+
+margin-top:4px;
+
+padding:4px;
+
+background:#000;
+
+color:#fff;
+
+border:1px solid #444;
+
+border-radius:4px;
+
+font-size:8px;
+
+}
+
+.skeleton-card{
+
+background:#151c28;
+
+border-radius:12px;
+
+padding:10px;
+
+animation:pulse 1.5s infinite ease-in-out;
+
+}
+
+.skeleton-media{
+
+width:100%;
+
+height:150px;
+
+background:#222b3a;
+
+border-radius:8px;
+
+}
+
+.skeleton-text{
+
+height:10px;
+
+background:#222b3a;
+
+margin:8px 0;
+
+border-radius:4px;
+
+}
+
+@keyframes pulse{
+
+0%{opacity:.6}
+50%{opacity:1}
+100%{opacity:.6}
+
+}
+
+/* =====================================================
+MODAL
+===================================================== */
+
+.modal-overlay{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.85);
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+z-index:10000;
+
+padding:15px;
+
+}
+
+.modal-content{
+
+background:#0a0d14;
+
+border:1px solid var(--gold);
+
+border-radius:14px;
+
+padding:20px;
+
+max-width:520px;
+
+width:100%;
+
+max-height:90vh;
+
+overflow-y:auto;
+
+}
+
+/* =====================================================
+FOOTER
+===================================================== */
+
+.app-footer{
+
+margin-top:30px;
+
+background:#131921;
+
+border-top:2px solid var(--gold);
+
+color:#ddd;
+
+font-size:12px;
+
 }
 
 .footer-announcement{
+
 padding:16px 20px;
+
 text-align:center;
+
 background:var(--soft-dark);
+
 border-bottom:1px solid #333;
+
 }
 
 .footer-announcement h4{
+
 color:var(--gold);
+
 margin-bottom:5px;
+
 font-size:14px;
+
 }
 
 .footer-announcement p{
+
 color:#ccc;
+
 line-height:1.5;
+
 font-size:11px;
+
 }
 
 .footer-links-grid{
+
 display:grid;
-grid-template-columns:repeat(3,1fr);
+
+grid-template-columns:
+repeat(3,1fr);
+
 gap:20px;
+
 width:100%;
+
 max-width:1000px;
+
 margin:auto;
+
 padding:25px 20px;
+
 }
 
 .footer-column h5{
+
 color:var(--gold);
+
 font-size:12px;
+
 margin-bottom:10px;
+
 text-transform:uppercase;
+
 }
 
 .footer-column ul{
+
 list-style:none;
+
 }
 
 .footer-column li{
+
 margin-bottom:8px;
+
 }
 
 .footer-column a{
+
 color:#aaa;
+
 text-decoration:none;
+
+transition:color .2s ease;
+
 }
 
 .footer-column a:hover{
+
 color:var(--gold);
+
+}
+
+/* LIEN DEVENIR VENDEUR */
+
+.seller-link{
+
+color:var(--gold) !important;
+
+font-weight:600;
+
+}
+
+.seller-link:hover{
+
+color:#fff !important;
+
 }
 
 .footer-bottom-bar{
+
 padding:15px;
+
 background:#000;
+
 border-top:1px solid #222;
+
 text-align:center;
+
 color:#777;
+
 font-size:10px;
+
 }
 
 .loading-message,
 .empty-message{
-grid-column: 1 / -1;
+
+grid-column:1 / -1;
+
 padding:40px 20px;
+
 text-align:center;
+
 color:#999;
+
 font-size:13px;
+
 }
 
 .error-message{
+
 color:#ff8080;
+
 }
 
 @media(max-width:700px){
+
 .footer-links-grid{
-grid-template-columns:repeat(2,1fr);
+
+grid-template-columns:
+repeat(2,1fr);
+
 }
+
 }
 
 @media(max-width:500px){
+
 .header{
+
 gap:7px;
+
 }
+
 .logo-container{
+
 width:38px;
 height:38px;
+
+min-width:38px;
+min-height:38px;
+
 flex-basis:38px;
+
 }
+
 .nav-icons{
+
 gap:6px;
+
 }
+
 .nav-item{
+
 min-width:32px;
+
 font-size:8px;
+
 }
+
 .nav-item>span:first-child{
+
 font-size:15px;
+
 }
+
 #searchBar{
+
 height:38px;
+
 padding:0 11px;
+
 font-size:11px;
+
 }
+
 .footer-links-grid{
+
 grid-template-columns:1fr;
+
 }
+
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- =====================================================
+HEADER
+===================================================== -->
+
 <header class="header">
-<div class="logo-container" id="logoButton">
-<img class="logo" id="appLogo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" loading="eager">
-<span class="fallback-logo" id="fallbackLogo" style="display:none">DP</span>
+
+<div
+class="logo-container"
+id="logoButton">
+
+<img
+class="logo"
+id="appLogo"
+src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png"
+alt="Logo DAKPROÉLITE"
+loading="eager"
+decoding="sync">
+
+<span
+class="fallback-logo"
+id="fallbackLogo"
+style="display:none">
+
+DP
+
+</span>
+
 </div>
 
 <div class="search-container">
-<input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits sur DAKPROÉLITE...">
+
+<input
+type="search"
+id="searchBar"
+autocomplete="off"
+placeholder="Rechercher des produits sur DAKPROÉLITE...">
+
 </div>
 
 <div class="nav-icons">
-<a href="panier.html" class="nav-item" id="navCartLink">
+
+<a
+href="panier.html"
+class="nav-item"
+id="navCartLink">
+
 <span>🛒</span>
-<span class="cart-badge" id="cartBadge">0</span>
+
+<span
+class="cart-badge"
+id="cartBadge">
+0
+</span>
+
 <span>Panier</span>
+
 </a>
-<a href="profil-acheteur.html" class="nav-item">
+
+<a
+href="profil-acheteur.html"
+class="nav-item">
+
 <span>👤</span>
+
 <span>Compte</span>
+
 </a>
+
 </div>
+
 </header>
 
+<!-- =====================================================
+INSTALLATION PWA
+===================================================== -->
+
 <div id="btnInstall">
+
 Installer l'application sur l'appareil
+
 </div>
 
-<!-- BANNIÈRES -->
-<section class="banner-container" id="bannerContainer">
-<div class="banner-track" id="bannerTrack"></div>
-<div class="banner-dots" id="bannerDots"></div>
+<!-- =====================================================
+BANNIÈRES
+===================================================== -->
+
+<section
+class="banner-container"
+id="bannerContainer">
+
+<div
+class="banner-track"
+id="bannerTrack">
+</div>
+
+<div
+class="banner-dots"
+id="bannerDots">
+</div>
+
 </section>
 
-<!-- CATÉGORIES -->
-<nav class="cat-scroll" id="catMenu"></nav>
+<!-- =====================================================
+CATÉGORIES
+===================================================== -->
 
-<!-- PRODUITS MARKETPLACE -->
-<main class="products" id="products">
-  <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
-  <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
-  <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
-  <div class="skeleton-card"><div class="skeleton-media"></div><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%"></div></div>
+<nav
+class="cat-scroll"
+id="catMenu">
+</nav>
+
+<!-- =====================================================
+PRODUITS
+===================================================== -->
+
+<main
+class="products"
+id="products">
+
+<div class="skeleton-card">
+
+<div class="skeleton-media">
+</div>
+
+<div class="skeleton-text">
+</div>
+
+<div
+class="skeleton-text"
+style="width:60%">
+</div>
+
+</div>
+
+<div class="skeleton-card">
+
+<div class="skeleton-media">
+</div>
+
+<div class="skeleton-text">
+</div>
+
+<div
+class="skeleton-text"
+style="width:60%">
+</div>
+
+</div>
+
+<div class="skeleton-card">
+
+<div class="skeleton-media">
+</div>
+
+<div class="skeleton-text">
+</div>
+
+<div
+class="skeleton-text"
+style="width:60%">
+</div>
+
+</div>
+
+<div class="skeleton-card">
+
+<div class="skeleton-media">
+</div>
+
+<div class="skeleton-text">
+</div>
+
+<div
+class="skeleton-text"
+style="width:60%">
+</div>
+
+</div>
+
 </main>
 
-<div id="productModalContainer"></div>
+<div
+id="productModalContainer">
+</div>
 
-<!-- FOOTER -->
+<!-- =====================================================
+FOOTER
+===================================================== -->
+
 <footer class="app-footer">
+
 <section class="footer-announcement">
-<h4 id="fayaBuzzTitle">⚡ Annonce Officielle</h4>
-<p id="fayaBuzzText">Bienvenue sur DAKPROÉLITE, votre plateforme de référence !</p>
+
+<h4 id="fayaBuzzTitle">
+⚡ Annonce Officielle
+</h4>
+
+<p id="fayaBuzzText">
+
+Bienvenue sur DAKPROÉLITE,
+votre plateforme de référence !
+
+</p>
+
 </section>
 
 <div class="footer-links-grid">
-<div class="footer-column">
-<h5>Navigation & Aide</h5>
-<ul>
-<li><a href="#" class="btn-load-support">Support Rapide</a></li>
-<li><a href="aide.html">Centre d'aide général</a></li>
-<li><a href="profil-acheteur.html">Mon Compte</a></li>
-</ul>
-</div>
+
+<!-- NAVIGATION -->
 
 <div class="footer-column">
-<h5>Règles & Légal</h5>
+
+<h5>
+Navigation & Aide
+</h5>
+
 <ul>
-<li><a href="reglement-interieur.html">Règlement Intérieur</a></li>
-<li><a href="politique-confidentialite.html">Politique de Confidentialité</a></li>
+
+<li>
+
+<a
+href="support-rapide.html">
+
+Support Rapide
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="aide.html">
+
+Centre d'aide général
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="profil-acheteur.html">
+
+Mon Compte
+
+</a>
+
+</li>
+
 </ul>
+
 </div>
 
+<!-- RÈGLES -->
+
 <div class="footer-column">
-<h5>Gagner de l'argent</h5>
+
+<h5>
+Règles & Légal
+</h5>
+
 <ul>
-<li><a href="programme-ambassadeur.html">Programme Ambassadeur</a></li>
-<li><a href="programme-ambassadeur.html">Affiliation</a></li>
-<li><a href="vendeur.html">Devenir Vendeur</a></li>
+
+<li>
+
+<a
+href="reglement-interieur.html">
+
+Règlement Intérieur
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="politique-confidentialite.html">
+
+Politique de Confidentialité
+
+</a>
+
+</li>
+
 </ul>
+
 </div>
+
+<!-- VENDEUR -->
+
+<div class="footer-column">
+
+<h5>
+Gagner de l'argent
+</h5>
+
+<ul>
+
+<li>
+
+<a
+href="programme-ambassadeur.html">
+
+Programme Ambassadeur
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="programme-ambassadeur.html">
+
+Affiliation
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="https://vendeur.dakproelite.com"
+class="seller-link">
+
+🛍️ Devenir Vendeur
+
+</a>
+
+</li>
+
+</ul>
+
+</div>
+
 </div>
 
 <div class="footer-bottom-bar">
-© 2026 DAKPROÉLITE / DAKPRO NEXUS. Tous droits réservés.
+
+© 2026 DAKPROÉLITE / DAKPRO NEXUS.
+Tous droits réservés.
+
 </div>
+
 </footer>
 
-<!-- CHARGEMENT DU FICHIER SUPPORT RAPIDE -->
+<!-- =====================================================
+SUPPORT RAPIDE
+===================================================== -->
+
 <script src="support-rapide.js"></script>
 
-<!-- FIREBASE INTEGRATION -->
+<!-- =====================================================
+FIREBASE
+===================================================== -->
+
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, onValue, get, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue,
+get,
+update,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+
+/* =====================================================
+FIREBASE CONFIG
+===================================================== */
 
 const firebaseConfig = {
-apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
-authDomain: "dakproelite.firebaseapp.com",
-databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
-projectId: "dakproelite",
-storageBucket: "dakproelite.firebasestorage.app",
-messagingSenderId: "580591769206",
-appId: "1:580591769206:web:4f67f8aadbf3d051087157"
+
+apiKey:
+"AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
+
+authDomain:
+"dakproelite.firebaseapp.com",
+
+databaseURL:
+"https://dakproelite-default-rtdb.firebaseio.com",
+
+projectId:
+"dakproelite",
+
+storageBucket:
+"dakproelite.firebasestorage.app",
+
+messagingSenderId:
+"580591769206",
+
+appId:
+"1:580591769206:web:4f67f8aadbf3d051087157"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
 
-window.dakproFirebase = { app, db, auth };
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+const auth =
+getAuth(app);
+
+
+window.dakproFirebase = {
+
+app,
+db,
+auth
+
+};
+
+
 window.allProductsData = [];
 
+
 const siteContext = {
-  currentUser: null,
-  userData: null
+
+currentUser:null,
+userData:null
+
 };
 
+
 let currentCat = "Tous";
+
 let currentIndex = 0;
+
 let totalSlides = 0;
+
 let autoPlay = null;
 
-// CHARGEMENT IMMEDIAT DEPUIS LE CACHE POUR UN AFFICHAGE EN 0 MILLISECONDE
+
+/* =====================================================
+CACHE
+===================================================== */
+
 (function chargerCacheImmediat(){
-  try {
-    const cachedProducts = localStorage.getItem("dakpro_cached_publications");
-    if(cachedProducts) {
-      window.allProductsData = JSON.parse(cachedProducts);
-      buildCategories();
-      filterProducts();
-    }
-  } catch(e) {}
+
+try{
+
+const cachedProducts =
+localStorage.getItem(
+"dakpro_cached_publications"
+);
+
+if(cachedProducts){
+
+window.allProductsData =
+JSON.parse(cachedProducts);
+
+buildCategories();
+
+filterProducts();
+
+}
+
+}catch(e){
+
+console.warn(
+"Cache indisponible:",
+e
+);
+
+}
+
 })();
 
-// Écoute de l'état utilisateur & Mise à jour du badge du panier en temps réel
-onAuthStateChanged(auth, user => {
-  siteContext.currentUser = user || null;
-  if(user) {
-    listenToCartBadge(user.uid);
-  } else {
-    updateCartBadgeDisplay(0);
-  }
+
+/* =====================================================
+UTILISATEUR + PANIER
+===================================================== */
+
+onAuthStateChanged(
+auth,
+user=>{
+
+siteContext.currentUser =
+user || null;
+
+if(user){
+
+listenToCartBadge(
+user.uid
+);
+
+}else{
+
+updateCartBadgeDisplay(0);
+
+}
+
 });
 
-function updateCartBadgeDisplay(count) {
-  const badge = document.getElementById("cartBadge");
-  if(!badge) return;
-  if(count > 0) {
-    badge.textContent = count;
-    badge.style.display = "inline-block";
-  } else {
-    badge.style.display = "none";
-  }
+
+function updateCartBadgeDisplay(count){
+
+const badge =
+document.getElementById(
+"cartBadge"
+);
+
+if(!badge)return;
+
+if(count>0){
+
+badge.textContent =
+count;
+
+badge.style.display =
+"inline-block";
+
+}else{
+
+badge.style.display =
+"none";
+
 }
 
-function listenToCartBadge(uid) {
-  const cartRef = ref(db, `users/${uid}/panier`);
-  onValue(cartRef, snapshot => {
-    const data = snapshot.val();
-    if(!data || typeof data !== "object") {
-      updateCartBadgeDisplay(0);
-      return;
-    }
-    let totalItems = 0;
-    Object.values(data).forEach(item => {
-      totalItems += parseInt(item.quantite || 1, 10);
-    });
-    updateCartBadgeDisplay(totalItems);
-  });
 }
+
+
+function listenToCartBadge(uid){
+
+const cartRef =
+ref(
+db,
+`users/${uid}/panier`
+);
+
+onValue(
+cartRef,
+snapshot=>{
+
+const data =
+snapshot.val();
+
+if(
+!data ||
+typeof data!=="object"
+){
+
+updateCartBadgeDisplay(0);
+
+return;
+
+}
+
+let totalItems=0;
+
+Object
+.values(data)
+.forEach(item=>{
+
+totalItems +=
+parseInt(
+item.quantite || 1,
+10
+);
+
+});
+
+updateCartBadgeDisplay(
+totalItems
+);
+
+});
+
+}
+
+
+/* =====================================================
+SÉCURITÉ HTML
+===================================================== */
 
 function escapeHTML(value){
-return String(value??"")
+
+return String(value ?? "")
+
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
 .replace(/>/g,"&gt;")
 .replace(/"/g,"&quot;")
 .replace(/'/g,"&#039;");
+
 }
+
 
 function escapeAttribute(value){
+
 return escapeHTML(value);
+
 }
 
-document.getElementById("logoButton")?.addEventListener("click", () => {
-window.location.href = "index.html";
+
+/* =====================================================
+LOGO
+===================================================== */
+
+document
+.getElementById("logoButton")
+?.addEventListener(
+"click",
+()=>{
+
+window.location.href =
+"index.html";
+
 });
 
-const appLogo = document.getElementById("appLogo");
-const fallbackLogo = document.getElementById("fallbackLogo");
-appLogo?.addEventListener("error", () => {
-appLogo.style.display = "none";
-if(fallbackLogo) fallbackLogo.style.display = "block";
+
+const appLogo =
+document.getElementById(
+"appLogo"
+);
+
+const fallbackLogo =
+document.getElementById(
+"fallbackLogo"
+);
+
+
+appLogo?.addEventListener(
+"error",
+()=>{
+
+appLogo.style.display =
+"none";
+
+if(fallbackLogo){
+
+fallbackLogo.style.display =
+"block";
+
+}
+
 });
 
-/* RECUPERATION EN TEMPS REEL DEPUIS "PUBLICATIONS" */
+
+/* =====================================================
+PRODUITS FIREBASE
+===================================================== */
+
 function loadProducts(){
-onValue(ref(db, "publications"), snapshot => {
-const data = snapshot.val();
 
-if(!data || typeof data !== "object"){
+onValue(
+
+ref(db,"publications"),
+
+snapshot=>{
+
+const data =
+snapshot.val();
+
+if(
+!data ||
+typeof data!=="object"
+){
+
 window.allProductsData = [];
+
 buildCategories();
+
 renderProducts([]);
+
 return;
+
 }
 
-window.allProductsData = Object.entries(data).map(([id, product]) => {
-if(!product || typeof product !== "object") return null;
-return { id, ...product };
-}).filter(product => {
-if(!product) return false;
-if(product.actif === false) return false;
+
+window.allProductsData =
+
+Object
+.entries(data)
+
+.map(
+([id,product])=>{
+
+if(
+!product ||
+typeof product!=="object"
+){
+
+return null;
+
+}
+
+return {
+
+id,
+...product
+
+};
+
+})
+
+.filter(product=>{
+
+if(!product)return false;
+
+if(product.actif===false)
+return false;
+
 return true;
+
 });
 
-try {
-  localStorage.setItem("dakpro_cached_publications", JSON.stringify(window.allProductsData));
-} catch(e){}
+
+try{
+
+localStorage.setItem(
+
+"dakpro_cached_publications",
+
+JSON.stringify(
+window.allProductsData
+)
+
+);
+
+}catch(e){}
+
 
 buildCategories();
+
 filterProducts();
+
 checkUrlForSharedProduct();
-}, error => {
-console.error("Erreur publications:", error);
-if(!window.allProductsData.length) {
-  document.getElementById("products").innerHTML = `<div class="empty-message error-message">Impossible de charger les publications. Vérifiez votre connexion.</div>`;
+
+},
+
+error=>{
+
+console.error(
+"Erreur publications:",
+error
+);
+
+if(
+!window.allProductsData.length
+){
+
+document.getElementById(
+"products"
+).innerHTML = `
+
+<div
+class="empty-message error-message">
+
+Impossible de charger
+les publications.
+
+Vérifiez votre connexion.
+
+</div>
+
+`;
+
 }
+
 });
+
 }
+
+
+/* =====================================================
+CATÉGORIES
+===================================================== */
 
 function buildCategories(){
-const categories = ["Tous", ...new Set(window.allProductsData.map(p => p.categorie || p.category).filter(Boolean))];
-const menu = document.getElementById("catMenu");
-if(!menu) return;
 
-menu.innerHTML = categories.map(category => {
-const safe = escapeHTML(category);
-return `<button type="button" class="cat-btn ${category === currentCat ? "active" : ""}" data-category="${safe}">${safe}</button>`;
-}).join("");
+const categories=[
 
-menu.querySelectorAll(".cat-btn").forEach(button => {
-button.addEventListener("click", () => {
-currentCat = button.dataset.category;
-menu.querySelectorAll(".cat-btn").forEach(item => item.classList.remove("active"));
-button.classList.add("active");
+"Tous",
+
+...new Set(
+
+window.allProductsData
+
+.map(
+p=>p.categorie ||
+p.category
+)
+
+.filter(Boolean)
+
+)
+
+];
+
+
+const menu =
+document.getElementById(
+"catMenu"
+);
+
+if(!menu)return;
+
+
+menu.innerHTML =
+
+categories
+.map(category=>{
+
+const safe =
+escapeHTML(category);
+
+return `
+
+<button
+type="button"
+class="cat-btn ${
+category===currentCat
+?"active"
+:""
+}"
+data-category="${safe}">
+
+${safe}
+
+</button>
+
+`;
+
+})
+.join("");
+
+
+menu
+.querySelectorAll(".cat-btn")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+()=>{
+
+currentCat =
+button.dataset.category;
+
+menu
+.querySelectorAll(
+".cat-btn"
+)
+.forEach(item=>
+item.classList.remove(
+"active"
+)
+);
+
+button.classList.add(
+"active"
+);
+
 filterProducts();
+
 });
+
 });
+
 }
 
-document.getElementById("searchBar")?.addEventListener("input", filterProducts);
+
+document
+.getElementById("searchBar")
+?.addEventListener(
+"input",
+filterProducts
+);
+
+
+/* =====================================================
+FILTRAGE
+===================================================== */
 
 function getFilteredProducts(){
-const search = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
-return window.allProductsData.filter(product => {
-const name = String(product.nom || product.title || product.name || "").toLowerCase();
-const description = String(product.description || "").toLowerCase();
-const category = String(product.categorie || product.category || "").toLowerCase();
-const productCategory = product.categorie || product.category || "";
-const categoryOK = currentCat === "Tous" || productCategory === currentCat;
-return categoryOK && (name.includes(search) || description.includes(search) || category.includes(search));
+
+const search =
+
+(
+document.getElementById(
+"searchBar"
+)?.value || ""
+)
+.toLowerCase()
+.trim();
+
+
+return window
+.allProductsData
+.filter(product=>{
+
+const name =
+String(
+product.nom ||
+product.title ||
+product.name ||
+""
+)
+.toLowerCase();
+
+
+const description =
+String(
+product.description ||
+""
+)
+.toLowerCase();
+
+
+const category =
+String(
+product.categorie ||
+product.category ||
+""
+)
+.toLowerCase();
+
+
+const productCategory =
+product.categorie ||
+product.category ||
+"";
+
+
+const categoryOK =
+
+currentCat==="Tous" ||
+productCategory===currentCat;
+
+
+return categoryOK &&
+(
+
+name.includes(search) ||
+
+description.includes(search) ||
+
+category.includes(search)
+
+);
+
 });
+
 }
+
 
 function filterProducts(){
-renderProducts(getFilteredProducts());
+
+renderProducts(
+getFilteredProducts()
+);
+
 }
 
-/* RENDU DYNAMIQUE DE LA CARTE AVEC ADAPTATION DE CADRE PARFAITE ET TAILLE DE MEDIA CONTRÔLÉE */
-function generateCardHTML(product, uid){
-const id = encodeURIComponent(product.id || "");
-const siteBase = "https://dakproelite-acheteur.vercel.app";
-const affiliateURL = `${siteBase}/api/share?id=${id}${uid ? '&ref=' + encodeURIComponent(uid) : ''}`;
 
-const image = product.image || product.imageUrl || product.photo || product.img || "";
-const video = product.video || product.videoUrl || "";
-const documentUrl = product.document || product.documentUrl || "";
-const safeName = escapeHTML(product.nom || product.title || product.name || "Produit");
+/* =====================================================
+CARTE PRODUIT
+===================================================== */
 
-const rawDesc = String(product.description || "");
-const shortDesc = rawDesc.length > 70 ? rawDesc.substring(0, 70) + "..." : rawDesc;
-const safeShortDesc = escapeHTML(shortDesc);
+function generateCardHTML(
+product,
+uid
+){
 
-const priceVal = parseFloat(product.prix !== undefined ? product.prix : (product.price !== undefined ? product.price : 0));
-const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : (product.promoPrice !== undefined ? parseFloat(product.promoPrice) : null);
-const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
+const id =
+encodeURIComponent(
+product.id || ""
+);
+
+
+const siteBase =
+"https://dakproelite-acheteur.vercel.app";
+
+
+const affiliateURL =
+
+`${siteBase}/api/share?id=${id}${
+uid
+? "&ref="+encodeURIComponent(uid)
+: ""
+}`;
+
+
+const image =
+product.image ||
+product.imageUrl ||
+product.photo ||
+product.img ||
+"";
+
+
+const video =
+product.video ||
+product.videoUrl ||
+"";
+
+
+const documentUrl =
+product.document ||
+product.documentUrl ||
+"";
+
+
+const safeName =
+escapeHTML(
+
+product.nom ||
+product.title ||
+product.name ||
+"Produit"
+
+);
+
+
+const rawDesc =
+String(
+product.description || ""
+);
+
+
+const shortDesc =
+
+rawDesc.length>70
+
+?rawDesc.substring(0,70)+"..."
+
+:rawDesc;
+
+
+const safeShortDesc =
+escapeHTML(shortDesc);
+
+
+const priceVal =
+
+parseFloat(
+
+product.prix!==undefined
+
+?product.prix
+
+:(product.price!==undefined
+?product.price
+:0)
+
+);
+
+
+const promoVal =
+
+product.prixPromo!==undefined
+
+?parseFloat(
+product.prixPromo
+)
+
+:
+
+(
+
+product.promoPrice!==undefined
+
+?parseFloat(
+product.promoPrice
+)
+
+:null
+
+);
+
+
+const hasPromo =
+
+promoVal!==null &&
+!isNaN(promoVal) &&
+promoVal>0 &&
+promoVal<priceVal;
+
 
 let discountBadgeHTML = "";
-if(hasPromo && priceVal > 0) {
-    const discountPercent = Math.round(((priceVal - promoVal) / priceVal) * 100);
-    discountBadgeHTML = `<span class="badge-discount">-${discountPercent}%</span>`;
+
+
+if(
+hasPromo &&
+priceVal>0
+){
+
+const discountPercent =
+
+Math.round(
+
+(
+(priceVal-promoVal) /
+priceVal
+)*100
+
+);
+
+
+discountBadgeHTML = `
+
+<span
+class="badge-discount">
+
+-${discountPercent}%
+
+</span>
+
+`;
+
 }
 
-const displayPrice = hasPromo ? escapeHTML(promoVal) : escapeHTML(priceVal);
-const currencySymbol = escapeHTML(product.devise || product.currency || "FCFA");
-const oldPriceHTML = hasPromo ? `<span class="price-old">${escapeHTML(priceVal)} ${currencySymbol}</span>` : "";
 
-const isVideo = Boolean(video) || /\.(mp4|webm|ogg)(\?|$)/i.test(image);
-const mediaSrc = video || image;
+const displayPrice =
+
+hasPromo
+
+?escapeHTML(promoVal)
+
+:escapeHTML(priceVal);
+
+
+const currencySymbol =
+
+escapeHTML(
+
+product.devise ||
+product.currency ||
+"FCFA"
+
+);
+
+
+const oldPriceHTML =
+
+hasPromo
+
+?
+
+`<span class="price-old">
+${escapeHTML(priceVal)}
+${currencySymbol}
+</span>`
+
+:"";
+
+
+const isVideo =
+
+Boolean(video) ||
+
+/\.(mp4|webm|ogg)(\?|$)/i
+.test(image);
+
+
+const mediaSrc =
+video || image;
+
+
 let mediaHTML = "";
 
-if(isVideo && mediaSrc){
-mediaHTML = `<video src="${escapeAttribute(mediaSrc)}" controls preload="metadata"></video>`;
-} else if(documentUrl){
-mediaHTML = `<a href="${escapeAttribute(documentUrl)}" target="_blank" rel="noopener noreferrer" class="doc-box"><span>📄</span><p>Consulter le document</p></a>`;
-} else if(image){
-mediaHTML = `<img src="${escapeAttribute(image)}" alt="${safeName}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="product-no-image" style="display:none"><strong>📦</strong><span>Image indisponible</span></div>`;
-} else {
-mediaHTML = `<div class="product-no-image"><strong>📦</strong><span>Image indisponible</span></div>`;
+
+if(
+isVideo &&
+mediaSrc
+){
+
+mediaHTML = `
+
+<video
+src="${escapeAttribute(mediaSrc)}"
+controls
+preload="metadata">
+</video>
+
+`;
+
 }
 
+else if(documentUrl){
+
+mediaHTML = `
+
+<a
+href="${escapeAttribute(documentUrl)}"
+target="_blank"
+rel="noopener noreferrer"
+class="doc-box">
+
+<span>📄</span>
+
+<p>
+Consulter le document
+</p>
+
+</a>
+
+`;
+
+}
+
+else if(image){
+
+mediaHTML = `
+
+<img
+src="${escapeAttribute(image)}"
+alt="${safeName}"
+loading="lazy"
+onerror="
+this.style.display='none';
+this.nextElementSibling.style.display='flex';
+">
+
+<div
+class="product-no-image"
+style="display:none">
+
+<strong>📦</strong>
+
+<span>
+Image indisponible
+</span>
+
+</div>
+
+`;
+
+}
+
+else{
+
+mediaHTML = `
+
+<div
+class="product-no-image">
+
+<strong>📦</strong>
+
+<span>
+Image indisponible
+</span>
+
+</div>
+
+`;
+
+}
+
+
 return `
-<article class="card" data-product-id="${escapeAttribute(product.id||"")}">
-${product.boost ? `<span class="badge-boost">🔥 HOT</span>` : ""}
+
+<article
+class="card"
+data-product-id="${escapeAttribute(
+product.id || ""
+)}">
+
+${
+product.boost
+?
+`<span class="badge-boost">
+🔥 HOT
+</span>`
+:""
+}
+
 ${discountBadgeHTML}
 
-<div class="media-container">
+<div
+class="media-container">
+
 ${mediaHTML}
+
 </div>
 
 <div>
-<div class="market-tags">
-  <span class="tag-express">⚡ Livraison Rapide</span>
-</div>
-<h3>${safeName}</h3>
-${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : ""}
+
+<div
+class="market-tags">
+
+<span
+class="tag-express">
+
+⚡ Livraison Rapide
+
+</span>
+
 </div>
 
-<div>
-<div class="price-container">
-<span class="price">${displayPrice} ${currencySymbol}</span>
-${oldPriceHTML}
-</div>
+<h3>
 
-<div class="card-actions-row">
-  <button type="button" class="btn-action btn-cart" data-id="${escapeAttribute(product.id||"")}">🛒 Panier</button>
-  <button type="button" class="btn-action btn-copy" data-affiliate="${escapeAttribute(affiliateURL)}">🔗 Affiliation</button>
-</div>
+${safeName}
 
-<div class="affiliate-box">
-  <input type="text" class="affiliate-input" value="${escapeAttribute(affiliateURL)}" readonly>
+</h3>
+
+${
+safeShortDesc
+
+?
+
+`
+<div
+class="description-complete">
+
+${safeShortDesc}
+
 </div>
-</div>
-</article>
-`;
+`
+
+:""
+
 }
+
+</div>
+
+<div>
+
+<div
+class="price-container">
+
+<span
+class="price">
+
+${displayPrice}
+${currencySymbol}
+
+</span>
+
+${oldPriceHTML}
+
+</div>
+
+<div
+class="card-actions-row">
+
+<button
+type="button"
+class="btn-action btn-cart"
+data-id="${escapeAttribute(
+product.id || ""
+)}">
+
+🛒 Panier
+
+</button>
+
+<button
+type="button"
+class="btn-action btn-copy"
+data-affiliate="${escapeAttribute(
+affiliateURL
+)}">
+
+🔗 Affiliation
+
+</button>
+
+</div>
+
+<div
+class="affiliate-box">
+
+<input
+type="text"
+class="affiliate-input"
+value="${escapeAttribute(
+affiliateURL
+)}"
+readonly>
+
+</div>
+
+</div>
+
+</article>
+
+`;
+
+}
+
+
+/* =====================================================
+AFFICHAGE PRODUITS
+===================================================== */
 
 function renderProducts(list){
-const container = document.getElementById("products");
-if(!container) return;
 
-if(!Array.isArray(list) || list.length === 0){
-container.innerHTML = `<div class="empty-message">Aucun produit disponible pour le moment.</div>`;
-return;
-}
+const container =
+document.getElementById(
+"products"
+);
 
-const uid = siteContext.currentUser?.uid || "";
-container.innerHTML = list.map(product => generateCardHTML(product, uid)).join("");
+if(!container)return;
 
-container.querySelectorAll(".btn-copy").forEach(button => {
-button.addEventListener("click", async event => {
-event.stopPropagation();
-const link = button.dataset.affiliate;
-try {
-if(navigator.clipboard && window.isSecureContext){
-await navigator.clipboard.writeText(link);
-} else {
-throw new Error("Clipboard indisponible");
-}
-const oldText = button.textContent;
-button.textContent = "✅ Copié !";
-setTimeout(() => { button.textContent = oldText; }, 1800);
-} catch {
-const input = button.closest(".card").querySelector(".affiliate-input");
-if(input){
-input.style.display = "block";
-input.focus();
-input.select();
-document.execCommand("copy");
-input.style.display = "none";
-}
-const oldText = button.textContent;
-button.textContent = "✅ Copié !";
-setTimeout(() => { button.textContent = oldText; }, 1800);
-}
-});
-});
 
-container.querySelectorAll(".btn-cart").forEach(button => {
-button.addEventListener("click", async event => {
-event.stopPropagation();
-const productId = button.dataset.id;
-ajouterAuPanierDirect(productId, button);
-});
-});
-}
+if(
+!Array.isArray(list) ||
+list.length===0
+){
 
-async function ajouterAuPanierDirect(productId, buttonEl) {
-const user = auth.currentUser;
+container.innerHTML = `
 
-if(!user) {
-  alert("Veuillez vous connecter pour ajouter un article à votre panier.");
-  window.location.href = "profil-acheteur.html";
-  return;
-}
+<div
+class="empty-message">
 
-const product = window.allProductsData.find(p => String(p.id) === String(productId));
+Aucun produit disponible
+pour le moment.
 
-if(product) {
-  try {
-    const itemRef = ref(db, `users/${user.uid}/panier/${product.id}`);
-    const gsItemRef = ref(db, `users/${user.uid}/gs/cart/${product.id}`);
-    const snapshot = await get(itemRef);
-    
-    let currentQty = 1;
-    if (snapshot.exists()) {
-      currentQty = parseInt(snapshot.val().quantite || 0, 10) + 1;
-    }
-
-    const unitPrice = parseFloat(product.prixPromo || product.prix || product.price || 0);
-    const nameVal = product.nom || product.title || product.name || "Produit";
-    const imgVal = product.image || product.imageUrl || product.photo || "";
-    const devVal = product.devise || product.currency || "FCFA";
-    const totalPrice = parseFloat((currentQty * unitPrice).toFixed(2));
-
-    const payload = {
-      id: product.id,
-      nom: nameVal,
-      prixUnitaire: unitPrice,
-      devise: devVal,
-      image: imgVal,
-      quantite: currentQty,
-      total: totalPrice,
-      updatedAt: Date.now()
-    };
-
-    const updates = {};
-    updates[`users/${user.uid}/panier/${product.id}`] = payload;
-    updates[`users/${user.uid}/gs/cart/${product.id}`] = payload;
-    await update(ref(db), updates);
-
-    // Recalcul du total /gs/total
-    const allGsCartSnap = await get(ref(db, `users/${user.uid}/gs/cart`));
-    let globalTotal = 0;
-    if (allGsCartSnap.exists()) {
-        Object.values(allGsCartSnap.val()).forEach(item => {
-            globalTotal += parseFloat(item.total || 0);
-        });
-    }
-    await set(ref(db, `users/${user.uid}/gs/total`), globalTotal);
-
-    if (buttonEl) {
-      const oldText = buttonEl.textContent;
-      buttonEl.textContent = "✅ Ajouté !";
-      setTimeout(() => { buttonEl.textContent = oldText; }, 1500);
-    }
-  } catch(error) {
-    console.error("Erreur d'ajout au panier:", error);
-    alert("Impossible d'ajouter le produit au panier.");
-  }
-}
-}
-
-/* OUVERTURE ET AFFICHAGE AUTOMATIQUE DU PRODUIT PARTAGÉ VIA URL */
-function checkUrlForSharedProduct() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('pid') || urlParams.get('id');
-    if (!productId) return;
-
-    const product = window.allProductsData.find(p => String(p.id) === String(productId));
-    if (!product) return;
-
-    const modalContainer = document.getElementById("productModalContainer");
-    if (!modalContainer) return;
-
-    const priceVal = parseFloat(product.prix !== undefined ? product.prix : (product.price !== undefined ? product.price : 0));
-    const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : (product.promoPrice !== undefined ? parseFloat(product.promoPrice) : null);
-    const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
-
-    const effectivePrice = hasPromo ? promoVal : priceVal;
-    const currencySymbol = escapeHTML(product.devise || product.currency || "FCFA");
-
-    modalContainer.innerHTML = `
-        <div class="modal-overlay">
-            <div class="modal-content">
-                <img src="${escapeAttribute(product.image || product.imageUrl || '')}" alt="${escapeHTML(product.nom || 'Produit')}" style="width:100%; height:auto; max-height:220px; object-fit:contain; background:#080b10; border-radius:10px; margin-bottom:12px; border:1px solid #333;">
-                <h2 style="color: var(--gold); margin-bottom: 8px; font-size: 18px;">${escapeHTML(product.nom || product.title || 'Produit DAKPROÉLITE')}</h2>
-                
-                <div class="price-container" style="margin-bottom: 12px;">
-                    <span class="price" style="font-size: 18px;">${effectivePrice} ${currencySymbol}</span>
-                    ${hasPromo ? `<span class="price-old">${priceVal}${currencySymbol}</span>` : ''}
-                </div>
-
-                <div style="background:#12161f; padding:12px; border-radius:8px; border:1px solid #222; margin-bottom:15px;">
-                    <h4 style="color:#fff; font-size:12px; margin-bottom:4px;">Description :</h4>
-                    <p style="color:#ccc; font-size:13px; line-height:1.5; white-space:pre-line;">${escapeHTML(product.description || 'Aucune description disponible.')}</p>
-                </div>
-
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-action btn-cart" id="btnModalAddToCart" style="padding:10px;">💳 SHOP NOW (Acheter)</button>
-                    <button class="btn-action" id="btnModalClose" style="background: #222; color: #fff; border-color:#444;">Fermer</button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.getElementById("btnModalAddToCart")?.addEventListener("click", () => {
-        ajouterAuPanierDirect(productId, document.getElementById("btnModalAddToCart"));
-    });
-
-    document.getElementById("btnModalClose")?.addEventListener("click", () => {
-        modalContainer.innerHTML = "";
-    });
-}
-
-/* BANNIERES */
-function loadBanners(){
-onValue(ref(db, "bannieres"), snapshot => {
-const data = snapshot.val();
-const container = document.getElementById("bannerContainer");
-const track = document.getElementById("bannerTrack");
-const dots = document.getElementById("bannerDots");
-if(!container || !track || !dots) return;
-
-if(!data || typeof data !== "object"){
-container.style.display = "none";
-track.innerHTML = "";
-dots.innerHTML = "";
-return;
-}
-
-const banners = Object.entries(data).map(([id, banner]) => ({ id, ...banner })).filter(banner => banner && banner.actif !== false);
-if(!banners.length){
-container.style.display = "none";
-track.innerHTML = "";
-dots.innerHTML = "";
-return;
-}
-
-totalSlides = banners.length;
-track.innerHTML = banners.map(banner => {
-const image = escapeAttribute(banner.image || "");
-const title = escapeHTML(banner.titre || "");
-const description = escapeHTML(banner.description || "");
-const link = escapeAttribute(banner.lien || "#");
-return `
-<div class="banner-slide">
-<a href="${link}" ${banner.lien ? 'target="_blank" rel="noopener noreferrer"' : ""}>
-<img src="${image}" alt="${title || "Publicité"}" loading="lazy">
-<div class="banner-content">
-${title ? `<h3>${title}</h3>` : ""}
-${description ? `<p>${description}</p>` : ""}
 </div>
-</a>
-</div>
+
 `;
-}).join("");
 
-dots.innerHTML = banners.map((_, index) => `<span class="dot ${index === 0 ? "active" : ""}" data-slide="${index}"></span>`).join("");
+return;
 
-dots.querySelectorAll(".dot").forEach(dot => {
-dot.addEventListener("click", event => {
+}
+
+
+const uid =
+siteContext.currentUser?.uid ||
+"";
+
+
+container.innerHTML =
+
+list
+.map(product=>
+generateCardHTML(
+product,
+uid
+)
+)
+.join("");
+
+
+container
+.querySelectorAll(".btn-copy")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+async event=>{
+
 event.stopPropagation();
-currentIndex = Number(dot.dataset.slide);
+
+
+const link =
+button.dataset.affiliate;
+
+
+try{
+
+if(
+navigator.clipboard &&
+window.isSecureContext
+){
+
+await navigator
+.clipboard
+.writeText(link);
+
+}else{
+
+throw new Error(
+"Clipboard indisponible"
+);
+
+}
+
+
+const oldText =
+button.textContent;
+
+
+button.textContent =
+"✅ Copié !";
+
+
+setTimeout(
+()=>{
+
+button.textContent =
+oldText;
+
+},
+1800
+);
+
+
+}catch{
+
+const input =
+button
+.closest(".card")
+.querySelector(
+".affiliate-input"
+);
+
+
+if(input){
+
+input.style.display =
+"block";
+
+input.focus();
+
+input.select();
+
+document.execCommand(
+"copy"
+);
+
+input.style.display =
+"none";
+
+}
+
+
+const oldText =
+button.textContent;
+
+
+button.textContent =
+"✅ Copié !";
+
+
+setTimeout(
+()=>{
+
+button.textContent =
+oldText;
+
+},
+1800
+);
+
+}
+
+});
+
+});
+
+
+container
+.querySelectorAll(".btn-cart")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+async event=>{
+
+event.stopPropagation();
+
+const productId =
+button.dataset.id;
+
+ajouterAuPanierDirect(
+productId,
+button
+);
+
+});
+
+});
+
+}
+
+
+/* =====================================================
+AJOUT PANIER
+===================================================== */
+
+async function ajouterAuPanierDirect(
+productId,
+buttonEl
+){
+
+const user =
+auth.currentUser;
+
+
+if(!user){
+
+alert(
+"Veuillez vous connecter pour ajouter un article à votre panier."
+);
+
+window.location.href =
+"profil-acheteur.html";
+
+return;
+
+}
+
+
+const product =
+window.allProductsData.find(
+p=>String(p.id)===String(productId)
+);
+
+
+if(product){
+
+try{
+
+const itemRef =
+
+ref(
+db,
+`users/${user.uid}/panier/${product.id}`
+);
+
+
+const gsItemRef =
+
+ref(
+db,
+`users/${user.uid}/gs/cart/${product.id}`
+);
+
+
+const snapshot =
+await get(itemRef);
+
+
+let currentQty = 1;
+
+
+if(snapshot.exists()){
+
+currentQty =
+
+parseInt(
+snapshot.val().quantite || 0,
+10
+)+1;
+
+}
+
+
+const unitPrice =
+
+parseFloat(
+
+product.prixPromo ||
+product.prix ||
+product.price ||
+0
+
+);
+
+
+const nameVal =
+
+product.nom ||
+product.title ||
+product.name ||
+"Produit";
+
+
+const imgVal =
+
+product.image ||
+product.imageUrl ||
+product.photo ||
+"";
+
+
+const devVal =
+
+product.devise ||
+product.currency ||
+"FCFA";
+
+
+const totalPrice =
+
+parseFloat(
+
+(
+currentQty *
+unitPrice
+).toFixed(2)
+
+);
+
+
+const payload = {
+
+id:product.id,
+
+nom:nameVal,
+
+prixUnitaire:unitPrice,
+
+devise:devVal,
+
+image:imgVal,
+
+quantite:currentQty,
+
+total:totalPrice,
+
+updatedAt:Date.now()
+
+};
+
+
+const updates = {};
+
+
+updates[
+`users/${user.uid}/panier/${product.id}`
+] =
+payload;
+
+
+updates[
+`users/${user.uid}/gs/cart/${product.id}`
+] =
+payload;
+
+
+await update(
+ref(db),
+updates
+);
+
+
+/* TOTAL */
+
+const allGsCartSnap =
+
+await get(
+
+ref(
+db,
+`users/${user.uid}/gs/cart`
+)
+
+);
+
+
+let globalTotal = 0;
+
+
+if(
+allGsCartSnap.exists()
+){
+
+Object
+.values(
+allGsCartSnap.val()
+)
+.forEach(item=>{
+
+globalTotal +=
+
+parseFloat(
+item.total || 0
+);
+
+});
+
+}
+
+
+await set(
+
+ref(
+db,
+`users/${user.uid}/gs/total`
+),
+
+globalTotal
+
+);
+
+
+if(buttonEl){
+
+const oldText =
+buttonEl.textContent;
+
+
+buttonEl.textContent =
+"✅ Ajouté !";
+
+
+setTimeout(
+()=>{
+
+buttonEl.textContent =
+oldText;
+
+},
+1500
+);
+
+}
+
+
+}catch(error){
+
+console.error(
+"Erreur d'ajout au panier:",
+error
+);
+
+alert(
+"Impossible d'ajouter le produit au panier."
+);
+
+}
+
+}
+
+}
+
+
+/* =====================================================
+PRODUIT PARTAGÉ
+===================================================== */
+
+function checkUrlForSharedProduct(){
+
+const urlParams =
+
+new URLSearchParams(
+window.location.search
+);
+
+
+const productId =
+
+urlParams.get("pid") ||
+urlParams.get("id");
+
+
+if(!productId)return;
+
+
+const product =
+
+window.allProductsData.find(
+p=>String(p.id)===String(productId)
+);
+
+
+if(!product)return;
+
+
+const modalContainer =
+
+document.getElementById(
+"productModalContainer"
+);
+
+
+if(!modalContainer)return;
+
+
+const priceVal =
+
+parseFloat(
+
+product.prix!==undefined
+
+?product.prix
+
+:(product.price!==undefined
+?product.price
+:0)
+
+);
+
+
+const promoVal =
+
+product.prixPromo!==undefined
+
+?parseFloat(
+product.prixPromo
+)
+
+:
+
+(
+
+product.promoPrice!==undefined
+
+?parseFloat(
+product.promoPrice
+)
+
+:null
+
+);
+
+
+const hasPromo =
+
+promoVal!==null &&
+!isNaN(promoVal) &&
+promoVal>0 &&
+promoVal<priceVal;
+
+
+const effectivePrice =
+
+hasPromo
+?promoVal
+:priceVal;
+
+
+const currencySymbol =
+
+escapeHTML(
+
+product.devise ||
+product.currency ||
+"FCFA"
+
+);
+
+
+modalContainer.innerHTML = `
+
+<div
+class="modal-overlay">
+
+<div
+class="modal-content">
+
+<img
+src="${escapeAttribute(
+product.image ||
+product.imageUrl ||
+""
+)}"
+alt="${escapeHTML(
+product.nom ||
+"Produit"
+)}"
+style="
+width:100%;
+height:auto;
+max-height:220px;
+object-fit:contain;
+background:#080b10;
+border-radius:10px;
+margin-bottom:12px;
+border:1px solid #333;
+">
+
+<h2
+style="
+color:var(--gold);
+margin-bottom:8px;
+font-size:18px;
+">
+
+${escapeHTML(
+product.nom ||
+product.title ||
+"Produit DAKPROÉLITE"
+)}
+
+</h2>
+
+<div
+class="price-container"
+style="margin-bottom:12px;">
+
+<span
+class="price"
+style="font-size:18px;">
+
+${effectivePrice}
+${currencySymbol}
+
+</span>
+
+${
+hasPromo
+?
+
+`
+<span class="price-old">
+
+${priceVal}
+${currencySymbol}
+
+</span>
+`
+
+:""
+
+}
+
+</div>
+
+<div
+style="
+background:#12161f;
+padding:12px;
+border-radius:8px;
+border:1px solid #222;
+margin-bottom:15px;
+">
+
+<h4
+style="
+color:#fff;
+font-size:12px;
+margin-bottom:4px;
+">
+
+Description :
+
+</h4>
+
+<p
+style="
+color:#ccc;
+font-size:13px;
+line-height:1.5;
+white-space:pre-line;
+">
+
+${escapeHTML(
+product.description ||
+"Aucune description disponible."
+)}
+
+</p>
+
+</div>
+
+<div
+style="
+display:flex;
+gap:10px;
+">
+
+<button
+class="btn-action btn-cart"
+id="btnModalAddToCart"
+style="padding:10px;">
+
+💳 SHOP NOW (Acheter)
+
+</button>
+
+<button
+class="btn-action"
+id="btnModalClose"
+style="
+background:#222;
+color:#fff;
+border-color:#444;
+">
+
+Fermer
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+
+document
+.getElementById(
+"btnModalAddToCart"
+)
+?.addEventListener(
+"click",
+()=>{
+
+ajouterAuPanierDirect(
+productId,
+document.getElementById(
+"btnModalAddToCart"
+)
+);
+
+});
+
+
+document
+.getElementById(
+"btnModalClose"
+)
+?.addEventListener(
+"click",
+()=>{
+
+modalContainer.innerHTML =
+"";
+
+});
+
+}
+
+
+/* =====================================================
+BANNIÈRES FIREBASE
+===================================================== */
+
+function loadBanners(){
+
+onValue(
+
+ref(db,"bannieres"),
+
+snapshot=>{
+
+const data =
+snapshot.val();
+
+const container =
+document.getElementById(
+"bannerContainer"
+);
+
+const track =
+document.getElementById(
+"bannerTrack"
+);
+
+const dots =
+document.getElementById(
+"bannerDots"
+);
+
+
+if(
+!container ||
+!track ||
+!dots
+)return;
+
+
+if(
+!data ||
+typeof data!=="object"
+){
+
+container.style.display =
+"none";
+
+track.innerHTML =
+"";
+
+dots.innerHTML =
+"";
+
+return;
+
+}
+
+
+const banners =
+
+Object
+.entries(data)
+
+.map(
+([id,banner])=>({
+
+id,
+...banner
+
+})
+)
+
+.filter(
+banner=>
+banner &&
+banner.actif!==false
+);
+
+
+if(!banners.length){
+
+container.style.display =
+"none";
+
+track.innerHTML =
+"";
+
+dots.innerHTML =
+"";
+
+return;
+
+}
+
+
+totalSlides =
+banners.length;
+
+
+track.innerHTML =
+
+banners
+.map(banner=>{
+
+const image =
+escapeAttribute(
+banner.image || ""
+);
+
+const title =
+escapeHTML(
+banner.titre || ""
+);
+
+const description =
+escapeHTML(
+banner.description || ""
+);
+
+const link =
+escapeAttribute(
+banner.lien || "#"
+);
+
+
+return `
+
+<div
+class="banner-slide">
+
+<a
+href="${link}"
+${
+banner.lien
+?
+'target="_blank" rel="noopener noreferrer"'
+:""
+}>
+
+<img
+src="${image}"
+alt="${
+title || "Publicité"
+}"
+loading="lazy">
+
+<div
+class="banner-content">
+
+${
+title
+?
+`<h3>${title}</h3>`
+:""
+}
+
+${
+description
+?
+`<p>${description}</p>`
+:""
+}
+
+</div>
+
+</a>
+
+</div>
+
+`;
+
+})
+.join("");
+
+
+dots.innerHTML =
+
+banners
+.map(
+(_,index)=>
+`
+
+<span
+class="dot ${
+index===0
+?"active"
+:""
+}"
+data-slide="${index}">
+</span>
+
+`
+)
+.join("");
+
+
+dots
+.querySelectorAll(".dot")
+.forEach(dot=>{
+
+dot.addEventListener(
+"click",
+event=>{
+
+event.stopPropagation();
+
+currentIndex =
+Number(
+dot.dataset.slide
+);
+
 updateSlide();
+
 });
+
 });
+
 
 currentIndex = 0;
-updateSlide();
-container.style.display = "block";
 
-if(autoPlay) clearInterval(autoPlay);
-autoPlay = setInterval(moveSlide, 4000);
+updateSlide();
+
+container.style.display =
+"block";
+
+
+if(autoPlay)
+clearInterval(autoPlay);
+
+
+autoPlay =
+
+setInterval(
+moveSlide,
+4000
+);
+
 });
+
 }
+
 
 function updateSlide(){
-const track = document.getElementById("bannerTrack");
-const dots = document.querySelectorAll(".dot");
-if(!track) return;
-track.style.transform = `translateX(-${currentIndex * 100}%)`;
-dots.forEach((dot, index) => dot.classList.toggle("active", index === currentIndex));
+
+const track =
+document.getElementById(
+"bannerTrack"
+);
+
+const dots =
+document.querySelectorAll(
+".dot"
+);
+
+
+if(!track)return;
+
+
+track.style.transform =
+
+`translateX(-${
+currentIndex*100
+}%)`;
+
+
+dots.forEach(
+(dot,index)=>
+dot.classList.toggle(
+"active",
+index===currentIndex
+)
+);
+
 }
+
 
 function moveSlide(){
-if(totalSlides <= 0) return;
-currentIndex = (currentIndex + 1) % totalSlides;
+
+if(totalSlides<=0)return;
+
+currentIndex =
+
+(
+currentIndex+1
+) %
+totalSlides;
+
 updateSlide();
+
 }
 
-/* ANNONCES FAYA BUZZ */
+
+/* =====================================================
+ANNONCE
+===================================================== */
+
 function loadAnnouncement(){
-onValue(ref(db, "annonces/faya_buzz"), snapshot => {
-const data = snapshot.val();
-const title = document.getElementById("fayaBuzzTitle");
-const text = document.getElementById("fayaBuzzText");
-if(!title || !text) return;
 
-if(!data || data.actif === false){
-title.textContent = "⚡ Annonce Officielle";
-text.textContent = "Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
+onValue(
+
+ref(
+db,
+"annonces/faya_buzz"
+),
+
+snapshot=>{
+
+const data =
+snapshot.val();
+
+const title =
+document.getElementById(
+"fayaBuzzTitle"
+);
+
+const text =
+document.getElementById(
+"fayaBuzzText"
+);
+
+
+if(
+!title ||
+!text
+)return;
+
+
+if(
+!data ||
+data.actif===false
+){
+
+title.textContent =
+"⚡ Annonce Officielle";
+
+text.textContent =
+"Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
+
 return;
+
 }
 
-title.textContent = data.titre || "⚡ Annonce Officielle";
-text.textContent = data.texte || data.text || "Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
+
+title.textContent =
+
+data.titre ||
+"⚡ Annonce Officielle";
+
+
+text.textContent =
+
+data.texte ||
+data.text ||
+"Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
+
 });
+
 }
 
-/* REDIRECTION DYNAMIQUE VERS SUPPORT-RAPIDE.JS */
-function initSupportRedirects() {
-  document.querySelectorAll(".btn-load-support").forEach(element => {
-    element.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (typeof window.loadSupportScript === "function") {
-        window.loadSupportScript();
-      } else {
-        const script = document.createElement("script");
-        script.src = "support-rapide.js";
-        script.onload = () => {
-          if (typeof window.loadSupportScript === "function") window.loadSupportScript();
-        };
-        script.onerror = () => {
-          console.error("Erreur lors du chargement de support-rapide.js");
-        };
-        document.body.appendChild(script);
-      }
-    });
-  });
-}
 
-/* PWA INSTALLATION */
+/* =====================================================
+SUPPORT RAPIDE
+===================================================== */
+
+/*
+Le bouton Support Rapide pointe maintenant
+directement vers support-rapide.html.
+
+Le fichier support-rapide.js reste disponible
+pour les fonctions utilisées ailleurs sur le site.
+*/
+
+
+/* =====================================================
+INSTALLATION PWA
+===================================================== */
+
 let deferredPrompt = null;
-window.addEventListener("beforeinstallprompt", event => {
+
+
+window.addEventListener(
+"beforeinstallprompt",
+event=>{
+
 event.preventDefault();
+
 deferredPrompt = event;
-const button = document.getElementById("btnInstall");
-if(button) button.style.display = "block";
+
+
+const button =
+document.getElementById(
+"btnInstall"
+);
+
+
+if(button){
+
+button.style.display =
+"block";
+
+}
+
 });
 
-document.getElementById("btnInstall")?.addEventListener("click", async () => {
-if(!deferredPrompt) return;
+
+document
+.getElementById(
+"btnInstall"
+)
+?.addEventListener(
+"click",
+async()=>{
+
+if(!deferredPrompt)return;
+
+
 deferredPrompt.prompt();
+
+
 await deferredPrompt.userChoice;
+
+
 deferredPrompt = null;
-document.getElementById("btnInstall").style.display = "none";
+
+
+document
+.getElementById(
+"btnInstall"
+)
+.style.display =
+"none";
+
 });
+
+
+/* =====================================================
+SERVICE WORKER
+===================================================== */
+
+if(
+"serviceWorker" in navigator
+){
+
+window.addEventListener(
+"load",
+()=>{
+
+navigator.serviceWorker
+.register("./sw.js")
+.then(
+()=>{
+console.log(
+"DAKPROÉLITE : Service Worker actif."
+);
+}
+)
+.catch(
+error=>{
+console.error(
+"Service Worker :",
+error
+);
+}
+);
+
+});
+
+}
+
+
+/* =====================================================
+DÉMARRAGE
+===================================================== */
 
 loadProducts();
+
 loadBanners();
+
 loadAnnouncement();
-initSupportRedirects();
+
 </script>
 
 </body>

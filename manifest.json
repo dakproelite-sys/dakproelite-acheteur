@@ -1,0 +1,28 @@
+{
+  "id": "./",
+  "name": "DAKPROÉLITE | La Référence Marketplace",
+  "short_name": "DAKPROÉLITE",
+  "description": "DAKPROÉLITE, marketplace internationale pour acheter et vendre en ligne.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050505",
+  "theme_color": "#d4af37",
+  "lang": "fr",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
