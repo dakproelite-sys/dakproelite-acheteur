@@ -374,7 +374,7 @@ font-weight:600;
 }
 
 /* =====================================================
-BANNIÈRES AVEC BOUTONS DESKTOP ARRIÈRE / DEVANT
+BANNIÈRES (PANNEAU DÉROULANT VERROUILLÉ SANS REDIRECTION)
 ===================================================== */
 
 .banner-container{
@@ -420,11 +420,17 @@ min-width:100%;
 
 }
 
+/* Bloquer toute redirection sur les liens du panneau déroulant */
+
 .banner-slide a{
 
 display:block;
 
 text-decoration:none;
+
+pointer-events:none;
+
+cursor:default;
 
 }
 
@@ -532,6 +538,7 @@ cursor: pointer;
 z-index: 12;
 transition: background 0.2s, transform 0.2s;
 user-select: none;
+pointer-events: auto;
 }
 
 .banner-nav-btn:hover {
@@ -828,7 +835,6 @@ height:100%;
 
 max-height:100%;
 
-/* Contient tout le produit sans le couper */
 object-fit:contain;
 object-position:center;
 
@@ -1267,7 +1273,7 @@ overflow-y:auto;
 }
 
 /* =====================================================
-FOOTER - STATIQUE & GRAVÉ (SANS DÉPLACEMENT/NAVIGATION)
+FOOTER (LIENS ET BOUTONS ENTIÈREMENT FONCTIONNELS)
 ===================================================== */
 
 .app-footer{
@@ -1283,10 +1289,6 @@ color:#ddd;
 font-size:12px;
 
 position: relative;
-
-user-select: none;
-
-pointer-events: auto;
 
 }
 
@@ -1365,9 +1367,7 @@ margin-bottom:8px;
 
 }
 
-/* Desactivation des actions parasites du footer pour le figer */
-
-.footer-column span.static-link {
+.footer-column a{
 
 color:#aaa;
 
@@ -1375,7 +1375,15 @@ font-size:11px;
 
 display: inline-block;
 
-cursor: default;
+text-decoration:none;
+
+transition:color .2s;
+
+}
+
+.footer-column a:hover{
+
+color:var(--gold);
 
 }
 
@@ -1679,7 +1687,7 @@ id="productModalContainer">
 </div>
 
 <!-- =====================================================
-FOOTER (SANS DÉPLACEMENT / FIXÉ)
+FOOTER FONCTIONNEL
 ===================================================== -->
 
 <footer class="app-footer">
@@ -1713,25 +1721,25 @@ Navigation & Aide
 
 <li>
 
-<span class="static-link">
+<a href="support.html">
 Support Rapide
-</span>
+</a>
 
 </li>
 
 <li>
 
-<span class="static-link">
+<a href="aide.html">
 Centre d'aide général
-</span>
+</a>
 
 </li>
 
 <li>
 
-<span class="static-link">
+<a href="profil-acheteur.html">
 Mon Compte
-</span>
+</a>
 
 </li>
 
@@ -1751,17 +1759,17 @@ Règles & Légal
 
 <li>
 
-<span class="static-link">
+<a href="reglement.html">
 Règlement Intérieur
-</span>
+</a>
 
 </li>
 
 <li>
 
-<span class="static-link">
+<a href="confidentialite.html">
 Politique de Confidentialité
-</span>
+</a>
 
 </li>
 
@@ -1781,25 +1789,25 @@ Gagner de l'argent
 
 <li>
 
-<span class="static-link">
+<a href="ambassadeur.html">
 Programme Ambassadeur
-</span>
+</a>
 
 </li>
 
 <li>
 
-<span class="static-link">
+<a href="affiliation.html">
 Affiliation
-</span>
+</a>
 
 </li>
 
 <li>
 
-<span class="static-link" style="color:var(--gold); font-weight:600;">
+<a href="https://vendeur.dakproelite.com" style="color:var(--gold); font-weight:600;" target="_blank" rel="noopener">
 🛍️ Devenir Vendeur
-</span>
+</a>
 
 </li>
 
@@ -3731,12 +3739,7 @@ class="banner-slide">
 
 <a
 href="${link}"
-${
-banner.lien
-?
-'target="_blank" rel="noopener noreferrer"'
-:""
-}>
+onclick="return false;">
 
 <img
 src="${image}"
