@@ -374,7 +374,7 @@ font-weight:600;
 }
 
 /* =====================================================
-BANNIÈRES (PANNEAU DÉROULANT VERROUILLÉ SANS REDIRECTION)
+BANNIÈRES
 ===================================================== */
 
 .banner-container{
@@ -420,15 +420,11 @@ min-width:100%;
 
 }
 
-/* Bloquer toute redirection sur les liens du panneau déroulant */
-
 .banner-slide a{
 
 display:block;
 
 text-decoration:none;
-
-pointer-events:none;
 
 cursor:default;
 
@@ -483,6 +479,58 @@ font-size:11px;
 
 }
 
+.banner-controls{
+
+position:absolute;
+
+top:10px;
+
+right:10px;
+
+z-index:20;
+
+display:flex;
+
+gap:6px;
+
+background:rgba(0,0,0,0.6);
+
+padding:4px 8px;
+
+border-radius:20px;
+
+border:1px solid var(--gold);
+
+}
+
+.banner-btn{
+
+background:transparent;
+
+border:none;
+
+color:var(--gold);
+
+font-size:14px;
+
+cursor:pointer;
+
+padding:2px 6px;
+
+line-height:1;
+
+user-select:none;
+
+transition:transform 0.1s ease;
+
+}
+
+.banner-btn:active{
+
+transform:scale(0.85);
+
+}
+
 .banner-dots{
 
 position:absolute;
@@ -494,7 +542,7 @@ display:flex;
 
 gap:5px;
 
-z-index: 10;
+z-index:10;
 
 }
 
@@ -515,47 +563,6 @@ cursor:pointer;
 
 background:var(--gold);
 
-}
-
-/* BOUTONS NAV BANNIÈRE DESKTOP/TABLETTE */
-
-.banner-nav-btn {
-position: absolute;
-top: 50%;
-transform: translateY(-50%);
-background: rgba(0, 0, 0, 0.65);
-color: var(--gold);
-border: 1px solid var(--gold);
-width: 38px;
-height: 38px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 18px;
-font-weight: bold;
-cursor: pointer;
-z-index: 12;
-transition: background 0.2s, transform 0.2s;
-user-select: none;
-pointer-events: auto;
-}
-
-.banner-nav-btn:hover {
-background: var(--gold);
-color: #000;
-}
-
-.banner-nav-btn:active {
-transform: translateY(-50%) scale(0.9);
-}
-
-.banner-btn-prev {
-left: 10px;
-}
-
-.banner-btn-next {
-right: 10px;
 }
 
 /* =====================================================
@@ -691,7 +698,7 @@ gap:16px;
 }
 
 /* =====================================================
-CARTE & ADAPTATION PARFAITE DES PRODUITS
+CARTE
 ===================================================== */
 
 .card{
@@ -799,14 +806,14 @@ text-transform:uppercase;
 }
 
 /* =====================================================
-MEDIA PRODUIT - SANS AUCUNE COUPURE DE PRODUIT
+MEDIA PRODUIT
 ===================================================== */
 
 .media-container{
 
 width:100%;
 
-height:200px;
+height:220px;
 
 position:relative;
 
@@ -814,7 +821,7 @@ border-radius:8px;
 
 overflow:hidden;
 
-background:#040609;
+background:#080b10;
 
 display:flex;
 
@@ -824,8 +831,6 @@ justify-content:center;
 
 margin-bottom:8px;
 
-padding: 4px;
-
 }
 
 .card img{
@@ -833,12 +838,11 @@ padding: 4px;
 width:100%;
 height:100%;
 
-max-height:100%;
+object-fit:cover;
 
-object-fit:contain;
 object-position:center;
 
-border-radius:6px;
+border-radius:8px;
 
 display:block;
 
@@ -852,11 +856,9 @@ transform .3s ease;
 width:100%;
 height:100%;
 
-max-height:100%;
+object-fit:cover;
 
-object-fit:contain;
-
-border-radius:6px;
+border-radius:8px;
 
 display:block;
 
@@ -1273,7 +1275,7 @@ overflow-y:auto;
 }
 
 /* =====================================================
-FOOTER (LIENS ET BOUTONS ENTIÈREMENT FONCTIONNELS)
+FOOTER
 ===================================================== */
 
 .app-footer{
@@ -1287,8 +1289,6 @@ border-top:2px solid var(--gold);
 color:#ddd;
 
 font-size:12px;
-
-position: relative;
 
 }
 
@@ -1371,19 +1371,31 @@ margin-bottom:8px;
 
 color:#aaa;
 
-font-size:11px;
-
-display: inline-block;
-
 text-decoration:none;
 
-transition:color .2s;
+transition:color .2s ease;
 
 }
 
 .footer-column a:hover{
 
 color:var(--gold);
+
+}
+
+/* LIEN DEVENIR VENDEUR */
+
+.seller-link{
+
+color:var(--gold) !important;
+
+font-weight:600;
+
+}
+
+.seller-link:hover{
+
+color:#fff !important;
 
 }
 
@@ -1581,15 +1593,22 @@ Installer l'application sur l'appareil
 </div>
 
 <!-- =====================================================
-BANNIÈRES AVEC NAVIGATION ARRIÈRE ET DEVANT
+BANNIÈRES
 ===================================================== -->
 
 <section
 class="banner-container"
 id="bannerContainer">
 
-<button class="banner-nav-btn banner-btn-prev" id="bannerPrevBtn" aria-label="Précédent">&lt;</button>
-<button class="banner-nav-btn banner-btn-next" id="bannerNextBtn" aria-label="Suivant">&gt;</button>
+<div class="banner-controls">
+
+<button type="button" class="banner-btn" id="btnBannerPrev" title="Précédent">◄</button>
+
+<button type="button" class="banner-btn" id="btnBannerPause" title="Arrêter / Reprendre">⏸</button>
+
+<button type="button" class="banner-btn" id="btnBannerNext" title="Suivant">►</button>
+
+</div>
 
 <div
 class="banner-track"
@@ -1687,7 +1706,7 @@ id="productModalContainer">
 </div>
 
 <!-- =====================================================
-FOOTER FONCTIONNEL
+FOOTER
 ===================================================== -->
 
 <footer class="app-footer">
@@ -1721,24 +1740,33 @@ Navigation & Aide
 
 <li>
 
-<a href="support.html">
+<a
+href="support-rapide.html">
+
 Support Rapide
+
 </a>
 
 </li>
 
 <li>
 
-<a href="aide.html">
+<a
+href="aide.html">
+
 Centre d'aide général
+
 </a>
 
 </li>
 
 <li>
 
-<a href="profil-acheteur.html">
+<a
+href="profil-acheteur.html">
+
 Mon Compte
+
 </a>
 
 </li>
@@ -1759,16 +1787,22 @@ Règles & Légal
 
 <li>
 
-<a href="reglement.html">
+<a
+href="reglement-interieur.html">
+
 Règlement Intérieur
+
 </a>
 
 </li>
 
 <li>
 
-<a href="confidentialite.html">
+<a
+href="politique-confidentialite.html">
+
 Politique de Confidentialité
+
 </a>
 
 </li>
@@ -1789,24 +1823,34 @@ Gagner de l'argent
 
 <li>
 
-<a href="ambassadeur.html">
+<a
+href="programme-ambassadeur.html">
+
 Programme Ambassadeur
+
 </a>
 
 </li>
 
 <li>
 
-<a href="affiliation.html">
+<a
+href="programme-ambassadeur.html">
+
 Affiliation
+
 </a>
 
 </li>
 
 <li>
 
-<a href="https://vendeur.dakproelite.com" style="color:var(--gold); font-weight:600;" target="_blank" rel="noopener">
+<a
+href="https://vendeur.dakproelite.com"
+class="seller-link">
+
 🛍️ Devenir Vendeur
+
 </a>
 
 </li>
@@ -1930,6 +1974,8 @@ let currentIndex = 0;
 let totalSlides = 0;
 
 let autoPlay = null;
+
+let isPaused = false;
 
 
 /* =====================================================
@@ -3609,7 +3655,7 @@ modalContainer.innerHTML =
 
 
 /* =====================================================
-BANNIÈRES FIREBASE ET NAVIGATION DESKTOP (ARRIÈRE / DEVANT)
+BANNIÈRES FIREBASE
 ===================================================== */
 
 function loadBanners(){
@@ -3726,11 +3772,6 @@ escapeHTML(
 banner.description || ""
 );
 
-const link =
-escapeAttribute(
-banner.lien || "#"
-);
-
 
 return `
 
@@ -3738,8 +3779,8 @@ return `
 class="banner-slide">
 
 <a
-href="${link}"
-onclick="return false;">
+href="javascript:void(0)"
+onclick="event.preventDefault();">
 
 <img
 src="${image}"
@@ -3815,8 +3856,6 @@ dot.dataset.slide
 
 updateSlide();
 
-resetAutoPlay();
-
 });
 
 });
@@ -3830,11 +3869,84 @@ container.style.display =
 "block";
 
 
-resetAutoPlay();
+startAutoPlay();
 
 });
 
 }
+
+
+function startAutoPlay(){
+
+if(autoPlay) clearInterval(autoPlay);
+
+autoPlay = setInterval(moveSlide, 4000);
+
+isPaused = false;
+
+const pauseBtn = document.getElementById("btnBannerPause");
+
+if(pauseBtn) pauseBtn.textContent = "⏸";
+
+}
+
+
+function stopAutoPlay(){
+
+if(autoPlay) clearInterval(autoPlay);
+
+autoPlay = null;
+
+isPaused = true;
+
+const pauseBtn = document.getElementById("btnBannerPause");
+
+if(pauseBtn) pauseBtn.textContent = "▶";
+
+}
+
+
+document.getElementById("btnBannerPrev")?.addEventListener("click", (e)=>{
+
+e.stopPropagation();
+
+if(totalSlides <= 0) return;
+
+currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+
+updateSlide();
+
+});
+
+
+document.getElementById("btnBannerNext")?.addEventListener("click", (e)=>{
+
+e.stopPropagation();
+
+if(totalSlides <= 0) return;
+
+currentIndex = (currentIndex + 1) % totalSlides;
+
+updateSlide();
+
+});
+
+
+document.getElementById("btnBannerPause")?.addEventListener("click", (e)=>{
+
+e.stopPropagation();
+
+if(isPaused){
+
+startAutoPlay();
+
+}else{
+
+stopAutoPlay();
+
+}
+
+});
 
 
 function updateSlide(){
@@ -3885,50 +3997,6 @@ totalSlides;
 updateSlide();
 
 }
-
-function prevSlide(){
-
-if(totalSlides<=0)return;
-
-currentIndex =
-
-(
-currentIndex - 1 + totalSlides
-) %
-totalSlides;
-
-updateSlide();
-
-}
-
-function resetAutoPlay(){
-
-if(autoPlay)
-clearInterval(autoPlay);
-
-
-autoPlay =
-
-setInterval(
-moveSlide,
-4000
-);
-
-}
-
-/* CONTROLES MANUELS DESKTOP (ARRIERE / DEVANT) */
-
-document.getElementById("bannerPrevBtn")?.addEventListener("click", (e)=>{
-e.stopPropagation();
-prevSlide();
-resetAutoPlay();
-});
-
-document.getElementById("bannerNextBtn")?.addEventListener("click", (e)=>{
-e.stopPropagation();
-moveSlide();
-resetAutoPlay();
-});
 
 
 /* =====================================================
@@ -3997,6 +4065,19 @@ data.text ||
 });
 
 }
+
+
+/* =====================================================
+SUPPORT RAPIDE
+===================================================== */
+
+/*
+Le bouton Support Rapide pointe maintenant
+directement vers support-rapide.html.
+
+Le fichier support-rapide.js reste disponible
+pour les fonctions utilisées ailleurs sur le site.
+*/
 
 
 /* =====================================================
