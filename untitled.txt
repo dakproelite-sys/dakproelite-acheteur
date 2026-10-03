@@ -1,855 +1,4230 @@
-/**
- * DAKPRO ÉLITE
- * Vercel + FedaPay Webhook
- *
- * URL finale :
- * https://TON-DOMAINE.com/api/fedapay-webhook
- *
- * IMPORTANT :
- * - Aucune clé secrète dans le frontend.
- * - La clé FedaPay est dans Vercel.
- * - Le secret du webhook est dans Vercel.
- * - Le paiement est vérifié directement auprès de FedaPay.
- * - La commande n'est confirmée qu'après vérification réelle.
- */
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-const crypto = require("crypto");
-const admin = require("firebase-admin");
+<meta name="theme-color" content="#d4af37">
+<meta name="application-name" content="DAKPROÉLITE">
+<meta name="apple-mobile-web-app-title" content="DAKPROÉLITE">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+<title>DAKPROÉLITE | La Référence Marketplace</title>
 
-// ============================================================
-// FIREBASE ADMIN
-// ============================================================
+<link rel="manifest" href="manifest.json">
 
-if (!admin.apps.length) {
+<link rel="icon" type="image/png"
+href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 
-  const serviceAccount =
-    JSON.parse(
-      process.env.FIREBASE_SERVICE_ACCOUNT_JSON
-    );
+<link rel="apple-touch-icon"
+href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 
-  admin.initializeApp({
-    credential:
-      admin.credential.cert(serviceAccount),
+<link rel="preload" as="image"
+href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 
-    databaseURL:
-      process.env.FIREBASE_DATABASE_URL
-  });
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--gold:#d4af37;
+--gold-light:#f3e5ab;
+--black:#050505;
+--dark:#0b0e13;
+--soft-dark:#12161f;
+--card:#1a2230;
+--blue:#007bff;
+--blue-dark:#0056b3;
+--green:#22c55e;
+--red:#ef4444;
+--white:#fff;
+--gray:#aaa;
+--border:rgba(212,175,55,.30);
 }
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+html{
+scroll-behavior:smooth;
+-webkit-text-size-adjust:100%;
+}
+
+body{
+min-height:100vh;
+background:var(--black);
+color:var(--white);
+font-family:Poppins,sans-serif;
+display:flex;
+flex-direction:column;
+overflow-x:hidden;
+top:0!important;
+}
+
+button,
+input,
+select,
+textarea{
+font-family:inherit;
+}
+
+button,
+a{
+-webkit-tap-highlight-color:transparent;
+}
+
+a{
+color:inherit;
+}
+
+/* =====================================================
+HEADER
+===================================================== */
+
+.header{
+position:sticky;
+top:0;
+z-index:5000;
+width:100%;
+min-height:62px;
+
+display:flex;
+align-items:center;
+
+gap:8px;
+
+padding:
+9px
+max(10px,env(safe-area-inset-right))
+9px
+max(10px,env(safe-area-inset-left));
+
+background:linear-gradient(
+to bottom,
+#131921,
+#050505
+);
+
+border-bottom:2px solid var(--gold);
+}
+
+/* =====================================================
+LOGO — STABLE ET SANS DÉFORMATION
+===================================================== */
+
+.logo-container{
+
+width:42px;
+height:42px;
+
+min-width:42px;
+min-height:42px;
+
+flex:0 0 42px;
+
+border-radius:50%;
+
+border:2px solid var(--gold);
+
+overflow:hidden;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:#000;
+
+cursor:pointer;
+
+box-shadow:
+inset 0 0 0 1px rgba(255,255,255,.08),
+inset 0 0 7px rgba(0,0,0,.75),
+0 1px 3px rgba(0,0,0,.8);
+
+transform:none !important;
+transition:none !important;
+animation:none !important;
+}
+
+/* IMAGE DU LOGO */
+
+.logo{
+
+display:block;
+
+width:100%;
+height:100%;
+
+max-width:100%;
+max-height:100%;
+
+object-fit:contain;
+object-position:center;
+
+background:#000;
+
+transform:none !important;
+transition:none !important;
+animation:none !important;
+
+filter:none !important;
+}
+
+.logo-container:hover,
+.logo-container:active,
+.logo-container:focus{
+
+transform:none !important;
+transition:none !important;
+animation:none !important;
+}
+
+.logo-container:hover .logo,
+.logo-container:active .logo,
+.logo-container:focus .logo{
+
+transform:none !important;
+transition:none !important;
+animation:none !important;
+
+filter:none !important;
+}
+
+.fallback-logo{
+
+color:var(--gold);
+
+font-size:12px;
+
+font-weight:800;
+
+}
+
+/* =====================================================
+RECHERCHE & OPTIONS LINGUISTIQUES (HARMONISÉES)
+===================================================== */
+
+.search-container{
+flex:1;
+min-width:0;
+display:flex;
+align-items:center;
+gap:5px;
+}
+
+#searchBar{
+flex:1;
+min-width:0;
+height:38px;
+border:1px solid var(--gold);
+border-radius:20px;
+background:#000;
+color:#fff;
+padding:0 12px;
+outline:none;
+font-size:12px;
+box-shadow:0 0 8px rgba(212,175,55,.12);
+text-overflow:ellipsis;
+}
+
+#searchBar::placeholder{
+color:#888;
+font-size:11px;
+}
+
+.select-lang-devise {
+background:#0b0e13;
+color:var(--gold);
+border:1px solid var(--gold);
+border-radius:10px;
+padding:4px 5px;
+font-size:10px;
+font-weight:600;
+height:38px;
+outline:none;
+cursor:pointer;
+flex-shrink:0;
+text-align:center;
+}
+
+#selectLangue {
+max-width:62px;
+}
+
+#selectDevise {
+max-width:70px;
+}
+
+/* =====================================================
+NAVIGATION
+===================================================== */
+
+.nav-icons{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+flex-shrink:0;
+
+}
+
+.nav-item{
+
+position:relative;
+
+min-width:38px;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+color:#fff;
+
+text-decoration:none;
+
+font-size:9px;
+
+cursor:pointer;
+
+}
+
+.nav-item>span:first-child{
+
+font-size:17px;
+
+line-height:18px;
+
+}
+
+.nav-item:hover{
+
+color:var(--gold);
+
+}
+
+.cart-badge{
+
+position:absolute;
+
+top:-4px;
+right:2px;
+
+background:var(--red);
+
+color:#fff;
+
+font-size:10px;
+
+font-weight:700;
+
+border-radius:10px;
+
+padding:1px 5px;
+
+min-width:16px;
+
+text-align:center;
+
+line-height:1.2;
+
+display:none;
+
+border:1px solid var(--black);
+
+}
+
+/* =====================================================
+INSTALLATION
+===================================================== */
+
+#btnInstall{
+
+display:none;
+
+width:calc(100% - 30px);
+
+max-width:600px;
+
+margin:12px auto;
+
+padding:11px;
+
+background:#333;
+
+border:1px solid var(--gold);
+
+border-radius:10px;
+
+text-align:center;
+
+color:#fff;
+
+cursor:pointer;
+
+font-size:13px;
+
+font-weight:600;
+
+}
+
+/* =====================================================
+BANNIÈRES
+===================================================== */
+
+.banner-container{
+
+display:none;
+
+position:relative;
+
+width:94%;
+
+max-width:1400px;
+
+margin:15px auto;
+
+overflow:hidden;
+
+border:1px solid var(--gold);
+
+border-radius:15px;
+
+background:var(--soft-dark);
+
+box-shadow:
+0 5px 20px rgba(212,175,55,.15);
+
+}
+
+.banner-track{
+
+display:flex;
+
+width:100%;
+
+transition:transform .5s ease;
+
+}
+
+.banner-slide{
+
+position:relative;
+
+min-width:100%;
+
+}
+
+.banner-slide a{
+
+display:block;
+
+text-decoration:none;
+
+cursor:default;
+
+}
+
+.banner-slide img{
+
+width:100%;
+
+height:220px;
+
+display:block;
+
+object-fit:cover;
+
+}
+
+.banner-content{
+
+position:absolute;
+
+left:0;
+right:0;
+bottom:0;
+
+padding:15px;
+
+background:
+linear-gradient(
+to top,
+rgba(0,0,0,.92),
+transparent
+);
+
+}
+
+.banner-content h3{
+
+color:var(--gold);
+
+font-size:15px;
+
+margin-bottom:3px;
+
+}
+
+.banner-content p{
+
+color:#ddd;
+
+font-size:11px;
+
+}
+
+.banner-controls{
+
+position:absolute;
+
+top:10px;
+
+right:10px;
+
+z-index:20;
+
+display:flex;
+
+gap:6px;
+
+background:rgba(0,0,0,0.6);
+
+padding:4px 8px;
+
+border-radius:20px;
+
+border:1px solid var(--gold);
+
+}
+
+.banner-btn{
+
+background:transparent;
+
+border:none;
+
+color:var(--gold);
+
+font-size:14px;
+
+cursor:pointer;
+
+padding:2px 6px;
+
+line-height:1;
+
+user-select:none;
+
+transition:transform 0.1s ease;
+
+}
+
+.banner-btn:active{
+
+transform:scale(0.85);
+
+}
+
+.banner-dots{
+
+position:absolute;
+
+bottom:9px;
+right:12px;
+
+display:flex;
+
+gap:5px;
+
+z-index:10;
+
+}
+
+.dot{
+
+width:8px;
+height:8px;
+
+border-radius:50%;
+
+background:rgba(255,255,255,.4);
+
+cursor:pointer;
+
+}
+
+.dot.active{
+
+background:var(--gold);
+
+}
+
+/* =====================================================
+CATÉGORIES
+===================================================== */
+
+.cat-scroll{
+
+width:100%;
+
+display:flex;
+
+gap:9px;
+
+overflow-x:auto;
+
+padding:10px 15px 15px;
+
+scrollbar-width:none;
+
+}
+
+.cat-scroll::-webkit-scrollbar{
+
+display:none;
+
+}
+
+.cat-btn{
+
+flex:0 0 auto;
+
+padding:9px 17px;
+
+border:1px solid var(--gold);
+
+border-radius:22px;
+
+background:transparent;
+
+color:#fff;
+
+cursor:pointer;
+
+white-space:nowrap;
+
+font-size:12px;
+
+transition:
+background .2s,
+color .2s;
+
+}
+
+.cat-btn.active{
+
+background:var(--gold);
+
+color:#000;
+
+font-weight:700;
+
+}
+
+/* =====================================================
+PRODUITS
+===================================================== */
+
+.products{
+
+width:100%;
+
+max-width:1800px;
+
+margin:0 auto;
+
+padding:10px;
+
+display:grid;
+
+grid-template-columns:
+repeat(2,1fr);
+
+gap:12px;
+
+align-items:stretch;
+
+flex:1;
+
+}
+
+@media(min-width:700px){
+
+.products{
+
+grid-template-columns:
+repeat(4,1fr);
+
+gap:14px;
+
+padding:15px;
+
+}
+
+}
+
+@media(min-width:1001px){
+
+.products{
+
+grid-template-columns:
+repeat(6,1fr);
+
+gap:16px;
+
+padding:20px;
+
+}
+
+}
+
+@media(min-width:1651px){
+
+.products{
+
+grid-template-columns:
+repeat(8,1fr);
+
+gap:16px;
+
+}
+
+}
+
+/* =====================================================
+CARTE PRODUIT
+===================================================== */
+
+.card{
+
+position:relative;
+
+display:flex;
+
+flex-direction:column;
+
+justify-content:space-between;
+
+width:100%;
+
+padding:10px;
+
+background:var(--card);
+
+border:1px solid var(--border);
+
+border-radius:12px;
+
+box-shadow:
+0 4px 12px rgba(0,0,0,.4);
+
+transition:
+transform .2s ease,
+border-color .2s ease,
+box-shadow .2s ease;
+
+overflow:hidden;
+
+height:100%;
+
+}
+
+.card:hover{
+
+transform:translateY(-3px);
+
+border-color:var(--gold);
+
+box-shadow:
+0 6px 16px rgba(212,175,55,.2);
+
+}
+
+.badge-discount{
+
+position:absolute;
+
+top:8px;
+right:8px;
+
+z-index:5;
+
+padding:3px 6px;
+
+background:var(--red);
+
+color:#fff;
+
+border-radius:4px;
+
+font-size:9px;
+
+font-weight:800;
+
+box-shadow:
+0 2px 4px rgba(0,0,0,.5);
+
+}
+
+.badge-boost{
+
+position:absolute;
+
+top:8px;
+left:8px;
+
+z-index:5;
+
+padding:3px 6px;
+
+background:
+linear-gradient(
+45deg,
+#e00000,
+#ff5252
+);
+
+color:#fff;
+
+border-radius:4px;
+
+font-size:8px;
+
+font-weight:800;
+
+box-shadow:
+0 2px 4px rgba(0,0,0,.5);
+
+text-transform:uppercase;
+
+}
+
+/* =====================================================
+MEDIA PRODUIT
+===================================================== */
+
+.media-container{
+
+width:100%;
+
+height:220px;
+
+position:relative;
+
+border-radius:8px;
+
+overflow:hidden;
+
+background:#080b10;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+padding: 6px;
+
+margin-bottom:8px;
+
+}
+
+.card img{
+
+width:100%;
+height:100%;
+
+object-fit:contain;
+
+object-position:center;
+
+border-radius:6px;
+
+display:block;
+
+transition:
+transform .3s ease;
+
+}
+
+.card video{
+
+width:100%;
+height:100%;
+
+object-fit:contain;
+
+border-radius:6px;
+
+display:block;
+
+}
+
+.card:hover img{
+
+transform:scale(1.02);
+
+}
+
+.product-no-image{
+
+width:100%;
+height:100%;
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+flex-direction:column;
+
+background:#080b10;
+
+color:#777;
+
+font-size:10px;
+
+text-align:center;
+
+border-radius:8px;
+
+}
+
+.product-no-image strong{
+
+font-size:24px;
+
+margin-bottom:3px;
+
+color:var(--gold);
+
+}
+
+.doc-box{
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+justify-content:center;
+
+width:100%;
+height:100%;
+
+background:#111;
+
+color:var(--gold);
+
+text-decoration:none;
+
+padding:10px 5px;
+
+text-align:center;
+
+border-radius:8px;
+
+}
+
+.doc-box span{
+
+font-size:24px;
+
+margin-bottom:3px;
+
+}
+
+.doc-box p{
+
+font-size:9px;
+
+color:#fff;
+
+word-break:break-all;
+
+}
+
+/* =====================================================
+TEXTES PRODUITS
+===================================================== */
+
+.card h3{
+
+margin:4px 0;
+
+font-size:12px;
+
+font-weight:600;
+
+line-height:1.3;
+
+word-break:break-word;
+
+color:#fff;
+
+display:-webkit-box;
+
+-webkit-line-clamp:2;
+
+-webkit-box-orient:vertical;
+
+overflow:hidden;
+
+min-height:31px;
+
+}
+
+.card .description-complete{
+
+font-size:10px;
+
+color:#aaa;
+
+line-height:1.3;
+
+margin-bottom:8px;
+
+display:-webkit-box;
+
+-webkit-line-clamp:2;
+
+-webkit-box-orient:vertical;
+
+overflow:hidden;
+
+word-break:break-word;
+
+}
+
+.market-tags{
+
+display:flex;
+
+gap:4px;
+
+margin-bottom:6px;
+
+flex-wrap:wrap;
+
+}
+
+.tag-express{
+
+background:
+rgba(34,197,94,.15);
+
+color:#22c55e;
+
+border:
+1px solid rgba(34,197,94,.3);
+
+font-size:8px;
+
+padding:1px 4px;
+
+border-radius:3px;
+
+font-weight:600;
+
+}
+
+.price-container{
+
+display:flex;
+
+align-items:baseline;
+
+gap:6px;
+
+flex-wrap:wrap;
+
+margin:4px 0 8px;
+
+}
+
+.price{
+
+color:var(--gold);
+
+font-size:14px;
+
+font-weight:800;
+
+}
+
+.price-old{
+
+text-decoration:line-through;
+
+color:#777;
+
+font-size:10px;
+
+font-weight:400;
+
+}
+
+.card-actions-row{
+
+display:flex;
+
+gap:6px;
+
+margin-top:auto;
+
+}
+
+.btn-action{
+
+flex:1;
+
+padding:7px 4px;
+
+border:1px solid var(--border);
+
+border-radius:6px;
+
+color:#fff;
+
+font-size:10px;
+
+font-weight:700;
+
+text-align:center;
+
+text-decoration:none;
+
+cursor:pointer;
+
+transition:
+background .2s,
+border-color .2s,
+transform .1s;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+white-space:nowrap;
+
+}
+
+.btn-action:active{
+
+transform:scale(.96);
+
+}
+
+.btn-cart{
+
+background:#166534;
+
+color:#fff;
+
+border-color:
+rgba(34,197,94,.5);
+
+}
+
+.btn-cart:hover{
+
+background:#15803d;
+
+}
+
+.btn-copy{
+
+background:var(--blue);
+
+color:#fff;
+
+border-color:
+rgba(0,123,255,.5);
+
+}
+
+.btn-copy:hover{
+
+background:var(--blue-dark);
+
+}
+
+.affiliate-box{
+
+margin-top:4px;
+
+}
+
+.affiliate-input{
+
+display:none;
+
+width:100%;
+
+margin-top:4px;
+
+padding:4px;
+
+background:#000;
+
+color:#fff;
+
+border:1px solid #444;
+
+border-radius:4px;
+
+font-size:8px;
+
+}
+
+.skeleton-card{
+
+background:#151c28;
+
+border-radius:12px;
+
+padding:10px;
+
+animation:pulse 1.5s infinite ease-in-out;
+
+}
+
+.skeleton-media{
+
+width:100%;
+
+height:150px;
+
+background:#222b3a;
+
+border-radius:8px;
+
+}
+
+.skeleton-text{
+
+height:10px;
+
+background:#222b3a;
+
+margin:8px 0;
+
+border-radius:4px;
+
+}
+
+@keyframes pulse{
+
+0%{opacity:.6}
+50%{opacity:1}
+100%{opacity:.6}
+
+}
+
+/* =====================================================
+MODAL
+===================================================== */
+
+.modal-overlay{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.85);
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+z-index:10000;
+
+padding:15px;
+
+}
+
+.modal-content{
+
+background:#0a0d14;
+
+border:1px solid var(--gold);
+
+border-radius:14px;
+
+padding:20px;
+
+max-width:520px;
+
+width:100%;
+
+max-height:90vh;
+
+overflow-y:auto;
+
+}
+
+/* =====================================================
+FOOTER
+===================================================== */
+
+.app-footer{
+
+margin-top:30px;
+
+background:#131921;
+
+border-top:2px solid var(--gold);
+
+color:#ddd;
+
+font-size:12px;
+
+}
+
+.footer-announcement{
+
+padding:16px 20px;
+
+text-align:center;
+
+background:var(--soft-dark);
+
+border-bottom:1px solid #333;
+
+}
+
+.footer-announcement h4{
+
+color:var(--gold);
+
+margin-bottom:5px;
+
+font-size:14px;
+
+}
+
+.footer-announcement p{
+
+color:#ccc;
+
+line-height:1.5;
+
+font-size:11px;
+
+}
+
+.footer-links-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(3,1fr);
+
+gap:20px;
+
+width:100%;
+
+max-width:1000px;
+
+margin:auto;
+
+padding:25px 20px;
+
+}
+
+.footer-column h5{
+
+color:var(--gold);
+
+font-size:12px;
+
+margin-bottom:10px;
+
+text-transform:uppercase;
+
+}
+
+.footer-column ul{
+
+list-style:none;
+
+}
+
+.footer-column li{
+
+margin-bottom:8px;
+
+}
+
+.footer-column a{
+
+color:#aaa;
+
+text-decoration:none;
+
+transition:color .2s ease;
+
+}
+
+.footer-column a:hover{
+
+color:var(--gold);
+
+}
+
+.seller-link{
+
+color:var(--gold) !important;
+
+font-weight:600;
+
+}
+
+.seller-link:hover{
+
+color:#fff !important;
+
+}
+
+.footer-bottom-bar{
+
+padding:15px;
+
+background:#000;
+
+border-top:1px solid #222;
+
+text-align:center;
+
+color:#777;
+
+font-size:10px;
+
+}
+
+.loading-message,
+.empty-message{
+
+grid-column:1 / -1;
+
+padding:40px 20px;
+
+text-align:center;
+
+color:#999;
+
+font-size:13px;
+
+}
+
+.error-message{
+
+color:#ff8080;
+
+}
+
+@media(max-width:700px){
+
+.footer-links-grid{
+
+grid-template-columns:
+repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:500px){
+
+.header{
+
+gap:5px;
+padding-left:6px;
+padding-right:6px;
+
+}
+
+.logo-container{
+
+width:36px;
+height:36px;
+
+min-width:36px;
+min-height:36px;
+
+flex-basis:36px;
+
+}
+
+.search-container{
+gap:4px;
+}
+
+#searchBar{
+
+height:36px;
+
+padding:0 8px;
+
+font-size:11px;
+
+}
+
+.select-lang-devise{
+height:36px;
+font-size:9.5px;
+padding:3px 2px;
+}
+
+#selectLangue{
+max-width:55px;
+}
+
+#selectDevise{
+max-width:62px;
+}
+
+.nav-icons{
+
+gap:4px;
+
+}
+
+.nav-item{
+
+min-width:30px;
+
+font-size:8px;
+
+}
+
+.nav-item>span:first-child{
+
+font-size:14px;
+
+}
+
+.footer-links-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+HEADER
+===================================================== -->
+
+<header class="header">
+
+<div
+class="logo-container"
+id="logoButton">
+
+<img
+class="logo"
+id="appLogo"
+src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png"
+alt="Logo DAKPROÉLITE"
+loading="eager"
+decoding="sync">
+
+<span
+class="fallback-logo"
+id="fallbackLogo"
+style="display:none">
+
+DP
+
+</span>
+
+</div>
+
+<div class="search-container">
+
+<input
+type="search"
+id="searchBar"
+autocomplete="off"
+placeholder="Rechercher des produits sur DAKPROÉLITE...">
+
+<!-- SÉLECTEUR DE LANGUES -->
+<select id="selectLangue" class="select-lang-devise" onchange="if(typeof changerLangue === 'function') changerLangue(this.value)">
+  <option value="fr">🇫🇷 FR</option>
+  <option value="en">🇬🇧 EN</option>
+  <option value="es">🇪🇸 ES</option>
+  <option value="ar">🇸🇦 AR</option>
+  <option value="zh">🇨🇳 ZH</option>
+  <option value="hi">🇮🇳 HI</option>
+  <option value="yo">🇳🇬 YO</option>
+  <option value="ha">🇳🇬 HA</option>
+</select>
+
+<!-- SÉLECTEUR DE DEVISES MONDIAL -->
+<select id="selectDevise" class="select-lang-devise" onchange="if(typeof changerDevise === 'function') changerDevise(this.value)">
+  <option value="XOF">FCFA</option>
+  <option value="USD">$ USD</option>
+  <option value="EUR">€ EUR</option>
+  <option value="GBP">£ GBP</option>
+  <option value="NGN">₦ NGN</option>
+  <option value="INR">₹ INR</option>
+  <option value="CNY">¥ CNY</option>
+  <option value="DZD">DA DZD</option>
+  <option value="KWD">KD KWD</option>
+</select>
+
+</div>
+
+<div class="nav-icons">
+
+<a
+href="panier.html"
+class="nav-item"
+id="navCartLink">
+
+<span>🛒</span>
+
+<span
+class="cart-badge"
+id="cartBadge">
+0
+</span>
+
+<span>Panier</span>
+
+</a>
+
+<a
+href="profil-acheteur.html"
+class="nav-item">
+
+<span>👤</span>
+
+<span>Compte</span>
+
+</a>
+
+</div>
+
+</header>
+
+<!-- =====================================================
+INSTALLATION PWA
+===================================================== -->
+
+<div id="btnInstall">
+
+Installer l'application sur l'appareil
+
+</div>
+
+<!-- =====================================================
+BANNIÈRES
+===================================================== -->
+
+<section
+class="banner-container"
+id="bannerContainer">
+
+<div class="banner-controls">
+
+<button type="button" class="banner-btn" id="btnBannerPrev" title="Précédent">◄</button>
+
+<button type="button" class="banner-btn" id="btnBannerPause" title="Arrêter / Reprendre">⏸</button>
+
+<button type="button" class="banner-btn" id="btnBannerNext" title="Suivant">►</button>
+
+</div>
+
+<div
+class="banner-track"
+id="bannerTrack">
+</div>
+
+<div
+class="banner-dots"
+id="bannerDots">
+</div>
+
+</section>
+
+<!-- =====================================================
+CATÉGORIES
+===================================================== -->
+
+<nav
+class="cat-scroll"
+id="catMenu">
+</nav>
+
+<!-- =====================================================
+PRODUITS
+===================================================== -->
+
+<main
+class="products"
+id="products">
+
+<div class="skeleton-card">
+
+<div class="skeleton-media">
+</div>
+
+<div class="skeleton-text">
+</div>
+
+<div
+class="skeleton-text"
+style="width:60%">
+</div>
+
+</div>
+
+<div class="skeleton-card">
+
+<div class="skeleton-media">
+</div>
+
+<div class="skeleton-text">
+</div>
+
+<div
+class="skeleton-text"
+style="width:60%">
+</div>
+
+</div>
+
+<div class="skeleton-card">
+
+<div class="skeleton-media">
+</div>
+
+<div class="skeleton-text">
+</div>
+
+<div
+class="skeleton-text"
+style="width:60%">
+</div>
+
+</div>
+
+<div class="skeleton-card">
+
+<div class="skeleton-media">
+</div>
+
+<div class="skeleton-text">
+</div>
+
+<div
+class="skeleton-text"
+style="width:60%">
+</div>
+
+</div>
+
+</main>
+
+<div
+id="productModalContainer">
+</div>
+
+<!-- =====================================================
+FOOTER
+===================================================== -->
+
+<footer class="app-footer">
+
+<section class="footer-announcement">
+
+<h4 id="fayaBuzzTitle">
+⚡ Annonce Officielle
+</h4>
+
+<p id="fayaBuzzText">
+
+Bienvenue sur DAKPROÉLITE,
+votre plateforme de référence !
+
+</p>
+
+</section>
+
+<div class="footer-links-grid">
+
+<!-- NAVIGATION -->
+
+<div class="footer-column">
+
+<h5>
+Navigation & Aide
+</h5>
+
+<ul>
+
+<li>
+
+<a
+href="support-rapide.html">
+
+Support Rapide
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="aide.html">
+
+Centre d'aide général
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="profil-acheteur.html">
+
+Mon Compte
+
+</a>
+
+</li>
+
+</ul>
+
+</div>
+
+<!-- RÈGLES -->
+
+<div class="footer-column">
+
+<h5>
+Règles & Légal
+</h5>
+
+<ul>
+
+<li>
+
+<a
+href="reglement-interieur.html">
+
+Règlement Intérieur
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="politique-confidentialite.html">
+
+Politique de Confidentialité
+
+</a>
+
+</li>
+
+</ul>
+
+</div>
+
+<!-- VENDEUR -->
+
+<div class="footer-column">
+
+<h5>
+Gagner de l'argent
+</h5>
+
+<ul>
+
+<li>
+
+<a
+href="programme-ambassadeur.html">
+
+Programme Ambassadeur
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="programme-ambassadeur.html">
+
+Affiliation
+
+</a>
+
+</li>
+
+<li>
+
+<a
+href="https://vendeur.dakproelite.com"
+class="seller-link">
+
+🛍️ Devenir Vendeur
+
+</a>
+
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<div class="footer-bottom-bar">
+
+© 2026 DAKPROÉLITE.
+Tous droits réservés.
+
+</div>
+
+</footer>
+
+<!-- =====================================================
+SUPPORT RAPIDE
+===================================================== -->
+
+<script src="support-rapide.js"></script>
+
+<!-- =====================================================
+FIREBASE
+===================================================== -->
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue,
+get,
+update,
+set
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+
+/* =====================================================
+FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
+
+authDomain:
+"dakproelite.firebaseapp.com",
+
+databaseURL:
+"https://dakproelite-default-rtdb.firebaseio.com",
+
+projectId:
+"dakproelite",
+
+storageBucket:
+"dakproelite.firebasestorage.app",
+
+messagingSenderId:
+"580591769206",
+
+appId:
+"1:580591769206:web:4f67f8aadbf3d051087157"
+
+};
+
+
+const app =
+initializeApp(firebaseConfig);
 
 const db =
-  admin.database();
+getDatabase(app);
+
+const auth =
+getAuth(app);
 
 
-// ============================================================
-// VERCEL
-// Garder le body brut pour vérifier la signature.
-// ============================================================
+window.dakproFirebase = {
 
-module.exports.config = {
-  api: {
-    bodyParser: false
-  }
+app,
+db,
+auth
+
 };
 
 
-// ============================================================
-// LECTURE DU BODY BRUT
-// ============================================================
+window.allProductsData = [];
 
-function readRawBody(req) {
 
-  return new Promise(
-    (resolve, reject) => {
+const siteContext = {
 
-      let data = "";
-
-      req.on(
-        "data",
-        chunk => {
-          data += chunk;
-        }
-      );
-
-      req.on(
-        "end",
-        () => resolve(data)
-      );
-
-      req.on(
-        "error",
-        reject
-      );
-
-    }
-  );
-}
-
-
-// ============================================================
-// VÉRIFICATION SIGNATURE FEDAPAY
-// ============================================================
-
-function verifyFedaPaySignature(
-  rawBody,
-  receivedSignature,
-  secret
-) {
-
-  if (
-    !rawBody ||
-    !receivedSignature ||
-    !secret
-  ) {
-    return false;
-  }
-
-  const expectedSignature =
-    crypto
-      .createHmac(
-        "sha256",
-        secret
-      )
-      .update(
-        rawBody,
-        "utf8"
-      )
-      .digest("hex");
-
-
-  const received =
-    String(
-      receivedSignature
-    ).trim()
-    .replace(
-      /^sha256=/i,
-      ""
-    );
-
-
-  if (
-    received.length !==
-    expectedSignature.length
-  ) {
-    return false;
-  }
-
-
-  return crypto.timingSafeEqual(
-    Buffer.from(received),
-    Buffer.from(expectedSignature)
-  );
-}
-
-
-// ============================================================
-// EXTRACTION DES DONNÉES
-// ============================================================
-
-function extractEvent(data) {
-
-  const eventName =
-    data?.name ||
-    data?.event ||
-    data?.type ||
-    "";
-
-  const entity =
-    data?.entity ||
-    data?.data?.entity ||
-    data?.data ||
-    data?.transaction ||
-    {};
-
-
-  return {
-    name:
-      String(eventName),
-
-    entity:
-      entity || {}
-  };
-}
-
-
-// ============================================================
-// TRANSACTION FEDAPAY
-// Vérification indépendante auprès de l'API.
-// ============================================================
-
-async function getFedaPayTransaction(
-  transactionId
-) {
-
-  if (!transactionId) {
-    throw new Error(
-      "ID transaction FedaPay manquant."
-    );
-  }
-
-
-  const response =
-    await fetch(
-      `https://api.fedapay.com/v1/transactions/${encodeURIComponent(
-        transactionId
-      )}`,
-      {
-        method: "GET",
-
-        headers: {
-          "Authorization":
-            `Bearer ${process.env.FEDAPAY_SECRET_KEY}`,
-
-          "Content-Type":
-            "application/json"
-        }
-      }
-    );
-
-
-  const text =
-    await response.text();
-
-
-  let data = {};
-
-  try {
-    data =
-      JSON.parse(text);
-  } catch {
-    data = {
-      raw: text
-    };
-  }
-
-
-  if (!response.ok) {
-
-    throw new Error(
-      `FedaPay API ${response.status}: ${text}`
-    );
-
-  }
-
-
-  return (
-    data?.v1?.transaction ||
-    data?.transaction ||
-    data?.data ||
-    data
-  );
-}
-
-
-// ============================================================
-// STATUTS ACCEPTÉS
-// ============================================================
-
-function isApproved(status) {
-
-  return [
-    "approved",
-    "paid",
-    "payé",
-    "payee"
-  ].includes(
-    String(status || "")
-      .toLowerCase()
-  );
-
-}
-
-
-function isFailed(status) {
-
-  return [
-    "declined",
-    "canceled",
-    "cancelled",
-    "failed",
-    "refunded"
-  ].includes(
-    String(status || "")
-      .toLowerCase()
-  );
-
-}
-
-
-// ============================================================
-// HANDLER
-// ============================================================
-
-module.exports = async function handler(
-  req,
-  res
-) {
-
-  // ----------------------------------------------------------
-  // MÉTHODE
-  // ----------------------------------------------------------
-
-  if (
-    req.method !== "POST"
-  ) {
-
-    return res
-      .status(405)
-      .json({
-        success: false,
-        message:
-          "Méthode non autorisée."
-      });
-
-  }
-
-
-  // ----------------------------------------------------------
-  // VARIABLES OBLIGATOIRES
-  // ----------------------------------------------------------
-
-  if (
-    !process.env.FEDAPAY_SECRET_KEY ||
-    !process.env.FEDAPAY_WEBHOOK_SECRET ||
-    !process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
-    !process.env.FIREBASE_DATABASE_URL
-  ) {
-
-    console.error(
-      "Variables Vercel manquantes."
-    );
-
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message:
-          "Configuration serveur incomplète."
-      });
-
-  }
-
-
-  try {
-
-    // --------------------------------------------------------
-    // BODY BRUT
-    // --------------------------------------------------------
-
-    const rawBody =
-      await readRawBody(req);
-
-
-    // --------------------------------------------------------
-    // SIGNATURE
-    // --------------------------------------------------------
-
-    const signature =
-      req.headers[
-        "x-fedapay-signature"
-      ];
-
-
-    const validSignature =
-      verifyFedaPaySignature(
-        rawBody,
-        signature,
-        process.env.FEDAPAY_WEBHOOK_SECRET
-      );
-
-
-    if (!validSignature) {
-
-      console.error(
-        "Signature FedaPay invalide."
-      );
-
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message:
-            "Signature webhook invalide."
-        });
-
-    }
-
-
-    // --------------------------------------------------------
-    // JSON
-    // --------------------------------------------------------
-
-    let payload;
-
-    try {
-
-      payload =
-        JSON.parse(rawBody);
-
-    } catch {
-
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "JSON webhook invalide."
-        });
-
-    }
-
-
-    const event =
-      extractEvent(payload);
-
-
-    console.log(
-      "FedaPay event :",
-      event.name
-    );
-
-
-    const entity =
-      event.entity || {};
-
-
-    // --------------------------------------------------------
-    // TRANSACTION ID
-    // --------------------------------------------------------
-
-    const transactionId =
-      entity.id ||
-      entity.transaction_id ||
-      payload?.transaction?.id ||
-      null;
-
-
-    if (!transactionId) {
-
-      console.warn(
-        "Webhook reçu sans ID transaction."
-      );
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-          ignored: true,
-          message:
-            "Événement sans transaction."
-        });
-
-    }
-
-
-    // --------------------------------------------------------
-    // MÉTADONNÉES
-    // --------------------------------------------------------
-
-    const metadata =
-      entity.custom_metadata ||
-      entity.metadata ||
-      payload?.custom_metadata ||
-      {};
-
-
-    const orderId =
-      metadata.commandeId ||
-      metadata.commandeID ||
-      metadata.orderId ||
-      metadata.orderID ||
-      null;
-
-
-    const uid =
-      metadata.acheteurId ||
-      metadata.uid ||
-      metadata.userId ||
-      null;
-
-
-    // --------------------------------------------------------
-    // SI PAS DE COMMANDE DAKPRO
-    // --------------------------------------------------------
-
-    if (!orderId || !uid) {
-
-      console.warn(
-        "Transaction FedaPay sans métadonnées DAKPRO.",
-        {
-          transactionId,
-          metadata
-        }
-      );
-
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-          ignored: true,
-          message:
-            "Transaction sans commande DAKPRO."
-        });
-
-    }
-
-
-    // --------------------------------------------------------
-    // RÉCUPÉRATION COMMANDE
-    // --------------------------------------------------------
-
-    const orderRef =
-      db.ref(
-        `commandes/${uid}/${orderId}`
-      );
-
-
-    const orderSnapshot =
-      await orderRef.once(
-        "value"
-      );
-
-
-    if (
-      !orderSnapshot.exists()
-    ) {
-
-      console.error(
-        "Commande introuvable :",
-        uid,
-        orderId
-      );
-
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-          ignored: true,
-          message:
-            "Commande introuvable."
-        });
-
-    }
-
-
-    const order =
-      orderSnapshot.val() || {};
-
-
-    // --------------------------------------------------------
-    // IDEMPOTENCE
-    // Si déjà confirmé, ne rien refaire.
-    // --------------------------------------------------------
-
-    if (
-      order.paiementConfirme === true ||
-      String(
-        order.paiement?.statut || ""
-      ).toLowerCase() ===
-        "approved"
-    ) {
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-          alreadyProcessed: true
-        });
-
-    }
-
-
-    // --------------------------------------------------------
-    // VÉRIFICATION DIRECTE FEDAPAY
-    // --------------------------------------------------------
-
-    const transaction =
-      await getFedaPayTransaction(
-        transactionId
-      );
-
-
-    const realStatus =
-      String(
-        transaction?.status ||
-        entity?.status ||
-        ""
-      ).toLowerCase();
-
-
-    const realAmount =
-      Number(
-        transaction?.amount ??
-        entity?.amount ??
-        0
-      );
-
-
-    const orderAmount =
-      Number(
-        order.montantTotal || 0
-      );
-
-
-    // --------------------------------------------------------
-    // VÉRIFICATION MONTANT
-    // --------------------------------------------------------
-
-    if (
-      realAmount !==
-      orderAmount
-    ) {
-
-      console.error(
-        "Montant différent !",
-        {
-          orderAmount,
-          realAmount,
-          orderId,
-          transactionId
-        }
-      );
-
-
-      await orderRef.update({
-
-        "paiement/statut":
-          "amount_mismatch",
-
-        "paiement/transactionId":
-          transactionId,
-
-        "paiement/verification":
-          "server_amount_mismatch",
-
-        "paiement/verifieLe":
-          Date.now(),
-
-        statutPaiement:
-          "amount_mismatch",
-
-        paiementConfirme:
-          false
-
-      });
-
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-          status:
-            "amount_mismatch"
-        });
-
-    }
-
-
-    // --------------------------------------------------------
-    // PAIEMENT APPROUVÉ
-    // --------------------------------------------------------
-
-    if (
-      isApproved(realStatus)
-    ) {
-
-      await orderRef.update({
-
-        "paiement/statut":
-          "approved",
-
-        "paiement/transactionId":
-          transactionId,
-
-        "paiement/referenceFedaPay":
-          transaction?.reference ||
-          entity?.reference ||
-          null,
-
-        "paiement/statutFedaPay":
-          realStatus,
-
-        "paiement/verification":
-          "server_verified",
-
-        "paiement/verifieLe":
-          Date.now(),
-
-        "paiementConfirme":
-          true,
-
-        statut:
-          "Payée",
-
-        statutPaiement:
-          "paid",
-
-        statutLivraison:
-          "En attente de livraison"
-
-      });
-
-
-      // ------------------------------------------------------
-      // VIDAGE PANIER UNIQUEMENT APRÈS PAIEMENT CONFIRMÉ
-      // ------------------------------------------------------
-
-      await db.ref(
-        `users/${uid}/panier`
-      ).remove();
-
-
-      await db.ref(
-        `users/${uid}/gs/cart`
-      ).remove();
-
-
-      await db.ref(
-        `users/${uid}/gs/total`
-      ).set(0);
-
-
-      console.log(
-        "✅ Paiement confirmé :",
-        {
-          uid,
-          orderId,
-          transactionId,
-          amount: realAmount
-        }
-      );
-
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-          paid: true,
-          orderId,
-          transactionId
-        });
-
-    }
-
-
-    // --------------------------------------------------------
-    // PAIEMENT ÉCHOUÉ / ANNULÉ
-    // --------------------------------------------------------
-
-    if (
-      isFailed(realStatus)
-    ) {
-
-      await orderRef.update({
-
-        "paiement/statut":
-          realStatus,
-
-        "paiement/transactionId":
-          transactionId,
-
-        "paiement/statutFedaPay":
-          realStatus,
-
-        "paiement/verification":
-          "server_verified",
-
-        "paiement/verifieLe":
-          Date.now(),
-
-        paiementConfirme:
-          false,
-
-        statutPaiement:
-          realStatus,
-
-        statut:
-          "Paiement non confirmé"
-
-      });
-
-
-      console.log(
-        "Paiement non confirmé :",
-        realStatus
-      );
-
-
-      return res
-        .status(200)
-        .json({
-          success: true,
-          paid: false,
-          status:
-            realStatus
-        });
-
-    }
-
-
-    // --------------------------------------------------------
-    // ENCORE EN ATTENTE
-    // --------------------------------------------------------
-
-    await orderRef.update({
-
-      "paiement/statut":
-        "pending",
-
-      "paiement/transactionId":
-        transactionId,
-
-      "paiement/statutFedaPay":
-        realStatus,
-
-      "paiement/verification":
-        "server_pending",
-
-      "paiement/verifieLe":
-        Date.now(),
-
-      paiementConfirme:
-        false,
-
-      statutPaiement:
-        "pending"
-
-    });
-
-
-    return res
-      .status(200)
-      .json({
-        success: true,
-        paid: false,
-        status:
-          realStatus
-      });
-
-
-  } catch (error) {
-
-    console.error(
-      "Erreur webhook FedaPay :",
-      error
-    );
-
-
-    /*
-     * Retour 500 afin que FedaPay puisse
-     * retenter la notification si nécessaire.
-     */
-
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message:
-          "Erreur interne webhook."
-      });
-
-  }
+currentUser:null,
+userData:null
 
 };
+
+
+let currentCat = "Tous";
+
+let currentIndex = 0;
+
+let totalSlides = 0;
+
+let autoPlay = null;
+
+let isPaused = false;
+
+
+/* =====================================================
+CACHE
+===================================================== */
+
+(function chargerCacheImmediat(){
+
+try{
+
+const cachedProducts =
+localStorage.getItem(
+"dakpro_cached_publications"
+);
+
+if(cachedProducts){
+
+window.allProductsData =
+JSON.parse(cachedProducts);
+
+buildCategories();
+
+filterProducts();
+
+}
+
+}catch(e){
+
+console.warn(
+"Cache indisponible:",
+e
+);
+
+}
+
+})();
+
+
+/* =====================================================
+UTILISATEUR + PANIER
+===================================================== */
+
+onAuthStateChanged(
+auth,
+user=>{
+
+siteContext.currentUser =
+user || null;
+
+if(user){
+
+listenToCartBadge(
+user.uid
+);
+
+}else{
+
+updateCartBadgeDisplay(0);
+
+}
+
+});
+
+
+function updateCartBadgeDisplay(count){
+
+const badge =
+document.getElementById(
+"cartBadge"
+);
+
+if(!badge)return;
+
+if(count>0){
+
+badge.textContent =
+count;
+
+badge.style.display =
+"inline-block";
+
+}else{
+
+badge.style.display =
+"none";
+
+}
+
+}
+
+
+function listenToCartBadge(uid){
+
+const cartRef =
+ref(
+db,
+`users/${uid}/panier`
+);
+
+onValue(
+cartRef,
+snapshot=>{
+
+const data =
+snapshot.val();
+
+if(
+!data ||
+typeof data!=="object"
+){
+
+updateCartBadgeDisplay(0);
+
+return;
+
+}
+
+let totalItems=0;
+
+Object
+.values(data)
+.forEach(item=>{
+
+totalItems +=
+parseInt(
+item.quantite || 1,
+10
+);
+
+});
+
+updateCartBadgeDisplay(
+totalItems
+);
+
+});
+
+}
+
+
+/* =====================================================
+SÉCURITÉ HTML
+===================================================== */
+
+function escapeHTML(value){
+
+return String(value ?? "")
+
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttribute(value){
+
+return escapeHTML(value);
+
+}
+
+
+/* =====================================================
+LOGO
+===================================================== */
+
+document
+.getElementById("logoButton")
+?.addEventListener(
+"click",
+()=>{
+
+window.location.href =
+"index.html";
+
+});
+
+
+const appLogo =
+document.getElementById(
+"appLogo"
+);
+
+const fallbackLogo =
+document.getElementById(
+"fallbackLogo"
+);
+
+
+appLogo?.addEventListener(
+"error",
+()=>{
+
+appLogo.style.display =
+"none";
+
+if(fallbackLogo){
+
+fallbackLogo.style.display =
+"block";
+
+}
+
+});
+
+
+/* =====================================================
+PRODUITS FIREBASE
+===================================================== */
+
+function loadProducts(){
+
+onValue(
+
+ref(db,"publications"),
+
+snapshot=>{
+
+const data =
+snapshot.val();
+
+if(
+!data ||
+typeof data!=="object"
+){
+
+window.allProductsData = [];
+
+buildCategories();
+
+renderProducts([]);
+
+return;
+
+}
+
+
+window.allProductsData =
+
+Object
+.entries(data)
+
+.map(
+([id,product])=>{
+
+if(
+!product ||
+typeof product!=="object"
+){
+
+return null;
+
+}
+
+return {
+
+id,
+...product
+
+};
+
+})
+
+.filter(product=>{
+
+if(!product)return false;
+
+if(product.actif===false)
+return false;
+
+return true;
+
+});
+
+
+try{
+
+localStorage.setItem(
+
+"dakpro_cached_publications",
+
+JSON.stringify(
+window.allProductsData
+)
+
+);
+
+}catch(e){}
+
+
+buildCategories();
+
+filterProducts();
+
+checkUrlForSharedProduct();
+
+},
+
+error=>{
+
+console.error(
+"Erreur publications:",
+error
+);
+
+if(
+!window.allProductsData.length
+){
+
+document.getElementById(
+"products"
+).innerHTML = `
+
+<div
+class="empty-message error-message">
+
+Impossible de charger
+les publications.
+
+Vérifiez votre connexion.
+
+</div>
+
+`;
+
+}
+
+});
+
+}
+
+
+/* =====================================================
+CATÉGORIES
+===================================================== */
+
+function buildCategories(){
+
+const categories=[
+
+"Tous",
+
+...new Set(
+
+window.allProductsData
+
+.map(
+p=>p.categorie ||
+p.category
+)
+
+.filter(Boolean)
+
+)
+
+];
+
+
+const menu =
+document.getElementById(
+"catMenu"
+);
+
+if(!menu)return;
+
+
+menu.innerHTML =
+
+categories
+.map(category=>{
+
+const safe =
+escapeHTML(category);
+
+return `
+
+<button
+type="button"
+class="cat-btn ${
+category===currentCat
+?"active"
+:""
+}"
+data-category="${safe}">
+
+${safe}
+
+</button>
+
+`;
+
+})
+.join("");
+
+
+menu
+.querySelectorAll(".cat-btn")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+()=>{
+
+currentCat =
+button.dataset.category;
+
+menu
+.querySelectorAll(
+".cat-btn"
+)
+.forEach(item=>
+item.classList.remove(
+"active"
+)
+);
+
+button.classList.add(
+"active"
+);
+
+filterProducts();
+
+});
+
+});
+
+}
+
+
+document
+.getElementById("searchBar")
+?.addEventListener(
+"input",
+filterProducts
+);
+
+
+/* =====================================================
+FILTRAGE
+===================================================== */
+
+function getFilteredProducts(){
+
+const search =
+
+(
+document.getElementById(
+"searchBar"
+)?.value || ""
+)
+.toLowerCase()
+.trim();
+
+
+return window
+.allProductsData
+.filter(product=>{
+
+const name =
+String(
+product.nom ||
+product.title ||
+product.name ||
+""
+)
+.toLowerCase();
+
+
+const description =
+String(
+product.description ||
+""
+)
+.toLowerCase();
+
+
+const category =
+String(
+product.categorie ||
+product.category ||
+""
+)
+.toLowerCase();
+
+
+const productCategory =
+product.categorie ||
+product.category ||
+"";
+
+
+const categoryOK =
+
+currentCat==="Tous" ||
+productCategory===currentCat;
+
+
+return categoryOK &&
+(
+
+name.includes(search) ||
+
+description.includes(search) ||
+
+category.includes(search)
+
+);
+
+});
+
+}
+
+
+function filterProducts(){
+
+renderProducts(
+getFilteredProducts()
+);
+
+}
+
+
+/* =====================================================
+CARTE PRODUIT
+===================================================== */
+
+function generateCardHTML(
+product,
+uid
+){
+
+const id =
+encodeURIComponent(
+product.id || ""
+);
+
+// LIEN D'AFFILIATION SANS VERCEL
+const siteBase =
+"https://dakproelite.com";
+
+
+const affiliateURL =
+
+`${siteBase}/?id=${id}${
+uid
+? "&ref="+encodeURIComponent(uid)
+: ""
+}`;
+
+
+const image =
+product.image ||
+product.imageUrl ||
+product.photo ||
+product.img ||
+"";
+
+
+const video =
+product.video ||
+product.videoUrl ||
+"";
+
+
+const documentUrl =
+product.document ||
+product.documentUrl ||
+"";
+
+
+const safeName =
+escapeHTML(
+
+product.nom ||
+product.title ||
+product.name ||
+"Produit"
+
+);
+
+
+const rawDesc =
+String(
+product.description || ""
+);
+
+
+const shortDesc =
+
+rawDesc.length>70
+
+?rawDesc.substring(0,70)+"..."
+
+:rawDesc;
+
+
+const safeShortDesc =
+escapeHTML(shortDesc);
+
+
+const priceVal =
+
+parseFloat(
+
+product.prix!==undefined
+
+?product.prix
+
+:(product.price!==undefined
+?product.price
+:0)
+
+);
+
+
+const promoVal =
+
+product.prixPromo!==undefined
+
+?parseFloat(
+product.prixPromo
+)
+
+:
+
+(
+
+product.promoPrice!==undefined
+
+?parseFloat(
+product.promoPrice
+)
+
+:null
+
+);
+
+
+const hasPromo =
+
+promoVal!==null &&
+!isNaN(promoVal) &&
+promoVal>0 &&
+promoVal<priceVal;
+
+
+let discountBadgeHTML = "";
+
+
+if(
+hasPromo &&
+priceVal>0
+){
+
+const discountPercent =
+
+Math.round(
+
+(
+(priceVal-promoVal) /
+priceVal
+)*100
+
+);
+
+
+discountBadgeHTML = `
+
+<span
+class="badge-discount">
+
+-${discountPercent}%
+
+</span>
+
+`;
+
+}
+
+
+const displayPrice =
+
+hasPromo
+
+?escapeHTML(promoVal)
+
+:escapeHTML(priceVal);
+
+
+const currencySymbol =
+
+escapeHTML(
+
+product.devise ||
+product.currency ||
+"FCFA"
+
+);
+
+
+const oldPriceHTML =
+
+hasPromo
+
+?
+
+`<span class="price-old">
+${escapeHTML(priceVal)}
+${currencySymbol}
+</span>`
+
+:"";
+
+
+const isVideo =
+
+Boolean(video) ||
+
+/\.(mp4|webm|ogg)(\?|$)/i
+.test(image);
+
+
+const mediaSrc =
+video || image;
+
+
+let mediaHTML = "";
+
+
+if(
+isVideo &&
+mediaSrc
+){
+
+mediaHTML = `
+
+<video
+src="${escapeAttribute(mediaSrc)}"
+controls
+preload="metadata">
+</video>
+
+`;
+
+}
+
+else if(documentUrl){
+
+mediaHTML = `
+
+<a
+href="${escapeAttribute(documentUrl)}"
+target="_blank"
+rel="noopener noreferrer"
+class="doc-box">
+
+<span>📄</span>
+
+<p>
+Consulter le document
+</p>
+
+</a>
+
+`;
+
+}
+
+else if(image){
+
+mediaHTML = `
+
+<img
+src="${escapeAttribute(image)}"
+alt="${safeName}"
+loading="lazy"
+onerror="
+this.style.display='none';
+this.nextElementSibling.style.display='flex';
+">
+
+<div
+class="product-no-image"
+style="display:none">
+
+<strong>📦</strong>
+
+<span>
+Image indisponible
+</span>
+
+</div>
+
+`;
+
+}
+
+else{
+
+mediaHTML = `
+
+<div
+class="product-no-image">
+
+<strong>📦</strong>
+
+<span>
+Image indisponible
+</span>
+
+</div>
+
+`;
+
+}
+
+
+return `
+
+<article
+class="card"
+data-product-id="${escapeAttribute(
+product.id || ""
+)}">
+
+${
+product.boost
+?
+`<span class="badge-boost">
+🔥 HOT
+</span>`
+:""
+}
+
+${discountBadgeHTML}
+
+<div
+class="media-container">
+
+${mediaHTML}
+
+</div>
+
+<div>
+
+<div
+class="market-tags">
+
+<span
+class="tag-express">
+
+⚡ Livraison Rapide
+
+</span>
+
+</div>
+
+<h3>
+
+${safeName}
+
+</h3>
+
+${
+safeShortDesc
+
+?
+
+`
+<div
+class="description-complete">
+
+${safeShortDesc}
+
+</div>
+`
+
+:""
+
+}
+
+</div>
+
+<div>
+
+<div
+class="price-container">
+
+<span
+class="price">
+
+${displayPrice}
+${currencySymbol}
+
+</span>
+
+${oldPriceHTML}
+
+</div>
+
+<div
+class="card-actions-row">
+
+<button
+type="button"
+class="btn-action btn-cart"
+data-id="${escapeAttribute(
+product.id || ""
+)}">
+
+🛒 Panier
+
+</button>
+
+<button
+type="button"
+class="btn-action btn-copy"
+data-affiliate="${escapeAttribute(
+affiliateURL
+)}">
+
+🔗 Affiliation
+
+</button>
+
+</div>
+
+<div
+class="affiliate-box">
+
+<input
+type="text"
+class="affiliate-input"
+value="${escapeAttribute(
+affiliateURL
+)}"
+readonly>
+
+</div>
+
+</div>
+
+</article>
+
+`;
+
+}
+
+
+/* =====================================================
+AFFICHAGE PRODUITS
+===================================================== */
+
+function renderProducts(list){
+
+const container =
+document.getElementById(
+"products"
+);
+
+if(!container)return;
+
+
+if(
+!Array.isArray(list) ||
+list.length===0
+){
+
+container.innerHTML = `
+
+<div
+class="empty-message">
+
+Aucun produit disponible
+pour le moment.
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+const uid =
+siteContext.currentUser?.uid ||
+"";
+
+
+container.innerHTML =
+
+list
+.map(product=>
+generateCardHTML(
+product,
+uid
+)
+)
+.join("");
+
+
+container
+.querySelectorAll(".btn-copy")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+async event=>{
+
+event.stopPropagation();
+
+
+const link =
+button.dataset.affiliate;
+
+
+try{
+
+if(
+navigator.clipboard &&
+window.isSecureContext
+){
+
+await navigator
+.clipboard
+.writeText(link);
+
+}else{
+
+throw new Error(
+"Clipboard indisponible"
+);
+
+}
+
+
+const oldText =
+button.textContent;
+
+
+button.textContent =
+"✅ Copié !";
+
+
+setTimeout(
+()=>{
+
+button.textContent =
+oldText;
+
+},
+1800
+);
+
+
+}catch{
+
+const input =
+button
+.closest(".card")
+.querySelector(
+".affiliate-input"
+);
+
+
+if(input){
+
+input.style.display =
+"block";
+
+input.focus();
+
+input.select();
+
+document.execCommand(
+"copy"
+);
+
+input.style.display =
+"none";
+
+}
+
+
+const oldText =
+button.textContent;
+
+
+button.textContent =
+"✅ Copié !";
+
+
+setTimeout(
+()=>{
+
+button.textContent =
+oldText;
+
+},
+1800
+);
+
+}
+
+});
+
+});
+
+
+container
+.querySelectorAll(".btn-cart")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+async event=>{
+
+event.stopPropagation();
+
+const productId =
+button.dataset.id;
+
+ajouterAuPanierDirect(
+productId,
+button
+);
+
+});
+
+});
+
+}
+
+
+/* =====================================================
+AJOUT PANIER
+===================================================== */
+
+async function ajouterAuPanierDirect(
+productId,
+buttonEl
+){
+
+const user =
+auth.currentUser;
+
+
+if(!user){
+
+alert(
+"Veuillez vous connecter pour ajouter un article à votre panier."
+);
+
+window.location.href =
+"profil-acheteur.html";
+
+return;
+
+}
+
+
+const product =
+window.allProductsData.find(
+p=>String(p.id)===String(productId)
+);
+
+
+if(product){
+
+try{
+
+const itemRef =
+
+ref(
+db,
+`users/${user.uid}/panier/${product.id}`
+);
+
+
+const gsItemRef =
+
+ref(
+db,
+`users/${user.uid}/gs/cart/${product.id}`
+);
+
+
+const snapshot =
+await get(itemRef);
+
+
+let currentQty = 1;
+
+
+if(snapshot.exists()){
+
+currentQty =
+
+parseInt(
+snapshot.val().quantite || 0,
+10
+)+1;
+
+}
+
+
+const unitPrice =
+
+parseFloat(
+
+product.prixPromo ||
+product.prix ||
+product.price ||
+0
+
+);
+
+
+const nameVal =
+
+product.nom ||
+product.title ||
+product.name ||
+"Produit";
+
+
+const imgVal =
+
+product.image ||
+product.imageUrl ||
+product.photo ||
+"";
+
+
+const devVal =
+
+product.devise ||
+product.currency ||
+"FCFA";
+
+
+const totalPrice =
+
+parseFloat(
+
+(
+currentQty *
+unitPrice
+).toFixed(2)
+
+);
+
+
+const payload = {
+
+id:product.id,
+
+nom:nameVal,
+
+prixUnitaire:unitPrice,
+
+devise:devVal,
+
+image:imgVal,
+
+quantite:currentQty,
+
+total:totalPrice,
+
+updatedAt:Date.now()
+
+};
+
+
+const updates = {};
+
+
+updates[
+`users/${user.uid}/panier/${product.id}`
+] =
+payload;
+
+
+updates[
+`users/${user.uid}/gs/cart/${product.id}`
+] =
+payload;
+
+
+await update(
+ref(db),
+updates
+);
+
+
+/* TOTAL */
+
+const allGsCartSnap =
+
+await get(
+
+ref(
+db,
+`users/${user.uid}/gs/cart`
+)
+
+);
+
+
+let globalTotal = 0;
+
+
+if(
+allGsCartSnap.exists()
+){
+
+Object
+.values(
+allGsCartSnap.val()
+)
+.forEach(item=>{
+
+globalTotal +=
+
+parseFloat(
+item.total || 0
+);
+
+});
+
+}
+
+
+await set(
+
+ref(
+db,
+`users/${user.uid}/gs/total`
+),
+
+globalTotal
+
+);
+
+
+if(buttonEl){
+
+const oldText =
+buttonEl.textContent;
+
+
+buttonEl.textContent =
+"✅ Ajouté !";
+
+
+setTimeout(
+()=>{
+
+buttonEl.textContent =
+oldText;
+
+},
+1500
+);
+
+}
+
+
+}catch(error){
+
+console.error(
+"Erreur d'ajout au panier:",
+error
+);
+
+alert(
+"Impossible d'ajouter le produit au panier."
+);
+
+}
+
+}
+
+}
+
+
+/* =====================================================
+PRODUIT PARTAGÉ
+===================================================== */
+
+function checkUrlForSharedProduct(){
+
+const urlParams =
+
+new URLSearchParams(
+window.location.search
+);
+
+
+const productId =
+
+urlParams.get("pid") ||
+urlParams.get("id");
+
+
+if(!productId)return;
+
+
+const product =
+
+window.allProductsData.find(
+p=>String(p.id)===String(productId)
+);
+
+
+if(!product)return;
+
+
+const modalContainer =
+
+document.getElementById(
+"productModalContainer"
+);
+
+
+if(!modalContainer)return;
+
+
+const priceVal =
+
+parseFloat(
+
+product.prix!==undefined
+
+?product.prix
+
+:(product.price!==undefined
+?product.price
+:0)
+
+);
+
+
+const promoVal =
+
+product.prixPromo!==undefined
+
+?parseFloat(
+product.prixPromo
+)
+
+:
+
+(
+
+product.promoPrice!==undefined
+
+?parseFloat(
+product.promoPrice
+)
+
+:null
+
+);
+
+
+const hasPromo =
+
+promoVal!==null &&
+!isNaN(promoVal) &&
+promoVal>0 &&
+promoVal<priceVal;
+
+
+const effectivePrice =
+
+hasPromo
+?promoVal
+:priceVal;
+
+
+const currencySymbol =
+
+escapeHTML(
+
+product.devise ||
+product.currency ||
+"FCFA"
+
+);
+
+
+modalContainer.innerHTML = `
+
+<div
+class="modal-overlay">
+
+<div
+class="modal-content">
+
+<img
+src="${escapeAttribute(
+product.image ||
+product.imageUrl ||
+""
+)}"
+alt="${escapeHTML(
+product.nom ||
+"Produit"
+)}"
+style="
+width:100%;
+height:auto;
+max-height:220px;
+object-fit:contain;
+background:#080b10;
+border-radius:10px;
+margin-bottom:12px;
+border:1px solid #333;
+">
+
+<h2
+style="
+color:var(--gold);
+margin-bottom:8px;
+font-size:18px;
+">
+
+${escapeHTML(
+product.nom ||
+product.title ||
+"Produit DAKPROÉLITE"
+)}
+
+</h2>
+
+<div
+class="price-container"
+style="margin-bottom:12px;">
+
+<span
+class="price"
+style="font-size:18px;">
+
+${effectivePrice}
+${currencySymbol}
+
+</span>
+
+${
+hasPromo
+?
+
+`
+<span class="price-old">
+
+${priceVal}${currencySymbol}
+
+</span>
+`
+
+:""
+
+}
+
+</div>
+
+<div
+style="
+background:#12161f;
+padding:12px;
+border-radius:8px;
+border:1px solid #222;
+margin-bottom:15px;
+">
+
+<h4
+style="
+color:#fff;
+font-size:12px;
+margin-bottom:4px;
+">
+
+Description :
+
+</h4>
+
+<p
+style="
+color:#ccc;
+font-size:13px;
+line-height:1.5;
+white-space:pre-line;
+">
+
+${escapeHTML(
+product.description ||
+"Aucune description disponible."
+)}
+
+</p>
+
+</div>
+
+<div
+style="
+display:flex;
+gap:10px;
+">
+
+<button
+class="btn-action btn-cart"
+id="btnModalAddToCart"
+style="padding:10px;">
+
+💳 SHOP NOW (Acheter)
+
+</button>
+
+<button
+class="btn-action"
+id="btnModalClose"
+style="
+background:#222;
+color:#fff;
+border-color:#444;
+">
+
+Fermer
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+
+document
+.getElementById(
+"btnModalAddToCart"
+)
+?.addEventListener(
+"click",
+()=>{
+
+ajouterAuPanierDirect(
+productId,
+document.getElementById(
+"btnModalAddToCart"
+)
+);
+
+});
+
+
+document
+.getElementById(
+"btnModalClose"
+)
+?.addEventListener(
+"click",
+()=>{
+
+modalContainer.innerHTML =
+"";
+
+});
+
+}
+
+
+/* =====================================================
+BANNIÈRES FIREBASE
+===================================================== */
+
+function loadBanners(){
+
+onValue(
+
+ref(db,"bannieres"),
+
+snapshot=>{
+
+const data =
+snapshot.val();
+
+const container =
+document.getElementById(
+"bannerContainer"
+);
+
+const track =
+document.getElementById(
+"bannerTrack"
+);
+
+const dots =
+document.getElementById(
+"bannerDots"
+);
+
+
+if(
+!container ||
+!track ||
+!dots
+)return;
+
+
+if(
+!data ||
+typeof data!=="object"
+){
+
+container.style.display =
+"none";
+
+track.innerHTML =
+"";
+
+dots.innerHTML =
+"";
+
+return;
+
+}
+
+
+const banners =
+
+Object
+.entries(data)
+
+.map(
+([id,banner])=>({
+
+id,
+...banner
+
+})
+)
+
+.filter(
+banner=>
+banner &&
+banner.actif!==false
+);
+
+
+if(!banners.length){
+
+container.style.display =
+"none";
+
+track.innerHTML =
+"";
+
+dots.innerHTML =
+"";
+
+return;
+
+}
+
+
+totalSlides =
+banners.length;
+
+
+track.innerHTML =
+
+banners
+.map(banner=>{
+
+const image =
+escapeAttribute(
+banner.image || ""
+);
+
+const title =
+escapeHTML(
+banner.titre || ""
+);
+
+const description =
+escapeHTML(
+banner.description || ""
+);
+
+
+return `
+
+<div
+class="banner-slide">
+
+<a
+href="javascript:void(0)"
+onclick="event.preventDefault();">
+
+<img
+src="${image}"
+alt="${
+title || "Publicité"
+}"
+loading="lazy">
+
+<div
+class="banner-content">
+
+${
+title
+?
+`<h3>${title}</h3>`
+:""
+}
+
+${
+description
+?
+`<p>${description}</p>`
+:""
+}
+
+</div>
+
+</a>
+
+</div>
+
+`;
+
+})
+.join("");
+
+
+dots.innerHTML =
+
+banners
+.map(
+(_,index)=>
+`
+
+<span
+class="dot ${
+index===0
+?"active"
+:""
+}"
+data-slide="${index}">
+</span>
+
+`
+)
+.join("");
+
+
+dots
+.querySelectorAll(".dot")
+.forEach(dot=>{
+
+dot.addEventListener(
+"click",
+event=>{
+
+event.stopPropagation();
+
+currentIndex =
+Number(
+dot.dataset.slide
+);
+
+updateSlide();
+
+});
+
+});
+
+
+currentIndex = 0;
+
+updateSlide();
+
+container.style.display =
+"block";
+
+
+startAutoPlay();
+
+});
+
+}
+
+
+function startAutoPlay(){
+
+if(autoPlay) clearInterval(autoPlay);
+
+autoPlay = setInterval(moveSlide, 4000);
+
+isPaused = false;
+
+const pauseBtn = document.getElementById("btnBannerPause");
+
+if(pauseBtn) pauseBtn.textContent = "⏸";
+
+}
+
+
+function stopAutoPlay(){
+
+if(autoPlay) clearInterval(autoPlay);
+
+autoPlay = null;
+
+isPaused = true;
+
+const pauseBtn = document.getElementById("btnBannerPause");
+
+if(pauseBtn) pauseBtn.textContent = "▶";
+
+}
+
+
+document.getElementById("btnBannerPrev")?.addEventListener("click", (e)=>{
+
+e.stopPropagation();
+
+if(totalSlides <= 0) return;
+
+currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+
+updateSlide();
+
+});
+
+
+document.getElementById("btnBannerNext")?.addEventListener("click", (e)=>{
+
+e.stopPropagation();
+
+if(totalSlides <= 0) return;
+
+currentIndex = (currentIndex + 1) % totalSlides;
+
+updateSlide();
+
+});
+
+
+document.getElementById("btnBannerPause")?.addEventListener("click", (e)=>{
+
+e.stopPropagation();
+
+if(isPaused){
+
+startAutoPlay();
+
+}else{
+
+stopAutoPlay();
+
+}
+
+});
+
+
+function updateSlide(){
+
+const track =
+document.getElementById(
+"bannerTrack"
+);
+
+const dots =
+document.querySelectorAll(
+".dot"
+);
+
+
+if(!track)return;
+
+
+track.style.transform =
+
+`translateX(-${
+currentIndex*100
+}%)`;
+
+
+dots.forEach(
+(dot,index)=>
+dot.classList.toggle(
+"active",
+index===currentIndex
+)
+);
+
+}
+
+
+function moveSlide(){
+
+if(totalSlides<=0)return;
+
+currentIndex =
+
+(
+currentIndex+1
+) %
+totalSlides;
+
+updateSlide();
+
+}
+
+
+/* =====================================================
+ANNONCE
+===================================================== */
+
+function loadAnnouncement(){
+
+onValue(
+
+ref(
+db,
+"annonces/faya_buzz"
+),
+
+snapshot=>{
+
+const data =
+snapshot.val();
+
+const title =
+document.getElementById(
+"fayaBuzzTitle"
+);
+
+const text =
+document.getElementById(
+"fayaBuzzText"
+);
+
+
+if(
+!title ||
+!text
+)return;
+
+
+if(
+!data ||
+data.actif===false
+){
+
+title.textContent =
+"⚡ Annonce Officielle";
+
+text.textContent =
+"Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
+
+return;
+
+}
+
+
+title.textContent =
+
+data.titre ||
+"⚡ Annonce Officielle";
+
+
+text.textContent =
+
+data.texte ||
+data.text ||
+"Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
+
+});
+
+}
+
+
+/* =====================================================
+INSTALLATION PWA
+===================================================== */
+
+let deferredPrompt = null;
+
+
+window.addEventListener(
+"beforeinstallprompt",
+event=>{
+
+event.preventDefault();
+
+deferredPrompt = event;
+
+
+const button =
+document.getElementById(
+"btnInstall"
+);
+
+
+if(button){
+
+button.style.display =
+"block";
+
+}
+
+});
+
+
+document
+.getElementById(
+"btnInstall"
+)
+?.addEventListener(
+"click",
+async()=>{
+
+if(!deferredPrompt)return;
+
+
+deferredPrompt.prompt();
+
+
+await deferredPrompt.userChoice;
+
+
+deferredPrompt = null;
+
+
+document
+.getElementById(
+"btnInstall"
+)
+.style.display =
+"none";
+
+});
+
+
+/* =====================================================
+SERVICE WORKER
+===================================================== */
+
+if(
+"serviceWorker" in navigator
+){
+
+window.addEventListener(
+"load",
+()=>{
+
+navigator.serviceWorker
+.register("./sw.js")
+.then(
+()=>{
+console.log(
+"DAKPROÉLITE : Service Worker actif."
+);
+}
+)
+.catch(
+error=>{
+console.error(
+"Service Worker :",
+error
+);
+}
+);
+
+});
+
+}
+
+
+/* =====================================================
+DÉMARRAGE
+===================================================== */
+
+loadProducts();
+
+loadBanners();
+
+loadAnnouncement();
+
+</script>
+
+</body>
+</html>

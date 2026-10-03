@@ -95,7 +95,7 @@ min-height:62px;
 display:flex;
 align-items:center;
 
-gap:10px;
+gap:8px;
 
 padding:
 9px
@@ -145,7 +145,6 @@ inset 0 0 0 1px rgba(255,255,255,.08),
 inset 0 0 7px rgba(0,0,0,.75),
 0 1px 3px rgba(0,0,0,.8);
 
-/* aucune animation */
 transform:none !important;
 transition:none !important;
 animation:none !important;
@@ -175,8 +174,6 @@ animation:none !important;
 filter:none !important;
 }
 
-/* Aucun mouvement */
-
 .logo-container:hover,
 .logo-container:active,
 .logo-container:focus{
@@ -197,8 +194,6 @@ animation:none !important;
 filter:none !important;
 }
 
-/* Logo de secours */
-
 .fallback-logo{
 
 color:var(--gold);
@@ -210,46 +205,58 @@ font-weight:800;
 }
 
 /* =====================================================
-RECHERCHE
+RECHERCHE & OPTIONS LINGUISTIQUES (HARMONISÉES)
 ===================================================== */
 
 .search-container{
-
 flex:1;
-
 min-width:0;
-
+display:flex;
+align-items:center;
+gap:5px;
 }
 
 #searchBar{
-
-width:100%;
-
-height:40px;
-
-border:2px solid var(--gold);
-
-border-radius:24px;
-
+flex:1;
+min-width:0;
+height:38px;
+border:1px solid var(--gold);
+border-radius:20px;
 background:#000;
-
 color:#fff;
-
-padding:0 15px;
-
+padding:0 12px;
 outline:none;
-
-font-size:13px;
-
-box-shadow:
-0 0 10px rgba(212,175,55,.12);
-
+font-size:12px;
+box-shadow:0 0 8px rgba(212,175,55,.12);
+text-overflow:ellipsis;
 }
 
 #searchBar::placeholder{
-
 color:#888;
+font-size:11px;
+}
 
+.select-lang-devise {
+background:#0b0e13;
+color:var(--gold);
+border:1px solid var(--gold);
+border-radius:10px;
+padding:4px 5px;
+font-size:10px;
+font-weight:600;
+height:38px;
+outline:none;
+cursor:pointer;
+flex-shrink:0;
+text-align:center;
+}
+
+#selectLangue {
+max-width:62px;
+}
+
+#selectDevise {
+max-width:70px;
 }
 
 /* =====================================================
@@ -305,8 +312,6 @@ line-height:18px;
 color:var(--gold);
 
 }
-
-/* PANIER */
 
 .cart-badge{
 
@@ -698,7 +703,7 @@ gap:16px;
 }
 
 /* =====================================================
-CARTE
+CARTE PRODUIT
 ===================================================== */
 
 .card{
@@ -829,6 +834,8 @@ align-items:center;
 
 justify-content:center;
 
+padding: 6px;
+
 margin-bottom:8px;
 
 }
@@ -838,11 +845,11 @@ margin-bottom:8px;
 width:100%;
 height:100%;
 
-object-fit:cover;
+object-fit:contain;
 
 object-position:center;
 
-border-radius:8px;
+border-radius:6px;
 
 display:block;
 
@@ -856,9 +863,9 @@ transform .3s ease;
 width:100%;
 height:100%;
 
-object-fit:cover;
+object-fit:contain;
 
-border-radius:8px;
+border-radius:6px;
 
 display:block;
 
@@ -866,7 +873,7 @@ display:block;
 
 .card:hover img{
 
-transform:scale(1.03);
+transform:scale(1.02);
 
 }
 
@@ -1383,8 +1390,6 @@ color:var(--gold);
 
 }
 
-/* LIEN DEVENIR VENDEUR */
-
 .seller-link{
 
 color:var(--gold) !important;
@@ -1451,31 +1456,61 @@ repeat(2,1fr);
 
 .header{
 
-gap:7px;
+gap:5px;
+padding-left:6px;
+padding-right:6px;
 
 }
 
 .logo-container{
 
-width:38px;
-height:38px;
+width:36px;
+height:36px;
 
-min-width:38px;
-min-height:38px;
+min-width:36px;
+min-height:36px;
 
-flex-basis:38px;
+flex-basis:36px;
 
+}
+
+.search-container{
+gap:4px;
+}
+
+#searchBar{
+
+height:36px;
+
+padding:0 8px;
+
+font-size:11px;
+
+}
+
+.select-lang-devise{
+height:36px;
+font-size:9.5px;
+padding:3px 2px;
+}
+
+#selectLangue{
+max-width:55px;
+}
+
+#selectDevise{
+max-width:62px;
 }
 
 .nav-icons{
 
-gap:6px;
+gap:4px;
 
 }
 
 .nav-item{
 
-min-width:32px;
+min-width:30px;
 
 font-size:8px;
 
@@ -1483,17 +1518,7 @@ font-size:8px;
 
 .nav-item>span:first-child{
 
-font-size:15px;
-
-}
-
-#searchBar{
-
-height:38px;
-
-padding:0 11px;
-
-font-size:11px;
+font-size:14px;
 
 }
 
@@ -1546,6 +1571,31 @@ type="search"
 id="searchBar"
 autocomplete="off"
 placeholder="Rechercher des produits sur DAKPROÉLITE...">
+
+<!-- SÉLECTEUR DE LANGUES -->
+<select id="selectLangue" class="select-lang-devise" onchange="if(typeof changerLangue === 'function') changerLangue(this.value)">
+  <option value="fr">🇫🇷 FR</option>
+  <option value="en">🇬🇧 EN</option>
+  <option value="es">🇪🇸 ES</option>
+  <option value="ar">🇸🇦 AR</option>
+  <option value="zh">🇨🇳 ZH</option>
+  <option value="hi">🇮🇳 HI</option>
+  <option value="yo">🇳🇬 YO</option>
+  <option value="ha">🇳🇬 HA</option>
+</select>
+
+<!-- SÉLECTEUR DE DEVISES MONDIAL -->
+<select id="selectDevise" class="select-lang-devise" onchange="if(typeof changerDevise === 'function') changerDevise(this.value)">
+  <option value="XOF">FCFA</option>
+  <option value="USD">$ USD</option>
+  <option value="EUR">€ EUR</option>
+  <option value="GBP">£ GBP</option>
+  <option value="NGN">₦ NGN</option>
+  <option value="INR">₹ INR</option>
+  <option value="CNY">¥ CNY</option>
+  <option value="DZD">DA DZD</option>
+  <option value="KWD">KD KWD</option>
+</select>
 
 </div>
 
@@ -1863,7 +1913,7 @@ class="seller-link">
 
 <div class="footer-bottom-bar">
 
-© 2026 DAKPROÉLITE / DAKPRO NEXUS.
+© 2026 DAKPROÉLITE.
 Tous droits réservés.
 
 </div>
@@ -2514,14 +2564,14 @@ encodeURIComponent(
 product.id || ""
 );
 
-
+// LIEN D'AFFILIATION SANS VERCEL
 const siteBase =
-"https://dakproelite-acheteur.vercel.app";
+"https://dakproelite.com";
 
 
 const affiliateURL =
 
-`${siteBase}/api/share?id=${id}${
+`${siteBase}/?id=${id}${
 uid
 ? "&ref="+encodeURIComponent(uid)
 : ""
@@ -4065,19 +4115,6 @@ data.text ||
 });
 
 }
-
-
-/* =====================================================
-SUPPORT RAPIDE
-===================================================== */
-
-/*
-Le bouton Support Rapide pointe maintenant
-directement vers support-rapide.html.
-
-Le fichier support-rapide.js reste disponible
-pour les fonctions utilisées ailleurs sur le site.
-*/
 
 
 /* =====================================================

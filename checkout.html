@@ -1,0 +1,24 @@
+<!-- 1. Script SDK FedaPay -->
+<script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+
+<!-- 2. Votre fichier JavaScript créé -->
+<script src="js/checkout.js"></script>
+
+<!-- 3. Exemple de déclenchement au clic sur le bouton de paiement -->
+<script>
+  document.getElementById('btn-payer').addEventListener('click', function() {
+    const panierData = {
+      montant: 15000, // Montant en FCFA
+      articles: [
+        { nom: "Chaussure Cuir Italien", quantite: 1, prix: 15000 }
+      ],
+      client: {
+        nom: "Client DAKPROELITE",
+        telephone: "+22901000000"
+      }
+    };
+
+    // Appel de la fonction définie dans checkout.js
+    initialiserCommande(panierData);
+  });
+</script>
