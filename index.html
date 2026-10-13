@@ -33,13 +33,15 @@ href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 --black:#050505;
 --dark:#0b0e13;
 --soft-dark:#12161f;
---card:#1a2230;
---blue:#007bff;
---blue-dark:#0056b3;
---green:#22c55e;
---red:#ef4444;
+--card:#ffffff;
+--card-text:#1a1a1a;
+--blue:#0066cc;
+--blue-dark:#004a99;
+--green:#15803d;
+--green-hover:#166534;
+--red:#dc2626;
 --white:#fff;
---gray:#aaa;
+--gray:#555;
 --border:rgba(212,175,55,.30);
 }
 
@@ -90,18 +92,18 @@ position:sticky;
 top:0;
 z-index:5000;
 width:100%;
-min-height:62px;
+min-height:82px;
 
 display:flex;
 align-items:center;
 
-gap:8px;
+gap:16px;
 
 padding:
-9px
-max(10px,env(safe-area-inset-right))
-9px
-max(10px,env(safe-area-inset-left));
+12px
+max(16px,env(safe-area-inset-right))
+12px
+max(16px,env(safe-area-inset-left));
 
 background:linear-gradient(
 to bottom,
@@ -113,99 +115,57 @@ border-bottom:2px solid var(--gold);
 }
 
 /* =====================================================
-LOGO — STABLE ET SANS DÉFORMATION
+LOGO — AGRANDI ET GRAVÉ (FIXE & IMMÉDIAT)
 ===================================================== */
 
 .logo-container{
-
-width:42px;
-height:42px;
-
-min-width:42px;
-min-height:42px;
-
-flex:0 0 42px;
-
+width:64px;
+height:64px;
+min-width:64px;
+min-height:64px;
+flex:0 0 64px;
 border-radius:50%;
-
 border:2px solid var(--gold);
-
 overflow:hidden;
-
 display:flex;
 align-items:center;
 justify-content:center;
-
 background:#000;
-
 cursor:pointer;
-
 box-shadow:
-inset 0 0 0 1px rgba(255,255,255,.08),
-inset 0 0 7px rgba(0,0,0,.75),
-0 1px 3px rgba(0,0,0,.8);
+inset 0 0 0 3px rgba(0,0,0,.95),
+inset 0 0 14px rgba(0,0,0,1),
+0 3px 8px rgba(0,0,0,.9);
 
 transform:none !important;
 transition:none !important;
 animation:none !important;
 }
-
-/* IMAGE DU LOGO */
 
 .logo{
-
 display:block;
-
 width:100%;
 height:100%;
-
 max-width:100%;
 max-height:100%;
-
 object-fit:contain;
 object-position:center;
-
 background:#000;
 
 transform:none !important;
 transition:none !important;
 animation:none !important;
-
-filter:none !important;
-}
-
-.logo-container:hover,
-.logo-container:active,
-.logo-container:focus{
-
-transform:none !important;
-transition:none !important;
-animation:none !important;
-}
-
-.logo-container:hover .logo,
-.logo-container:active .logo,
-.logo-container:focus .logo{
-
-transform:none !important;
-transition:none !important;
-animation:none !important;
-
 filter:none !important;
 }
 
 .fallback-logo{
-
 color:var(--gold);
-
-font-size:12px;
-
+font-size:16px;
 font-weight:800;
-
 }
 
 /* =====================================================
-RECHERCHE & OPTIONS LINGUISTIQUES (HARMONISÉES)
+RECHERCHE
 ===================================================== */
 
 .search-container{
@@ -213,50 +173,27 @@ flex:1;
 min-width:0;
 display:flex;
 align-items:center;
-gap:5px;
+gap:8px;
 }
 
 #searchBar{
 flex:1;
 min-width:0;
-height:38px;
+height:46px;
 border:1px solid var(--gold);
-border-radius:20px;
+border-radius:23px;
 background:#000;
 color:#fff;
-padding:0 12px;
+padding:0 16px;
 outline:none;
-font-size:12px;
+font-size:13px;
 box-shadow:0 0 8px rgba(212,175,55,.12);
 text-overflow:ellipsis;
 }
 
 #searchBar::placeholder{
 color:#888;
-font-size:11px;
-}
-
-.select-lang-devise {
-background:#0b0e13;
-color:var(--gold);
-border:1px solid var(--gold);
-border-radius:10px;
-padding:4px 5px;
-font-size:10px;
-font-weight:600;
-height:38px;
-outline:none;
-cursor:pointer;
-flex-shrink:0;
-text-align:center;
-}
-
-#selectLangue {
-max-width:62px;
-}
-
-#selectDevise {
-max-width:70px;
+font-size:12px;
 }
 
 /* =====================================================
@@ -264,84 +201,49 @@ NAVIGATION
 ===================================================== */
 
 .nav-icons{
-
 display:flex;
-
 align-items:center;
-
-gap:10px;
-
+gap:16px;
 flex-shrink:0;
-
 }
 
 .nav-item{
-
 position:relative;
-
-min-width:38px;
-
+min-width:44px;
 display:flex;
-
 flex-direction:column;
-
 align-items:center;
-
 justify-content:center;
-
 color:#fff;
-
 text-decoration:none;
-
-font-size:9px;
-
+font-size:10px;
 cursor:pointer;
-
 }
 
 .nav-item>span:first-child{
-
-font-size:17px;
-
-line-height:18px;
-
+font-size:20px;
+line-height:22px;
 }
 
 .nav-item:hover{
-
 color:var(--gold);
-
 }
 
 .cart-badge{
-
 position:absolute;
-
 top:-4px;
 right:2px;
-
 background:var(--red);
-
 color:#fff;
-
 font-size:10px;
-
 font-weight:700;
-
 border-radius:10px;
-
 padding:1px 5px;
-
 min-width:16px;
-
 text-align:center;
-
 line-height:1.2;
-
 display:none;
-
 border:1px solid var(--black);
-
 }
 
 /* =====================================================
@@ -349,33 +251,19 @@ INSTALLATION
 ===================================================== */
 
 #btnInstall{
-
 display:none;
-
 width:calc(100% - 30px);
-
 max-width:600px;
-
 margin:12px auto;
-
 padding:11px;
-
 background:#333;
-
 border:1px solid var(--gold);
-
 border-radius:10px;
-
 text-align:center;
-
 color:#fff;
-
 cursor:pointer;
-
 font-size:13px;
-
 font-weight:600;
-
 }
 
 /* =====================================================
@@ -383,191 +271,110 @@ BANNIÈRES
 ===================================================== */
 
 .banner-container{
-
 display:none;
-
 position:relative;
-
 width:94%;
-
 max-width:1400px;
-
 margin:15px auto;
-
 overflow:hidden;
-
 border:1px solid var(--gold);
-
 border-radius:15px;
-
 background:var(--soft-dark);
-
-box-shadow:
-0 5px 20px rgba(212,175,55,.15);
-
+box-shadow:0 5px 20px rgba(212,175,55,.15);
 }
 
 .banner-track{
-
 display:flex;
-
 width:100%;
-
 transition:transform .5s ease;
-
 }
 
 .banner-slide{
-
 position:relative;
-
 min-width:100%;
-
 }
 
 .banner-slide a{
-
 display:block;
-
 text-decoration:none;
-
 cursor:default;
-
 }
 
 .banner-slide img{
-
 width:100%;
-
 height:220px;
-
 display:block;
-
 object-fit:cover;
-
 }
 
 .banner-content{
-
 position:absolute;
-
 left:0;
 right:0;
 bottom:0;
-
 padding:15px;
-
-background:
-linear-gradient(
-to top,
-rgba(0,0,0,.92),
-transparent
-);
-
+background:linear-gradient(to top, rgba(0,0,0,.92), transparent);
 }
 
 .banner-content h3{
-
 color:var(--gold);
-
 font-size:15px;
-
 margin-bottom:3px;
-
 }
 
 .banner-content p{
-
 color:#ddd;
-
 font-size:11px;
-
 }
 
 .banner-controls{
-
 position:absolute;
-
 top:10px;
-
 right:10px;
-
 z-index:20;
-
 display:flex;
-
 gap:6px;
-
 background:rgba(0,0,0,0.6);
-
 padding:4px 8px;
-
 border-radius:20px;
-
 border:1px solid var(--gold);
-
 }
 
 .banner-btn{
-
 background:transparent;
-
 border:none;
-
 color:var(--gold);
-
 font-size:14px;
-
 cursor:pointer;
-
 padding:2px 6px;
-
 line-height:1;
-
 user-select:none;
-
 transition:transform 0.1s ease;
-
 }
 
 .banner-btn:active{
-
 transform:scale(0.85);
-
 }
 
 .banner-dots{
-
 position:absolute;
-
 bottom:9px;
 right:12px;
-
 display:flex;
-
 gap:5px;
-
 z-index:10;
-
 }
 
 .dot{
-
 width:8px;
 height:8px;
-
 border-radius:50%;
-
 background:rgba(255,255,255,.4);
-
 cursor:pointer;
-
 }
 
 .dot.active{
-
 background:var(--gold);
-
 }
 
 /* =====================================================
@@ -575,239 +382,132 @@ CATÉGORIES
 ===================================================== */
 
 .cat-scroll{
-
 width:100%;
-
 display:flex;
-
 gap:9px;
-
 overflow-x:auto;
-
 padding:10px 15px 15px;
-
 scrollbar-width:none;
-
 }
 
 .cat-scroll::-webkit-scrollbar{
-
 display:none;
-
 }
 
 .cat-btn{
-
 flex:0 0 auto;
-
 padding:9px 17px;
-
 border:1px solid var(--gold);
-
 border-radius:22px;
-
 background:transparent;
-
 color:#fff;
-
 cursor:pointer;
-
 white-space:nowrap;
-
 font-size:12px;
-
-transition:
-background .2s,
-color .2s;
-
+transition:background .2s, color .2s;
 }
 
 .cat-btn.active{
-
 background:var(--gold);
-
 color:#000;
-
 font-weight:700;
-
 }
 
 /* =====================================================
-PRODUITS
+PRODUITS (FOND BLANC ÉPURÉ)
 ===================================================== */
 
 .products{
-
-width:100%;
-
+width:96%;
 max-width:1800px;
-
-margin:0 auto;
-
-padding:10px;
-
+margin:10px auto;
+padding:16px;
+background:#ffffff;
+border-radius:12px;
 display:grid;
-
-grid-template-columns:
-repeat(2,1fr);
-
-gap:12px;
-
+grid-template-columns:repeat(2,1fr);
+gap:16px;
 align-items:stretch;
-
 flex:1;
-
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
 }
 
 @media(min-width:700px){
-
 .products{
-
-grid-template-columns:
-repeat(4,1fr);
-
-gap:14px;
-
-padding:15px;
-
+grid-template-columns:repeat(4,1fr);
+gap:18px;
+padding:22px;
 }
-
 }
 
 @media(min-width:1001px){
-
 .products{
-
-grid-template-columns:
-repeat(6,1fr);
-
-gap:16px;
-
-padding:20px;
-
+grid-template-columns:repeat(6,1fr);
+gap:20px;
+padding:24px;
 }
-
 }
 
 @media(min-width:1651px){
-
 .products{
-
-grid-template-columns:
-repeat(8,1fr);
-
-gap:16px;
-
+grid-template-columns:repeat(8,1fr);
+gap:20px;
 }
-
 }
 
 /* =====================================================
-CARTE PRODUIT
+CARTE PRODUIT (STYLES CLAIRS & HARMONIEUX)
 ===================================================== */
 
 .card{
-
 position:relative;
-
 display:flex;
-
 flex-direction:column;
-
 justify-content:space-between;
-
 width:100%;
-
-padding:10px;
-
-background:var(--card);
-
-border:1px solid var(--border);
-
+padding:12px;
+background:#ffffff;
+border:1px solid #e2e8f0;
 border-radius:12px;
-
-box-shadow:
-0 4px 12px rgba(0,0,0,.4);
-
-transition:
-transform .2s ease,
-border-color .2s ease,
-box-shadow .2s ease;
-
+box-shadow:0 4px 12px rgba(0,0,0,.05);
+transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 overflow:hidden;
-
 height:100%;
-
 }
 
 .card:hover{
-
 transform:translateY(-3px);
-
 border-color:var(--gold);
-
-box-shadow:
-0 6px 16px rgba(212,175,55,.2);
-
+box-shadow:0 6px 18px rgba(212,175,55,.15);
 }
 
 .badge-discount{
-
 position:absolute;
-
-top:8px;
-right:8px;
-
+top:10px;
+right:10px;
 z-index:5;
-
-padding:3px 6px;
-
+padding:3px 7px;
 background:var(--red);
-
 color:#fff;
-
 border-radius:4px;
-
 font-size:9px;
-
 font-weight:800;
-
-box-shadow:
-0 2px 4px rgba(0,0,0,.5);
-
+box-shadow:0 2px 4px rgba(0,0,0,0.15);
 }
 
 .badge-boost{
-
 position:absolute;
-
-top:8px;
-left:8px;
-
+top:10px;
+left:10px;
 z-index:5;
-
-padding:3px 6px;
-
-background:
-linear-gradient(
-45deg,
-#e00000,
-#ff5252
-);
-
+padding:3px 7px;
+background:linear-gradient(45deg, #d97706, #b45309);
 color:#fff;
-
 border-radius:4px;
-
 font-size:8px;
-
 font-weight:800;
-
-box-shadow:
-0 2px 4px rgba(0,0,0,.5);
-
 text-transform:uppercase;
-
+box-shadow:0 2px 4px rgba(0,0,0,0.15);
 }
 
 /* =====================================================
@@ -815,423 +515,228 @@ MEDIA PRODUIT
 ===================================================== */
 
 .media-container{
-
 width:100%;
-
-height:220px;
-
+height:190px;
 position:relative;
-
 border-radius:8px;
-
 overflow:hidden;
-
-background:#080b10;
-
+background:#f8fafc;
 display:flex;
-
 align-items:center;
-
 justify-content:center;
-
-padding: 6px;
-
-margin-bottom:8px;
-
+padding:4px;
+margin-bottom:10px;
+border:1px solid #f1f5f9;
 }
 
 .card img{
-
 width:100%;
 height:100%;
-
 object-fit:contain;
-
 object-position:center;
-
 border-radius:6px;
-
 display:block;
-
-transition:
-transform .3s ease;
-
 }
 
 .card video{
-
 width:100%;
 height:100%;
-
 object-fit:contain;
-
 border-radius:6px;
-
 display:block;
-
-}
-
-.card:hover img{
-
-transform:scale(1.02);
-
 }
 
 .product-no-image{
-
 width:100%;
 height:100%;
-
 display:flex;
-
 align-items:center;
 justify-content:center;
-
 flex-direction:column;
-
-background:#080b10;
-
-color:#777;
-
+background:#f8fafc;
+color:#94a3b8;
 font-size:10px;
-
 text-align:center;
-
 border-radius:8px;
-
 }
 
 .product-no-image strong{
-
 font-size:24px;
-
 margin-bottom:3px;
-
 color:var(--gold);
-
 }
 
 .doc-box{
-
 display:flex;
-
 flex-direction:column;
-
 align-items:center;
 justify-content:center;
-
 width:100%;
 height:100%;
-
-background:#111;
-
-color:var(--gold);
-
+background:#f1f5f9;
+color:#334155;
 text-decoration:none;
-
 padding:10px 5px;
-
 text-align:center;
-
 border-radius:8px;
-
 }
 
 .doc-box span{
-
 font-size:24px;
-
 margin-bottom:3px;
-
 }
 
 .doc-box p{
-
 font-size:9px;
-
-color:#fff;
-
+color:#334155;
 word-break:break-all;
-
 }
 
 /* =====================================================
-TEXTES PRODUITS
+TEXTES PRODUITS (LISIBLES ET ÉLÉGANTS)
 ===================================================== */
 
 .card h3{
-
-margin:4px 0;
-
-font-size:12px;
-
+margin:4px 0 6px;
+font-size:13px;
 font-weight:600;
-
-line-height:1.3;
-
+line-height:1.35;
 word-break:break-word;
-
-color:#fff;
-
+color:var(--card-text);
 display:-webkit-box;
-
 -webkit-line-clamp:2;
-
 -webkit-box-orient:vertical;
-
 overflow:hidden;
-
-min-height:31px;
-
+min-height:35px;
 }
 
 .card .description-complete{
-
-font-size:10px;
-
-color:#aaa;
-
-line-height:1.3;
-
-margin-bottom:8px;
-
+font-size:10.5px;
+color:var(--gray);
+line-height:1.4;
+margin-bottom:10px;
 display:-webkit-box;
-
 -webkit-line-clamp:2;
-
 -webkit-box-orient:vertical;
-
 overflow:hidden;
-
 word-break:break-word;
-
+min-height:29px;
 }
 
 .market-tags{
-
 display:flex;
-
 gap:4px;
-
 margin-bottom:6px;
-
 flex-wrap:wrap;
-
 }
 
 .tag-express{
-
-background:
-rgba(34,197,94,.15);
-
-color:#22c55e;
-
-border:
-1px solid rgba(34,197,94,.3);
-
-font-size:8px;
-
-padding:1px 4px;
-
-border-radius:3px;
-
+background:rgba(22,163,74,0.1);
+color:#15803d;
+border:1px solid rgba(22,163,74,0.2);
+font-size:8.5px;
+padding:2px 5px;
+border-radius:4px;
 font-weight:600;
-
 }
 
 .price-container{
-
 display:flex;
-
 align-items:baseline;
-
 gap:6px;
-
 flex-wrap:wrap;
-
-margin:4px 0 8px;
-
+margin:6px 0 10px;
 }
 
 .price{
-
-color:var(--gold);
-
-font-size:14px;
-
+color:#b48a00;
+font-size:14.5px;
 font-weight:800;
-
+letter-spacing:-0.2px;
 }
 
 .price-old{
-
 text-decoration:line-through;
-
-color:#777;
-
+color:#94a3b8;
 font-size:10px;
-
 font-weight:400;
-
 }
 
+/* =====================================================
+BOUTONS D'ACTION (ÉGAUX ET BIEN ORGANISÉS)
+===================================================== */
+
 .card-actions-row{
-
 display:flex;
-
 gap:6px;
-
 margin-top:auto;
-
+width:100%;
 }
 
 .btn-action{
-
 flex:1;
-
-padding:7px 4px;
-
-border:1px solid var(--border);
-
+min-width:0;
+padding:8px 4px;
 border-radius:6px;
-
-color:#fff;
-
 font-size:10px;
-
 font-weight:700;
-
 text-align:center;
-
 text-decoration:none;
-
 cursor:pointer;
-
-transition:
-background .2s,
-border-color .2s,
-transform .1s;
-
+transition:background .2s, transform .1s, opacity .2s;
 display:flex;
-
 align-items:center;
-
 justify-content:center;
-
 white-space:nowrap;
-
+border:none;
+box-shadow:0 1px 2px rgba(0,0,0,0.05);
 }
 
 .btn-action:active{
-
-transform:scale(.96);
-
+transform:scale(.95);
 }
 
-.btn-cart{
-
-background:#166534;
-
+.btn-view{
+background:var(--blue);
 color:#fff;
-
-border-color:
-rgba(34,197,94,.5);
-
 }
 
-.btn-cart:hover{
-
-background:#15803d;
-
+.btn-view:hover{
+background:var(--blue-dark);
 }
 
 .btn-copy{
-
-background:var(--blue);
-
+background:#334155;
 color:#fff;
-
-border-color:
-rgba(0,123,255,.5);
-
 }
 
 .btn-copy:hover{
+background:#1e293b;
+}
 
-background:var(--blue-dark);
+.btn-cart{
+background:var(--green);
+color:#fff;
+}
 
+.btn-cart:hover{
+background:var(--green-hover);
 }
 
 .affiliate-box{
-
 margin-top:4px;
-
 }
 
 .affiliate-input{
-
 display:none;
-
 width:100%;
-
 margin-top:4px;
-
 padding:4px;
-
-background:#000;
-
-color:#fff;
-
-border:1px solid #444;
-
+background:#fff;
+color:#000;
+border:1px solid #cbd5e1;
 border-radius:4px;
-
 font-size:8px;
-
-}
-
-.skeleton-card{
-
-background:#151c28;
-
-border-radius:12px;
-
-padding:10px;
-
-animation:pulse 1.5s infinite ease-in-out;
-
-}
-
-.skeleton-media{
-
-width:100%;
-
-height:150px;
-
-background:#222b3a;
-
-border-radius:8px;
-
-}
-
-.skeleton-text{
-
-height:10px;
-
-background:#222b3a;
-
-margin:8px 0;
-
-border-radius:4px;
-
-}
-
-@keyframes pulse{
-
-0%{opacity:.6}
-50%{opacity:1}
-100%{opacity:.6}
-
 }
 
 /* =====================================================
@@ -1239,46 +744,28 @@ MODAL
 ===================================================== */
 
 .modal-overlay{
-
 position:fixed;
-
 top:0;
 left:0;
-
 width:100%;
 height:100%;
-
 background:rgba(0,0,0,.85);
-
 display:flex;
-
 justify-content:center;
 align-items:center;
-
 z-index:10000;
-
 padding:15px;
-
 }
 
 .modal-content{
-
 background:#0a0d14;
-
 border:1px solid var(--gold);
-
 border-radius:14px;
-
 padding:20px;
-
 max-width:520px;
-
 width:100%;
-
 max-height:90vh;
-
 overflow-y:auto;
-
 }
 
 /* =====================================================
@@ -1286,192 +773,118 @@ FOOTER
 ===================================================== */
 
 .app-footer{
-
 margin-top:30px;
-
 background:#131921;
-
 border-top:2px solid var(--gold);
-
 color:#ddd;
-
 font-size:12px;
-
 }
 
 .footer-announcement{
-
 padding:16px 20px;
-
 text-align:center;
-
 background:var(--soft-dark);
-
 border-bottom:1px solid #333;
-
 }
 
 .footer-announcement h4{
-
 color:var(--gold);
-
 margin-bottom:5px;
-
 font-size:14px;
-
 }
 
 .footer-announcement p{
-
 color:#ccc;
-
 line-height:1.5;
-
 font-size:11px;
-
 }
 
 .footer-links-grid{
-
 display:grid;
-
-grid-template-columns:
-repeat(3,1fr);
-
+grid-template-columns:repeat(3,1fr);
 gap:20px;
-
 width:100%;
-
 max-width:1000px;
-
 margin:auto;
-
 padding:25px 20px;
-
 }
 
 .footer-column h5{
-
 color:var(--gold);
-
 font-size:12px;
-
 margin-bottom:10px;
-
 text-transform:uppercase;
-
 }
 
 .footer-column ul{
-
 list-style:none;
-
 }
 
 .footer-column li{
-
 margin-bottom:8px;
-
 }
 
 .footer-column a{
-
 color:#aaa;
-
 text-decoration:none;
-
 transition:color .2s ease;
-
 }
 
 .footer-column a:hover{
-
 color:var(--gold);
-
 }
 
 .seller-link{
-
 color:var(--gold) !important;
-
 font-weight:600;
-
 }
 
 .seller-link:hover{
-
 color:#fff !important;
-
 }
 
 .footer-bottom-bar{
-
 padding:15px;
-
 background:#000;
-
 border-top:1px solid #222;
-
 text-align:center;
-
 color:#777;
-
 font-size:10px;
-
 }
 
 .loading-message,
 .empty-message{
-
 grid-column:1 / -1;
-
 padding:40px 20px;
-
 text-align:center;
-
-color:#999;
-
+color:#64748b;
 font-size:13px;
-
 }
 
 .error-message{
-
-color:#ff8080;
-
+color:#dc2626;
 }
 
 @media(max-width:700px){
-
 .footer-links-grid{
-
-grid-template-columns:
-repeat(2,1fr);
-
+grid-template-columns:repeat(2,1fr);
 }
-
 }
 
 @media(max-width:500px){
-
 .header{
-
-gap:5px;
-padding-left:6px;
-padding-right:6px;
-
+gap:6px;
+padding-left:8px;
+padding-right:8px;
+min-height:68px;
 }
 
 .logo-container{
-
-width:36px;
-height:36px;
-
-min-width:36px;
-min-height:36px;
-
-flex-basis:36px;
-
+width:50px;
+height:50px;
+min-width:50px;
+min-height:50px;
+flex-basis:50px;
 }
 
 .search-container{
@@ -1479,55 +892,27 @@ gap:4px;
 }
 
 #searchBar{
-
-height:36px;
-
-padding:0 8px;
-
+height:40px;
+padding:0 10px;
 font-size:11px;
-
-}
-
-.select-lang-devise{
-height:36px;
-font-size:9.5px;
-padding:3px 2px;
-}
-
-#selectLangue{
-max-width:55px;
-}
-
-#selectDevise{
-max-width:62px;
 }
 
 .nav-icons{
-
-gap:4px;
-
+gap:6px;
 }
 
 .nav-item{
-
-min-width:30px;
-
+min-width:32px;
 font-size:8px;
-
 }
 
 .nav-item>span:first-child{
-
-font-size:14px;
-
+font-size:16px;
 }
 
 .footer-links-grid{
-
 grid-template-columns:1fr;
-
 }
-
 }
 
 </style>
@@ -1557,9 +942,7 @@ decoding="sync">
 class="fallback-logo"
 id="fallbackLogo"
 style="display:none">
-
 DP
-
 </span>
 
 </div>
@@ -1571,31 +954,6 @@ type="search"
 id="searchBar"
 autocomplete="off"
 placeholder="Rechercher des produits sur DAKPROÉLITE...">
-
-<!-- SÉLECTEUR DE LANGUES -->
-<select id="selectLangue" class="select-lang-devise" onchange="if(typeof changerLangue === 'function') changerLangue(this.value)">
-  <option value="fr">🇫🇷 FR</option>
-  <option value="en">🇬🇧 EN</option>
-  <option value="es">🇪🇸 ES</option>
-  <option value="ar">🇸🇦 AR</option>
-  <option value="zh">🇨🇳 ZH</option>
-  <option value="hi">🇮🇳 HI</option>
-  <option value="yo">🇳🇬 YO</option>
-  <option value="ha">🇳🇬 HA</option>
-</select>
-
-<!-- SÉLECTEUR DE DEVISES MONDIAL -->
-<select id="selectDevise" class="select-lang-devise" onchange="if(typeof changerDevise === 'function') changerDevise(this.value)">
-  <option value="XOF">FCFA</option>
-  <option value="USD">$ USD</option>
-  <option value="EUR">€ EUR</option>
-  <option value="GBP">£ GBP</option>
-  <option value="NGN">₦ NGN</option>
-  <option value="INR">₹ INR</option>
-  <option value="CNY">¥ CNY</option>
-  <option value="DZD">DA DZD</option>
-  <option value="KWD">KD KWD</option>
-</select>
 
 </div>
 
@@ -1637,9 +995,7 @@ INSTALLATION PWA
 ===================================================== -->
 
 <div id="btnInstall">
-
 Installer l'application sur l'appareil
-
 </div>
 
 <!-- =====================================================
@@ -1651,13 +1007,9 @@ class="banner-container"
 id="bannerContainer">
 
 <div class="banner-controls">
-
 <button type="button" class="banner-btn" id="btnBannerPrev" title="Précédent">◄</button>
-
 <button type="button" class="banner-btn" id="btnBannerPause" title="Arrêter / Reprendre">⏸</button>
-
 <button type="button" class="banner-btn" id="btnBannerNext" title="Suivant">►</button>
-
 </div>
 
 <div
@@ -1682,73 +1034,13 @@ id="catMenu">
 </nav>
 
 <!-- =====================================================
-PRODUITS
+PRODUITS (ZONE BLANCHE)
 ===================================================== -->
 
 <main
 class="products"
 id="products">
-
-<div class="skeleton-card">
-
-<div class="skeleton-media">
-</div>
-
-<div class="skeleton-text">
-</div>
-
-<div
-class="skeleton-text"
-style="width:60%">
-</div>
-
-</div>
-
-<div class="skeleton-card">
-
-<div class="skeleton-media">
-</div>
-
-<div class="skeleton-text">
-</div>
-
-<div
-class="skeleton-text"
-style="width:60%">
-</div>
-
-</div>
-
-<div class="skeleton-card">
-
-<div class="skeleton-media">
-</div>
-
-<div class="skeleton-text">
-</div>
-
-<div
-class="skeleton-text"
-style="width:60%">
-</div>
-
-</div>
-
-<div class="skeleton-card">
-
-<div class="skeleton-media">
-</div>
-
-<div class="skeleton-text">
-</div>
-
-<div
-class="skeleton-text"
-style="width:60%">
-</div>
-
-</div>
-
+<div class="loading-message">Chargement des produits...</div>
 </main>
 
 <div
@@ -1762,160 +1054,45 @@ FOOTER
 <footer class="app-footer">
 
 <section class="footer-announcement">
-
-<h4 id="fayaBuzzTitle">
-⚡ Annonce Officielle
-</h4>
-
-<p id="fayaBuzzText">
-
-Bienvenue sur DAKPROÉLITE,
-votre plateforme de référence !
-
-</p>
-
+<h4 id="fayaBuzzTitle">⚡ Annonce Officielle</h4>
+<p id="fayaBuzzText">Bienvenue sur DAKPROÉLITE, votre plateforme de référence !</p>
 </section>
 
 <div class="footer-links-grid">
 
 <!-- NAVIGATION -->
-
 <div class="footer-column">
-
-<h5>
-Navigation & Aide
-</h5>
-
+<h5>Navigation & Aide</h5>
 <ul>
-
-<li>
-
-<a
-href="support-rapide.html">
-
-Support Rapide
-
-</a>
-
-</li>
-
-<li>
-
-<a
-href="aide.html">
-
-Centre d'aide général
-
-</a>
-
-</li>
-
-<li>
-
-<a
-href="profil-acheteur.html">
-
-Mon Compte
-
-</a>
-
-</li>
-
+<li><a href="support-rapide.html">Support Rapide</a></li>
+<li><a href="aide.html">Centre d'aide général</a></li>
+<li><a href="profil-acheteur.html">Mon Compte</a></li>
 </ul>
-
 </div>
 
 <!-- RÈGLES -->
-
 <div class="footer-column">
-
-<h5>
-Règles & Légal
-</h5>
-
+<h5>Règles & Légal</h5>
 <ul>
-
-<li>
-
-<a
-href="reglement-interieur.html">
-
-Règlement Intérieur
-
-</a>
-
-</li>
-
-<li>
-
-<a
-href="politique-confidentialite.html">
-
-Politique de Confidentialité
-
-</a>
-
-</li>
-
+<li><a href="reglement-interieur.html">Règlement Intérieur</a></li>
+<li><a href="politique-confidentialite.html">Politique de Confidentialité</a></li>
 </ul>
-
 </div>
 
 <!-- VENDEUR -->
-
 <div class="footer-column">
-
-<h5>
-Gagner de l'argent
-</h5>
-
+<h5>Gagner de l'argent</h5>
 <ul>
-
-<li>
-
-<a
-href="programme-ambassadeur.html">
-
-Programme Ambassadeur
-
-</a>
-
-</li>
-
-<li>
-
-<a
-href="programme-ambassadeur.html">
-
-Affiliation
-
-</a>
-
-</li>
-
-<li>
-
-<a
-href="https://vendeur.dakproelite.com"
-class="seller-link">
-
-🛍️ Devenir Vendeur
-
-</a>
-
-</li>
-
+<li><a href="programme-ambassadeur.html">Programme Ambassadeur</a></li>
+<li><a href="programme-ambassadeur.html">Affiliation</a></li>
+<li><a href="https://vendeur.dakproelite.com" class="seller-link" id="sellerLinkBtn">🛍️ Devenir Vendeur</a></li>
 </ul>
-
 </div>
 
 </div>
 
 <div class="footer-bottom-bar">
-
-© 2026 DAKPROÉLITE.
-Tous droits réservés.
-
+© 2026 DAKPROÉLITE. Tous droits réservés.
 </div>
 
 </footer>
@@ -1962,69 +1139,28 @@ FIREBASE CONFIG
 ===================================================== */
 
 const firebaseConfig = {
-
-apiKey:
-"AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
-
-authDomain:
-"dakproelite.firebaseapp.com",
-
-databaseURL:
-"https://dakproelite-default-rtdb.firebaseio.com",
-
-projectId:
-"dakproelite",
-
-storageBucket:
-"dakproelite.firebasestorage.app",
-
-messagingSenderId:
-"580591769206",
-
-appId:
-"1:580591769206:web:4f67f8aadbf3d051087157"
-
+apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
+authDomain: "dakproelite.firebaseapp.com",
+databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
+projectId: "dakproelite",
+storageBucket: "dakproelite.firebasestorage.app",
+messagingSenderId: "580591769206",
+appId: "1:580591769206:web:4f67f8aadbf3d051087157"
 };
 
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getDatabase(app);
-
-const auth =
-getAuth(app);
-
-
-window.dakproFirebase = {
-
-app,
-db,
-auth
-
-};
-
-
+window.dakproFirebase = { app, db, auth };
 window.allProductsData = [];
 
-
-const siteContext = {
-
-currentUser:null,
-userData:null
-
-};
-
+const siteContext = { currentUser: null, userData: null };
 
 let currentCat = "Tous";
-
 let currentIndex = 0;
-
 let totalSlides = 0;
-
 let autoPlay = null;
-
 let isPaused = false;
 
 
@@ -2033,34 +1169,16 @@ CACHE
 ===================================================== */
 
 (function chargerCacheImmediat(){
-
 try{
-
-const cachedProducts =
-localStorage.getItem(
-"dakpro_cached_publications"
-);
-
+const cachedProducts = localStorage.getItem("dakpro_cached_publications");
 if(cachedProducts){
-
-window.allProductsData =
-JSON.parse(cachedProducts);
-
+window.allProductsData = JSON.parse(cachedProducts);
 buildCategories();
-
 filterProducts();
-
 }
-
 }catch(e){
-
-console.warn(
-"Cache indisponible:",
-e
-);
-
+console.warn("Cache indisponible:", e);
 }
-
 })();
 
 
@@ -2068,101 +1186,42 @@ e
 UTILISATEUR + PANIER
 ===================================================== */
 
-onAuthStateChanged(
-auth,
-user=>{
-
-siteContext.currentUser =
-user || null;
-
+onAuthStateChanged(auth, user=>{
+siteContext.currentUser = user || null;
 if(user){
-
-listenToCartBadge(
-user.uid
-);
-
+listenToCartBadge(user.uid);
 }else{
-
 updateCartBadgeDisplay(0);
-
 }
-
 });
 
 
 function updateCartBadgeDisplay(count){
-
-const badge =
-document.getElementById(
-"cartBadge"
-);
-
+const badge = document.getElementById("cartBadge");
 if(!badge)return;
-
 if(count>0){
-
-badge.textContent =
-count;
-
-badge.style.display =
-"inline-block";
-
+badge.textContent = count;
+badge.style.display = "inline-block";
 }else{
-
-badge.style.display =
-"none";
-
+badge.style.display = "none";
 }
-
 }
 
 
 function listenToCartBadge(uid){
-
-const cartRef =
-ref(
-db,
-`users/${uid}/panier`
-);
-
-onValue(
-cartRef,
-snapshot=>{
-
-const data =
-snapshot.val();
-
-if(
-!data ||
-typeof data!=="object"
-){
-
+const cartRef = ref(db, `users/${uid}/panier`);
+onValue(cartRef, snapshot=>{
+const data = snapshot.val();
+if(!data || typeof data!=="object"){
 updateCartBadgeDisplay(0);
-
 return;
-
 }
-
 let totalItems=0;
-
-Object
-.values(data)
-.forEach(item=>{
-
-totalItems +=
-parseInt(
-item.quantite || 1,
-10
-);
-
+Object.values(data).forEach(item=>{
+totalItems += parseInt(item.quantite || 1, 10);
 });
-
-updateCartBadgeDisplay(
-totalItems
-);
-
+updateCartBadgeDisplay(totalItems);
 });
-
 }
 
 
@@ -2171,22 +1230,16 @@ SÉCURITÉ HTML
 ===================================================== */
 
 function escapeHTML(value){
-
 return String(value ?? "")
-
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
 .replace(/>/g,"&gt;")
 .replace(/"/g,"&quot;")
 .replace(/'/g,"&#039;");
-
 }
 
-
 function escapeAttribute(value){
-
 return escapeHTML(value);
-
 }
 
 
@@ -2194,43 +1247,33 @@ return escapeHTML(value);
 LOGO
 ===================================================== */
 
-document
-.getElementById("logoButton")
-?.addEventListener(
-"click",
-()=>{
+document.getElementById("logoButton")?.addEventListener("click", ()=>{
+window.location.href = "index.html";
+});
 
-window.location.href =
-"index.html";
+const appLogo = document.getElementById("appLogo");
+const fallbackLogo = document.getElementById("fallbackLogo");
 
+appLogo?.addEventListener("error", ()=>{
+appLogo.style.display = "none";
+if(fallbackLogo){
+fallbackLogo.style.display = "block";
+}
 });
 
 
-const appLogo =
-document.getElementById(
-"appLogo"
-);
+/* =====================================================
+GESTION DYNAMIQUE LIEN VENDEUR
+===================================================== */
 
-const fallbackLogo =
-document.getElementById(
-"fallbackLogo"
-);
-
-
-appLogo?.addEventListener(
-"error",
-()=>{
-
-appLogo.style.display =
-"none";
-
-if(fallbackLogo){
-
-fallbackLogo.style.display =
-"block";
-
-}
-
+document.getElementById("sellerLinkBtn")?.addEventListener("click", function(e){
+e.preventDefault();
+const targetUrl = this.getAttribute("href");
+this.innerHTML = "⏳ Traitement...";
+this.style.pointerEvents = "none";
+setTimeout(()=>{
+window.location.href = targetUrl;
+}, 300);
 });
 
 
@@ -2239,124 +1282,43 @@ PRODUITS FIREBASE
 ===================================================== */
 
 function loadProducts(){
-
-onValue(
-
-ref(db,"publications"),
-
-snapshot=>{
-
-const data =
-snapshot.val();
-
-if(
-!data ||
-typeof data!=="object"
-){
-
+onValue(ref(db,"publications"), snapshot=>{
+const data = snapshot.val();
+if(!data || typeof data!=="object"){
 window.allProductsData = [];
-
 buildCategories();
-
 renderProducts([]);
-
 return;
-
 }
 
-
-window.allProductsData =
-
-Object
-.entries(data)
-
-.map(
-([id,product])=>{
-
-if(
-!product ||
-typeof product!=="object"
-){
-
-return null;
-
-}
-
-return {
-
-id,
-...product
-
-};
-
+window.allProductsData = Object.entries(data)
+.map(([id,product])=>{
+if(!product || typeof product!=="object") return null;
+return { id, ...product };
 })
-
 .filter(product=>{
-
-if(!product)return false;
-
-if(product.actif===false)
-return false;
-
+if(!product) return false;
+if(product.actif===false) return false;
 return true;
-
 });
-
 
 try{
-
-localStorage.setItem(
-
-"dakpro_cached_publications",
-
-JSON.stringify(
-window.allProductsData
-)
-
-);
-
+localStorage.setItem("dakpro_cached_publications", JSON.stringify(window.allProductsData));
 }catch(e){}
 
-
 buildCategories();
-
 filterProducts();
-
 checkUrlForSharedProduct();
-
-},
-
-error=>{
-
-console.error(
-"Erreur publications:",
-error
-);
-
-if(
-!window.allProductsData.length
-){
-
-document.getElementById(
-"products"
-).innerHTML = `
-
-<div
-class="empty-message error-message">
-
-Impossible de charger
-les publications.
-
-Vérifiez votre connexion.
-
+}, error=>{
+console.error("Erreur publications:", error);
+if(!window.allProductsData.length){
+document.getElementById("products").innerHTML = `
+<div class="empty-message error-message">
+Impossible de charger les publications. Vérifiez votre connexion.
 </div>
-
 `;
-
 }
-
 });
-
 }
 
 
@@ -2365,104 +1327,42 @@ CATÉGORIES
 ===================================================== */
 
 function buildCategories(){
-
 const categories=[
-
 "Tous",
-
 ...new Set(
-
 window.allProductsData
-
-.map(
-p=>p.categorie ||
-p.category
-)
-
+.map(p=>p.categorie || p.category)
 .filter(Boolean)
-
 )
-
 ];
 
-
-const menu =
-document.getElementById(
-"catMenu"
-);
-
+const menu = document.getElementById("catMenu");
 if(!menu)return;
 
-
-menu.innerHTML =
-
-categories
-.map(category=>{
-
-const safe =
-escapeHTML(category);
-
+menu.innerHTML = categories.map(category=>{
+const safe = escapeHTML(category);
 return `
-
 <button
 type="button"
-class="cat-btn ${
-category===currentCat
-?"active"
-:""
-}"
+class="cat-btn ${category===currentCat?"active":""}"
 data-category="${safe}">
-
 ${safe}
-
 </button>
-
 `;
+}).join("");
 
-})
-.join("");
-
-
-menu
-.querySelectorAll(".cat-btn")
-.forEach(button=>{
-
-button.addEventListener(
-"click",
-()=>{
-
-currentCat =
-button.dataset.category;
-
-menu
-.querySelectorAll(
-".cat-btn"
-)
-.forEach(item=>
-item.classList.remove(
-"active"
-)
-);
-
-button.classList.add(
-"active"
-);
-
+menu.querySelectorAll(".cat-btn").forEach(button=>{
+button.addEventListener("click", ()=>{
+currentCat = button.dataset.category;
+menu.querySelectorAll(".cat-btn").forEach(item=>item.classList.remove("active"));
+button.classList.add("active");
 filterProducts();
-
 });
-
 });
-
 }
 
 
-document
-.getElementById("searchBar")
-?.addEventListener(
-"input",
-filterProducts
-);
+document.getElementById("searchBar")?.addEventListener("input", filterProducts);
 
 
 /* =====================================================
@@ -2470,510 +1370,118 @@ FILTRAGE
 ===================================================== */
 
 function getFilteredProducts(){
+const search = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
 
-const search =
+return window.allProductsData.filter(product=>{
+const name = String(product.nom || product.title || product.name || "").toLowerCase();
+const description = String(product.description || "").toLowerCase();
+const category = String(product.categorie || product.category || "").toLowerCase();
+const productCategory = product.categorie || product.category || "";
 
-(
-document.getElementById(
-"searchBar"
-)?.value || ""
-)
-.toLowerCase()
-.trim();
+const categoryOK = currentCat==="Tous" || productCategory===currentCat;
 
-
-return window
-.allProductsData
-.filter(product=>{
-
-const name =
-String(
-product.nom ||
-product.title ||
-product.name ||
-""
-)
-.toLowerCase();
-
-
-const description =
-String(
-product.description ||
-""
-)
-.toLowerCase();
-
-
-const category =
-String(
-product.categorie ||
-product.category ||
-""
-)
-.toLowerCase();
-
-
-const productCategory =
-product.categorie ||
-product.category ||
-"";
-
-
-const categoryOK =
-
-currentCat==="Tous" ||
-productCategory===currentCat;
-
-
-return categoryOK &&
-(
-
+return categoryOK && (
 name.includes(search) ||
-
 description.includes(search) ||
-
 category.includes(search)
-
 );
-
 });
-
 }
 
-
 function filterProducts(){
-
-renderProducts(
-getFilteredProducts()
-);
-
+renderProducts(getFilteredProducts());
 }
 
 
 /* =====================================================
-CARTE PRODUIT
+CARTE PRODUIT (3 BOUTONS ÉGAUX ET ÉPURÉS)
 ===================================================== */
 
-function generateCardHTML(
-product,
-uid
-){
+function generateCardHTML(product, uid){
+const id = encodeURIComponent(product.id || "");
+const siteBase = "https://dakproelite.com";
+const affiliateURL = `${siteBase}/?id=${id}${uid ? "&ref="+encodeURIComponent(uid) : ""}`;
 
-const id =
-encodeURIComponent(
-product.id || ""
-);
+const image = product.image || product.imageUrl || product.photo || product.img || "";
+const video = product.video || product.videoUrl || "";
+const documentUrl = product.document || product.documentUrl || "";
 
-// LIEN D'AFFILIATION SANS VERCEL
-const siteBase =
-"https://dakproelite.com";
+const safeName = escapeHTML(product.nom || product.title || product.name || "Produit");
+const rawDesc = String(product.description || "");
+const shortDesc = rawDesc.length>70 ? rawDesc.substring(0,70)+"..." : rawDesc;
+const safeShortDesc = escapeHTML(shortDesc);
 
+const priceVal = parseFloat(product.prix!==undefined ? product.prix : (product.price!==undefined ? product.price : 0));
+const promoVal = product.prixPromo!==undefined ? parseFloat(product.prixPromo) : (product.promoPrice!==undefined ? parseFloat(product.promoPrice) : null);
 
-const affiliateURL =
-
-`${siteBase}/?id=${id}${
-uid
-? "&ref="+encodeURIComponent(uid)
-: ""
-}`;
-
-
-const image =
-product.image ||
-product.imageUrl ||
-product.photo ||
-product.img ||
-"";
-
-
-const video =
-product.video ||
-product.videoUrl ||
-"";
-
-
-const documentUrl =
-product.document ||
-product.documentUrl ||
-"";
-
-
-const safeName =
-escapeHTML(
-
-product.nom ||
-product.title ||
-product.name ||
-"Produit"
-
-);
-
-
-const rawDesc =
-String(
-product.description || ""
-);
-
-
-const shortDesc =
-
-rawDesc.length>70
-
-?rawDesc.substring(0,70)+"..."
-
-:rawDesc;
-
-
-const safeShortDesc =
-escapeHTML(shortDesc);
-
-
-const priceVal =
-
-parseFloat(
-
-product.prix!==undefined
-
-?product.prix
-
-:(product.price!==undefined
-?product.price
-:0)
-
-);
-
-
-const promoVal =
-
-product.prixPromo!==undefined
-
-?parseFloat(
-product.prixPromo
-)
-
-:
-
-(
-
-product.promoPrice!==undefined
-
-?parseFloat(
-product.promoPrice
-)
-
-:null
-
-);
-
-
-const hasPromo =
-
-promoVal!==null &&
-!isNaN(promoVal) &&
-promoVal>0 &&
-promoVal<priceVal;
-
-
+const hasPromo = promoVal!==null && !isNaN(promoVal) && promoVal>0 && promoVal<priceVal;
 let discountBadgeHTML = "";
 
-
-if(
-hasPromo &&
-priceVal>0
-){
-
-const discountPercent =
-
-Math.round(
-
-(
-(priceVal-promoVal) /
-priceVal
-)*100
-
-);
-
-
-discountBadgeHTML = `
-
-<span
-class="badge-discount">
-
--${discountPercent}%
-
-</span>
-
-`;
-
+if(hasPromo && priceVal>0){
+const discountPercent = Math.round(((priceVal-promoVal)/priceVal)*100);
+discountBadgeHTML = `<span class="badge-discount">-${discountPercent}%</span>`;
 }
 
+const displayPrice = hasPromo ? escapeHTML(promoVal) : escapeHTML(priceVal);
+const currencySymbol = escapeHTML(product.devise || product.currency || "FCFA");
 
-const displayPrice =
-
-hasPromo
-
-?escapeHTML(promoVal)
-
-:escapeHTML(priceVal);
-
-
-const currencySymbol =
-
-escapeHTML(
-
-product.devise ||
-product.currency ||
-"FCFA"
-
-);
-
-
-const oldPriceHTML =
-
-hasPromo
-
-?
-
-`<span class="price-old">
-${escapeHTML(priceVal)}
-${currencySymbol}
-</span>`
-
-:"";
-
-
-const isVideo =
-
-Boolean(video) ||
-
-/\.(mp4|webm|ogg)(\?|$)/i
-.test(image);
-
-
-const mediaSrc =
-video || image;
-
-
+const oldPriceHTML = hasPromo ? `<span class="price-old">${escapeHTML(priceVal)} ${currencySymbol}</span>` : "";
+const isVideo = Boolean(video) || /\.(mp4|webm|ogg)(\?|$)/i.test(image);
+const mediaSrc = video || image;
 let mediaHTML = "";
 
-
-if(
-isVideo &&
-mediaSrc
-){
-
+if(isVideo && mediaSrc){
+mediaHTML = `<video src="${escapeAttribute(mediaSrc)}" controls preload="metadata"></video>`;
+}else if(documentUrl){
 mediaHTML = `
-
-<video
-src="${escapeAttribute(mediaSrc)}"
-controls
-preload="metadata">
-</video>
-
-`;
-
-}
-
-else if(documentUrl){
-
-mediaHTML = `
-
-<a
-href="${escapeAttribute(documentUrl)}"
-target="_blank"
-rel="noopener noreferrer"
-class="doc-box">
-
+<a href="${escapeAttribute(documentUrl)}" target="_blank" rel="noopener noreferrer" class="doc-box">
 <span>📄</span>
-
-<p>
-Consulter le document
-</p>
-
+<p>Consulter le document</p>
 </a>
-
 `;
-
-}
-
-else if(image){
-
+}else if(image){
 mediaHTML = `
-
-<img
-src="${escapeAttribute(image)}"
-alt="${safeName}"
-loading="lazy"
-onerror="
-this.style.display='none';
-this.nextElementSibling.style.display='flex';
-">
-
-<div
-class="product-no-image"
-style="display:none">
-
+<img src="${escapeAttribute(image)}" alt="${safeName}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+<div class="product-no-image" style="display:none">
 <strong>📦</strong>
-
-<span>
-Image indisponible
-</span>
-
+<span>Image indisponible</span>
 </div>
-
 `;
-
-}
-
-else{
-
+}else{
 mediaHTML = `
-
-<div
-class="product-no-image">
-
+<div class="product-no-image">
 <strong>📦</strong>
-
-<span>
-Image indisponible
-</span>
-
+<span>Image indisponible</span>
 </div>
-
 `;
-
 }
-
 
 return `
-
-<article
-class="card"
-data-product-id="${escapeAttribute(
-product.id || ""
-)}">
-
-${
-product.boost
-?
-`<span class="badge-boost">
-🔥 HOT
-</span>`
-:""
-}
-
+<article class="card" data-product-id="${escapeAttribute(product.id || "")}">
+${product.boost ? `<span class="badge-boost">🔥 HOT</span>` : ""}
 ${discountBadgeHTML}
-
-<div
-class="media-container">
-
-${mediaHTML}
-
-</div>
-
+<div class="media-container">${mediaHTML}</div>
 <div>
-
-<div
-class="market-tags">
-
-<span
-class="tag-express">
-
-⚡ Livraison Rapide
-
-</span>
-
+<div class="market-tags"><span class="tag-express">⚡ Livraison Rapide</span></div>
+<h3>${safeName}</h3>
+${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : `<div class="description-complete">Découvrez ce produit d'exception sur DAKPROÉLITE.</div>`}
 </div>
-
-<h3>
-
-${safeName}
-
-</h3>
-
-${
-safeShortDesc
-
-?
-
-`
-<div
-class="description-complete">
-
-${safeShortDesc}
-
-</div>
-`
-
-:""
-
-}
-
-</div>
-
 <div>
-
-<div
-class="price-container">
-
-<span
-class="price">
-
-${displayPrice}
-${currencySymbol}
-
-</span>
-
+<div class="price-container">
+<span class="price">${displayPrice} ${currencySymbol}</span>
 ${oldPriceHTML}
-
 </div>
-
-<div
-class="card-actions-row">
-
-<button
-type="button"
-class="btn-action btn-cart"
-data-id="${escapeAttribute(
-product.id || ""
-)}">
-
-🛒 Panier
-
-</button>
-
-<button
-type="button"
-class="btn-action btn-copy"
-data-affiliate="${escapeAttribute(
-affiliateURL
-)}">
-
-🔗 Affiliation
-
-</button>
-
+<div class="card-actions-row">
+<a href="produit.html?id=${escapeAttribute(product.id || "")}" class="btn-action btn-view">👁️ Voir</a>
+<button type="button" class="btn-action btn-copy" data-affiliate="${escapeAttribute(affiliateURL)}">🔗 Copier</button>
+<button type="button" class="btn-action btn-cart" data-id="${escapeAttribute(product.id || "")}">🛒 Panier</button>
 </div>
-
-<div
-class="affiliate-box">
-
-<input
-type="text"
-class="affiliate-input"
-value="${escapeAttribute(
-affiliateURL
-)}"
-readonly>
-
+<div class="affiliate-box">
+<input type="text" class="affiliate-input" value="${escapeAttribute(affiliateURL)}" readonly>
 </div>
-
 </div>
-
 </article>
-
 `;
-
 }
 
 
@@ -2982,184 +1490,53 @@ AFFICHAGE PRODUITS
 ===================================================== */
 
 function renderProducts(list){
-
-const container =
-document.getElementById(
-"products"
-);
-
+const container = document.getElementById("products");
 if(!container)return;
 
-
-if(
-!Array.isArray(list) ||
-list.length===0
-){
-
-container.innerHTML = `
-
-<div
-class="empty-message">
-
-Aucun produit disponible
-pour le moment.
-
-</div>
-
-`;
-
+if(!Array.isArray(list) || list.length===0){
+container.innerHTML = `<div class="empty-message">Aucun produit disponible pour le moment.</div>`;
 return;
-
 }
 
+const uid = siteContext.currentUser?.uid || "";
+container.innerHTML = list.map(product=>generateCardHTML(product, uid)).join("");
 
-const uid =
-siteContext.currentUser?.uid ||
-"";
-
-
-container.innerHTML =
-
-list
-.map(product=>
-generateCardHTML(
-product,
-uid
-)
-)
-.join("");
-
-
-container
-.querySelectorAll(".btn-copy")
-.forEach(button=>{
-
-button.addEventListener(
-"click",
-async event=>{
-
+container.querySelectorAll(".btn-copy").forEach(button=>{
+button.addEventListener("click", async event=>{
 event.stopPropagation();
-
-
-const link =
-button.dataset.affiliate;
-
-
+const link = button.dataset.affiliate;
 try{
-
-if(
-navigator.clipboard &&
-window.isSecureContext
-){
-
-await navigator
-.clipboard
-.writeText(link);
-
+if(navigator.clipboard && window.isSecureContext){
+await navigator.clipboard.writeText(link);
 }else{
-
-throw new Error(
-"Clipboard indisponible"
-);
-
+throw new Error("Clipboard indisponible");
 }
-
-
-const oldText =
-button.textContent;
-
-
-button.textContent =
-"✅ Copié !";
-
-
-setTimeout(
-()=>{
-
-button.textContent =
-oldText;
-
-},
-1800
-);
-
-
+const oldText = button.textContent;
+button.textContent = "✅ Copié !";
+setTimeout(()=>{ button.textContent = oldText; }, 1800);
 }catch{
-
-const input =
-button
-.closest(".card")
-.querySelector(
-".affiliate-input"
-);
-
-
+const input = button.closest(".card").querySelector(".affiliate-input");
 if(input){
-
-input.style.display =
-"block";
-
+input.style.display = "block";
 input.focus();
-
 input.select();
-
-document.execCommand(
-"copy"
-);
-
-input.style.display =
-"none";
-
+document.execCommand("copy");
+input.style.display = "none";
 }
-
-
-const oldText =
-button.textContent;
-
-
-button.textContent =
-"✅ Copié !";
-
-
-setTimeout(
-()=>{
-
-button.textContent =
-oldText;
-
-},
-1800
-);
-
+const oldText = button.textContent;
+button.textContent = "✅ Copié !";
+setTimeout(()=>{ button.textContent = oldText; }, 1800);
 }
-
+});
 });
 
-});
-
-
-container
-.querySelectorAll(".btn-cart")
-.forEach(button=>{
-
-button.addEventListener(
-"click",
-async event=>{
-
+container.querySelectorAll(".btn-cart").forEach(button=>{
+button.addEventListener("click", async event=>{
 event.stopPropagation();
-
-const productId =
-button.dataset.id;
-
-ajouterAuPanierDirect(
-productId,
-button
-);
-
+const productId = button.dataset.id;
+ajouterAuPanierDirect(productId, button);
 });
-
 });
-
 }
 
 
@@ -3167,251 +1544,70 @@ button
 AJOUT PANIER
 ===================================================== */
 
-async function ajouterAuPanierDirect(
-productId,
-buttonEl
-){
-
-const user =
-auth.currentUser;
-
-
+async function ajouterAuPanierDirect(productId, buttonEl){
+const user = auth.currentUser;
 if(!user){
-
-alert(
-"Veuillez vous connecter pour ajouter un article à votre panier."
-);
-
-window.location.href =
-"profil-acheteur.html";
-
+alert("Veuillez vous connecter pour ajouter un article à votre panier.");
+window.location.href = "profil-acheteur.html";
 return;
-
 }
 
-
-const product =
-window.allProductsData.find(
-p=>String(p.id)===String(productId)
-);
-
-
+const product = window.allProductsData.find(p=>String(p.id)===String(productId));
 if(product){
-
 try{
-
-const itemRef =
-
-ref(
-db,
-`users/${user.uid}/panier/${product.id}`
-);
-
-
-const gsItemRef =
-
-ref(
-db,
-`users/${user.uid}/gs/cart/${product.id}`
-);
-
-
-const snapshot =
-await get(itemRef);
-
+const itemRef = ref(db, `users/${user.uid}/panier/${product.id}`);
+const gsItemRef = ref(db, `users/${user.uid}/gs/cart/${product.id}`);
+const snapshot = await get(itemRef);
 
 let currentQty = 1;
-
-
 if(snapshot.exists()){
-
-currentQty =
-
-parseInt(
-snapshot.val().quantite || 0,
-10
-)+1;
-
+currentQty = parseInt(snapshot.val().quantite || 0, 10)+1;
 }
 
-
-const unitPrice =
-
-parseFloat(
-
-product.prixPromo ||
-product.prix ||
-product.price ||
-0
-
-);
-
-
-const nameVal =
-
-product.nom ||
-product.title ||
-product.name ||
-"Produit";
-
-
-const imgVal =
-
-product.image ||
-product.imageUrl ||
-product.photo ||
-"";
-
-
-const devVal =
-
-product.devise ||
-product.currency ||
-"FCFA";
-
-
-const totalPrice =
-
-parseFloat(
-
-(
-currentQty *
-unitPrice
-).toFixed(2)
-
-);
-
+const unitPrice = parseFloat(product.prixPromo || product.prix || product.price || 0);
+const nameVal = product.nom || product.title || product.name || "Produit";
+const imgVal = product.image || product.imageUrl || product.photo || "";
+const devVal = product.devise || product.currency || "FCFA";
+const totalPrice = parseFloat((currentQty * unitPrice).toFixed(2));
 
 const payload = {
-
-id:product.id,
-
-nom:nameVal,
-
-prixUnitaire:unitPrice,
-
-devise:devVal,
-
-image:imgVal,
-
-quantite:currentQty,
-
-total:totalPrice,
-
-updatedAt:Date.now()
-
+id: product.id,
+nom: nameVal,
+prixUnitaire: unitPrice,
+devise: devVal,
+image: imgVal,
+quantite: currentQty,
+total: totalPrice,
+updatedAt: Date.now()
 };
 
-
 const updates = {};
+updates[`users/${user.uid}/panier/${product.id}`] = payload;
+updates[`users/${user.uid}/gs/cart/${product.id}`] = payload;
 
+await update(ref(db), updates);
 
-updates[
-`users/${user.uid}/panier/${product.id}`
-] =
-payload;
-
-
-updates[
-`users/${user.uid}/gs/cart/${product.id}`
-] =
-payload;
-
-
-await update(
-ref(db),
-updates
-);
-
-
-/* TOTAL */
-
-const allGsCartSnap =
-
-await get(
-
-ref(
-db,
-`users/${user.uid}/gs/cart`
-)
-
-);
-
-
+const allGsCartSnap = await get(ref(db, `users/${user.uid}/gs/cart`));
 let globalTotal = 0;
-
-
-if(
-allGsCartSnap.exists()
-){
-
-Object
-.values(
-allGsCartSnap.val()
-)
-.forEach(item=>{
-
-globalTotal +=
-
-parseFloat(
-item.total || 0
-);
-
+if(allGsCartSnap.exists()){
+Object.values(allGsCartSnap.val()).forEach(item=>{
+globalTotal += parseFloat(item.total || 0);
 });
-
 }
 
-
-await set(
-
-ref(
-db,
-`users/${user.uid}/gs/total`
-),
-
-globalTotal
-
-);
-
+await set(ref(db, `users/${user.uid}/gs/total`), globalTotal);
 
 if(buttonEl){
-
-const oldText =
-buttonEl.textContent;
-
-
-buttonEl.textContent =
-"✅ Ajouté !";
-
-
-setTimeout(
-()=>{
-
-buttonEl.textContent =
-oldText;
-
-},
-1500
-);
-
+const oldText = buttonEl.textContent;
+buttonEl.textContent = "✅ Ajouté !";
+setTimeout(()=>{ buttonEl.textContent = oldText; }, 1500);
 }
-
 
 }catch(error){
-
-console.error(
-"Erreur d'ajout au panier:",
-error
-);
-
-alert(
-"Impossible d'ajouter le produit au panier."
-);
-
+console.error("Erreur d'ajout au panier:", error);
+alert("Impossible d'ajouter le produit au panier.");
 }
-
 }
-
 }
 
 
@@ -3420,287 +1616,50 @@ PRODUIT PARTAGÉ
 ===================================================== */
 
 function checkUrlForSharedProduct(){
-
-const urlParams =
-
-new URLSearchParams(
-window.location.search
-);
-
-
-const productId =
-
-urlParams.get("pid") ||
-urlParams.get("id");
-
-
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get("pid") || urlParams.get("id");
 if(!productId)return;
 
-
-const product =
-
-window.allProductsData.find(
-p=>String(p.id)===String(productId)
-);
-
-
+const product = window.allProductsData.find(p=>String(p.id)===String(productId));
 if(!product)return;
 
-
-const modalContainer =
-
-document.getElementById(
-"productModalContainer"
-);
-
-
+const modalContainer = document.getElementById("productModalContainer");
 if(!modalContainer)return;
 
-
-const priceVal =
-
-parseFloat(
-
-product.prix!==undefined
-
-?product.prix
-
-:(product.price!==undefined
-?product.price
-:0)
-
-);
-
-
-const promoVal =
-
-product.prixPromo!==undefined
-
-?parseFloat(
-product.prixPromo
-)
-
-:
-
-(
-
-product.promoPrice!==undefined
-
-?parseFloat(
-product.promoPrice
-)
-
-:null
-
-);
-
-
-const hasPromo =
-
-promoVal!==null &&
-!isNaN(promoVal) &&
-promoVal>0 &&
-promoVal<priceVal;
-
-
-const effectivePrice =
-
-hasPromo
-?promoVal
-:priceVal;
-
-
-const currencySymbol =
-
-escapeHTML(
-
-product.devise ||
-product.currency ||
-"FCFA"
-
-);
-
+const priceVal = parseFloat(product.prix!==undefined ? product.prix : (product.price!==undefined ? product.price : 0));
+const promoVal = product.prixPromo!==undefined ? parseFloat(product.prixPromo) : (product.promoPrice!==undefined ? parseFloat(product.promoPrice) : null);
+const hasPromo = promoVal!==null && !isNaN(promoVal) && promoVal>0 && promoVal<priceVal;
+const effectivePrice = hasPromo ? promoVal : priceVal;
+const currencySymbol = escapeHTML(product.devise || product.currency || "FCFA");
 
 modalContainer.innerHTML = `
-
-<div
-class="modal-overlay">
-
-<div
-class="modal-content">
-
-<img
-src="${escapeAttribute(
-product.image ||
-product.imageUrl ||
-""
-)}"
-alt="${escapeHTML(
-product.nom ||
-"Produit"
-)}"
-style="
-width:100%;
-height:auto;
-max-height:220px;
-object-fit:contain;
-background:#080b10;
-border-radius:10px;
-margin-bottom:12px;
-border:1px solid #333;
-">
-
-<h2
-style="
-color:var(--gold);
-margin-bottom:8px;
-font-size:18px;
-">
-
-${escapeHTML(
-product.nom ||
-product.title ||
-"Produit DAKPROÉLITE"
-)}
-
-</h2>
-
-<div
-class="price-container"
-style="margin-bottom:12px;">
-
-<span
-class="price"
-style="font-size:18px;">
-
-${effectivePrice}
-${currencySymbol}
-
-</span>
-
-${
-hasPromo
-?
-
-`
-<span class="price-old">
-
-${priceVal}${currencySymbol}
-
-</span>
-`
-
-:""
-
-}
-
+<div class="modal-overlay">
+<div class="modal-content">
+<img src="${escapeAttribute(product.image || product.imageUrl || "")}" alt="${escapeHTML(product.nom || "Produit")}" style="width:100%;height:auto;max-height:220px;object-fit:contain;background:#080b10;border-radius:10px;margin-bottom:12px;border:1px solid #333;">
+<h2 style="color:var(--gold);margin-bottom:8px;font-size:18px;">${escapeHTML(product.nom || product.title || "Produit DAKPROÉLITE")}</h2>
+<div class="price-container" style="margin-bottom:12px;">
+<span class="price" style="font-size:18px;">${effectivePrice} ${currencySymbol}</span>
+${hasPromo ? `<span class="price-old">${priceVal}${currencySymbol}</span>` : ""}
 </div>
-
-<div
-style="
-background:#12161f;
-padding:12px;
-border-radius:8px;
-border:1px solid #222;
-margin-bottom:15px;
-">
-
-<h4
-style="
-color:#fff;
-font-size:12px;
-margin-bottom:4px;
-">
-
-Description :
-
-</h4>
-
-<p
-style="
-color:#ccc;
-font-size:13px;
-line-height:1.5;
-white-space:pre-line;
-">
-
-${escapeHTML(
-product.description ||
-"Aucune description disponible."
-)}
-
-</p>
-
+<div style="background:#12161f;padding:12px;border-radius:8px;border:1px solid #222;margin-bottom:15px;">
+<h4 style="color:#fff;font-size:12px;margin-bottom:4px;">Description :</h4>
+<p style="color:#ccc;font-size:13px;line-height:1.5;white-space:pre-line;">${escapeHTML(product.description || "Aucune description disponible.")}</p>
 </div>
-
-<div
-style="
-display:flex;
-gap:10px;
-">
-
-<button
-class="btn-action btn-cart"
-id="btnModalAddToCart"
-style="padding:10px;">
-
-💳 SHOP NOW (Acheter)
-
-</button>
-
-<button
-class="btn-action"
-id="btnModalClose"
-style="
-background:#222;
-color:#fff;
-border-color:#444;
-">
-
-Fermer
-
-</button>
-
+<div style="display:flex;gap:10px;">
+<button class="btn-action btn-cart" id="btnModalAddToCart" style="padding:10px;">💳 SHOP NOW (Acheter)</button>
+<button class="btn-action" id="btnModalClose" style="background:#222;color:#fff;border-color:#444;">Fermer</button>
 </div>
-
 </div>
-
 </div>
-
 `;
 
-
-document
-.getElementById(
-"btnModalAddToCart"
-)
-?.addEventListener(
-"click",
-()=>{
-
-ajouterAuPanierDirect(
-productId,
-document.getElementById(
-"btnModalAddToCart"
-)
-);
-
+document.getElementById("btnModalAddToCart")?.addEventListener("click", ()=>{
+ajouterAuPanierDirect(productId, document.getElementById("btnModalAddToCart"));
 });
 
-
-document
-.getElementById(
-"btnModalClose"
-)
-?.addEventListener(
-"click",
-()=>{
-
-modalContainer.innerHTML =
-"";
-
+document.getElementById("btnModalClose")?.addEventListener("click", ()=>{
+modalContainer.innerHTML = "";
 });
-
 }
 
 
@@ -3709,343 +1668,121 @@ BANNIÈRES FIREBASE
 ===================================================== */
 
 function loadBanners(){
+onValue(ref(db,"bannieres"), snapshot=>{
+const data = snapshot.val();
+const container = document.getElementById("bannerContainer");
+const track = document.getElementById("bannerTrack");
+const dots = document.getElementById("bannerDots");
 
-onValue(
+if(!container || !track || !dots)return;
 
-ref(db,"bannieres"),
-
-snapshot=>{
-
-const data =
-snapshot.val();
-
-const container =
-document.getElementById(
-"bannerContainer"
-);
-
-const track =
-document.getElementById(
-"bannerTrack"
-);
-
-const dots =
-document.getElementById(
-"bannerDots"
-);
-
-
-if(
-!container ||
-!track ||
-!dots
-)return;
-
-
-if(
-!data ||
-typeof data!=="object"
-){
-
-container.style.display =
-"none";
-
-track.innerHTML =
-"";
-
-dots.innerHTML =
-"";
-
+if(!data || typeof data!=="object"){
+container.style.display = "none";
+track.innerHTML = "";
+dots.innerHTML = "";
 return;
-
 }
 
-
-const banners =
-
-Object
-.entries(data)
-
-.map(
-([id,banner])=>({
-
-id,
-...banner
-
-})
-)
-
-.filter(
-banner=>
-banner &&
-banner.actif!==false
-);
-
+const banners = Object.entries(data)
+.map(([id,banner])=>({ id, ...banner }))
+.filter(banner=>banner && banner.actif!==false);
 
 if(!banners.length){
-
-container.style.display =
-"none";
-
-track.innerHTML =
-"";
-
-dots.innerHTML =
-"";
-
+container.style.display = "none";
+track.innerHTML = "";
+dots.innerHTML = "";
 return;
-
 }
 
+totalSlides = banners.length;
 
-totalSlides =
-banners.length;
-
-
-track.innerHTML =
-
-banners
-.map(banner=>{
-
-const image =
-escapeAttribute(
-banner.image || ""
-);
-
-const title =
-escapeHTML(
-banner.titre || ""
-);
-
-const description =
-escapeHTML(
-banner.description || ""
-);
-
+track.innerHTML = banners.map(banner=>{
+const image = escapeAttribute(banner.image || "");
+const title = escapeHTML(banner.titre || "");
+const description = escapeHTML(banner.description || "");
 
 return `
-
-<div
-class="banner-slide">
-
-<a
-href="javascript:void(0)"
-onclick="event.preventDefault();">
-
-<img
-src="${image}"
-alt="${
-title || "Publicité"
-}"
-loading="lazy">
-
-<div
-class="banner-content">
-
-${
-title
-?
-`<h3>${title}</h3>`
-:""
-}
-
-${
-description
-?
-`<p>${description}</p>`
-:""
-}
-
+<div class="banner-slide">
+<a href="javascript:void(0)" onclick="event.preventDefault();">
+<img src="${image}" alt="${title || "Publicité"}" loading="lazy">
+<div class="banner-content">
+${title ? `<h3>${title}</h3>` : ""}
+${description ? `<p>${description}</p>` : ""}
 </div>
-
 </a>
-
 </div>
-
 `;
+}).join("");
 
-})
-.join("");
+dots.innerHTML = banners.map((_,index)=>`<span class="dot ${index===0?"active":""}" data-slide="${index}"></span>`).join("");
 
-
-dots.innerHTML =
-
-banners
-.map(
-(_,index)=>
-`
-
-<span
-class="dot ${
-index===0
-?"active"
-:""
-}"
-data-slide="${index}">
-</span>
-
-`
-)
-.join("");
-
-
-dots
-.querySelectorAll(".dot")
-.forEach(dot=>{
-
-dot.addEventListener(
-"click",
-event=>{
-
+dots.querySelectorAll(".dot").forEach(dot=>{
+dot.addEventListener("click", event=>{
 event.stopPropagation();
-
-currentIndex =
-Number(
-dot.dataset.slide
-);
-
+currentIndex = Number(dot.dataset.slide);
 updateSlide();
-
 });
-
 });
-
 
 currentIndex = 0;
-
 updateSlide();
-
-container.style.display =
-"block";
-
-
+container.style.display = "block";
 startAutoPlay();
-
 });
-
 }
 
 
 function startAutoPlay(){
-
 if(autoPlay) clearInterval(autoPlay);
-
 autoPlay = setInterval(moveSlide, 4000);
-
 isPaused = false;
-
 const pauseBtn = document.getElementById("btnBannerPause");
-
 if(pauseBtn) pauseBtn.textContent = "⏸";
-
 }
-
 
 function stopAutoPlay(){
-
 if(autoPlay) clearInterval(autoPlay);
-
 autoPlay = null;
-
 isPaused = true;
-
 const pauseBtn = document.getElementById("btnBannerPause");
-
 if(pauseBtn) pauseBtn.textContent = "▶";
-
 }
-
 
 document.getElementById("btnBannerPrev")?.addEventListener("click", (e)=>{
-
 e.stopPropagation();
-
 if(totalSlides <= 0) return;
-
 currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-
 updateSlide();
-
 });
-
 
 document.getElementById("btnBannerNext")?.addEventListener("click", (e)=>{
-
 e.stopPropagation();
-
 if(totalSlides <= 0) return;
-
 currentIndex = (currentIndex + 1) % totalSlides;
-
 updateSlide();
-
 });
-
 
 document.getElementById("btnBannerPause")?.addEventListener("click", (e)=>{
-
 e.stopPropagation();
-
 if(isPaused){
-
 startAutoPlay();
-
 }else{
-
 stopAutoPlay();
-
 }
-
 });
 
-
 function updateSlide(){
-
-const track =
-document.getElementById(
-"bannerTrack"
-);
-
-const dots =
-document.querySelectorAll(
-".dot"
-);
-
-
+const track = document.getElementById("bannerTrack");
+const dots = document.querySelectorAll(".dot");
 if(!track)return;
-
-
-track.style.transform =
-
-`translateX(-${
-currentIndex*100
-}%)`;
-
-
-dots.forEach(
-(dot,index)=>
-dot.classList.toggle(
-"active",
-index===currentIndex
-)
-);
-
+track.style.transform = `translateX(-${currentIndex*100}%)`;
+dots.forEach((dot,index)=>dot.classList.toggle("active", index===currentIndex));
 }
 
-
 function moveSlide(){
-
 if(totalSlides<=0)return;
-
-currentIndex =
-
-(
-currentIndex+1
-) %
-totalSlides;
-
+currentIndex = (currentIndex+1) % totalSlides;
 updateSlide();
-
 }
 
 
@@ -4054,66 +1791,22 @@ ANNONCE
 ===================================================== */
 
 function loadAnnouncement(){
+onValue(ref(db, "annonces/faya_buzz"), snapshot=>{
+const data = snapshot.val();
+const title = document.getElementById("fayaBuzzTitle");
+const text = document.getElementById("fayaBuzzText");
 
-onValue(
+if(!title || !text)return;
 
-ref(
-db,
-"annonces/faya_buzz"
-),
-
-snapshot=>{
-
-const data =
-snapshot.val();
-
-const title =
-document.getElementById(
-"fayaBuzzTitle"
-);
-
-const text =
-document.getElementById(
-"fayaBuzzText"
-);
-
-
-if(
-!title ||
-!text
-)return;
-
-
-if(
-!data ||
-data.actif===false
-){
-
-title.textContent =
-"⚡ Annonce Officielle";
-
-text.textContent =
-"Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
-
+if(!data || data.actif===false){
+title.textContent = "⚡ Annonce Officielle";
+text.textContent = "Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
 return;
-
 }
 
-
-title.textContent =
-
-data.titre ||
-"⚡ Annonce Officielle";
-
-
-text.textContent =
-
-data.texte ||
-data.text ||
-"Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
-
+title.textContent = data.titre || "⚡ Annonce Officielle";
+text.textContent = data.texte || data.text || "Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
 });
-
 }
 
 
@@ -4123,59 +1816,21 @@ INSTALLATION PWA
 
 let deferredPrompt = null;
 
-
-window.addEventListener(
-"beforeinstallprompt",
-event=>{
-
+window.addEventListener("beforeinstallprompt", event=>{
 event.preventDefault();
-
 deferredPrompt = event;
-
-
-const button =
-document.getElementById(
-"btnInstall"
-);
-
-
+const button = document.getElementById("btnInstall");
 if(button){
-
-button.style.display =
-"block";
-
+button.style.display = "block";
 }
-
 });
 
-
-document
-.getElementById(
-"btnInstall"
-)
-?.addEventListener(
-"click",
-async()=>{
-
+document.getElementById("btnInstall")?.addEventListener("click", async()=>{
 if(!deferredPrompt)return;
-
-
 deferredPrompt.prompt();
-
-
 await deferredPrompt.userChoice;
-
-
 deferredPrompt = null;
-
-
-document
-.getElementById(
-"btnInstall"
-)
-.style.display =
-"none";
-
+document.getElementById("btnInstall").style.display = "none";
 });
 
 
@@ -4183,34 +1838,12 @@ document
 SERVICE WORKER
 ===================================================== */
 
-if(
-"serviceWorker" in navigator
-){
-
-window.addEventListener(
-"load",
-()=>{
-
-navigator.serviceWorker
-.register("./sw.js")
-.then(
-()=>{
-console.log(
-"DAKPROÉLITE : Service Worker actif."
-);
-}
-)
-.catch(
-error=>{
-console.error(
-"Service Worker :",
-error
-);
-}
-);
-
+if("serviceWorker" in navigator){
+window.addEventListener("load", ()=>{
+navigator.serviceWorker.register("./sw.js")
+.then(()=>{ console.log("DAKPROÉLITE : Service Worker actif."); })
+.catch(error=>{ console.error("Service Worker :", error); });
 });
-
 }
 
 
@@ -4219,9 +1852,7 @@ DÉMARRAGE
 ===================================================== */
 
 loadProducts();
-
 loadBanners();
-
 loadAnnouncement();
 
 </script>
