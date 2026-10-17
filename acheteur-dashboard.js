@@ -100,6 +100,13 @@ export function init(container, db, auth, userId) {
                 justify-content: space-between;
                 align-items: center;
             }
+            .affiliation-box {
+                background: #0a0d14;
+                border: 1px solid #d4af37;
+                border-radius: 10px;
+                padding: 15px;
+                margin-bottom: 25px;
+            }
             .products-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -215,6 +222,17 @@ export function init(container, db, auth, userId) {
             <div style="font-size: 28px;">🛒</div>
         </div>
 
+        <!-- Section Lien d'Affiliation & Suivi -->
+        <div class="affiliation-box">
+            <div style="color: #d4af37; font-weight: bold; margin-bottom: 8px;">🔗 Votre Lien d'Affiliation & Trçage</div>
+            <div style="font-size: 13px; color: #aaa; margin-bottom: 6px;">Partagez votre lien pour suivre vos commissions :</div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="affiliateLinkInput" readonly style="background: #12161f; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; width: 100%; font-size: 12px;" value="Chargement du lien...">
+                <button id="copyAffiliateBtn" style="background: #d4af37; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; color: #000;">Copier</button>
+            </div>
+            <div style="margin-top: 10px; font-size: 13px; color: #22c55e;" id="affiliateEarningsText">Commission tracée : 0 FCFA</div>
+        </div>
+
         <!-- Statistiques Acheteur Calculées en Temps Réel -->
         <div class="stats-grid">
             <div class="stat-card">
@@ -230,12 +248,12 @@ export function init(container, db, auth, userId) {
                 <div class="stat-value" id="statMonthCount">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Total Dépensé</div>
+                <div class="stat-label">Total Dépensé (Validé)</div>
                 <div class="stat-value" id="statTotalSpent">0 FCFA</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Commandes / Livraisons</div>
-                <div class="stat-value" id="statPendingOrders">0</div>
+                <div class="stat-label">Paiements en Attente</div>
+                <div class="stat-value" id="statPendingOrders" style="color: #d4af37;">0</div>
             </div>
         </div>
 
@@ -262,21 +280,56 @@ export function init(container, db, auth, userId) {
 
     const fallbackImage = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.5'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M21 16l-5-5-4 5-3-3-4 4'/><circle cx='8.5' cy='8.5' r='1.5'/></svg>";
 
-    // 1. CHARGEMENT DES INFOS DU PROFIL UTILISATEUR (`users/{userId}`)
+    // 1. CHARGEMENT DES INFOS DU PROFIL UTILISATEUR ET LIEN D'AFFILIATION
     const userProfileRef = ref(db, `users/${currentUid}`);
     onValue(userProfileRef, (snapshot) => {
         const nameEl = document.getElementById("welcomeUserName");
         const emailEl = document.getElementById("welcomeUserEmail");
+        const affiliateInput = document.getElementById("affiliateLinkInput");
 
         if (snapshot.exists()) {
             const data = snapshot.val();
             const nom = data.nom || data.displayName || data.prenom || "Acheteur";
             if (nameEl) nameEl.textContent = `Bienvenue, ${nom} 👋`;
             if (emailEl) emailEl.textContent = data.email || (auth.currentUser ? auth.currentUser.email : "");
+            
+            // Gestion du lien d'affiliation
+            const codeAff = data.codeAffiliation || data.affiliateCode || currentUid.substring(0, 8);
+            const generatedLink = `${window.location.origin}/?ref=${codeAff}`;
+            if (affiliateInput) affiliateInput.value = generatedLink;
         } else {
             if (nameEl) nameEl.textContent = `Bienvenue, ${auth.currentUser ? (auth.currentUser.displayName || 'Acheteur') : 'Acheteur'} 👋`;
             if (emailEl) emailEl.textContent = auth.currentUser ? auth.currentUser.email : "";
+            if (affiliateInput) affiliateInput.value = `${window.location.origin}/?ref=${currentUid.substring(0, 8)}`;
         }
+    });
+
+    // Copie du lien d'affiliation au clic
+    document.addEventListener("click", (e) => {
+        if (e.target && e.target.id === "copyAffiliateBtn") {
+            const affiliateInput = document.getElementById("affiliateLinkInput");
+            if (affiliateInput) {
+                navigator.clipboard.writeText(affiliateInput.value);
+                e.target.textContent = "Copié !";
+                setTimeout(() => { e.target.textContent = "Copier"; }, 2000);
+            }
+        }
+    });
+
+    // Suivi des commissions d'affiliation
+    const affiliationRef = ref(db, `commissions_affiliation`);
+    onValue(affiliationRef, (snapshot) => {
+        let totalCommissions = 0;
+        if (snapshot.exists()) {
+            const comms = snapshot.val();
+            Object.values(comms).forEach(comm => {
+                if (comm.affiliateUid === currentUid || comm.affilieUid === currentUid) {
+                    totalCommissions += parseFloat(comm.montantCommission || comm.montant || 0);
+                }
+            });
+        }
+        const earningsText = document.getElementById("affiliateEarningsText");
+        if (earningsText) earningsText.textContent = `Commission tracée : ${formatCFA(totalCommissions)}`;
     });
 
     // 2. ÉCOUTE ET CALCULS EN TEMPS RÉEL DES COMMANDES (`commandes/{userId}`)
@@ -323,22 +376,25 @@ export function init(container, db, auth, userId) {
             orderKeys.forEach((orderId) => {
                 const order = orders[orderId];
                 const amount = parseFloat(order.montantTotal || order.total || 0);
-                totalSpent += amount;
 
                 const statusPaiement = order.statut || "Payée";
                 const statusLivraison = order.statutLivraison || "En préparation";
 
-                const isPending = statusLivraison.toLowerCase().includes("cours") || 
-                                  statusLivraison.toLowerCase().includes("préparation") || 
-                                  statusPaiement.toLowerCase().includes("attente");
+                const isPaymentPending = statusPaiement.toLowerCase().includes("attente");
+                const isPending = isPaymentPending || statusLivraison.toLowerCase().includes("cours") || statusLivraison.toLowerCase().includes("préparation");
 
-                if (isPending) pendingCount++;
+                if (isPaymentPending) {
+                    pendingCount++;
+                } else {
+                    // Ne comptabilise dans les dépenses totales que si le paiement est validé / effectif
+                    totalSpent += amount;
+                }
 
                 // Date de la commande
                 const orderTimestamp = order.date ? new Date(order.date).getTime() : 0;
                 const dateStr = order.date ? new Date(order.date).toLocaleDateString("fr-FR") : "Récents";
 
-                // Extraction des articles et comptage temporel
+                // Extraction des articles et comptage temporel (uniquement si le paiement n'est pas en attente bloquante)
                 let productDisplay = "";
                 let totalOrderQty = 0;
 
@@ -349,12 +405,13 @@ export function init(container, db, auth, userId) {
                         const qty = parseInt(item.quantite || item.qty || 1, 10);
                         totalOrderQty += qty;
 
-                        if (orderTimestamp >= startOfToday) todayItemsCount += qty;
-                        if (orderTimestamp >= startOfWeek) weekItemsCount += qty;
-                        if (orderTimestamp >= startOfMonth) monthItemsCount += qty;
+                        if (!isPaymentPending) {
+                            if (orderTimestamp >= startOfToday) todayItemsCount += qty;
+                            if (orderTimestamp >= startOfWeek) weekItemsCount += qty;
+                            if (orderTimestamp >= startOfMonth) monthItemsCount += qty;
+                        }
                     });
 
-                    // Formatage du premier produit pour l'affichage tableau
                     const firstItem = articlesArr[0];
                     const itemTitle = firstItem.nom || firstItem.titre || "Produit DAKPROELITE";
                     const itemImg = firstItem.image || firstItem.imageUrl || fallbackImage;
@@ -382,7 +439,8 @@ export function init(container, db, auth, userId) {
                     totalOrderQty = 1;
                 }
 
-                const badgePaiementClass = statusPaiement.toLowerCase().includes("attente") ? "status-attente" : "status-payee";
+                const badgePaiementClass = isPaymentPending ? "status-attente" : "status-payee";
+                const displayPaiementText = isPaymentPending ? "Paiement en attente" : "Dépôt effectué";
                 const badgeLivraisonClass = isPending ? "status-attente" : "status-livree";
 
                 tableHTML += `
@@ -392,7 +450,7 @@ export function init(container, db, auth, userId) {
                         <td style="font-weight:bold; text-align:center;">${totalOrderQty}</td>
                         <td>${escapeHTML(dateStr)}</td>
                         <td style="color:#22c55e; font-weight:bold;">${formatCFA(amount)}</td>
-                        <td><span class="status-badge ${badgePaiementClass}">${escapeHTML(statusPaiement)}</span></td>
+                        <td><span class="status-badge ${badgePaiementClass}">${escapeHTML(displayPaiementText)}</span></td>
                         <td><span class="status-badge ${badgeLivraisonClass}">${escapeHTML(statusLivraison)}</span></td>
                     </tr>
                 `;
@@ -527,14 +585,12 @@ async function ajouterAuPanierDirect(productId, db, userId, btn) {
             dateAjout: Date.now()
         };
 
-        // Synchronisation atomique sur les deux parcours du panier
         const updates = {};
         updates[`users/${userId}/gs/cart/${productId}`] = itemPayload;
         updates[`users/${userId}/panier/${productId}`] = itemPayload;
 
         await update(ref(db), updates);
 
-        // Recalcul du Total Global GS
         const allGsCartSnap = await get(ref(db, `users/${userId}/gs/cart`));
         let globalTotal = 0;
 

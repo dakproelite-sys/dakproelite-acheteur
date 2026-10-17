@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<title>DAKPROÉLITE | La Référence Marketplace</title>
+<title>DAKPROÉLITE | La Référence Marketplace Internationale</title>
 
 <link rel="manifest" href="manifest.json">
 
@@ -378,16 +378,53 @@ background:var(--gold);
 }
 
 /* =====================================================
-CATÉGORIES
+SECTION NAVIGATION SUPÉRIEURE (MÉTIERS + CATÉGORIES)
 ===================================================== */
 
-.cat-scroll{
+.navigation-bar-container{
 width:100%;
+padding:10px 15px;
+display:flex;
+gap:12px;
+align-items:center;
+background:rgba(11,14,19,0.8);
+border-bottom:1px solid rgba(212,175,55,0.15);
+overflow-x:auto;
+scrollbar-width:none;
+}
+
+.navigation-bar-container::-webkit-scrollbar{
+display:none;
+}
+
+.btn-metiers-special{
+flex:0 0 auto;
+padding:9px 18px;
+border:1px solid var(--gold);
+border-radius:22px;
+background:linear-gradient(135deg, #d4af37, #aa8c2c);
+color:#000;
+cursor:pointer;
+white-space:nowrap;
+font-size:12px;
+font-weight:800;
+text-decoration:none;
+display:inline-flex;
+align-items:center;
+gap:6px;
+box-shadow:0 0 12px rgba(212,175,55,0.3);
+}
+
+.btn-metiers-special:hover{
+background:#f3e5ab;
+}
+
+.cat-scroll{
 display:flex;
 gap:9px;
 overflow-x:auto;
-padding:10px 15px 15px;
 scrollbar-width:none;
+align-items:center;
 }
 
 .cat-scroll::-webkit-scrollbar{
@@ -456,7 +493,7 @@ gap:20px;
 }
 
 /* =====================================================
-CARTE PRODUIT (STYLES CLAIRS & HARMONIEUX)
+CARTE PRODUIT
 ===================================================== */
 
 .card{
@@ -509,10 +546,6 @@ font-weight:800;
 text-transform:uppercase;
 box-shadow:0 2px 4px rgba(0,0,0,0.15);
 }
-
-/* =====================================================
-MEDIA PRODUIT
-===================================================== */
 
 .media-container{
 width:100%;
@@ -592,10 +625,6 @@ color:#334155;
 word-break:break-all;
 }
 
-/* =====================================================
-TEXTES PRODUITS (LISIBLES ET ÉLÉGANTS)
-===================================================== */
-
 .card h3{
 margin:4px 0 6px;
 font-size:13px;
@@ -661,10 +690,6 @@ color:#94a3b8;
 font-size:10px;
 font-weight:400;
 }
-
-/* =====================================================
-BOUTONS D'ACTION (ÉGAUX ET BIEN ORGANISÉS)
-===================================================== */
 
 .card-actions-row{
 display:flex;
@@ -740,7 +765,7 @@ font-size:8px;
 }
 
 /* =====================================================
-MODAL
+MODAL & FOOTER
 ===================================================== */
 
 .modal-overlay{
@@ -767,10 +792,6 @@ width:100%;
 max-height:90vh;
 overflow-y:auto;
 }
-
-/* =====================================================
-FOOTER
-===================================================== */
 
 .app-footer{
 margin-top:30px;
@@ -878,7 +899,6 @@ padding-left:8px;
 padding-right:8px;
 min-height:68px;
 }
-
 .logo-container{
 width:50px;
 height:50px;
@@ -886,30 +906,24 @@ min-width:50px;
 min-height:50px;
 flex-basis:50px;
 }
-
 .search-container{
 gap:4px;
 }
-
 #searchBar{
 height:40px;
 padding:0 10px;
 font-size:11px;
 }
-
 .nav-icons{
 gap:6px;
 }
-
 .nav-item{
 min-width:32px;
 font-size:8px;
 }
-
 .nav-item>span:first-child{
 font-size:16px;
 }
-
 .footer-links-grid{
 grid-template-columns:1fr;
 }
@@ -926,66 +940,26 @@ HEADER
 
 <header class="header">
 
-<div
-class="logo-container"
-id="logoButton">
-
-<img
-class="logo"
-id="appLogo"
-src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png"
-alt="Logo DAKPROÉLITE"
-loading="eager"
-decoding="sync">
-
-<span
-class="fallback-logo"
-id="fallbackLogo"
-style="display:none">
-DP
-</span>
-
+<div class="logo-container" id="logoButton">
+<img class="logo" id="appLogo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" loading="eager" decoding="sync">
+<span class="fallback-logo" id="fallbackLogo" style="display:none">DP</span>
 </div>
 
 <div class="search-container">
-
-<input
-type="search"
-id="searchBar"
-autocomplete="off"
-placeholder="Rechercher des produits sur DAKPROÉLITE...">
-
+<input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits, vêtements ou services...">
 </div>
 
 <div class="nav-icons">
-
-<a
-href="panier.html"
-class="nav-item"
-id="navCartLink">
-
+<a href="panier.html" class="nav-item" id="navCartLink">
 <span>🛒</span>
-
-<span
-class="cart-badge"
-id="cartBadge">
-0
-</span>
-
+<span class="cart-badge" id="cartBadge">0</span>
 <span>Panier</span>
-
 </a>
 
-<a
-href="profil-acheteur.html"
-class="nav-item">
-
+<a href="profil-acheteur.html" class="nav-item">
 <span>👤</span>
-
 <span>Compte</span>
-
 </a>
-
 </div>
 
 </header>
@@ -994,58 +968,40 @@ class="nav-item">
 INSTALLATION PWA
 ===================================================== -->
 
-<div id="btnInstall">
-Installer l'application sur l'appareil
-</div>
+<div id="btnInstall">Installer l'application sur l'appareil</div>
 
 <!-- =====================================================
 BANNIÈRES
 ===================================================== -->
 
-<section
-class="banner-container"
-id="bannerContainer">
-
+<section class="banner-container" id="bannerContainer">
 <div class="banner-controls">
 <button type="button" class="banner-btn" id="btnBannerPrev" title="Précédent">◄</button>
 <button type="button" class="banner-btn" id="btnBannerPause" title="Arrêter / Reprendre">⏸</button>
 <button type="button" class="banner-btn" id="btnBannerNext" title="Suivant">►</button>
 </div>
-
-<div
-class="banner-track"
-id="bannerTrack">
-</div>
-
-<div
-class="banner-dots"
-id="bannerDots">
-</div>
-
+<div class="banner-track" id="bannerTrack"></div>
+<div class="banner-dots" id="bannerDots"></div>
 </section>
 
 <!-- =====================================================
-CATÉGORIES
+BARRE DE NAVIGATION (BOUTON MÉTIERS FIXE + CATÉGORIES)
 ===================================================== -->
 
-<nav
-class="cat-scroll"
-id="catMenu">
-</nav>
+<div class="navigation-bar-container">
+<a href="metiers.html" class="btn-metiers-special">🛠️ Tous les Métiers</a>
+<div class="cat-scroll" id="catMenu"></div>
+</div>
 
 <!-- =====================================================
-PRODUITS (ZONE BLANCHE)
+PRODUITS / CATALOGUE (FILTRÉ PAR CATÉGORIE)
 ===================================================== -->
 
-<main
-class="products"
-id="products">
-<div class="loading-message">Chargement des produits...</div>
+<main class="products" id="products">
+<div class="loading-message">Sélectionnez une catégorie (ex: Chemises, Robes...) ou utilisez la recherche pour afficher les articles.</div>
 </main>
 
-<div
-id="productModalContainer">
-</div>
+<div id="productModalContainer"></div>
 
 <!-- =====================================================
 FOOTER
@@ -1055,12 +1011,10 @@ FOOTER
 
 <section class="footer-announcement">
 <h4 id="fayaBuzzTitle">⚡ Annonce Officielle</h4>
-<p id="fayaBuzzText">Bienvenue sur DAKPROÉLITE, votre plateforme de référence !</p>
+<p id="fayaBuzzText">Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !</p>
 </section>
 
 <div class="footer-links-grid">
-
-<!-- NAVIGATION -->
 <div class="footer-column">
 <h5>Navigation & Aide</h5>
 <ul>
@@ -1070,7 +1024,6 @@ FOOTER
 </ul>
 </div>
 
-<!-- RÈGLES -->
 <div class="footer-column">
 <h5>Règles & Légal</h5>
 <ul>
@@ -1079,7 +1032,6 @@ FOOTER
 </ul>
 </div>
 
-<!-- VENDEUR -->
 <div class="footer-column">
 <h5>Gagner de l'argent</h5>
 <ul>
@@ -1088,7 +1040,6 @@ FOOTER
 <li><a href="https://vendeur.dakproelite.com" class="seller-link" id="sellerLinkBtn">🛍️ Devenir Vendeur</a></li>
 </ul>
 </div>
-
 </div>
 
 <div class="footer-bottom-bar">
@@ -1100,7 +1051,6 @@ FOOTER
 <!-- =====================================================
 SUPPORT RAPIDE
 ===================================================== -->
-
 <script src="support-rapide.js"></script>
 
 <!-- =====================================================
@@ -1109,34 +1059,9 @@ FIREBASE
 
 <script type="module">
 
-import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-onValue,
-get,
-update,
-set
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-import {
-getAuth,
-onAuthStateChanged
-}
-from
-"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-
-/* =====================================================
-FIREBASE CONFIG
-===================================================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, onValue, get, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
@@ -1155,31 +1080,13 @@ const auth = getAuth(app);
 window.dakproFirebase = { app, db, auth };
 window.allProductsData = [];
 
-const siteContext = { currentUser: null, userData: null };
+const siteContext = { currentUser: null };
 
-let currentCat = "Tous";
+let currentCat = ""; 
 let currentIndex = 0;
 let totalSlides = 0;
 let autoPlay = null;
 let isPaused = false;
-
-
-/* =====================================================
-CACHE
-===================================================== */
-
-(function chargerCacheImmediat(){
-try{
-const cachedProducts = localStorage.getItem("dakpro_cached_publications");
-if(cachedProducts){
-window.allProductsData = JSON.parse(cachedProducts);
-buildCategories();
-filterProducts();
-}
-}catch(e){
-console.warn("Cache indisponible:", e);
-}
-})();
 
 
 /* =====================================================
@@ -1195,7 +1102,6 @@ updateCartBadgeDisplay(0);
 }
 });
 
-
 function updateCartBadgeDisplay(count){
 const badge = document.getElementById("cartBadge");
 if(!badge)return;
@@ -1206,7 +1112,6 @@ badge.style.display = "inline-block";
 badge.style.display = "none";
 }
 }
-
 
 function listenToCartBadge(uid){
 const cartRef = ref(db, `users/${uid}/panier`);
@@ -1244,7 +1149,7 @@ return escapeHTML(value);
 
 
 /* =====================================================
-LOGO
+LOGO & VENDEUR
 ===================================================== */
 
 document.getElementById("logoButton")?.addEventListener("click", ()=>{
@@ -1256,29 +1161,20 @@ const fallbackLogo = document.getElementById("fallbackLogo");
 
 appLogo?.addEventListener("error", ()=>{
 appLogo.style.display = "none";
-if(fallbackLogo){
-fallbackLogo.style.display = "block";
-}
+if(fallbackLogo){ fallbackLogo.style.display = "block"; }
 });
-
-
-/* =====================================================
-GESTION DYNAMIQUE LIEN VENDEUR
-===================================================== */
 
 document.getElementById("sellerLinkBtn")?.addEventListener("click", function(e){
 e.preventDefault();
 const targetUrl = this.getAttribute("href");
-this.innerHTML = "⏳ Traitement...";
+this.innerHTML = "⏳ Redirection...";
 this.style.pointerEvents = "none";
-setTimeout(()=>{
-window.location.href = targetUrl;
-}, 300);
+setTimeout(()=>{ window.location.href = targetUrl; }, 300);
 });
 
 
 /* =====================================================
-PRODUITS FIREBASE
+CHARGEMENT PUBLICATIONS FIREBASE
 ===================================================== */
 
 function loadProducts(){
@@ -1302,33 +1198,21 @@ if(product.actif===false) return false;
 return true;
 });
 
-try{
-localStorage.setItem("dakpro_cached_publications", JSON.stringify(window.allProductsData));
-}catch(e){}
-
 buildCategories();
 filterProducts();
 checkUrlForSharedProduct();
 }, error=>{
 console.error("Erreur publications:", error);
-if(!window.allProductsData.length){
-document.getElementById("products").innerHTML = `
-<div class="empty-message error-message">
-Impossible de charger les publications. Vérifiez votre connexion.
-</div>
-`;
-}
 });
 }
 
 
 /* =====================================================
-CATÉGORIES
+CONSTRUCTION DES CATÉGORIES (SÉPARÉES DU BOUTON MÉTIERS)
 ===================================================== */
 
 function buildCategories(){
 const categories=[
-"Tous",
 ...new Set(
 window.allProductsData
 .map(p=>p.categorie || p.category)
@@ -1339,13 +1223,11 @@ window.allProductsData
 const menu = document.getElementById("catMenu");
 if(!menu)return;
 
+// Injecte uniquement les catégories de produits/vêtements dans le conteneur défilant
 menu.innerHTML = categories.map(category=>{
 const safe = escapeHTML(category);
 return `
-<button
-type="button"
-class="cat-btn ${category===currentCat?"active":""}"
-data-category="${safe}">
+<button type="button" class="cat-btn ${category===currentCat?"active":""}" data-category="${safe}">
 ${safe}
 </button>
 `;
@@ -1366,7 +1248,7 @@ document.getElementById("searchBar")?.addEventListener("input", filterProducts);
 
 
 /* =====================================================
-FILTRAGE
+FILTRAGE STRICT PAR CATÉGORIE OU RECHERCHE
 ===================================================== */
 
 function getFilteredProducts(){
@@ -1378,13 +1260,12 @@ const description = String(product.description || "").toLowerCase();
 const category = String(product.categorie || product.category || "").toLowerCase();
 const productCategory = product.categorie || product.category || "";
 
-const categoryOK = currentCat==="Tous" || productCategory===currentCat;
+if(search.length > 0){
+return name.includes(search) || description.includes(search) || category.includes(search);
+}
 
-return categoryOK && (
-name.includes(search) ||
-description.includes(search) ||
-category.includes(search)
-);
+if(!currentCat) return false; 
+return productCategory === currentCat;
 });
 }
 
@@ -1394,7 +1275,7 @@ renderProducts(getFilteredProducts());
 
 
 /* =====================================================
-CARTE PRODUIT (3 BOUTONS ÉGAUX ET ÉPURÉS)
+GÉNÉRATION CARTE PRODUIT & AFFILIATION UNIQUE
 ===================================================== */
 
 function generateCardHTML(product, uid){
@@ -1406,7 +1287,7 @@ const image = product.image || product.imageUrl || product.photo || product.img 
 const video = product.video || product.videoUrl || "";
 const documentUrl = product.document || product.documentUrl || "";
 
-const safeName = escapeHTML(product.nom || product.title || product.name || "Produit");
+const safeName = escapeHTML(product.nom || product.title || product.name || "Article");
 const rawDesc = String(product.description || "");
 const shortDesc = rawDesc.length>70 ? rawDesc.substring(0,70)+"..." : rawDesc;
 const safeShortDesc = escapeHTML(shortDesc);
@@ -1424,8 +1305,8 @@ discountBadgeHTML = `<span class="badge-discount">-${discountPercent}%</span>`;
 
 const displayPrice = hasPromo ? escapeHTML(promoVal) : escapeHTML(priceVal);
 const currencySymbol = escapeHTML(product.devise || product.currency || "FCFA");
-
 const oldPriceHTML = hasPromo ? `<span class="price-old">${escapeHTML(priceVal)} ${currencySymbol}</span>` : "";
+
 const isVideo = Boolean(video) || /\.(mp4|webm|ogg)(\?|$)/i.test(image);
 const mediaSrc = video || image;
 let mediaHTML = "";
@@ -1462,9 +1343,9 @@ ${product.boost ? `<span class="badge-boost">🔥 HOT</span>` : ""}
 ${discountBadgeHTML}
 <div class="media-container">${mediaHTML}</div>
 <div>
-<div class="market-tags"><span class="tag-express">⚡ Livraison Rapide</span></div>
+<div class="market-tags"><span class="tag-express">⚡ DAKPROÉLITE</span></div>
 <h3>${safeName}</h3>
-${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : `<div class="description-complete">Découvrez ce produit d'exception sur DAKPROÉLITE.</div>`}
+${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : `<div class="description-complete">Article sélectionné sur DAKPROÉLITE.</div>`}
 </div>
 <div>
 <div class="price-container">
@@ -1486,15 +1367,20 @@ ${oldPriceHTML}
 
 
 /* =====================================================
-AFFICHAGE PRODUITS
+RENDU DES PRODUITS DANS LA GRILLE
 ===================================================== */
 
 function renderProducts(list){
 const container = document.getElementById("products");
 if(!container)return;
 
+if(!currentCat && !document.getElementById("searchBar")?.value.trim()){
+container.innerHTML = `<div class="empty-message">Veuillez sélectionner une catégorie ci-dessus (ex: Chemises, Robes) ou taper un mot-clé dans la barre de recherche.</div>`;
+return;
+}
+
 if(!Array.isArray(list) || list.length===0){
-container.innerHTML = `<div class="empty-message">Aucun produit disponible pour le moment.</div>`;
+container.innerHTML = `<div class="empty-message">Aucun article trouvé dans cette sélection pour le moment.</div>`;
 return;
 }
 
@@ -1541,7 +1427,7 @@ ajouterAuPanierDirect(productId, button);
 
 
 /* =====================================================
-AJOUT PANIER
+AJOUT AU PANIER
 ===================================================== */
 
 async function ajouterAuPanierDirect(productId, buttonEl){
@@ -1556,7 +1442,6 @@ const product = window.allProductsData.find(p=>String(p.id)===String(productId))
 if(product){
 try{
 const itemRef = ref(db, `users/${user.uid}/panier/${product.id}`);
-const gsItemRef = ref(db, `users/${user.uid}/gs/cart/${product.id}`);
 const snapshot = await get(itemRef);
 
 let currentQty = 1;
@@ -1612,7 +1497,7 @@ alert("Impossible d'ajouter le produit au panier.");
 
 
 /* =====================================================
-PRODUIT PARTAGÉ
+PRODUIT PARTAGÉ VIA LIEN
 ===================================================== */
 
 function checkUrlForSharedProduct(){
@@ -1636,7 +1521,7 @@ modalContainer.innerHTML = `
 <div class="modal-overlay">
 <div class="modal-content">
 <img src="${escapeAttribute(product.image || product.imageUrl || "")}" alt="${escapeHTML(product.nom || "Produit")}" style="width:100%;height:auto;max-height:220px;object-fit:contain;background:#080b10;border-radius:10px;margin-bottom:12px;border:1px solid #333;">
-<h2 style="color:var(--gold);margin-bottom:8px;font-size:18px;">${escapeHTML(product.nom || product.title || "Produit DAKPROÉLITE")}</h2>
+<h2 style="color:var(--gold);margin-bottom:8px;font-size:18px;">${escapeHTML(product.nom || product.title || "Article DAKPROÉLITE")}</h2>
 <div class="price-container" style="margin-bottom:12px;">
 <span class="price" style="font-size:18px;">${effectivePrice} ${currencySymbol}</span>
 ${hasPromo ? `<span class="price-old">${priceVal}${currencySymbol}</span>` : ""}
@@ -1664,7 +1549,7 @@ modalContainer.innerHTML = "";
 
 
 /* =====================================================
-BANNIÈRES FIREBASE
+BANNIÈRES DYNAMIQUES
 ===================================================== */
 
 function loadBanners(){
@@ -1731,7 +1616,6 @@ startAutoPlay();
 });
 }
 
-
 function startAutoPlay(){
 if(autoPlay) clearInterval(autoPlay);
 autoPlay = setInterval(moveSlide, 4000);
@@ -1764,11 +1648,7 @@ updateSlide();
 
 document.getElementById("btnBannerPause")?.addEventListener("click", (e)=>{
 e.stopPropagation();
-if(isPaused){
-startAutoPlay();
-}else{
-stopAutoPlay();
-}
+if(isPaused){ startAutoPlay(); }else{ stopAutoPlay(); }
 });
 
 function updateSlide(){
@@ -1787,7 +1667,7 @@ updateSlide();
 
 
 /* =====================================================
-ANNONCE
+ANNONCES OFFICIELLES
 ===================================================== */
 
 function loadAnnouncement(){
@@ -1800,18 +1680,18 @@ if(!title || !text)return;
 
 if(!data || data.actif===false){
 title.textContent = "⚡ Annonce Officielle";
-text.textContent = "Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
+text.textContent = "Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !";
 return;
 }
 
 title.textContent = data.titre || "⚡ Annonce Officielle";
-text.textContent = data.texte || data.text || "Bienvenue sur DAKPROÉLITE, votre plateforme de référence !";
+text.textContent = data.texte || data.text || "Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !";
 });
 }
 
 
 /* =====================================================
-INSTALLATION PWA
+INSTALLATION PWA & SERVICE WORKER
 ===================================================== */
 
 let deferredPrompt = null;
@@ -1820,9 +1700,7 @@ window.addEventListener("beforeinstallprompt", event=>{
 event.preventDefault();
 deferredPrompt = event;
 const button = document.getElementById("btnInstall");
-if(button){
-button.style.display = "block";
-}
+if(button){ button.style.display = "block"; }
 });
 
 document.getElementById("btnInstall")?.addEventListener("click", async()=>{
@@ -1832,11 +1710,6 @@ await deferredPrompt.userChoice;
 deferredPrompt = null;
 document.getElementById("btnInstall").style.display = "none";
 });
-
-
-/* =====================================================
-SERVICE WORKER
-===================================================== */
 
 if("serviceWorker" in navigator){
 window.addEventListener("load", ()=>{
@@ -1848,7 +1721,7 @@ navigator.serviceWorker.register("./sw.js")
 
 
 /* =====================================================
-DÉMARRAGE
+DÉMARRAGE DE L'APPLICATION
 ===================================================== */
 
 loadProducts();

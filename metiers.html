@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="theme-color" content="#d4af37">
+<title>DAKPROÉLITE | Annuaire des Métiers & Professionnels</title>
+<link rel="icon" type="image/png" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- FedaPay JS SDK -->
+<script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+
+<style>
+:root{
+--gold:#d4af37;
+--gold-light:#f3e5ab;
+--black:#050505;
+--soft-dark:#12161f;
+--blue:#0066cc;
+--green:#15803d;
+--red:#dc2626;
+--white:#fff;
+--gray:#555;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ min-height:100vh; background:var(--black); color:var(--white); font-family:Poppins,sans-serif; display:flex; flex-direction:column; }
+
+.header{ position:sticky; top:0; z-index:5000; width:100%; min-height:82px; display:flex; align-items:center; gap:16px; padding:12px 16px; background:linear-gradient(to bottom, #131921, #050505); border-bottom:2px solid var(--gold); }
+.logo-container{ width:64px; height:64px; border-radius:50%; border:2px solid var(--gold); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#000; cursor:pointer; }
+.logo{ width:100%; height:100%; object-fit:contain; }
+.search-container{ flex:1; display:flex; align-items:center; }
+#searchBar{ width:100%; height:46px; border:1px solid var(--gold); border-radius:23px; background:#000; color:#fff; padding:0 16px; outline:none; font-size:13px; }
+
+.nav-icons{ display:flex; align-items:center; gap:16px; }
+.nav-item{ display:flex; flex-direction:column; align-items:center; color:#fff; text-decoration:none; font-size:10px; }
+
+.navigation-bar-container{ width:100%; padding:10px 15px; display:flex; gap:12px; align-items:center; background:rgba(11,14,19,0.8); border-bottom:1px solid rgba(212,175,55,0.15); overflow-x:auto; }
+.btn-home-special{ padding:9px 18px; border:1px solid var(--gold); border-radius:22px; background:linear-gradient(135deg, #161b26, #0a0d14); color:var(--gold); text-decoration:none; font-size:12px; font-weight:700; white-space:nowrap; }
+.cat-scroll{ display:flex; gap:9px; overflow-x:auto; }
+.cat-btn{ padding:9px 17px; border:1px solid var(--gold); border-radius:22px; background:transparent; color:#fff; cursor:pointer; white-space:nowrap; font-size:12px; }
+.cat-btn.active{ background:var(--gold); color:#000; font-weight:700; }
+
+.products{ width:96%; max-width:1800px; margin:10px auto; padding:16px; background:#ffffff; border-radius:12px; display:grid; grid-template-columns:repeat(2,1fr); gap:16px; flex:1; }
+@media(min-width:700px){ .products{ grid-template-columns:repeat(4,1fr); } }
+@media(min-width:1001px){ .products{ grid-template-columns:repeat(6,1fr); } }
+
+.card{ display:flex; flex-direction:column; justify-content:space-between; padding:12px; background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; }
+.media-container{ width:100%; height:190px; border-radius:8px; overflow:hidden; background:#f8fafc; margin-bottom:10px; }
+.card img{ width:100%; height:100%; object-fit:cover; }
+.card h3{ font-size:13px; font-weight:600; color:#1a1a1a; margin:4px 0; }
+.card .description-complete{ font-size:10.5px; color:var(--gray); margin-bottom:10px; }
+
+.tag-express{ background:rgba(212,175,55,0.15); color:#b48a00; border:1px solid rgba(212,175,55,0.3); font-size:8.5px; padding:2px 5px; border-radius:4px; font-weight:600; }
+.card-actions-row{ display:flex; gap:6px; margin-top:auto; }
+.btn-action{ flex:1; padding:8px 4px; border-radius:6px; font-size:10px; font-weight:700; text-align:center; cursor:pointer; border:none; text-decoration:none; }
+.btn-view{ background:var(--blue); color:#fff; }
+.btn-copy{ background:#334155; color:#fff; }
+
+/* MODAL DE CONTACT / PAIEMENT */
+.modal-overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:10000; padding:15px; }
+.modal-card{ background:#12161f; border:1px solid var(--gold); border-radius:14px; padding:20px; max-width:480px; width:100%; color:#fff; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.5); }
+.modal-card h3{ color:var(--gold); font-size:16px; margin-bottom:10px; }
+.modal-card p{ font-size:12px; color:#ccc; margin-bottom:15px; line-height:1.5; }
+.info-row{ background:#0b0e13; padding:10px; border-radius:8px; border:1px solid #333; margin-bottom:10px; text-align:left; font-size:13px; }
+.info-row span{ color:var(--gold); font-weight:bold; }
+.btn-modal-action{ width:100%; padding:12px; border-radius:8px; border:none; font-weight:bold; font-size:13px; cursor:pointer; margin-top:8px; text-decoration:none; display:inline-block; }
+.btn-wa{ background:#25d366; color:#fff; }
+.btn-call{ background:var(--blue); color:#fff; }
+.btn-close{ background:#333; color:#fff; margin-top:10px; }
+
+.app-footer{ margin-top:30px; background:#131921; border-top:2px solid var(--gold); text-align:center; padding:15px; font-size:10px; color:#777; }
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<div class="logo-container" onclick="window.location.href='index.html'">
+<img class="logo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE">
+</div>
+<div class="search-container">
+<input type="search" id="searchBar" placeholder="Rechercher un professionnel (mécanicien, électricien, couturière)...">
+</div>
+<div class="nav-icons">
+<a href="panier.html" class="nav-item"><span>🛒</span><span>Panier</span></a>
+<a href="profil-acheteur.html" class="nav-item"><span>👤</span><span>Compte</span></a>
+</div>
+</header>
+
+<div class="navigation-bar-container">
+<a href="index.html" class="btn-home-special">🏠 Accueil Produits</a>
+<div class="cat-scroll" id="catMenu"></div>
+</div>
+
+<main class="products" id="products">
+<div style="grid-column:1/-1; text-align:center; color:#64748b;">Chargement des professionnels...</div>
+</main>
+
+<!-- MODAL AFFICHAGE DES COORDONNÉES DÉVERROUILLÉES -->
+<div class="modal-overlay" id="contactModal">
+<div class="modal-card">
+<h3 id="modalName">Profil Professionnel</h3>
+<p id="modalCategory" style="color:var(--gold); font-weight:600;"></p>
+<div class="info-row">📍 <strong>Ville / Adresse :</strong> <span id="modalVille">-</span></div>
+<div class="info-row">📞 <strong>Téléphone :</strong> <span id="modalPhone">-</span></div>
+<div class="info-row">💬 <strong>WhatsApp :</strong> <span id="modalWhatsapp">-</span></div>
+<div id="modalActions"></div>
+<button type="button" class="btn-modal-action btn-close" onclick="closeContactModal()">Fermer</button>
+</div>
+</div>
+
+<footer class="app-footer">© 2026 DAKPROÉLITE. Tous droits réservés.</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
+authDomain: "dakproelite.firebaseapp.com",
+databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
+projectId: "dakproelite",
+storageBucket: "dakproelite.firebasestorage.app",
+messagingSenderId: "580591769206",
+appId: "1:580591769206:web:4f67f8aadbf3d051087157"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+window.allMetiersData = [];
+let currentCat = "Tous";
+let currentUser = null;
+
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+});
+
+function loadMetiers(){
+onValue(ref(db, "metiers_publications"), snapshot=>{
+const data = snapshot.val();
+
+if(!data){
+loadFallbackPublications();
+return;
+}
+
+window.allMetiersData = Object.entries(data)
+.map(([id, item])=>({ id, ...item }))
+.filter(item => item && item.actif !== false);
+
+buildCategories();
+filterMetiers();
+}, error=>{
+console.error("Erreur Firebase:", error);
+document.getElementById("products").innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#dc2626;">Erreur d'accès à la base de données.</div>`;
+});
+}
+
+function loadFallbackPublications(){
+onValue(ref(db, "publications"), snapshot=>{
+const data = snapshot.val();
+if(!data){ renderList([]); return; }
+
+window.allMetiersData = Object.entries(data)
+.map(([id, item])=>({ id, ...item }))
+.filter(item => item && item.actif !== false);
+
+buildCategories();
+filterMetiers();
+});
+}
+
+function buildCategories(){
+const categories = ["Tous", ...new Set(window.allMetiersData.map(p=> p.categorie).filter(Boolean))];
+const menu = document.getElementById("catMenu");
+if(!menu) return;
+
+menu.innerHTML = categories.map(cat => `
+<button type="button" class="cat-btn ${cat === currentCat ? "active" : ""}" data-cat="${cat}">${cat}</button>
+`).join("");
+
+menu.querySelectorAll(".cat-btn").forEach(btn=>{
+btn.addEventListener("click", ()=>{
+currentCat = btn.dataset.cat;
+menu.querySelectorAll(".cat-btn").forEach(b=> b.classList.remove("active"));
+btn.classList.add("active");
+filterMetiers();
+});
+});
+}
+
+document.getElementById("searchBar")?.addEventListener("input", filterMetiers);
+
+function filterMetiers(){
+const q = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
+const filtered = window.allMetiersData.filter(item=>{
+const name = String(item.nom || item.titre || "").toLowerCase();
+const desc = String(item.description || "").toLowerCase();
+const cat = String(item.categorie || "");
+const ville = String(item.ville || "").toLowerCase();
+
+const matchCat = currentCat === "Tous" || cat === currentCat;
+const matchQuery = !q || name.includes(q) || desc.includes(q) || cat.toLowerCase().includes(q) || ville.includes(q);
+return matchCat && matchQuery;
+});
+renderList(filtered);
+}
+
+function renderList(list){
+const container = document.getElementById("products");
+if(!container) return;
+
+if(list.length === 0){
+container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b;">Aucun professionnel disponible pour le moment.</div>`;
+return;
+}
+
+const uid = auth.currentUser?.uid || "";
+container.innerHTML = list.map(item => {
+const id = encodeURIComponent(item.id || "");
+const affLink = `https://dakproelite.com/metiers.html?id=${id}${uid ? "&ref="+uid : ""}`;
+const img = item.images && item.images.length > 0 ? item.images[0] : (item.image || "https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png");
+
+return `
+<article class="card">
+<div class="media-container">
+<img src="${img}" alt="${item.nom || "Professionnel"}">
+</div>
+<div>
+<div style="margin-bottom:6px;"><span class="tag-express">🛠️ ${item.categorie || "Artisan"}</span></div>
+<h3>${item.nom || item.titre || "Prestataire"}</h3>
+<div style="font-size:11px; color:#b48a00; font-weight:bold; margin-bottom:4px;">📍 ${item.ville || "Ville non spécifiée"}</div>
+<div class="description-complete">${item.description || "Service certifié DAKPROÉLITE."}</div>
+</div>
+<div>
+<div style="margin:6px 0;"><span style="color:#15803d; font-weight:800; font-size:11px;">🔒 Accès aux coordonnées (2 000 F / 30j)</span></div>
+<div class="card-actions-row">
+<button type="button" class="btn-action btn-view btn-inspect" data-id="${id}">👁️ Voir / Appeler</button>
+<button type="button" class="btn-action btn-copy" data-aff="${affLink}">🔗 Partager</button>
+</div>
+</div>
+</article>
+`;
+}).join("");
+
+container.querySelectorAll(".btn-inspect").forEach(btn => {
+  btn.addEventListener("click", () => {
+    gererAccèsProfil(btn.dataset.id);
+  });
+});
+
+container.querySelectorAll(".btn-copy").forEach(btn=>{
+btn.addEventListener("click", ()=>{
+navigator.clipboard.writeText(btn.dataset.aff);
+const old = btn.textContent;
+btn.textContent = "✅ Copié !";
+setTimeout(()=> btn.textContent = old, 1500);
+});
+});
+}
+
+/* =====================================================
+GESTION ACCÈS & PAIEMENT FEDAPAY (2 000 FCFA / 30 JOURS)
+===================================================== */
+
+async function gererAccèsProfil(metierId) {
+  if (!currentUser) {
+    alert("Veuillez vous connecter à votre compte pour accéder aux coordonnées.");
+    window.location.href = "profil-acheteur.html";
+    return;
+  }
+
+  const metier = window.allMetiersData.find(m => String(m.id) === String(metierId));
+  if (!metier) return;
+
+  // Verification du Pass 30 Jours dans Firebase
+  const passSnap = await get(ref(db, `users/${currentUser.uid}/pass_metiers`));
+  const maintenant = Date.now();
+  let passValide = false;
+
+  if (passSnap.exists()) {
+    const pass = passSnap.val();
+    if (pass.actif && pass.date_expiration > maintenant) {
+      passValide = true;
+    }
+  }
+
+  if (passValide) {
+    // PASS VALIDE : Afficher directement les coordonnées
+    afficherCoordonnees(metier);
+  } else {
+    // PAS DE PASS VALIDE : Lancer le formulaire FedaPay de 2 000 FCFA
+    declencherFedaPay(metier);
+  }
+}
+
+function declencherFedaPay(metierTarget) {
+  const confirmPaiement = confirm("Pour accéder aux coordonnées de tous les professionnels pendant 30 jours, un règlement de 2 000 FCFA est requis.\n\nVoulez-vous procéder au paiement sécurisé ?");
+  if (!confirmPaiement) return;
+
+  let widget = FedaPay.init({
+    public_key: 'pk_live_DUGntocyIWTtfHBOvFpPtq54',
+    transaction: {
+      amount: 2000,
+      description: 'Pass 30 Jours Annuaire Métiers DAKPROÉLITE',
+      currency: { iso: 'XOF' }
+    },
+    customer: {
+      email: currentUser.email || 'client@dakproelite.com',
+      lastname: currentUser.displayName || 'Acheteur DAKPROÉLITE'
+    },
+    onComplete: async function(response) {
+      if (response.reason === FedaPay.DIALOG_DISMISSED) {
+        alert("Paiement annulé.");
+        return;
+      }
+      
+      if (response.status === 'approved' || response.transaction?.status === 'approved') {
+        const duree30Jours = 30 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+        
+        // Enregistrement dans Realtime Database
+        await set(ref(db, `users/${currentUser.uid}/pass_metiers`), {
+          actif: true,
+          date_paiement: now,
+          date_expiration: now + duree30Jours,
+          transaction_id: response.transaction?.id || "FEDAPAY_OK"
+        });
+
+        alert("🎉 Paiement réussi ! Votre Pass 30 Jours est activé.");
+        afficherCoordonnees(metierTarget);
+      } else {
+        alert("Transaction non validée. Veuillez réessayer.");
+      }
+    }
+  });
+
+  widget.open();
+}
+
+function afficherCoordonnees(metier) {
+  document.getElementById("modalName").textContent = metier.nom || metier.titre || "Professionnel";
+  document.getElementById("modalCategory").textContent = `🛠️ ${metier.categorie || "Artisan"}`;
+  document.getElementById("modalVille").textContent = metier.ville || "Non précisée";
+  document.getElementById("modalPhone").textContent = metier.telephone || metier.whatsapp || "Non renseigné";
+  document.getElementById("modalWhatsapp").textContent = metier.whatsapp || "Non renseigné";
+
+  const numTel = (metier.whatsapp || metier.telephone || "").replace(/[^0-9]/g, '');
+  
+  document.getElementById("modalActions").innerHTML = `
+    <a href="https://wa.me/${numTel}" target="_blank" class="btn-modal-action btn-wa">💬 Discuter sur WhatsApp</a>
+    <a href="tel:${numTel}" class="btn-modal-action btn-call">📞 Appeler directement</a>
+  `;
+
+  document.getElementById("contactModal").style.display = "flex";
+}
+
+window.closeContactModal = function() {
+  document.getElementById("contactModal").style.display = "none";
+};
+
+loadMetiers();
+</script>
+
+</body>
+</html>
