@@ -129,7 +129,23 @@ background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-size:12
 }
 .cat-btn.active{background:var(--gold);color:#000;font-weight:700;}
 
-/* PRODUITS */
+/* SECTIONS STYLE AMAZON (PANNEAUX DE ROULAGE INFINI) */
+.amazon-section{
+width:96%;max-width:1800px;margin:15px auto;padding:16px;background:#ffffff;
+border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);
+}
+.amazon-section-title{
+font-size:15px;font-weight:700;color:var(--black);margin-bottom:12px;
+display:flex;align-items:center;justify-content:between;gap:8px;border-bottom:2px solid var(--gold);padding-bottom:6px;
+}
+.amazon-carousel{
+display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;
+scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin;
+}
+.amazon-carousel::-webkit-scrollbar{height:8px;}
+.amazon-carousel::-webkit-scrollbar-thumb{background:var(--gold);border-radius:10px;}
+
+/* CATALOGUE GÉNÉRAL EN GRILLE CLASSIQUE */
 .products{
 width:96%;max-width:1800px;margin:10px auto;padding:16px;background:#ffffff;
 border-radius:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:stretch;flex:1;
@@ -139,51 +155,45 @@ box-shadow:0 4px 15px rgba(0,0,0,0.1);
 @media(min-width:1001px){.products{grid-template-columns:repeat(6,1fr);gap:20px;padding:24px;}}
 @media(min-width:1651px){.products{grid-template-columns:repeat(8,1fr);gap:20px;}}
 
-/* CARTE PRODUIT */
+/* CARTE PRODUIT (UNIVERSELLE GRILLE & CARROUSEL) */
 .card{
 position:relative;display:flex;flex-direction:column;justify-content:space-between;
-width:100%;padding:12px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;
-box-shadow:0 4px 12px rgba(0,0,0,.05);transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;overflow:hidden;height:100%;
+width:100%;min-width:170px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;
+padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.05);transition:transform .2s ease, box-shadow .2s ease;overflow:hidden;height:100%;
+scroll-snap-align:start;
 }
+.amazon-carousel .card{flex:0 0 200px;min-width:200px;}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(212,175,55,0.25);border-color:var(--gold);}
+
 .badge-discount{position:absolute;top:10px;right:10px;z-index:5;padding:3px 7px;background:var(--red);color:#fff;border-radius:4px;font-size:9px;font-weight:800;}
 .badge-boost{position:absolute;top:10px;left:10px;z-index:5;padding:3px 7px;background:linear-gradient(45deg, #d97706, #b45309);color:#fff;border-radius:4px;font-size:8px;font-weight:800;text-transform:uppercase;}
 
 .media-container{
-width:100%;height:190px;position:relative;border-radius:8px;overflow:hidden;
+width:100%;height:170px;position:relative;border-radius:8px;overflow:hidden;
 background:#f8fafc;display:flex;align-items:center;justify-content:center;padding:4px;margin-bottom:10px;border:1px solid #f1f5f9;
 }
 .card img{width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;}
 .card video{width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;}
 
 .card h3{
-margin:4px 0 6px;font-size:13px;font-weight:600;line-height:1.35;word-break:break-word;
-color:var(--card-text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:35px;
+margin:4px 0 6px;font-size:12.5px;font-weight:600;line-height:1.35;word-break:break-word;
+color:var(--card-text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:34px;
 }
 .card .description-complete{
-font-size:10.5px;color:var(--gray);line-height:1.4;margin-bottom:10px;
-display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:29px;
+font-size:10px;color:var(--gray);line-height:1.4;margin-bottom:8px;
+display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:28px;
 }
 .market-tags{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;}
 .tag-express{background:rgba(22,163,74,0.1);color:#15803d;border:1px solid rgba(22,163,74,0.2);font-size:8.5px;padding:2px 5px;border-radius:4px;font-weight:600;}
 
-/* PRIX : PROMO EN ROUGE, ANCIEN EN BLEU BARRÉ */
-.price-container{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:6px 0 10px;}
-.price{
-color: var(--red);
-font-size: 15px;
-font-weight: 800;
-letter-spacing: -0.2px;
-}
-.price-old{
-text-decoration: line-through;
-color: var(--blue);
-font-size: 11px;
-font-weight: 600;
-}
+/* PRIX */
+.price-container{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:4px 0 8px;}
+.price{color:var(--red);font-size:14px;font-weight:800;}
+.price-old{text-decoration:line-through;color:var(--blue);font-size:10.5px;font-weight:600;}
 
-.card-actions-row{display:flex;gap:6px;margin-top:auto;width:100%;}
+.card-actions-row{display:flex;gap:5px;margin-top:auto;width:100%;}
 .btn-action{
-flex:1;min-width:0;padding:8px 4px;border-radius:6px;font-size:10px;font-weight:700;
+flex:1;min-width:0;padding:7px 3px;border-radius:6px;font-size:9.5px;font-weight:700;
 text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:center;justify-content:center;white-space:nowrap;border:none;
 }
 .btn-view{background:var(--blue);color:#fff;}
@@ -203,7 +213,7 @@ text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:c
 .footer-column li{margin-bottom:8px;}
 .footer-column a{color:#aaa;text-decoration:none;}
 
-/* SÉLECTEUR DE LANGUE STYLE AMAZON (BOUTON UNIQUE AVEC MENU DÉROULANT) */
+/* SÉLECTEUR DE LANGUE STYLE AMAZON */
 .footer-language-container{
 display:flex;justify-content:center;align-items:center;padding:15px;
 background:rgba(0,0,0,0.5);border-top:1px solid #222;border-bottom:1px solid #222;position:relative;
@@ -251,6 +261,7 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 
 <div id="btnInstall">Installer l'application sur l'appareil</div>
 
+<!-- BANNIÈRE DÉFILANTE PRINCIPALE -->
 <section class="banner-container" id="bannerContainer">
 <div class="banner-controls">
 <button type="button" class="banner-btn" id="btnBannerPrev">◄</button>
@@ -267,10 +278,41 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 <div class="cat-scroll" id="catMenu"></div>
 </div>
 
-<!-- CATALOGUE PRODUITS -->
-<main class="products" id="products">
-<div class="loading-message" data-i18n="loadingArticles">Chargement des articles de la marketplace...</div>
-</main>
+<!-- ===================================================== -->
+<!-- PANNEAUX DE ROULAGE STYLE AMAZON (POUR 1000+ PRODUITS) -->
+<!-- ===================================================== -->
+
+<!-- PANNEAU 1 : PRODUITS SPONSORISÉS / RECOMMANDÉS (Défilement infini horizontal) -->
+<section class="amazon-section">
+  <div class="amazon-section-title">
+    <span data-i18n="sponsoredTitle">⭐ Produits recommandés &amp; Sponsorisés</span>
+    <small style="color:#666; font-weight:400; font-size:11px;" data-i18n="swipeHint">Glissez pour voir plus →</small>
+  </div>
+  <div class="amazon-carousel" id="carouselRelated">
+    <!-- Généré dynamiquement -->
+  </div>
+</section>
+
+<!-- PANNEAU 2 : OFFRES FLASH & PROMOTIONS VEDETTES -->
+<section class="amazon-section">
+  <div class="amazon-section-title">
+    <span data-i18n="flashOffers">🔥 Offres Flash &amp; Promos du jour</span>
+    <small style="color:#666; font-weight:400; font-size:11px;" data-i18n="swipeHint">Glissez pour voir plus →</small>
+  </div>
+  <div class="amazon-carousel" id="carouselPromos">
+    <!-- Généré dynamiquement -->
+  </div>
+</section>
+
+<!-- CATALOGUE GÉNÉRAL CLASSIQUE EN GRILLE -->
+<section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
+  <div class="amazon-section-title" style="background:#fff; padding:12px; border-radius:8px;">
+    <span data-i18n="fullCatalog">📦 Catalogue Complet &amp; Catégories</span>
+  </div>
+  <main class="products" id="products">
+    <div class="loading-message" data-i18n="loadingArticles">Chargement des articles de la marketplace...</div>
+  </main>
+</section>
 
 <div id="productModalContainer"></div>
 
@@ -305,7 +347,7 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 </div>
 </div>
 
-<!-- SÉLECTEUR DE LANGUE STYLE AMAZON AVEC NOUVELLES LANGUES VERNACULAIRES -->
+<!-- SÉLECTEUR DE LANGUE STYLE AMAZON -->
 <div class="footer-language-container">
 <div class="lang-dropdown-wrapper">
 <button type="button" class="lang-main-btn" id="langMainBtn">
@@ -375,6 +417,10 @@ loadingArticles: "Chargement des articles de la marketplace...",
 emptyCategory: "Aucun article trouvé dans cette catégorie pour le moment.",
 officialAnnouncement: "⚡ Annonce Officielle",
 welcomeText: "Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !",
+sponsoredTitle: "⭐ Produits recommandés & Sponsorisés",
+flashOffers: "🔥 Offres Flash & Promos du jour",
+fullCatalog: "📦 Catalogue Complet & Catégories",
+swipeHint: "Glissez pour voir plus →",
 navAndHelp: "Navigation & Aide",
 quickSupport: "Support Rapide",
 helpCenter: "Centre d'aide général",
@@ -408,6 +454,10 @@ loadingArticles: "Loading marketplace items...",
 emptyCategory: "No items found in this category right now.",
 officialAnnouncement: "⚡ Official Announcement",
 welcomeText: "Welcome to DAKPROÉLITE, your international benchmark marketplace!",
+sponsoredTitle: "⭐ Recommended & Sponsored Products",
+flashOffers: "🔥 Flash Offers & Daily Deals",
+fullCatalog: "📦 Full Catalog & Categories",
+swipeHint: "Swipe to see more →",
 navAndHelp: "Navigation & Help",
 quickSupport: "Quick Support",
 helpCenter: "General Help Center",
@@ -441,6 +491,10 @@ loadingArticles: "Cargando artículos del mercado...",
 emptyCategory: "No se encontraron artículos en esta categoría por el momento.",
 officialAnnouncement: "⚡ Anuncio Oficial",
 welcomeText: "¡Bienvenido a DAKPROÉLITE, su plataforma internacional de referencia!",
+sponsoredTitle: "⭐ Productos recomendados y patrocinados",
+flashOffers: "🔥 Ofertas flash y promociones del día",
+fullCatalog: "📦 Catálogo completo y categorías",
+swipeHint: "Desliza para ver más →",
 navAndHelp: "Navegación y Ayuda",
 quickSupport: "Soporte Rápido",
 helpCenter: "Centro de Ayuda General",
@@ -474,6 +528,10 @@ loadingArticles: "正在加载市场商品...",
 emptyCategory: "当前分类下暂无商品。",
 officialAnnouncement: "⚡ 官方公告",
 welcomeText: "欢迎来到 DAKPROÉLITE，您的国际基准市场！",
+sponsoredTitle: "⭐ 推荐与赞助商品",
+flashOffers: "🔥 限时抢购与每日特惠",
+fullCatalog: "📦 完整目录与分类",
+swipeHint: "滑动查看更多 →",
 navAndHelp: "导航与帮助",
 quickSupport: "快速支持",
 helpCenter: "通用帮助中心",
@@ -507,6 +565,10 @@ loadingArticles: "মার্কেটপ্লেস আইটেম লোড
 emptyCategory: "এই ক্যাটাগরিতে এই মুহূর্তে কোনো আইটেম পাওয়া যায়নি।",
 officialAnnouncement: "⚡ অফিসিয়াল ঘোষণা",
 welcomeText: "DAKPROÉLITE-এ স্বাগতম, আপনার আন্তর্জাতিক বেঞ্চমার্ক মার্কেটপ্লেস!",
+sponsoredTitle: "⭐ প্রস্তাবিত এবং স্পনসরকৃত পণ্য",
+flashOffers: "🔥 ফ্ল্যাশ অফার এবং দৈনিক ডিল",
+fullCatalog: "📦 সম্পূর্ণ ক্যাটালগ এবং বিভাগ",
+swipeHint: "আরও দেখতে সোয়াইপ করুন →",
 navAndHelp: "নেভিগেশন ও সহায়তা",
 quickSupport: "দ্রুত সহায়তা",
 helpCenter: "সাধারণ সহায়তা কেন্দ্র",
@@ -540,6 +602,10 @@ loadingArticles: "N ṣe agbega awọn ọja oja...",
 emptyCategory: "Ko si ọja ti a rii ni ẹka yii ni bayi.",
 officialAnnouncement: "⚡ Ikede Oṣiṣẹ",
 welcomeText: "Kaabọ si DAKPROÉLITE, ọja agbaye ti o dara julọ!",
+sponsoredTitle: "⭐ Awọn ọja ti a ṣeduro",
+flashOffers: "🔥 Awọn ipese pataki",
+fullCatalog: "📦 Gbogbo Awọn Ọja",
+swipeHint: "Ra lati wo diẹ sii →",
 navAndHelp: "Iṣakoso & Iranlọwọ",
 quickSupport: "Atilẹyin Yara",
 helpCenter: "Ile-iṣẹ Iranlọwọ",
@@ -573,6 +639,10 @@ loadingArticles: "E ɖò nǔ lɛ ɖè wɛ...",
 emptyCategory: "Nǔ ɖebǔ mɛ e ma ɖò tɛnmɛ nɛ ɔ mɛ ǎ.",
 officialAnnouncement: "⚡ Gbeɖéɖé",
 welcomeText: "Wɛkɛ ɖò DAKPROÉLITE, akɔ̀ tɔn mɛ!",
+sponsoredTitle: "⭐ Nǔ e sɔ́ ɖó tɛnmɛ lɛ",
+flashOffers: "🔥 Hwenu ɖagbe kpo",
+fullCatalog: "📦 Nǔ bǐ tɛnmɛ",
+swipeHint: "Sɔ́ yì nukɔn →",
 navAndHelp: "Alɔgɔ kpo",
 quickSupport: "Alɔgɔ Kalo",
 helpCenter: "Tɛn alɔgɔ tɔn",
@@ -608,43 +678,54 @@ converted = Math.round(converted);
 return `${converted} ${t.currency}`;
 }
 
-/* TRADUCTION DYNAMIQUE INSTANTANÉE */
 const dynamicTranslations = {
 en: {
 "A1 capsule": "A1 Capsule",
 "Santé et bien-être": "Health & Wellness",
 "Équipements de protection médicale": "Medical Protection Equipment",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 THE HIGH-LEVEL DIETARY SUPPLEMENT THAT RELIEVES AND STRENGTHENS"
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 THE HIGH-LEVEL DIETARY SUPPLEMENT THAT RELIEVES AND STRENGTHENS",
+"INVITATION SPÉCIALE": "SPECIAL INVITATION",
+"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 SPECIAL INVITATION — DAKPROÉLITE 🚀 The DAKPROÉLITE Marketplace benchmark invites all manufacturers, wholesalers, sellers, buyers, artisans, tradesmen, entrepreneurs, and service providers to join its official channel. 🎯 Our goal: bring trade actors together in an organized, dynamic, and professional community to foster exchanges, promote products and services, and develop new business opportunities. 🤝 Your expertise, products, and ambitions have their place at DAKPROÉLITE! 🌍 Join us now and help build a more accessible and dynamic commerce. DAKPROÉLITE — One platform, a thousand opportunities! 🚀"
 },
 es: {
 "A1 capsule": "Cápsula A1",
 "Santé et bien-être": "Salud y Bienestar",
 "Équipements de protection médicale": "Equipos de Protección Médica",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 EL SUPLEMENTO DIETÉTICO DE ALTO NIVEL QUE ALIVIA Y FORTALECE"
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 EL SUPLEMENTO DIETÉTICO DE ALTO NIVEL QUE ALIVIA Y FORTALECE",
+"INVITATION SPÉCIALE": "INVITACIÓN ESPECIAL",
+"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 INVITACIÓN ESPECIAL — DAKPROÉLITE 🚀 La referencia de Marketplace DAKPROÉLITE invita a todos los fabricantes, mayoristas, vendedores, compradores, artesanos, profesionales, empresarios y proveedores de servicios a unirse a su canal oficial. 🎯 Nuestro objetivo: reunir a los actores del comercio en una comunidad organizada, dinámica y profesional para fomentar los intercambios, promover productos y servicios y desarrollar nuevas oportunidades de negocio. 🤝 ¡Su saber hacer, sus productos y sus ambiciones tienen su lugar en DAKPROÉLITE! 🌍 Únase a nosotros ahora y participe en la construcción de un comercio más accesible y dinámico. DAKPROÉLITE — ¡Una plataforma, mil oportunidades! 🚀"
 },
 zh: {
 "A1 capsule": "A1 胶囊",
 "Santé et bien-être": "健康与养生",
 "Équipements de protection médicale": "医疗防护设备",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 高级膳食补充剂，具有缓解和强健身体的功效"
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 高级膳食补充剂，具有缓解和强健身体的功效",
+"INVITATION SPÉCIALE": "特别邀请",
+"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 特别邀请 — DAKPROÉLITE 🚀 DAKPROÉLITE 市场基准邀请所有制造商、批发商、卖家、买家、工匠、商贩、企业家和服务提供商加入其官方频道。 🎯 我们的目标：将商业参与者聚集在一个有组织、充满活力和专业的社区中，以促进交流、推广产品和服务并开发新的商机。 🤝 您的专业知识、产品和雄心在 DAKPROÉLITE 占有一席之地！ 🌍 立即加入我们，共同建设一个更加便捷和充满活力的商业环境。 DAKPROÉLITE — 一个平台，无数商机！ 🚀"
 },
 bn: {
 "A1 capsule": "A1 ক্যাপসুল",
 "Santé et bien-être": "স্বাস্থ্য ও সুস্থতা",
 "Équipements de protection médicale": "মেডিকেল সুরক্ষা সরঞ্জাম",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 উচ্চ-স্তরের খাদ্য পরিপূরক যা উপশম এবং শক্তিশালী করে"
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 উচ্চ-স্তরের খাদ্য পরিপূরক যা উপশম এবং শক্তিশালী করে",
+"INVITATION SPÉCIALE": "বিশেষ আমন্ত্রণ",
+"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 বিশেষ আমন্ত্রণ — DAKPROÉLITE 🚀 DAKPROÉLITE মার্কেটপ্লেস সমস্ত প্রস্তুতকারক, পাইকারী বিক্রেতা, বিক্রেতা, ক্রেতা, কারিগর, উদ্যোক্তা এবং পরিষেবা প্রদানকারীদের তাদের অফিসিয়াল চ্যানেলে যোগদানের জন্য আমন্ত্রণ জানায়।"
 },
 yo: {
 "A1 capsule": "Akwọṣe A1",
 "Santé et bien-être": "Ilera & Alafia",
 "Équipements de protection médicale": "Awọn Ohun Elo Aabo Iṣoogun",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 AFIKUN OUNJE TO GA JULO TI O N TUN ARA SE"
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 AFIKUN OUNJE TO GA JULO TI O N TUN ARA SE",
+"INVITATION SPÉCIALE": "IPE PATAKI",
+"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 IPE PATAKI — DAKPROÉLITE 🚀 Ọja DAKPROÉLITE n pe gbogbo olutaja, olura, ati oṣiṣẹ lati darapọ mọ ikanni osise wa."
 },
 fon: {
 "A1 capsule": "A1 kapslu",
 "Santé et bien-être": "Linsin kpo alɔgɔ kpo",
 "Équipements de protection médicale": "Alɔgɔ dotó tɔn",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 Nǔɖuɖu ɖagbe e nɔ d'alɔ bo nɔ d'usixu nú mɛ e"
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 Nǔɖuɖu ɖagbe e nɔ d'alɔ bo nɔ d'usixu nú mɛ e",
+"INVITATION SPÉCIALE": "GBEƉÉDÉ TENTON",
+"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 GBEƉÉDÉ TENTON — DAKPROÉLITE 🚀 DAKPROÉLITE nɔ ylɔ mɛ bǐ ɖò akɔ̀ tɔn mɛ bo na w'azɔ̌ ɖó kpɔ́."
 }
 };
 
@@ -683,6 +764,7 @@ applyAnnouncement(announcementDataCache);
 }
 
 filterProducts();
+renderCarousels(window.allProductsData);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -746,6 +828,7 @@ if(!data || typeof data!=="object"){
 window.allProductsData = [];
 buildCategories();
 renderProducts([]);
+renderCarousels([]);
 return;
 }
 
@@ -758,6 +841,7 @@ return { id, ...product };
 
 buildCategories();
 filterProducts();
+renderCarousels(window.allProductsData);
 checkUrlForSharedProduct();
 }, error=>{ console.error("Erreur publications:", error); });
 }
@@ -810,6 +894,7 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
+/* GÉNÉRATEUR DE CARTE UNIVERSEL (POUR GRILLE ET CARROUSELS) */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
 const siteBase = "https://marketplace.acheteur.dakproelite.com";
@@ -884,18 +969,35 @@ ${oldPriceHTML}
 `;
 }
 
-function renderProducts(list){
-const container = document.getElementById("products");
-if(!container)return;
-const t = translations[currentLang];
+/* RENDU DES CARROUSELS INFINIS (STYLE AMAZON) */
+function renderCarousels(allProducts){
+const containerRelated = document.getElementById("carouselRelated");
+const containerPromos = document.getElementById("carouselPromos");
+const uid = siteContext.currentUser?.uid || "";
 
-if(!Array.isArray(list) || list.length===0){
-container.innerHTML = `<div class="empty-message">${t.emptyCategory}</div>`;
-return;
+if(!allProducts || allProducts.length === 0) return;
+
+// 1. Carrousel Recommandés (Prend jusqu'à 50 articles pour fluidité maximale)
+if(containerRelated){
+containerRelated.innerHTML = allProducts.slice(0, 50).map(product => generateCardHTML(product, uid)).join("");
+attachCardEvents(containerRelated);
 }
 
-const uid = siteContext.currentUser?.uid || "";
-container.innerHTML = list.map(product=>generateCardHTML(product, uid)).join("");
+// 2. Carrousel Promos / Offres Flash (Filtré sur les articles avec promo ou boost)
+const promoProducts = allProducts.filter(p => p.prixPromo || p.boost);
+if(containerPromos){
+if(promoProducts.length > 0){
+containerPromos.innerHTML = promoProducts.map(product => generateCardHTML(product, uid)).join("");
+attachCardEvents(containerPromos);
+} else {
+containerPromos.innerHTML = `<div class="empty-message" style="padding:10px;">${translations[currentLang].emptyCategory}</div>`;
+}
+}
+}
+
+/* ATTACHEMENT DES ÉVÉNEMENTS BOUTONS (COPIER & PANIER) */
+function attachCardEvents(container){
+const t = translations[currentLang];
 
 container.querySelectorAll(".btn-copy").forEach(button=>{
 button.addEventListener("click", async event=>{
@@ -919,6 +1021,21 @@ event.stopPropagation();
 ajouterAuPanierDirect(button.dataset.id, button);
 });
 });
+}
+
+function renderProducts(list){
+const container = document.getElementById("products");
+if(!container)return;
+const t = translations[currentLang];
+
+if(!Array.isArray(list) || list.length===0){
+container.innerHTML = `<div class="empty-message">${t.emptyCategory}</div>`;
+return;
+}
+
+const uid = siteContext.currentUser?.uid || "";
+container.innerHTML = list.map(product=>generateCardHTML(product, uid)).join("");
+attachCardEvents(container);
 }
 
 async function ajouterAuPanierDirect(productId, buttonEl){
