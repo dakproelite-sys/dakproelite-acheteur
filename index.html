@@ -53,7 +53,7 @@ background:linear-gradient(to bottom,#131921,#050505);
 border-bottom:2px solid var(--gold);
 }
 
-/* LOGO FIXE & INAMOVIBLE */
+/* LOGO FIXE & GRAVÉ (STABLE & INSTANTANÉ) */
 .logo-container{
 width:64px;height:64px;min-width:64px;min-height:64px;flex:0 0 64px;
 border-radius:50%;border:2px solid var(--gold);overflow:hidden;
@@ -65,7 +65,6 @@ user-select:none;pointer-events:none;
 display:block;width:100%;height:100%;max-width:100%;max-height:100%;
 object-fit:contain;object-position:center;background:#000;
 }
-.fallback-logo{color:var(--gold);font-size:16px;font-weight:800;}
 
 /* RECHERCHE */
 .search-container{flex:1;min-width:0;display:flex;align-items:center;gap:8px;}
@@ -360,7 +359,7 @@ let isPaused = false;
 let announcementDataCache = null;
 
 /* =====================================================
-DICTIONNAIRE DE TRADUCTION & DEVISES (COMPLÉTÉ AVEC BENGALI, YORUBA ET FON)
+DICTIONNAIRE DE TRADUCTION & DEVISES
 ===================================================== */
 const translations = {
 fr: {
@@ -499,7 +498,6 @@ bn: {
 name: "বাংলা",
 currency: "BDT",
 rate: 1 / 5,
-searchplaceholder: "পroducts, clothing or services search...",
 searchPlaceholder: "পroducts, clothing or services search...",
 navCart: "কার্ট",
 navAccount: "অ্যাকাউন্ট",
@@ -610,27 +608,56 @@ converted = Math.round(converted);
 return `${converted} ${t.currency}`;
 }
 
+/* TRADUCTION DYNAMIQUE INSTANTANÉE */
+const dynamicTranslations = {
+en: {
+"A1 capsule": "A1 Capsule",
+"Santé et bien-être": "Health & Wellness",
+"Équipements de protection médicale": "Medical Protection Equipment",
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 THE HIGH-LEVEL DIETARY SUPPLEMENT THAT RELIEVES AND STRENGTHENS"
+},
+es: {
+"A1 capsule": "Cápsula A1",
+"Santé et bien-être": "Salud y Bienestar",
+"Équipements de protection médicale": "Equipos de Protección Médica",
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 EL SUPLEMENTO DIETÉTICO DE ALTO NIVEL QUE ALIVIA Y FORTALECE"
+},
+zh: {
+"A1 capsule": "A1 胶囊",
+"Santé et bien-être": "健康与养生",
+"Équipements de protection médicale": "医疗防护设备",
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 高级膳食补充剂，具有缓解和强健身体的功效"
+},
+bn: {
+"A1 capsule": "A1 ক্যাপসুল",
+"Santé et bien-être": "স্বাস্থ্য ও সুস্থতা",
+"Équipements de protection médicale": "মেডিকেল সুরক্ষা সরঞ্জাম",
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 উচ্চ-স্তরের খাদ্য পরিপূরক যা উপশম এবং শক্তিশালী করে"
+},
+yo: {
+"A1 capsule": "Akwọṣe A1",
+"Santé et bien-être": "Ilera & Alafia",
+"Équipements de protection médicale": "Awọn Ohun Elo Aabo Iṣoogun",
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 AFIKUN OUNJE TO GA JULO TI O N TUN ARA SE"
+},
+fon: {
+"A1 capsule": "A1 kapslu",
+"Santé et bien-être": "Linsin kpo alɔgɔ kpo",
+"Équipements de protection médicale": "Alɔgɔ dotó tɔn",
+"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 Nǔɖuɖu ɖagbe e nɔ d'alɔ bo nɔ d'usixu nú mɛ e"
+}
+};
+
 function getLocalizedText(obj, fieldBase, lang) {
 if(!obj) return "";
-if(lang === 'en' && (obj[fieldBase + '_en'] || obj['title_en'] || obj['description_en'])) {
-return obj[fieldBase + '_en'] || obj['title_en'] || obj['description_en'];
+if(lang !== 'fr' && (obj[fieldBase + '_' + lang] || obj['title_' + lang] || obj['description_' + lang])) {
+return obj[fieldBase + '_' + lang] || obj['title_' + lang] || obj['description_' + lang];
 }
-if(lang === 'es' && (obj[fieldBase + '_es'] || obj['title_es'] || obj['description_es'])) {
-return obj[fieldBase + '_es'] || obj['title_es'] || obj['description_es'];
+let originalText = obj[fieldBase] || obj['texte'] || obj['text'] || obj['description'] || obj['nom'] || obj['title'] || obj['name'] || "";
+if (lang !== 'fr' && dynamicTranslations[lang] && dynamicTranslations[lang][originalText]) {
+return dynamicTranslations[lang][originalText];
 }
-if(lang === 'zh' && (obj[fieldBase + '_zh'] || obj['title_zh'] || obj['description_zh'])) {
-return obj[fieldBase + '_zh'] || obj['title_zh'] || obj['description_zh'];
-}
-if(lang === 'bn' && (obj[fieldBase + '_bn'] || obj['title_bn'] || obj['description_bn'])) {
-return obj[fieldBase + '_bn'] || obj['title_bn'] || obj['description_bn'];
-}
-if(lang === 'yo' && (obj[fieldBase + '_yo'] || obj['title_yo'] || obj['description_yo'])) {
-return obj[fieldBase + '_yo'] || obj['title_yo'] || obj['description_yo'];
-}
-if(lang === 'fon' && (obj[fieldBase + '_fon'] || obj['title_fon'] || obj['description_fon'])) {
-return obj[fieldBase + '_fon'] || obj['title_fon'] || obj['description_fon'];
-}
-return obj[fieldBase] || obj['nom'] || obj['title'] || obj['name'] || obj['description'] || obj['texte'] || obj['text'] || "";
+return originalText;
 }
 
 function setLanguage(lang) {
@@ -658,7 +685,6 @@ applyAnnouncement(announcementDataCache);
 filterProducts();
 }
 
-/* GESTION DU MENU DÉROULANT DE LANGUE (TYPE AMAZON) */
 document.addEventListener("DOMContentLoaded", () => {
 const mainBtn = document.getElementById("langMainBtn");
 const menu = document.getElementById("langMenu");
@@ -712,7 +738,7 @@ function escapeAttribute(value){ return escapeHTML(value); }
 
 document.getElementById("logoButton")?.addEventListener("click", ()=>{ window.location.href = "index.html"; });
 
-/* CHARGEMENT PUBLICATIONS FIREBASE */
+/* CHARGEMENT DIRECT DES PUBLICATIONS */
 function loadProducts(){
 onValue(ref(db,"publications"), snapshot=>{
 const data = snapshot.val();
@@ -736,7 +762,6 @@ checkUrlForSharedProduct();
 }, error=>{ console.error("Erreur publications:", error); });
 }
 
-/* CONSTRUCTION DES CATÉGORIES ET SÉLECTION AUTOMATIQUE DE LA PREMIÈRE */
 function buildCategories(){
 const categories=[...new Set(window.allProductsData.map(p=>p.categorie || p.category).filter(Boolean))];
 const menu = document.getElementById("catMenu");
@@ -748,7 +773,8 @@ currentCat = categories[0];
 
 menu.innerHTML = categories.map(category=>{
 const safe = escapeHTML(category);
-return `<button type="button" class="cat-btn ${category===currentCat?"active":""}" data-category="${safe}">${safe}</button>`;
+const displayCatName = getLocalizedText({ cat: category }, 'cat', currentLang) || category;
+return `<button type="button" class="cat-btn ${category===currentCat?"active":""}" data-category="${safe}">${escapeHTML(displayCatName)}</button>`;
 }).join("");
 
 menu.querySelectorAll(".cat-btn").forEach(button=>{
@@ -784,7 +810,6 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* GÉNÉRATION CARTE PRODUIT AVEC TRADUCTION ET DEVISE ADAPTÉE */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
 const siteBase = "https://marketplace.acheteur.dakproelite.com";
@@ -1039,7 +1064,7 @@ if(!title || !text) return;
 if(!data || data.actif===false) return;
 
 const localizedTitle = getLocalizedText(data, 'titre', currentLang) || data.titre || translations[currentLang].officialAnnouncement;
-const localizedText = getLocalizedText(data, 'texte', currentLang) || getLocalizedText(data, 'text', currentLang) || data.texte || data.text || "";
+const localizedText = getLocalizedText(data, 'texte', currentLang) || data.texte || "";
 
 title.textContent = localizedTitle;
 text.textContent = localizedText;
