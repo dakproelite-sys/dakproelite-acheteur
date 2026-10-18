@@ -219,7 +219,7 @@ transition:background .2s;
 .lang-menu{
 display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:8px;
 background:#12161f;border:1px solid var(--gold);border-radius:10px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.5);z-index:100;
-min-width:160px;
+min-width:170px;max-height:280px;overflow-y:auto;
 }
 .lang-menu.show{display:block;}
 .lang-option{
@@ -306,7 +306,7 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 </div>
 </div>
 
-<!-- SÉLECTEUR DE LANGUE STYLE AMAZON (BOUTON UNIQUE AVEC MENU DÉROULANT) -->
+<!-- SÉLECTEUR DE LANGUE STYLE AMAZON AVEC NOUVELLES LANGUES VERNACULAIRES -->
 <div class="footer-language-container">
 <div class="lang-dropdown-wrapper">
 <button type="button" class="lang-main-btn" id="langMainBtn">
@@ -317,6 +317,9 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 <button type="button" class="lang-option" data-lang="en">🇬🇧 English</button>
 <button type="button" class="lang-option" data-lang="es">🇪🇸 Español</button>
 <button type="button" class="lang-option" data-lang="zh">🇨🇳 中文</button>
+<button type="button" class="lang-option" data-lang="bn">🇧🇩 বাংলা (Bangladesh)</button>
+<button type="button" class="lang-option" data-lang="yo">🇳🇬 Yorùbá</button>
+<button type="button" class="lang-option" data-lang="fon">🇧🇯 Fɔ̀ngbè (Fon)</button>
 </div>
 </div>
 </div>
@@ -357,13 +360,13 @@ let isPaused = false;
 let announcementDataCache = null;
 
 /* =====================================================
-DICTIONNAIRE DE TRADUCTION & DEVISES (SANS GOOGLE TRANSLATE)
+DICTIONNAIRE DE TRADUCTION & DEVISES (COMPLÉTÉ AVEC BENGALI, YORUBA ET FON)
 ===================================================== */
 const translations = {
 fr: {
 name: "Français",
 currency: "FCFA",
-rate: 1, // Référence FCFA
+rate: 1,
 searchPlaceholder: "Rechercher des produits, vêtements ou services...",
 navCart: "Panier",
 navAccount: "Compte",
@@ -396,7 +399,7 @@ modalClose: "Fermer"
 en: {
 name: "English",
 currency: "USD",
-rate: 1 / 600, // Conversion indicative FCFA vers USD ($)
+rate: 1 / 600,
 searchPlaceholder: "Search for products, clothing or services...",
 navCart: "Cart",
 navAccount: "Account",
@@ -428,8 +431,8 @@ modalClose: "Close"
 },
 es: {
 name: "Español",
-currency: "FCFA",
-rate: 1,
+currency: "EUR",
+rate: 1 / 655.957,
 searchPlaceholder: "Buscar productos, ropa o servicios...",
 navCart: "Carrito",
 navAccount: "Cuenta",
@@ -462,7 +465,7 @@ modalClose: "Cerrar"
 zh: {
 name: "中文",
 currency: "CNY",
-rate: 1 / 85, // Conversion indicative FCFA vers Yuan (¥)
+rate: 1 / 85,
 searchPlaceholder: "搜索产品、服装或服务...",
 navCart: "购物车",
 navAccount: "账户",
@@ -491,6 +494,106 @@ imageUnavailable: "图片不可用",
 selectedArticle: "在 DAKPROÉLITE 上选定的商品。",
 modalBuy: "💳 购买",
 modalClose: "关闭"
+},
+bn: {
+name: "বাংলা",
+currency: "BDT",
+rate: 1 / 5,
+searchplaceholder: "পroducts, clothing or services search...",
+searchPlaceholder: "পroducts, clothing or services search...",
+navCart: "কার্ট",
+navAccount: "অ্যাকাউন্ট",
+installApp: "ডিভাইসে অ্যাপ ইনস্টল করুন",
+allTrades: "🛠️ সকল পেশা",
+loadingArticles: "মার্কেটপ্লেস আইটেম লোড হচ্ছে...",
+emptyCategory: "এই ক্যাটাগরিতে এই মুহূর্তে কোনো আইটেম পাওয়া যায়নি।",
+officialAnnouncement: "⚡ অফিসিয়াল ঘোষণা",
+welcomeText: "DAKPROÉLITE-এ স্বাগতম, আপনার আন্তর্জাতিক বেঞ্চমার্ক মার্কেটপ্লেস!",
+navAndHelp: "নেভিগেশন ও সহায়তা",
+quickSupport: "দ্রুত সহায়তা",
+helpCenter: "সাধারণ সহায়তা কেন্দ্র",
+myAccount: "আমার অ্যাকাউন্ট",
+rulesAndLegal: "নিয়মাবলী ও আইন",
+internalRules: "অভ্যন্তরীণ নিয়ম",
+privacyPolicy: "গোপনীয়তা নীতি",
+earnMoney: "টাকা আয় করুন",
+ambassadorProgram: "অ্যাম্বাসেডর প্রোগ্রাম",
+becomeSeller: "🛍️ বিক্রেতা হন",
+viewBtn: "👁️ দেখুন",
+copyBtn: "🔗 কপি",
+cartBtn: "🛒 কার্ট",
+copiedMsg: "✅ কপি হয়েছে!",
+addedMsg: "✅ যোগ করা হয়েছে!",
+imageUnavailable: "ছবি উপলব্ধ নেই",
+selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।",
+modalBuy: "💳 কিনুন",
+modalClose: "বন্ধ করুন"
+},
+yo: {
+name: "Yorùbá",
+currency: "NGN",
+rate: 1.2,
+searchPlaceholder: "Wa awọn ọja, aṣọ tabi iṣẹ...",
+navCart: "Kẹkẹ",
+navAccount: "Àsántì",
+installApp: "Fi ohun elo sori ẹrọ rẹ",
+allTrades: "🛠️ Gbogbo Iṣẹ",
+loadingArticles: "N ṣe agbega awọn ọja oja...",
+emptyCategory: "Ko si ọja ti a rii ni ẹka yii ni bayi.",
+officialAnnouncement: "⚡ Ikede Oṣiṣẹ",
+welcomeText: "Kaabọ si DAKPROÉLITE, ọja agbaye ti o dara julọ!",
+navAndHelp: "Iṣakoso & Iranlọwọ",
+quickSupport: "Atilẹyin Yara",
+helpCenter: "Ile-iṣẹ Iranlọwọ",
+myAccount: "Akanti Mi",
+rulesAndLegal: "Awọn Ofin",
+internalRules: "Awọn Ilana",
+privacyPolicy: "Asiri",
+earnMoney: "Gba Owo",
+ambassadorProgram: "Eto Amọṣa",
+becomeSeller: "🛍️ Di Olutaja",
+viewBtn: "👁️ Wo",
+copyBtn: "🔗 Daako",
+cartBtn: "🛒 Kẹkẹ",
+copiedMsg: "✅ A daako re!",
+addedMsg: "✅ A fi kun!",
+imageUnavailable: "Aworan ko si",
+selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.",
+modalBuy: "💳 Ra Bayi",
+modalClose: "Pade"
+},
+fon: {
+name: "Fɔ̀ngbè",
+currency: "FCFA",
+rate: 1,
+searchPlaceholder: "Ba nǔ kpo avɔ kpo...",
+navCart: "Tɛnmɛ",
+navAccount: "Akɔntá",
+installApp: "Tɔn aplikasiɔn ɔ ɖo mɔ̌",
+allTrades: "🛠️ Azɔ̌ bǐ",
+loadingArticles: "E ɖò nǔ lɛ ɖè wɛ...",
+emptyCategory: "Nǔ ɖebǔ mɛ e ma ɖò tɛnmɛ nɛ ɔ mɛ ǎ.",
+officialAnnouncement: "⚡ Gbeɖéɖé",
+welcomeText: "Wɛkɛ ɖò DAKPROÉLITE, akɔ̀ tɔn mɛ!",
+navAndHelp: "Alɔgɔ kpo",
+quickSupport: "Alɔgɔ Kalo",
+helpCenter: "Tɛn alɔgɔ tɔn",
+myAccount: "Akɔntá ce",
+rulesAndLegal: "Sɛ́n lɛ",
+internalRules: "Sɛ́n mɛ tɔn",
+privacyPolicy: "Nǔ nyanya mɛ",
+earnMoney: "Mɛ akwɛ",
+ambassadorProgram: "Ambasadɔ",
+becomeSeller: "🛍️ Huzu Ajɔ̌tɔ́",
+viewBtn: "👁️ Kpé",
+copyBtn: "🔗 Kpé nǔ",
+cartBtn: "🛒 Tɛnmɛ",
+copiedMsg: "✅ E kpé!",
+addedMsg: "✅ E ɖó!",
+imageUnavailable: "Nɛ̌ nǔ ɖé ǎ",
+selectedArticle: "Nǔ e ɖò DAKPROÉLITE.",
+modalBuy: "💳 Hò",
+modalClose: "Sɔ́"
 }
 };
 
@@ -499,7 +602,7 @@ let currentLang = localStorage.getItem("dakpro_lang") || "fr";
 function formatPrice(val) {
 const t = translations[currentLang];
 let converted = val * t.rate;
-if(t.currency === "USD" || t.currency === "CNY") {
+if(t.currency === "USD" || t.currency === "EUR" || t.currency === "BDT" || t.currency === "NGN") {
 converted = converted.toFixed(2);
 } else {
 converted = Math.round(converted);
@@ -517,6 +620,15 @@ return obj[fieldBase + '_es'] || obj['title_es'] || obj['description_es'];
 }
 if(lang === 'zh' && (obj[fieldBase + '_zh'] || obj['title_zh'] || obj['description_zh'])) {
 return obj[fieldBase + '_zh'] || obj['title_zh'] || obj['description_zh'];
+}
+if(lang === 'bn' && (obj[fieldBase + '_bn'] || obj['title_bn'] || obj['description_bn'])) {
+return obj[fieldBase + '_bn'] || obj['title_bn'] || obj['description_bn'];
+}
+if(lang === 'yo' && (obj[fieldBase + '_yo'] || obj['title_yo'] || obj['description_yo'])) {
+return obj[fieldBase + '_yo'] || obj['title_yo'] || obj['description_yo'];
+}
+if(lang === 'fon' && (obj[fieldBase + '_fon'] || obj['title_fon'] || obj['description_fon'])) {
+return obj[fieldBase + '_fon'] || obj['title_fon'] || obj['description_fon'];
 }
 return obj[fieldBase] || obj['nom'] || obj['title'] || obj['name'] || obj['description'] || obj['texte'] || obj['text'] || "";
 }
