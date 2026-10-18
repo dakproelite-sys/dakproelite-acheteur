@@ -354,13 +354,16 @@ let currentIndex = 0;
 let totalSlides = 0;
 let autoPlay = null;
 let isPaused = false;
+let announcementDataCache = null;
 
 /* =====================================================
-DICTIONNAIRE DE TRADUCTION NATIF (SANS GOOGLE TRANSLATE)
+DICTIONNAIRE DE TRADUCTION & DEVISES (SANS GOOGLE TRANSLATE)
 ===================================================== */
 const translations = {
 fr: {
 name: "Français",
+currency: "FCFA",
+rate: 1, // Référence FCFA
 searchPlaceholder: "Rechercher des produits, vêtements ou services...",
 navCart: "Panier",
 navAccount: "Compte",
@@ -392,6 +395,8 @@ modalClose: "Fermer"
 },
 en: {
 name: "English",
+currency: "USD",
+rate: 1 / 600, // Conversion indicative FCFA vers USD ($)
 searchPlaceholder: "Search for products, clothing or services...",
 navCart: "Cart",
 navAccount: "Account",
@@ -423,6 +428,8 @@ modalClose: "Close"
 },
 es: {
 name: "Español",
+currency: "FCFA",
+rate: 1,
 searchPlaceholder: "Buscar productos, ropa o servicios...",
 navCart: "Carrito",
 navAccount: "Cuenta",
@@ -454,6 +461,8 @@ modalClose: "Cerrar"
 },
 zh: {
 name: "中文",
+currency: "CNY",
+rate: 1 / 85, // Conversion indicative FCFA vers Yuan (¥)
 searchPlaceholder: "搜索产品、服装或服务...",
 navCart: "购物车",
 navAccount: "账户",
@@ -487,6 +496,31 @@ modalClose: "关闭"
 
 let currentLang = localStorage.getItem("dakpro_lang") || "fr";
 
+function formatPrice(val) {
+const t = translations[currentLang];
+let converted = val * t.rate;
+if(t.currency === "USD" || t.currency === "CNY") {
+converted = converted.toFixed(2);
+} else {
+converted = Math.round(converted);
+}
+return `${converted} ${t.currency}`;
+}
+
+function getLocalizedText(obj, fieldBase, lang) {
+if(!obj) return "";
+if(lang === 'en' && (obj[fieldBase + '_en'] || obj['title_en'] || obj['description_en'])) {
+return obj[fieldBase + '_en'] || obj['title_en'] || obj['description_en'];
+}
+if(lang === 'es' && (obj[fieldBase + '_es'] || obj['title_es'] || obj['description_es'])) {
+return obj[fieldBase + '_es'] || obj['title_es'] || obj['description_es'];
+}
+if(lang === 'zh' && (obj[fieldBase + '_zh'] || obj['title_zh'] || obj['description_zh'])) {
+return obj[fieldBase + '_zh'] || obj['title_zh'] || obj['description_zh'];
+}
+return obj[fieldBase] || obj['nom'] || obj['title'] || obj['name'] || obj['description'] || obj['texte'] || obj['text'] || "";
+}
+
 function setLanguage(lang) {
 if(!translations[lang]) return;
 currentLang = lang;
@@ -504,6 +538,10 @@ if(searchInput) searchInput.placeholder = translations[lang].searchPlaceholder;
 
 const langLabel = document.getElementById("currentLangLabel");
 if(langLabel) langLabel.textContent = translations[lang].name;
+
+if(announcementDataCache) {
+applyAnnouncement(announcementDataCache);
+}
 
 filterProducts();
 }
@@ -617,8 +655,8 @@ function getFilteredProducts(){
 const search = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
 
 return window.allProductsData.filter(product=>{
-const name = String(product.nom || product.title || product.name || "").toLowerCase();
-const description = String(product.description || "").toLowerCase();
+const name = String(getLocalizedText(product, 'nom', currentLang) || product.title || product.name || "").toLowerCase();
+const description = String(getLocalizedText(product, 'description', currentLang) || "").toLowerCase();
 const category = String(product.categorie || product.category || "").toLowerCase();
 const productCategory = product.categorie || product.category || "";
 
@@ -634,7 +672,7 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* GÉNÉRATION CARTE PRODUIT AVEC LIEN D'AFFILIATION ACHETEUR & TRADUCTION UI */
+/* GÉNÉRATION CARTE PRODUIT AVEC TRADUCTION ET DEVISE ADAPTÉE */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
 const siteBase = "https://marketplace.acheteur.dakproelite.com";
@@ -644,8 +682,10 @@ const image = product.image || product.imageUrl || product.photo || product.img 
 const video = product.video || product.videoUrl || "";
 const documentUrl = product.document || product.documentUrl || "";
 
-const safeName = escapeHTML(product.nom || product.title || product.name || "Article");
-const rawDesc = String(product.description || "");
+const productName = getLocalizedText(product, 'nom', currentLang) || product.title || product.name || "Article";
+const safeName = escapeHTML(productName);
+
+const rawDesc = String(getLocalizedText(product, 'description', currentLang) || product.description || "");
 const shortDesc = rawDesc.length>70 ? rawDesc.substring(0,70)+"..." : rawDesc;
 const safeShortDesc = escapeHTML(shortDesc);
 
@@ -660,9 +700,8 @@ const discountPercent = Math.round(((priceVal-promoVal)/priceVal)*100);
 discountBadgeHTML = `<span class="badge-discount">-${discountPercent}%</span>`;
 }
 
-const displayPrice = hasPromo ? escapeHTML(promoVal) : escapeHTML(priceVal);
-const currencySymbol = "FCFA";
-const oldPriceHTML = hasPromo ? `<span class="price-old">${escapeHTML(priceVal)} ${currencySymbol}</span>` : "";
+const displayPrice = formatPrice(hasPromo ? promoVal : priceVal);
+const oldPriceHTML = hasPromo ? `<span class="price-old">${formatPrice(priceVal)}</span>` : "";
 
 const isVideo = Boolean(video) || /\.(mp4|webm|ogg)(\?|$)/i.test(image);
 const mediaSrc = video || image;
@@ -692,7 +731,7 @@ ${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : `
 </div>
 <div>
 <div class="price-container">
-<span class="price">${displayPrice} ${currencySymbol}</span>
+<span class="price">${displayPrice}</span>
 ${oldPriceHTML}
 </div>
 <div class="card-actions-row">
@@ -764,7 +803,7 @@ let currentQty = 1;
 if(snapshot.exists()){ currentQty = parseInt(snapshot.val().quantite || 0, 10)+1; }
 
 const unitPrice = parseFloat(product.prixPromo || product.prix || product.price || 0);
-const nameVal = product.nom || product.title || product.name || "Produit";
+const nameVal = getLocalizedText(product, 'nom', currentLang) || product.title || product.name || "Produit";
 const imgVal = product.image || product.imageUrl || product.photo || "";
 const totalPrice = parseFloat((currentQty * unitPrice).toFixed(2));
 
@@ -804,17 +843,19 @@ const priceVal = parseFloat(product.prix || product.price || 0);
 const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : null;
 const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
 const effectivePrice = hasPromo ? promoVal : priceVal;
+const productName = getLocalizedText(product, 'nom', currentLang) || product.title || "Article";
+const productDesc = getLocalizedText(product, 'description', currentLang) || product.description || "";
 
 modalContainer.innerHTML = `
 <div class="modal-overlay">
 <div class="modal-content">
 <img src="${escapeAttribute(product.image || product.imageUrl || "")}" alt="Produit" style="width:100%;height:auto;max-height:220px;object-fit:contain;background:#080b10;border-radius:10px;margin-bottom:12px;">
-<h2 style="color:var(--gold);margin-bottom:8px;font-size:18px;">${escapeHTML(product.nom || product.title || "Article")}</h2>
+<h2 style="color:var(--gold);margin-bottom:8px;font-size:18px;">${escapeHTML(productName)}</h2>
 <div class="price-container" style="margin-bottom:12px;">
-<span class="price" style="font-size:18px;">${effectivePrice} FCFA</span>
-${hasPromo ? `<span class="price-old">${priceVal} FCFA</span>` : ""}
+<span class="price" style="font-size:18px;">${formatPrice(effectivePrice)}</span>
+${hasPromo ? `<span class="price-old">${formatPrice(priceVal)}</span>` : ""}
 </div>
-<p style="color:#ccc;font-size:13px;line-height:1.5;margin-bottom:15px;">${escapeHTML(product.description || "")}</p>
+<p style="color:#ccc;font-size:13px;line-height:1.5;margin-bottom:15px;">${escapeHTML(productDesc)}</p>
 <div style="display:flex;gap:10px;">
 <button class="btn-action btn-cart" id="btnModalAddToCart" style="padding:10px;">${t.modalBuy}</button>
 <button class="btn-action" id="btnModalClose" style="background:#222;color:#fff;">${t.modalClose}</button>
@@ -845,8 +886,8 @@ track.innerHTML = banners.map(banner=>`
 <div class="banner-slide">
 <img src="${escapeAttribute(banner.image || "")}" alt="Publicité" loading="lazy">
 <div class="banner-content">
-${banner.titre ? `<h3>${escapeHTML(banner.titre)}</h3>` : ""}
-${banner.description ? `<p>${escapeHTML(banner.description)}</p>` : ""}
+${banner.titre ? `<h3>${escapeHTML(getLocalizedText(banner, 'titre', currentLang))}</h3>` : ""}
+${banner.description ? `<p>${escapeHTML(getLocalizedText(banner, 'description', currentLang))}</p>` : ""}
 </div>
 </div>
 `).join("");
@@ -879,15 +920,24 @@ if(autoPlay){ clearInterval(autoPlay); autoPlay=null; e.target.textContent="▶"
 else{ autoPlay=setInterval(()=>{ currentIndex=(currentIndex+1)%totalSlides; updateSlide(); },4000); e.target.textContent="⏸"; }
 });
 
+function applyAnnouncement(data) {
+const title = document.getElementById("fayaBuzzTitle");
+const text = document.getElementById("fayaBuzzText");
+if(!title || !text) return;
+if(!data || data.actif===false) return;
+
+const localizedTitle = getLocalizedText(data, 'titre', currentLang) || data.titre || translations[currentLang].officialAnnouncement;
+const localizedText = getLocalizedText(data, 'texte', currentLang) || getLocalizedText(data, 'text', currentLang) || data.texte || data.text || "";
+
+title.textContent = localizedTitle;
+text.textContent = localizedText;
+}
+
 function loadAnnouncement(){
 onValue(ref(db, "annonces/faya_buzz"), snapshot=>{
 const data = snapshot.val();
-const title = document.getElementById("fayaBuzzTitle");
-const text = document.getElementById("fayaBuzzText");
-if(!title || !text)return;
-if(!data || data.actif===false)return;
-title.textContent = data.titre || "⚡ Annonce Officielle";
-text.textContent = data.texte || data.text || "";
+announcementDataCache = data;
+applyAnnouncement(data);
 });
 }
 
