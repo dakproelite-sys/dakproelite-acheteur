@@ -53,7 +53,7 @@ background:linear-gradient(to bottom,#131921,#050505);
 border-bottom:2px solid var(--gold);
 }
 
-/* LOGO FIXE & GRAVÉ (STABLE & INSTANTANÉ) */
+/* LOGO FIXE & GRAVÉ */
 .logo-container{
 width:64px;height:64px;min-width:64px;min-height:64px;flex:0 0 64px;
 border-radius:50%;border:2px solid var(--gold);overflow:hidden;
@@ -129,7 +129,7 @@ background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-size:12
 }
 .cat-btn.active{background:var(--gold);color:#000;font-weight:700;}
 
-/* SECTIONS STYLE AMAZON (PANNEAUX DE ROULAGE INFINI) */
+/* SECTIONS STYLE AMAZON */
 .amazon-section{
 width:96%;max-width:1800px;margin:15px auto;padding:16px;background:#ffffff;
 border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);
@@ -155,7 +155,7 @@ box-shadow:0 4px 15px rgba(0,0,0,0.1);
 @media(min-width:1001px){.products{grid-template-columns:repeat(6,1fr);gap:20px;padding:24px;}}
 @media(min-width:1651px){.products{grid-template-columns:repeat(8,1fr);gap:20px;}}
 
-/* CARTE PRODUIT (UNIVERSELLE GRILLE & CARROUSEL) */
+/* CARTE PRODUIT */
 .card{
 position:relative;display:flex;flex-direction:column;justify-content:space-between;
 width:100%;min-width:170px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;
@@ -213,7 +213,7 @@ text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:c
 .footer-column li{margin-bottom:8px;}
 .footer-column a{color:#aaa;text-decoration:none;}
 
-/* SÉLECTEUR DE LANGUE STYLE AMAZON */
+/* SÉLECTEUR DE LANGUE */
 .footer-language-container{
 display:flex;justify-content:center;align-items:center;padding:15px;
 background:rgba(0,0,0,0.5);border-top:1px solid #222;border-bottom:1px solid #222;position:relative;
@@ -279,28 +279,28 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 </div>
 
 <!-- ===================================================== -->
-<!-- PANNEAUX DE ROULAGE STYLE AMAZON (POUR 1000+ PRODUITS) -->
+<!-- PANNEAUX DE ROULAGE STYLE AMAZON (ANTI-DOUBLONS INTÉGRÉ) -->
 <!-- ===================================================== -->
 
-<!-- PANNEAU 1 : PRODUITS SPONSORISÉS / RECOMMANDÉS (Défilement infini horizontal) -->
-<section class="amazon-section">
-  <div class="amazon-section-title">
-    <span data-i18n="sponsoredTitle">⭐ Produits recommandés &amp; Sponsorisés</span>
-    <small style="color:#666; font-weight:400; font-size:11px;" data-i18n="swipeHint">Glissez pour voir plus →</small>
-  </div>
-  <div class="amazon-carousel" id="carouselRelated">
-    <!-- Généré dynamiquement -->
-  </div>
-</section>
-
-<!-- PANNEAU 2 : OFFRES FLASH & PROMOTIONS VEDETTES -->
+<!-- PANNEAU 1 : OFFRES FLASH & PROMOTIONS DU JOUR -->
 <section class="amazon-section">
   <div class="amazon-section-title">
     <span data-i18n="flashOffers">🔥 Offres Flash &amp; Promos du jour</span>
     <small style="color:#666; font-weight:400; font-size:11px;" data-i18n="swipeHint">Glissez pour voir plus →</small>
   </div>
   <div class="amazon-carousel" id="carouselPromos">
-    <!-- Généré dynamiquement -->
+    <!-- Généré dynamiquement sans doublon -->
+  </div>
+</section>
+
+<!-- PANNEAU 2 : PRODUITS RECOMMANDÉS & SPONSORISÉS -->
+<section class="amazon-section">
+  <div class="amazon-section-title">
+    <span data-i18n="sponsoredTitle">⭐ Produits recommandés &amp; Sponsorisés</span>
+    <small style="color:#666; font-weight:400; font-size:11px;" data-i18n="swipeHint">Glissez pour voir plus →</small>
+  </div>
+  <div class="amazon-carousel" id="carouselRelated">
+    <!-- Généré dynamiquement sans doublon -->
   </div>
 </section>
 
@@ -894,7 +894,7 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* GÉNÉRATEUR DE CARTE UNIVERSEL (POUR GRILLE ET CARROUSELS) */
+/* GÉNÉRATEUR DE CARTE UNIVERSEL */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
 const siteBase = "https://marketplace.acheteur.dakproelite.com";
@@ -969,7 +969,7 @@ ${oldPriceHTML}
 `;
 }
 
-/* RENDU DES CARROUSELS INFINIS (STYLE AMAZON) */
+/* RENDU DES CARROUSELS AVEC LOGIQUE ANTI-DOUBLONS STRICTE */
 function renderCarousels(allProducts){
 const containerRelated = document.getElementById("carouselRelated");
 const containerPromos = document.getElementById("carouselPromos");
@@ -977,14 +977,14 @@ const uid = siteContext.currentUser?.uid || "";
 
 if(!allProducts || allProducts.length === 0) return;
 
-// 1. Carrousel Recommandés (Prend jusqu'à 50 articles pour fluidité maximale)
-if(containerRelated){
-containerRelated.innerHTML = allProducts.slice(0, 50).map(product => generateCardHTML(product, uid)).join("");
-attachCardEvents(containerRelated);
-}
-
-// 2. Carrousel Promos / Offres Flash (Filtré sur les articles avec promo ou boost)
+// 1. Isolation rigoureuse des promos et produits boostés
 const promoProducts = allProducts.filter(p => p.prixPromo || p.boost);
+const promoIds = new Set(promoProducts.map(p => p.id));
+
+// 2. Isolation des produits restants pour la section Recommandés (sans doublon avec les promos)
+const nonPromoProducts = allProducts.filter(p => !promoIds.has(p.id));
+
+// Rendu du carrousel des Offres Flash & Promos
 if(containerPromos){
 if(promoProducts.length > 0){
 containerPromos.innerHTML = promoProducts.map(product => generateCardHTML(product, uid)).join("");
@@ -992,6 +992,13 @@ attachCardEvents(containerPromos);
 } else {
 containerPromos.innerHTML = `<div class="empty-message" style="padding:10px;">${translations[currentLang].emptyCategory}</div>`;
 }
+}
+
+// Rendu du carrousel Recommandés & Sponsorisés (Anti-doublon garanti)
+if(containerRelated){
+const listToDisplay = nonPromoProducts.length > 0 ? nonPromoProducts : allProducts;
+containerRelated.innerHTML = listToDisplay.slice(0, 50).map(product => generateCardHTML(product, uid)).join("");
+attachCardEvents(containerRelated);
 }
 }
 
