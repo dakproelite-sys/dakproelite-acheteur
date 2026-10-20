@@ -64,7 +64,7 @@ export function init(container, db, auth, userId) {
             }
             .catalog-title { color: #d4af37; font-size: 18px; font-weight: bold; }
             
-            /* Style du sélecteur de langue et de devises */
+            /* Style du sélecteur de langue et de devises avec bouton déroulant */
             .header-lang-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
             .header-lang-btn {
                 background: #12161f; border: 1px solid #d4af37; color: #d4af37; padding: 8px 12px;
@@ -155,6 +155,7 @@ export function init(container, db, auth, userId) {
         <div class="catalog-header">
             <div class="catalog-title" id="catalogTitleLabel">${t.title}</div>
             
+            <!-- Sélecteur de langue et de devises -->
             <div class="header-lang-wrapper">
                 <button type="button" class="header-lang-btn" id="headerLangBtn">
                     🌐 <span id="currentLangLabel">${t.name} (${t.currency})</span> ▾
@@ -180,6 +181,7 @@ export function init(container, db, auth, userId) {
         <div id="productModalContainer"></div>
     `;
 
+    // Gestion de l'ouverture/fermeture du menu déroulant de langue et devises
     const mainBtn = document.getElementById("headerLangBtn");
     const menu = document.getElementById("headerLangMenu");
 
@@ -358,7 +360,7 @@ async function afficherDetailsProduit(productId, db, userId) {
                         <p style="color:#ccc; font-size:12px; line-height:1.4; white-space:pre-line; max-height:100px; overflow-y:auto;">${escapeHTML(description)}</p>
                     </div>
 
-                    <!-- Contrôle de quantité -->
+                    <!-- Contrôle de quantité dynamique -->
                     <div class="qty-box">
                         <span style="font-size: 12px; color: #aaa; flex:1;">${t.qtyLabel}</span>
                         <button class="btn-qty" id="btn-minus">-</button>
@@ -366,7 +368,7 @@ async function afficherDetailsProduit(productId, db, userId) {
                         <button class="btn-qty" id="btn-plus">+</button>
                     </div>
 
-                    <!-- Récapitulatif dynamique -->
+                    <!-- Récapitulatif dynamique avec calcul du montant réel -->
                     <div style="font-size: 13px; color: #fff; margin-bottom: 12px; display:flex; justify-content:space-between; background:#1e293b; padding:10px; border-radius:8px;">
                         <span>${t.totalLabel}</span>
                         <strong style="color: #22c55e; font-size: 15px;" id="total-display">${formatCurrency(totalAmount)}</strong>
@@ -380,7 +382,6 @@ async function afficherDetailsProduit(productId, db, userId) {
             </div>
         `;
 
-        // Événements de la modale
         document.getElementById("btn-plus")?.addEventListener("click", () => {
             currentQty++;
             updateModalContent();
@@ -398,7 +399,7 @@ async function afficherDetailsProduit(productId, db, userId) {
         });
 
         document.getElementById("btn-modal-buy")?.addEventListener("click", async () => {
-            // Vérification de connexion obligatoire pour le paiement direct
+            // Vérification de connexion : si non connecté, redirection vers la page de profil/connexion
             if (!userId || !auth.currentUser) {
                 alert("Veuillez vous connecter ou vous inscrire pour effectuer votre paiement.");
                 window.location.href = "profil-acheteur.html";
@@ -427,7 +428,7 @@ async function afficherDetailsProduit(productId, db, userId) {
                 await update(ref(db), updates);
                 localStorage.setItem("dakpro_cached_cart_total", finalTotal.toString());
 
-                // Redirection instantanée vers le check-out paiement
+                // Redirection directe vers le module de paiement
                 if (typeof window.chargerModule === 'function') {
                     window.chargerModule('paiement');
                 } else {
