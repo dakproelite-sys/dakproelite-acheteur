@@ -4,20 +4,23 @@ import { ref, onValue, get, set, update } from "https://www.gstatic.com/firebase
    DICTIONNAIRE DE TRADUCTION & TAUX DE DEVISES INTERNES
    ===================================================== */
 const translations = {
-    fr: { name: "Français", currency: "FCFA", rate: 1, title: "🛍️ Catalogue des Produits DAKPROÉLITE", viewBtn: "👁️ Aperçu", shareBtn: "🔗 Lien Affiliation", cartBtn: "🛒 Ajouter au Panier", modalBuy: "💳 SHOP NOW (Acheter)", modalClose: "Fermer", loading: "Chargement des produits en cours...", empty: "Aucun produit disponible pour le moment.", descTitle: "Description du produit :" },
-    en: { name: "English", currency: "USD", rate: 1 / 600, title: "🛍️ DAKPROÉLITE Product Catalog", viewBtn: "👁️ Preview", shareBtn: "🔗 Affiliate Link", cartBtn: "🛒 Add to Cart", modalBuy: "💳 SHOP NOW (Buy)", modalClose: "Close", loading: "Loading products...", empty: "No products available at the moment.", descTitle: "Product Description:" },
-    es: { name: "Español", currency: "EUR", rate: 1 / 655.957, title: "🛍️ Catálogo de Productos DAKPROÉLITE", viewBtn: "👁️ Vista previa", shareBtn: "🔗 Enlace de Afiliado", cartBtn: "🛒 Añadir al Carrito", modalBuy: "💳 SHOP NOW (Comprar)", modalClose: "Cerrar", loading: "Cargando productos...", empty: "No hay productos disponibles por el momento.", descTitle: "Descripción del producto:" },
-    zh: { name: "中文", currency: "CNY", rate: 1 / 85, title: "🛍️ DAKPROÉLITE 产品目录", viewBtn: "👁️ 预览", shareBtn: "🔗 推广链接", cartBtn: "🛒 加入购物车", modalBuy: "💳 立即购买", modalClose: "关闭", loading: "正在加载产品...", empty: "暂无可用产品。", descTitle: "产品描述：" },
-    bn: { name: "বাংলা", currency: "BDT", rate: 1 / 5, title: "🛍️ DAKPROÉLITE পণ্য ক্যাটালগ", viewBtn: "👁️ পূর্বরূপ", shareBtn: "🔗 অ্যাফিলিয়েট লিঙ্ক", cartBtn: "🛒 কার্টে যোগ করুন", modalBuy: "💳 এখনই কিনুন", modalClose: "বন্ধ করুন", loading: "পণ্য লোড হচ্ছে...", empty: "এই মুহূর্তে কোনো পণ্য উপলব্ধ নেই。", descTitle: "পণ্যের বিবরণ:" },
-    yo: { name: "Yorùbá", currency: "NGN", rate: 1.2, title: "🛍️ Àwọn Ọja DAKPROÉLITE", viewBtn: "👁️ Wo Ṣaaju", shareBtn: "🔗 Ọna Aṣoju", cartBtn: "🛒 Fi Kun Kẹkẹ", modalBuy: "💳 Ra Bayi", modalClose: "Pade", loading: "N ṣe agbega awọn ọja...", empty: "Ko si ọja ti o wa ni akoko yii.", descTitle: "Apejuwe Ọja:" },
-    fon: { name: "Fɔ̀ngbè", currency: "FCFA", rate: 1, title: "🛍️ DAKPROÉLITE Nǔ tɛnmɛ bǐ", viewBtn: "👁️ Kpé nǔ", shareBtn: "🔗 Alɔgɔ tɛnmɛ", cartBtn: "🛒 Dó tɛnmɛ", modalBuy: "💳 Hò Nǔ", modalClose: "Sɔ́", loading: "E ɖò nǔ lɛ ɖè wɛ...", empty: "Nǔ ɖebǔ mɛ ɖò tɛnmɛ nɛ ɔ mɛ ǎ.", descTitle: "Nǔ e ɖò nǔ tɛnmɛ ɔ mɛ:" }
+    fr: { name: "Français", currency: "FCFA", rate: 1, title: "🛍️ Catalogue des Produits DAKPROÉLITE", viewBtn: "👁️ Aperçu", shareBtn: "🔗 Lien Affiliation", modalBuy: "💳 Payer Directement", modalClose: "Fermer", loading: "Chargement des produits en cours...", empty: "Aucun produit disponible pour le moment.", descTitle: "Description du produit :", qtyLabel: "Quantité :", unitPriceLabel: "Prix unitaire :", totalLabel: "Total Général :" },
+    en: { name: "English", currency: "USD", rate: 1 / 600, title: "🛍️ DAKPROÉLITE Product Catalog", viewBtn: "👁️ Preview", shareBtn: "🔗 Affiliate Link", modalBuy: "💳 Pay Directly", modalClose: "Close", loading: "Loading products...", empty: "No products available at the moment.", descTitle: "Product Description:", qtyLabel: "Quantity:", unitPriceLabel: "Unit Price:", totalLabel: "Grand Total:" },
+    es: { name: "Español", currency: "EUR", rate: 1 / 655.957, title: "🛍️ Catálogo de Productos DAKPROÉLITE", viewBtn: "👁️ Vista previa", shareBtn: "🔗 Enlace de Afiliado", modalBuy: "💳 Pagar Directamente", modalClose: "Cerrar", loading: "Cargando productos...", empty: "No hay productos disponibles por el momento.", descTitle: "Descripción del producto:", qtyLabel: "Cantidad:", unitPriceLabel: "Precio unitario:", totalLabel: "Total General:" },
+    zh: { name: "中文", currency: "CNY", rate: 1 / 85, title: "🛍️ DAKPROÉLITE 产品目录", viewBtn: "👁️ 预览", shareBtn: "🔗 推广链接", modalBuy: "💳 直接支付", modalClose: "关闭", loading: "正在加载产品...", empty: "暂无可用产品。", descTitle: "产品描述：", qtyLabel: "数量：", unitPriceLabel: "单价：", totalLabel: "总计：" },
+    bn: { name: "বাংলা", currency: "BDT", rate: 1 / 5, title: "🛍️ DAKPROÉLITE পণ্য ক্যাটালগ", viewBtn: "👁️ পূর্বরূপ", shareBtn: "🔗 অ্যাফিলিয়েট লিঙ্ক", modalBuy: "💳 সরাসরি পেমেন্ট করুন", modalClose: "বন্ধ করুন", loading: "পণ্য লোড হচ্ছে...", empty: "এই মুহূর্তে কোনো পণ্য উপলব্ধ নেই。", descTitle: "পণ্যের বিবরণ:", qtyLabel: "পরিমাণ:", unitPriceLabel: "একক মূল্য:", totalLabel: "সর্বমোট:" },
+    yo: { name: "Yorùbá", currency: "NGN", rate: 1.2, title: "🛍️ Àwọn Ọja DAKPROÉLITE", viewBtn: "👁️ Wo Ṣaaju", shareBtn: "🔗 Ọna Aṣoju", modalBuy: "💳 San Tàuntan", modalClose: "Pade", loading: "N ṣe agbega awọn ọja...", empty: "Ko si ọja ti o wa ni akoko yii.", descTitle: "Apejuwe Ọja:", qtyLabel: "Opoiye:", unitPriceLabel: "Iye Ọkan:", totalLabel: "Apapọ Gbogbogbo:" },
+    fon: { name: "Fɔ̀ngbè", currency: "FCFA", rate: 1, title: "🛍️ DAKPROÉLITE Nǔ tɛnmɛ bǐ", viewBtn: "👁️ Kpé nǔ", shareBtn: "🔗 Alɔgɔ tɛnmɛ", modalBuy: "💳 Hò Gbadanu", modalClose: "Sɔ́", loading: "E ɖò nǔ lɛ ɖè wɛ...", empty: "Nǔ ɖebǔ mɛ ɖò tɛnmɛ nɛ ɔ mɛ ǎ.", descTitle: "Nǔ e ɖò nǔ tɛnmɛ ɔ mɛ:", qtyLabel: "Sɔ́xwé:", unitPriceLabel: "Akwɛ ɖokpo:", totalLabel: "Akwɛ bǐ:" }
 };
 
 let currentLang = localStorage.getItem("dakpro_lang") || "fr";
 
 function formatCurrency(val) {
+    const numericVal = Number(val);
+    if (isNaN(numericVal)) return `0 ${translations[currentLang]?.currency || 'FCFA'}`;
+
     const t = translations[currentLang] || translations['fr'];
-    let converted = Number(val || 0) * t.rate;
+    let converted = numericVal * t.rate;
     if (t.currency === "USD" || t.currency === "EUR" || t.currency === "BDT" || t.currency === "NGN") {
         converted = converted.toFixed(2);
     } else {
@@ -60,17 +63,27 @@ export function init(container, db, auth, userId) {
                 gap: 10px;
             }
             .catalog-title { color: #d4af37; font-size: 18px; font-weight: bold; }
-            .catalog-lang-select {
-                background: #12161f;
-                color: #d4af37;
-                border: 1px solid #d4af37;
-                padding: 6px 12px;
-                border-radius: 20px;
-                font-size: 11px;
-                font-weight: 700;
-                cursor: pointer;
-                outline: none;
+            
+            /* Style du sélecteur de langue et de devises */
+            .header-lang-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
+            .header-lang-btn {
+                background: #12161f; border: 1px solid #d4af37; color: #d4af37; padding: 8px 12px;
+                border-radius: 20px; font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;
+                transition: background .2s;
             }
+            .header-lang-btn:hover { background: #253041; }
+            .header-lang-menu {
+                display: none; position: absolute; top: 100%; right: 0; margin-top: 8px;
+                background: #12161f; border: 1px solid #d4af37; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.8); z-index: 6000;
+                min-width: 170px; max-height: 280px; overflow-y: auto;
+            }
+            .header-lang-menu.show { display: block; }
+            .header-lang-option {
+                width: 100%; padding: 10px 14px; background: transparent; border: none; color: #fff;
+                text-align: left; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            }
+            .header-lang-option:hover { background: #d4af37; color: #000; font-weight: 700; }
+
             .products-grid {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
@@ -116,19 +129,14 @@ export function init(container, db, auth, userId) {
             .card-actions { display: flex; gap: 6px; flex-direction: column; margin-top: auto; }
             .btn-view {
                 width: 100%; background: #12161f; color: #d4af37; border: 1px solid #d4af37;
-                padding: 7px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 11px; transition: 0.2s;
+                padding: 8px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 11px; transition: 0.2s;
             }
             .btn-view:hover { background: #d4af37; color: #000; }
             .btn-share {
                 width: 100%; background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8;
-                padding: 6px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 11px; transition: 0.2s;
+                padding: 8px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 11px; transition: 0.2s;
             }
             .btn-share:hover { background: #38bdf8; color: #000; }
-            .btn-order {
-                width: 100%; background: #22c55e; color: #fff; border: none;
-                padding: 8px; border-radius: 6px; font-weight: 800; cursor: pointer; font-size: 11px; transition: 0.2s;
-            }
-            .btn-order:hover { background: #16a34a; }
 
             .modal-overlay {
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -139,20 +147,27 @@ export function init(container, db, auth, userId) {
                 background: #0a0d14; border: 1px solid #d4af37; border-radius: 14px;
                 padding: 20px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto;
             }
+            .qty-box { display: flex; align-items: center; gap: 10px; margin: 12px 0; background: #12161f; padding: 8px 12px; border-radius: 8px; border: 1px solid #333; }
+            .btn-qty { width: 30px; height: 30px; background: #d4af37; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+            .qty-val { font-size: 16px; font-weight: bold; color: #fff; min-width: 30px; text-align: center; }
         </style>
 
         <div class="catalog-header">
             <div class="catalog-title" id="catalogTitleLabel">${t.title}</div>
-            <div>
-                <select id="catalogLangSelector" class="catalog-lang-select">
-                    <option value="fr" ${currentLang==='fr'?'selected':''}>🇫🇷 Français (FCFA)</option>
-                    <option value="en" ${currentLang==='en'?'selected':''}>🇬🇧 English (USD)</option>
-                    <option value="es" ${currentLang==='es'?'selected':''}>🇪🇸 Español (EUR)</option>
-                    <option value="zh" ${currentLang==='zh'?'selected':''}>🇨🇳 中文 (CNY)</option>
-                    <option value="bn" ${currentLang==='bn'?'selected':''}>🇧🇩 বাংলা (BDT)</option>
-                    <option value="yo" ${currentLang==='yo'?'selected':''}>🇳🇬 Yorùbá (NGN)</option>
-                    <option value="fon" ${currentLang==='fon'?'selected':''}>🇧🇯 Fɔ̀ngbè (FCFA)</option>
-                </select>
+            
+            <div class="header-lang-wrapper">
+                <button type="button" class="header-lang-btn" id="headerLangBtn">
+                    🌐 <span id="currentLangLabel">${t.name} (${t.currency})</span> ▾
+                </button>
+                <div class="header-lang-menu" id="headerLangMenu">
+                    <button type="button" class="header-lang-option" data-lang="fr">🇫🇷 Français (FCFA)</button>
+                    <button type="button" class="header-lang-option" data-lang="en">🇬🇧 English (USD)</button>
+                    <button type="button" class="header-lang-option" data-lang="es">🇪🇸 Español (EUR)</button>
+                    <button type="button" class="header-lang-option" data-lang="zh">🇨🇳 中文 (CNY)</button>
+                    <button type="button" class="header-lang-option" data-lang="bn">🇧🇩 বাংলা (BDT)</button>
+                    <button type="button" class="header-lang-option" data-lang="yo">🇳🇬 Yorùbá (NGN)</button>
+                    <button type="button" class="header-lang-option" data-lang="fon">🇧🇯 Fɔ̀ngbè (FCFA)</button>
+                </div>
             </div>
         </div>
 
@@ -165,17 +180,34 @@ export function init(container, db, auth, userId) {
         <div id="productModalContainer"></div>
     `;
 
-    // Écouteur de changement de langue / devise instantané
-    const langSelector = document.getElementById("catalogLangSelector");
-    if (langSelector) {
-        langSelector.addEventListener("change", (e) => {
-            currentLang = e.target.value;
+    const mainBtn = document.getElementById("headerLangBtn");
+    const menu = document.getElementById("headerLangMenu");
+
+    mainBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", () => {
+        menu?.classList.remove("show");
+    });
+
+    document.querySelectorAll(".header-lang-option").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const selectedLang = btn.dataset.lang;
+            currentLang = selectedLang;
             localStorage.setItem("dakpro_lang", currentLang);
+            menu?.classList.remove("show");
+
+            const activeTr = translations[currentLang];
+            const langLabel = document.getElementById("currentLangLabel");
+            if (langLabel) langLabel.textContent = `${activeTr.name} (${activeTr.currency})`;
+
             if (window._lastProductsSnapshot) {
                 renderProducts(window._lastProductsSnapshot, db, currentUid);
             }
         });
-    }
+    });
 
     const fallbackImage = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='190' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.5'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M21 16l-5-5-4 5-3-3-4 4'/><circle cx='8.5' cy='8.5' r='1.5'/></svg>";
 
@@ -254,7 +286,6 @@ export function init(container, db, auth, userId) {
                         <div class="card-actions">
                             <button class="btn-view" id="btn-view-${pubId}">${tr.viewBtn}</button>
                             <button class="btn-share" id="btn-share-${pubId}">${tr.shareBtn}</button>
-                            <button class="btn-order" id="btn-add-${pubId}">${tr.cartBtn}</button>
                         </div>
                     </div>
                 </div>
@@ -268,10 +299,6 @@ export function init(container, db, auth, userId) {
 
             card.querySelector(`#btn-share-${pubId}`)?.addEventListener("click", () => {
                 partagerLienAffilie(pubId, title, uid);
-            });
-
-            card.querySelector(`#btn-add-${pubId}`)?.addEventListener("click", () => {
-                ajouterAuPanierGS(pubId, dbInstance, uid);
             });
         });
     }
@@ -308,121 +335,110 @@ async function afficherDetailsProduit(productId, db, userId) {
     const fallbackImage = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='190' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='1.5'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M21 16l-5-5-4 5-3-3-4 4'/><circle cx='8.5' cy='8.5' r='1.5'/></svg>";
     const image = product.image || product.imageUrl || (Array.isArray(product.images) ? product.images[0] : fallbackImage);
 
+    let currentQty = 1;
     const t = translations[currentLang] || translations['fr'];
+
     const modalEl = document.getElementById("productModalContainer");
-    modalEl.innerHTML = `
-        <div class="modal-overlay">
-            <div class="modal-content">
-                <img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" style="width:100%; height:220px; object-fit:contain; background:#080b10; border-radius:10px; margin-bottom:12px; border:1px solid #333;" onerror="this.onerror=null; this.src='${fallbackImage}';">
-                <h2 style="color: #d4af37; margin-bottom: 8px; font-size: 18px;">${escapeHTML(title)}</h2>
-                
-                <div class="price-container" style="margin-bottom: 12px;">
-                    <span class="price-promo" style="font-size: 18px;">${formatCurrency(unitPrice)}</span>
-                    ${isPromo ? `<span class="price-normal" style="font-size: 13px;">${formatCurrency(prixNormal)}</span> <span class="badge-reduction">-${reduction}%</span>` : ''}
-                </div>
+    
+    function updateModalContent() {
+        const totalAmount = unitPrice * currentQty;
+        modalEl.innerHTML = `
+            <div class="modal-overlay">
+                <div class="modal-content">
+                    <img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" style="width:100%; height:200px; object-fit:contain; background:#080b10; border-radius:10px; margin-bottom:12px; border:1px solid #333;" onerror="this.onerror=null; this.src='${fallbackImage}';">
+                    <h2 style="color: #d4af37; margin-bottom: 6px; font-size: 16px;">${escapeHTML(title)}</h2>
+                    
+                    <div class="price-container" style="margin-bottom: 8px;">
+                        <span class="price-promo" style="font-size: 16px;">${formatCurrency(unitPrice)}</span>
+                        ${isPromo ? `<span class="price-normal" style="font-size: 12px;">${formatCurrency(prixNormal)}</span> <span class="badge-reduction">-${reduction}%</span>` : ''}
+                    </div>
 
-                <div style="background:#12161f; padding:12px; border-radius:8px; border:1px solid #222; margin-bottom:15px;">
-                    <h4 style="color:#fff; font-size:12px; margin-bottom:4px;">${t.descTitle}</h4>
-                    <p style="color:#ccc; font-size:13px; line-height:1.5; white-space:pre-line;">${escapeHTML(description)}</p>
-                </div>
+                    <div style="background:#12161f; padding:10px; border-radius:8px; border:1px solid #222; margin-bottom:12px;">
+                        <h4 style="color:#fff; font-size:11px; margin-bottom:4px;">${t.descTitle}</h4>
+                        <p style="color:#ccc; font-size:12px; line-height:1.4; white-space:pre-line; max-height:100px; overflow-y:auto;">${escapeHTML(description)}</p>
+                    </div>
 
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-order" id="btn-modal-add" style="flex:1;">${t.modalBuy}</button>
-                    <button class="btn-view" id="btn-modal-close" style="background: #222; color: #fff; border-color:#444;">${t.modalClose}</button>
+                    <!-- Contrôle de quantité -->
+                    <div class="qty-box">
+                        <span style="font-size: 12px; color: #aaa; flex:1;">${t.qtyLabel}</span>
+                        <button class="btn-qty" id="btn-minus">-</button>
+                        <span class="qty-val" id="qty-display">${currentQty}</span>
+                        <button class="btn-qty" id="btn-plus">+</button>
+                    </div>
+
+                    <!-- Récapitulatif dynamique -->
+                    <div style="font-size: 13px; color: #fff; margin-bottom: 12px; display:flex; justify-content:space-between; background:#1e293b; padding:10px; border-radius:8px;">
+                        <span>${t.totalLabel}</span>
+                        <strong style="color: #22c55e; font-size: 15px;" id="total-display">${formatCurrency(totalAmount)}</strong>
+                    </div>
+
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-order" id="btn-modal-buy" style="flex:1; padding: 10px; font-size: 13px;">${t.modalBuy}</button>
+                        <button class="btn-view" id="btn-modal-close" style="background: #222; color: #fff; border-color:#444; width:90px;">${t.modalClose}</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
 
-    document.getElementById("btn-modal-add")?.addEventListener("click", () => {
-        ajouterAuPanierGS(productId, db, userId);
-    });
+        // Événements de la modale
+        document.getElementById("btn-plus")?.addEventListener("click", () => {
+            currentQty++;
+            updateModalContent();
+        });
 
-    document.getElementById("btn-modal-close")?.addEventListener("click", () => {
-        modalEl.innerHTML = "";
-    });
-}
-
-async function ajouterAuPanierGS(productId, db, userId) {
-    if (!userId) {
-        alert("Veuillez vous connecter pour commander sur DAKPROÉLITE.");
-        window.location.href = "profil-acheteur.html";
-        return;
-    }
-
-    const btn = document.getElementById(`btn-add-${productId}`) || document.getElementById("btn-modal-add");
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = "✔ Ajouté !";
-        btn.style.background = "#22c55e";
-        btn.style.color = "#fff";
-    }
-
-    try {
-        const pubSnap = await get(ref(db, `publications/${productId}`));
-        if (!pubSnap.exists()) return alert("Produit introuvable.");
-
-        const product = pubSnap.val();
-        const prixNormal = parseFloat(product.prixNormal || product.prix || product.price || 0);
-        const prixPromo = parseFloat(product.prixPromo || product.promoPrice || 0);
-        const unitPrice = (prixPromo > 0 && prixPromo < prixNormal) ? prixPromo : prixNormal;
-        const title = product.nom || product.titre || product.title || "Produit DAKPROÉLITE";
-        const image = product.image || product.imageUrl || (Array.isArray(product.images) ? product.images[0] : "");
-        const t = translations[currentLang] || translations['fr'];
-
-        const gsCartItemRef = ref(db, `users/${userId}/gs/cart/${productId}`);
-        const currentItemSnap = await get(gsCartItemRef);
-
-        let newQty = 1;
-        if (currentItemSnap.exists()) {
-            newQty = parseInt(currentItemSnap.val().quantite || currentItemSnap.val().qty || 1, 10) + 1;
-        }
-
-        const itemPayload = {
-            id: productId,
-            nom: title,
-            quantite: newQty,
-            prixUnitaire: unitPrice,
-            total: unitPrice * newQty,
-            image: image,
-            devise: t.currency,
-            dateAjout: Date.now()
-        };
-
-        const updates = {};
-        updates[`users/${userId}/gs/cart/${productId}`] = itemPayload;
-        updates[`users/${userId}/panier/${productId}`] = itemPayload;
-
-        await update(ref(db), updates);
-
-        const allGsCartSnap = await get(ref(db, `users/${userId}/gs/cart`));
-        let globalTotal = 0;
-        if (allGsCartSnap.exists()) {
-            const items = allGsCartSnap.val();
-            Object.values(items).forEach(item => {
-                globalTotal += parseFloat(item.total || 0);
-            });
-        }
-
-        await set(ref(db, `users/${userId}/gs/total`), globalTotal);
-        localStorage.setItem("dakpro_cached_cart_total", globalTotal.toString());
-
-        setTimeout(() => {
-            if (typeof window.chargerModule === 'function') {
-                window.chargerModule('paiement');
-            } else {
-                window.location.href = "paiement.html";
+        document.getElementById("btn-minus")?.addEventListener("click", () => {
+            if (currentQty > 1) {
+                currentQty--;
+                updateModalContent();
             }
-        }, 500);
+        });
 
-    } catch (error) {
-        console.error("Erreur lors de l'ajout au panier :", error);
-        alert("❌ Une erreur est survenue lors de l'ajout au panier.");
-        if (btn) {
-            btn.disabled = false;
-            btn.textContent = translations[currentLang].cartBtn;
-            btn.style.background = "#22c55e";
-            btn.style.color = "#fff";
-        }
+        document.getElementById("btn-modal-close")?.addEventListener("click", () => {
+            modalEl.innerHTML = "";
+        });
+
+        document.getElementById("btn-modal-buy")?.addEventListener("click", async () => {
+            // Vérification de connexion obligatoire pour le paiement direct
+            if (!userId || !auth.currentUser) {
+                alert("Veuillez vous connecter ou vous inscrire pour effectuer votre paiement.");
+                window.location.href = "profil-acheteur.html";
+                return;
+            }
+
+            const finalTotal = unitPrice * currentQty;
+
+            const itemPayload = {
+                id: productId,
+                nom: title,
+                quantite: currentQty,
+                prixUnitaire: unitPrice,
+                total: finalTotal,
+                image: image,
+                devise: t.currency,
+                dateAjout: Date.now()
+            };
+
+            try {
+                const updates = {};
+                updates[`users/${userId}/gs/cart/${productId}`] = itemPayload;
+                updates[`users/${userId}/panier/${productId}`] = itemPayload;
+                updates[`users/${userId}/gs/total`] = finalTotal;
+
+                await update(ref(db), updates);
+                localStorage.setItem("dakpro_cached_cart_total", finalTotal.toString());
+
+                // Redirection instantanée vers le check-out paiement
+                if (typeof window.chargerModule === 'function') {
+                    window.chargerModule('paiement');
+                } else {
+                    window.location.href = "paiement.html";
+                }
+            } catch (error) {
+                console.error("Erreur lors de la préparation du paiement :", error);
+                alert("❌ Une erreur est survenue. Veuillez réessayer.");
+            }
+        });
     }
+
+    updateModalContent();
 }
