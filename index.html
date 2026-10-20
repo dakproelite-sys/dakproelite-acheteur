@@ -53,17 +53,19 @@ background:linear-gradient(to bottom,#131921,#050505);
 border-bottom:2px solid var(--gold);
 }
 
-/* LOGO FIXE & GRAVÉ */
+/* LOGO FIXE, GRAVÉ ET INDESTRUCTIBLE (ZÉRO MOUVEMENT / ZÉRO ZOOM) */
 .logo-container{
-width:64px;height:64px;min-width:64px;min-height:64px;flex:0 0 64px;
-border-radius:50%;border:2px solid var(--gold);overflow:hidden;
-display:flex;align-items:center;justify-content:center;background:#000;cursor:pointer;
-box-shadow:inset 0 0 0 3px rgba(0,0,0,.95),inset 0 0 14px rgba(0,0,0,1),0 3px 8px rgba(0,0,0,.9);
-user-select:none;pointer-events:none;
+width:64px !important;height:64px !important;min-width:64px !important;min-height:64px !important;flex:0 0 64px !important;
+border-radius:50% !important;border:2px solid var(--gold) !important;overflow:hidden !important;
+display:flex !important;align-items:center !important;justify-content:center !important;background:#000 !important;
+box-shadow:inset 0 0 0 3px rgba(0,0,0,.95),inset 0 0 14px rgba(0,0,0,1),0 3px 8px rgba(0,0,0,.9) !important;
+user-select:none !important;pointer-events:none !important;-webkit-user-select:none !important;
+transform:none !important;transition:none !important;
 }
 .logo{
-display:block;width:100%;height:100%;max-width:100%;max-height:100%;
-object-fit:contain;object-position:center;background:#000;
+display:block !important;width:100% !important;height:100% !important;max-width:100% !important;max-height:100% !important;
+object-fit:contain !important;object-position:center !important;background:#000 !important;
+transform:none !important;transition:none !important;
 }
 
 /* RECHERCHE */
@@ -95,7 +97,7 @@ background:#333;border:1px solid var(--gold);border-radius:10px;text-align:cente
 .banner-container{
 display:none;position:relative;width:94%;max-width:1400px;margin:15px auto;
 overflow:hidden;border:1px solid var(--gold);border-radius:15px;background:var(--soft-dark);
-box-shadow:0 5px 20px rgba(212,175,55,.15);
+box-shadow:0 5px 20px rgba(212,175,55,.15);min-height:220px;
 }
 .banner-track{display:flex;width:100%;transition:transform .5s ease;}
 .banner-slide{position:relative;min-width:100%;}
@@ -109,10 +111,10 @@ box-shadow:0 5px 20px rgba(212,175,55,.15);
 .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;}
 .dot.active{background:var(--gold);}
 
-/* BARRE DE NAVIGATION (MÉTIERS + CATÉGORIES) */
+/* BARRE DE NAVIGATION (MÉTIERS + CATÉGORIES VISUELLES) */
 .navigation-bar-container{
 width:100%;padding:10px 15px;display:flex;gap:12px;align-items:center;
-background:rgba(11,14,19,0.8);border-bottom:1px solid rgba(212,175,55,0.15);overflow-x:auto;scrollbar-width:none;
+background:rgba(11,14,19,0.85);border-bottom:1px solid rgba(212,175,55,0.2);overflow-x:auto;scrollbar-width:none;
 }
 .navigation-bar-container::-webkit-scrollbar{display:none;}
 .btn-metiers-special{
@@ -124,10 +126,12 @@ display:inline-flex;align-items:center;gap:6px;box-shadow:0 0 12px rgba(212,175,
 .cat-scroll{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;align-items:center;}
 .cat-scroll::-webkit-scrollbar{display:none;}
 .cat-btn{
-flex:0 0 auto;padding:9px 17px;border:1px solid var(--gold);border-radius:22px;
-background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-size:12px;transition:background .2s, color .2s;
+flex:0 0 auto;padding:8px 14px;border:1px solid var(--gold);border-radius:18px;
+background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-size:11.5px;
+display:inline-flex;align-items:center;gap:6px;transition:all .2s ease;
 }
-.cat-btn.active{background:var(--gold);color:#000;font-weight:700;}
+.cat-btn .cat-ico{font-size:15px;}
+.cat-btn.active{background:var(--gold);color:#000;font-weight:800;box-shadow:0 0 10px rgba(212,175,55,0.4);}
 
 /* SECTIONS STYLE AMAZON */
 .amazon-section{
@@ -136,11 +140,11 @@ border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);
 }
 .amazon-section-title{
 font-size:15px;font-weight:700;color:var(--black);margin-bottom:12px;
-display:flex;align-items:center;justify-content:between;gap:8px;border-bottom:2px solid var(--gold);padding-bottom:6px;
+display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:2px solid var(--gold);padding-bottom:6px;
 }
 .amazon-carousel{
 display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;
-scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin;
+scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin;min-height:260px;
 }
 .amazon-carousel::-webkit-scrollbar{height:8px;}
 .amazon-carousel::-webkit-scrollbar-thumb{background:var(--gold);border-radius:10px;}
@@ -149,7 +153,7 @@ scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin;
 .products{
 width:96%;max-width:1800px;margin:10px auto;padding:16px;background:#ffffff;
 border-radius:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:stretch;flex:1;
-box-shadow:0 4px 15px rgba(0,0,0,0.1);
+box-shadow:0 4px 15px rgba(0,0,0,0.1);min-height:300px;
 }
 @media(min-width:700px){.products{grid-template-columns:repeat(4,1fr);gap:18px;padding:22px;}}
 @media(min-width:1001px){.products{grid-template-columns:repeat(6,1fr);gap:20px;padding:24px;}}
@@ -245,8 +249,8 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 <body>
 
 <header class="header">
-<div class="logo-container" id="logoButton">
-<img class="logo" id="appLogo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" loading="eager" decoding="sync">
+<div class="logo-container">
+<img class="logo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" loading="eager" decoding="sync">
 </div>
 <div class="search-container">
 <input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits, vêtements ou services...">
@@ -272,7 +276,7 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 <div class="banner-dots" id="bannerDots"></div>
 </section>
 
-<!-- BARRE DE NAVIGATION : BOUTON MÉTIERS FIXE + CATÉGORIES -->
+<!-- BARRE DE NAVIGATION : BOUTON MÉTIERS FIXE + CATÉGORIES VISUELLES -->
 <div class="navigation-bar-container">
 <a href="metiers.html" class="btn-metiers-special"><span data-i18n="allTrades">🛠️ Tous les Métiers</span></a>
 <div class="cat-scroll" id="catMenu"></div>
@@ -372,7 +376,7 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, onValue, get, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, onValue, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -390,29 +394,43 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 
 window.dakproFirebase = { app, db, auth };
-window.allProductsData = [];
+
+// CHARGEMENT INSTANTANÉ DEPUIS LE CACHE LOCAL S'IL EXISTE
+let cachedProducts = localStorage.getItem("dakpro_cached_products");
+window.allProductsData = cachedProducts ? JSON.parse(cachedProducts) : [];
+
 const siteContext = { currentUser: null };
 
 let currentCat = ""; 
 let currentIndex = 0;
 let totalSlides = 0;
 let autoPlay = null;
-let isPaused = false;
 let announcementDataCache = null;
+
+/* Dictionnaire des icônes associées par défaut aux catégories */
+const categoryIconsMap = {
+"Voitures": "🚗", "Smartphones": "📱", "Vêtements": "👕", "Chaussures": "👟",
+"Montres": "⌚", "Bijoux": "💍", "Parfums": "🌸", "Meubles": "🛋️",
+"Cuisine": "🍳", "Jouets": "🧸", "Sport": "⚽", "Santé": "🩺",
+"Livres": "📚", "Outils": "🔨", "Agriculture": "🌱", "Alimentation": "🍚"
+};
+
+function getCategoryIcon(catName){
+if(!catName) return "📦";
+for(let key in categoryIconsMap){
+if(catName.toLowerCase().includes(key.toLowerCase())) return categoryIconsMap[key];
+}
+return "📦";
+}
 
 /* =====================================================
 DICTIONNAIRE DE TRADUCTION & DEVISES
 ===================================================== */
 const translations = {
 fr: {
-name: "Français",
-currency: "FCFA",
-rate: 1,
+name: "Français", currency: "FCFA", rate: 1,
 searchPlaceholder: "Rechercher des produits, vêtements ou services...",
-navCart: "Panier",
-navAccount: "Compte",
-installApp: "Installer l'application sur l'appareil",
-allTrades: "🛠️ Tous les Métiers",
+navCart: "Panier", navAccount: "Compte", allTrades: "🛠️ Tous les Métiers",
 loadingArticles: "Chargement des articles de la marketplace...",
 emptyCategory: "Aucun article trouvé dans cette catégorie pour le moment.",
 officialAnnouncement: "⚡ Annonce Officielle",
@@ -421,35 +439,14 @@ sponsoredTitle: "⭐ Produits recommandés & Sponsorisés",
 flashOffers: "🔥 Offres Flash & Promos du jour",
 fullCatalog: "📦 Catalogue Complet & Catégories",
 swipeHint: "Glissez pour voir plus →",
-navAndHelp: "Navigation & Aide",
-quickSupport: "Support Rapide",
-helpCenter: "Centre d'aide général",
-myAccount: "Mon Compte",
-rulesAndLegal: "Règles & Légal",
-internalRules: "Règlement Intérieur",
-privacyPolicy: "Politique de Confidentialité",
-earnMoney: "Gagner de l'argent",
-ambassadorProgram: "Programme Ambassadeur",
-becomeSeller: "🛍️ Devenir Vendeur",
-viewBtn: "👁️ Voir",
-copyBtn: "🔗 Copier",
-cartBtn: "🛒 Panier",
-copiedMsg: "✅ Copié !",
-addedMsg: "✅ Ajouté !",
-imageUnavailable: "Image indisponible",
-selectedArticle: "Article sélectionné sur DAKPROÉLITE.",
-modalBuy: "💳 Acheter",
-modalClose: "Fermer"
+viewBtn: "👁️ Voir", copyBtn: "🔗 Copier", cartBtn: "🛒 Panier",
+copiedMsg: "✅ Copié !", addedMsg: "✅ Ajouté !", imageUnavailable: "Image indisponible",
+selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalBuy: "💳 Acheter", modalClose: "Fermer"
 },
 en: {
-name: "English",
-currency: "USD",
-rate: 1 / 600,
+name: "English", currency: "USD", rate: 1 / 600,
 searchPlaceholder: "Search for products, clothing or services...",
-navCart: "Cart",
-navAccount: "Account",
-installApp: "Install application on device",
-allTrades: "🛠️ All Trades",
+navCart: "Cart", navAccount: "Account", allTrades: "🛠️ All Trades",
 loadingArticles: "Loading marketplace items...",
 emptyCategory: "No items found in this category right now.",
 officialAnnouncement: "⚡ Official Announcement",
@@ -458,35 +455,14 @@ sponsoredTitle: "⭐ Recommended & Sponsored Products",
 flashOffers: "🔥 Flash Offers & Daily Deals",
 fullCatalog: "📦 Full Catalog & Categories",
 swipeHint: "Swipe to see more →",
-navAndHelp: "Navigation & Help",
-quickSupport: "Quick Support",
-helpCenter: "General Help Center",
-myAccount: "My Account",
-rulesAndLegal: "Rules & Legal",
-internalRules: "Internal Rules",
-privacyPolicy: "Privacy Policy",
-earnMoney: "Earn Money",
-ambassadorProgram: "Ambassador Program",
-becomeSeller: "🛍️ Become a Seller",
-viewBtn: "👁️ View",
-copyBtn: "🔗 Copy",
-cartBtn: "🛒 Cart",
-copiedMsg: "✅ Copied!",
-addedMsg: "✅ Added!",
-imageUnavailable: "Image unavailable",
-selectedArticle: "Selected item on DAKPROÉLITE.",
-modalBuy: "💳 Buy Now",
-modalClose: "Close"
+viewBtn: "👁️ View", copyBtn: "🔗 Copy", cartBtn: "🛒 Cart",
+copiedMsg: "✅ Copied!", addedMsg: "✅ Added!", imageUnavailable: "Image unavailable",
+selectedArticle: "Selected item on DAKPROÉLITE.", modalBuy: "💳 Buy Now", modalClose: "Close"
 },
 es: {
-name: "Español",
-currency: "EUR",
-rate: 1 / 655.957,
+name: "Español", currency: "EUR", rate: 1 / 655.957,
 searchPlaceholder: "Buscar productos, ropa o servicios...",
-navCart: "Carrito",
-navAccount: "Cuenta",
-installApp: "Instalar aplicación en el dispositivo",
-allTrades: "🛠️ Todos los Oficios",
+navCart: "Carrito", navAccount: "Cuenta", allTrades: "🛠️ Todos los Oficios",
 loadingArticles: "Cargando artículos del mercado...",
 emptyCategory: "No se encontraron artículos en esta categoría por el momento.",
 officialAnnouncement: "⚡ Anuncio Oficial",
@@ -495,35 +471,14 @@ sponsoredTitle: "⭐ Productos recomendados y patrocinados",
 flashOffers: "🔥 Ofertas flash y promociones del día",
 fullCatalog: "📦 Catálogo completo y categorías",
 swipeHint: "Desliza para ver más →",
-navAndHelp: "Navegación y Ayuda",
-quickSupport: "Soporte Rápido",
-helpCenter: "Centro de Ayuda General",
-myAccount: "Mi Cuenta",
-rulesAndLegal: "Reglas y Legal",
-internalRules: "Reglamento Interno",
-privacyPolicy: "Política de Privacidad",
-earnMoney: "Ganar Dinero",
-ambassadorProgram: "Programa de Embajadores",
-becomeSeller: "🛍️ Convertirse en Vendedor",
-viewBtn: "👁️ Ver",
-copyBtn: "🔗 Copiar",
-cartBtn: "🛒 Carrito",
-copiedMsg: "✅ ¡Copiado!",
-addedMsg: "✅ ¡Añadido!",
-imageUnavailable: "Imagen no disponible",
-selectedArticle: "Artículo seleccionado en DAKPROÉLITE.",
-modalBuy: "💳 Comprar",
-modalClose: "Cerrar"
+viewBtn: "👁️ Ver", copyBtn: "🔗 Copiar", cartBtn: "🛒 Carrito",
+copiedMsg: "✅ ¡Copiado!", addedMsg: "✅ ¡Añadido!", imageUnavailable: "Imagen no disponible",
+selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalBuy: "💳 Comprar", modalClose: "Cerrar"
 },
 zh: {
-name: "中文",
-currency: "CNY",
-rate: 1 / 85,
+name: "中文", currency: "CNY", rate: 1 / 85,
 searchPlaceholder: "搜索产品、服装或服务...",
-navCart: "购物车",
-navAccount: "账户",
-installApp: "在设备上安装应用",
-allTrades: "🛠️ 所有行业",
+navCart: "购物车", navAccount: "账户", allTrades: "🛠️ 所有行业",
 loadingArticles: "正在加载市场商品...",
 emptyCategory: "当前分类下暂无商品。",
 officialAnnouncement: "⚡ 官方公告",
@@ -532,35 +487,14 @@ sponsoredTitle: "⭐ 推荐与赞助商品",
 flashOffers: "🔥 限时抢购与每日特惠",
 fullCatalog: "📦 完整目录与分类",
 swipeHint: "滑动查看更多 →",
-navAndHelp: "导航与帮助",
-quickSupport: "快速支持",
-helpCenter: "通用帮助中心",
-myAccount: "我的账户",
-rulesAndLegal: "规则与法律",
-internalRules: "内部规则",
-privacyPolicy: "隐私政策",
-earnMoney: "赚钱",
-ambassadorProgram: "大使计划",
-becomeSeller: "🛍️ 成为卖家",
-viewBtn: "👁️ 查看",
-copyBtn: "🔗 复制",
-cartBtn: "🛒 购物车",
-copiedMsg: "✅ 已复制！",
-addedMsg: "✅ 已添加！",
-imageUnavailable: "图片不可用",
-selectedArticle: "在 DAKPROÉLITE 上选定的商品。",
-modalBuy: "💳 购买",
-modalClose: "关闭"
+viewBtn: "👁️ 查看", copyBtn: "🔗 复制", cartBtn: "🛒 购物车",
+copiedMsg: "✅ 已复制！", addedMsg: "✅ 已添加！", imageUnavailable: "图片不可用",
+selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalBuy: "💳 购买", modalClose: "关闭"
 },
 bn: {
-name: "বাংলা",
-currency: "BDT",
-rate: 1 / 5,
+name: "বাংলা", currency: "BDT", rate: 1 / 5,
 searchPlaceholder: "পroducts, clothing or services search...",
-navCart: "কার্ট",
-navAccount: "অ্যাকাউন্ট",
-installApp: "ডিভাইসে অ্যাপ ইনস্টল করুন",
-allTrades: "🛠️ সকল পেশা",
+navCart: "কার্ট", navAccount: "অ্যাকাউন্ট", allTrades: "🛠️ সকল পেশা",
 loadingArticles: "মার্কেটপ্লেস আইটেম লোড হচ্ছে...",
 emptyCategory: "এই ক্যাটাগরিতে এই মুহূর্তে কোনো আইটেম পাওয়া যায়নি।",
 officialAnnouncement: "⚡ অফিসিয়াল ঘোষণা",
@@ -569,35 +503,14 @@ sponsoredTitle: "⭐ প্রস্তাবিত এবং স্পনসর
 flashOffers: "🔥 ফ্ল্যাশ অফার এবং দৈনিক ডিল",
 fullCatalog: "📦 সম্পূর্ণ ক্যাটালগ এবং বিভাগ",
 swipeHint: "আরও দেখতে সোয়াইপ করুন →",
-navAndHelp: "নেভিগেশন ও সহায়তা",
-quickSupport: "দ্রুত সহায়তা",
-helpCenter: "সাধারণ সহায়তা কেন্দ্র",
-myAccount: "আমার অ্যাকাউন্ট",
-rulesAndLegal: "নিয়মাবলী ও আইন",
-internalRules: "অভ্যন্তরীণ নিয়ম",
-privacyPolicy: "গোপনীয়তা নীতি",
-earnMoney: "টাকা আয় করুন",
-ambassadorProgram: "অ্যাম্বাসেডর প্রোগ্রাম",
-becomeSeller: "🛍️ বিক্রেতা হন",
-viewBtn: "👁️ দেখুন",
-copyBtn: "🔗 কপি",
-cartBtn: "🛒 কার্ট",
-copiedMsg: "✅ কপি হয়েছে!",
-addedMsg: "✅ যোগ করা হয়েছে!",
-imageUnavailable: "ছবি উপলব্ধ নেই",
-selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।",
-modalBuy: "💳 কিনুন",
-modalClose: "বন্ধ করুন"
+viewBtn: "👁️ দেখুন", copyBtn: "🔗 কপি", cartBtn: "🛒 কার্ট",
+copiedMsg: "✅ কপি হয়েছে!", addedMsg: "✅ যোগ করা হয়েছে!", imageUnavailable: "ছবি উপলব্ধ নেই",
+selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।", modalBuy: "💳 কিনুন", modalClose: "বন্ধ করুন"
 },
 yo: {
-name: "Yorùbá",
-currency: "NGN",
-rate: 1.2,
+name: "Yorùbá", currency: "NGN", rate: 1.2,
 searchPlaceholder: "Wa awọn ọja, aṣọ tabi iṣẹ...",
-navCart: "Kẹkẹ",
-navAccount: "Àsántì",
-installApp: "Fi ohun elo sori ẹrọ rẹ",
-allTrades: "🛠️ Gbogbo Iṣẹ",
+navCart: "Kẹkẹ", navAccount: "Àsántì", allTrades: "🛠️ Gbogbo Iṣẹ",
 loadingArticles: "N ṣe agbega awọn ọja oja...",
 emptyCategory: "Ko si ọja ti a rii ni ẹka yii ni bayi.",
 officialAnnouncement: "⚡ Ikede Oṣiṣẹ",
@@ -606,35 +519,14 @@ sponsoredTitle: "⭐ Awọn ọja ti a ṣeduro",
 flashOffers: "🔥 Awọn ipese pataki",
 fullCatalog: "📦 Gbogbo Awọn Ọja",
 swipeHint: "Ra lati wo diẹ sii →",
-navAndHelp: "Iṣakoso & Iranlọwọ",
-quickSupport: "Atilẹyin Yara",
-helpCenter: "Ile-iṣẹ Iranlọwọ",
-myAccount: "Akanti Mi",
-rulesAndLegal: "Awọn Ofin",
-internalRules: "Awọn Ilana",
-privacyPolicy: "Asiri",
-earnMoney: "Gba Owo",
-ambassadorProgram: "Eto Amọṣa",
-becomeSeller: "🛍️ Di Olutaja",
-viewBtn: "👁️ Wo",
-copyBtn: "🔗 Daako",
-cartBtn: "🛒 Kẹkẹ",
-copiedMsg: "✅ A daako re!",
-addedMsg: "✅ A fi kun!",
-imageUnavailable: "Aworan ko si",
-selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.",
-modalBuy: "💳 Ra Bayi",
-modalClose: "Pade"
+viewBtn: "👁️ Wo", copyBtn: "🔗 Daako", cartBtn: "🛒 Kẹkẹ",
+copiedMsg: "✅ A daako re!", addedMsg: "✅ A fi kun!", imageUnavailable: "Aworan ko si",
+selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.", modalBuy: "💳 Ra Bayi", modalClose: "Pade"
 },
 fon: {
-name: "Fɔ̀ngbè",
-currency: "FCFA",
-rate: 1,
+name: "Fɔ̀ngbè", currency: "FCFA", rate: 1,
 searchPlaceholder: "Ba nǔ kpo avɔ kpo...",
-navCart: "Tɛnmɛ",
-navAccount: "Akɔntá",
-installApp: "Tɔn aplikasiɔn ɔ ɖo mɔ̌",
-allTrades: "🛠️ Azɔ̌ bǐ",
+navCart: "Tɛnmɛ", navAccount: "Akɔntá", allTrades: "🛠️ Azɔ̌ bǐ",
 loadingArticles: "E ɖò nǔ lɛ ɖè wɛ...",
 emptyCategory: "Nǔ ɖebǔ mɛ e ma ɖò tɛnmɛ nɛ ɔ mɛ ǎ.",
 officialAnnouncement: "⚡ Gbeɖéɖé",
@@ -643,25 +535,9 @@ sponsoredTitle: "⭐ Nǔ e sɔ́ ɖó tɛnmɛ lɛ",
 flashOffers: "🔥 Hwenu ɖagbe kpo",
 fullCatalog: "📦 Nǔ bǐ tɛnmɛ",
 swipeHint: "Sɔ́ yì nukɔn →",
-navAndHelp: "Alɔgɔ kpo",
-quickSupport: "Alɔgɔ Kalo",
-helpCenter: "Tɛn alɔgɔ tɔn",
-myAccount: "Akɔntá ce",
-rulesAndLegal: "Sɛ́n lɛ",
-internalRules: "Sɛ́n mɛ tɔn",
-privacyPolicy: "Nǔ nyanya mɛ",
-earnMoney: "Mɛ akwɛ",
-ambassadorProgram: "Ambasadɔ",
-becomeSeller: "🛍️ Huzu Ajɔ̌tɔ́",
-viewBtn: "👁️ Kpé",
-copyBtn: "🔗 Kpé nǔ",
-cartBtn: "🛒 Tɛnmɛ",
-copiedMsg: "✅ E kpé!",
-addedMsg: "✅ E ɖó!",
-imageUnavailable: "Nɛ̌ nǔ ɖé ǎ",
-selectedArticle: "Nǔ e ɖò DAKPROÉLITE.",
-modalBuy: "💳 Hò",
-modalClose: "Sɔ́"
+viewBtn: "👁️ Kpé", copyBtn: "🔗 Kpé nǔ", cartBtn: "🛒 Tɛnmɛ",
+copiedMsg: "✅ E kpé!", addedMsg: "✅ E ɖó!", imageUnavailable: "Nɛ̌ nǔ ɖé ǎ",
+selectedArticle: "Nǔ e ɖò DAKPROÉLITE.", modalBuy: "💳 Hò", modalClose: "Sɔ́"
 }
 };
 
@@ -678,67 +554,12 @@ converted = Math.round(converted);
 return `${converted} ${t.currency}`;
 }
 
-const dynamicTranslations = {
-en: {
-"A1 capsule": "A1 Capsule",
-"Santé et bien-être": "Health & Wellness",
-"Équipements de protection médicale": "Medical Protection Equipment",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 THE HIGH-LEVEL DIETARY SUPPLEMENT THAT RELIEVES AND STRENGTHENS",
-"INVITATION SPÉCIALE": "SPECIAL INVITATION",
-"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 SPECIAL INVITATION — DAKPROÉLITE 🚀 The DAKPROÉLITE Marketplace benchmark invites all manufacturers, wholesalers, sellers, buyers, artisans, tradesmen, entrepreneurs, and service providers to join its official channel. 🎯 Our goal: bring trade actors together in an organized, dynamic, and professional community to foster exchanges, promote products and services, and develop new business opportunities. 🤝 Your expertise, products, and ambitions have their place at DAKPROÉLITE! 🌍 Join us now and help build a more accessible and dynamic commerce. DAKPROÉLITE — One platform, a thousand opportunities! 🚀"
-},
-es: {
-"A1 capsule": "Cápsula A1",
-"Santé et bien-être": "Salud y Bienestar",
-"Équipements de protection médicale": "Equipos de Protección Médica",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 EL SUPLEMENTO DIETÉTICO DE ALTO NIVEL QUE ALIVIA Y FORTALECE",
-"INVITATION SPÉCIALE": "INVITACIÓN ESPECIAL",
-"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 INVITACIÓN ESPECIAL — DAKPROÉLITE 🚀 La referencia de Marketplace DAKPROÉLITE invita a todos los fabricantes, mayoristas, vendedores, compradores, artesanos, profesionales, empresarios y proveedores de servicios a unirse a su canal oficial. 🎯 Nuestro objetivo: reunir a los actores del comercio en una comunidad organizada, dinámica y profesional para fomentar los intercambios, promover productos y servicios y desarrollar nuevas oportunidades de negocio. 🤝 ¡Su saber hacer, sus productos y sus ambiciones tienen su lugar en DAKPROÉLITE! 🌍 Únase a nosotros ahora y participe en la construcción de un comercio más accesible y dinámico. DAKPROÉLITE — ¡Una plataforma, mil oportunidades! 🚀"
-},
-zh: {
-"A1 capsule": "A1 胶囊",
-"Santé et bien-être": "健康与养生",
-"Équipements de protection médicale": "医疗防护设备",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 高级膳食补充剂，具有缓解和强健身体的功效",
-"INVITATION SPÉCIALE": "特别邀请",
-"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 特别邀请 — DAKPROÉLITE 🚀 DAKPROÉLITE 市场基准邀请所有制造商、批发商、卖家、买家、工匠、商贩、企业家和服务提供商加入其官方频道。 🎯 我们的目标：将商业参与者聚集在一个有组织、充满活力和专业的社区中，以促进交流、推广产品和服务并开发新的商机。 🤝 您的专业知识、产品和雄心在 DAKPROÉLITE 占有一席之地！ 🌍 立即加入我们，共同建设一个更加便捷和充满活力的商业环境。 DAKPROÉLITE — 一个平台，无数商机！ 🚀"
-},
-bn: {
-"A1 capsule": "A1 ক্যাপসুল",
-"Santé et bien-être": "স্বাস্থ্য ও সুস্থতা",
-"Équipements de protection médicale": "মেডিকেল সুরক্ষা সরঞ্জাম",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 উচ্চ-স্তরের খাদ্য পরিপূরক যা উপশম এবং শক্তিশালী করে",
-"INVITATION SPÉCIALE": "বিশেষ আমন্ত্রণ",
-"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 বিশেষ আমন্ত্রণ — DAKPROÉLITE 🚀 DAKPROÉLITE মার্কেটপ্লেস সমস্ত প্রস্তুতকারক, পাইকারী বিক্রেতা, বিক্রেতা, ক্রেতা, কারিগর, উদ্যোক্তা এবং পরিষেবা প্রদানকারীদের তাদের অফিসিয়াল চ্যানেলে যোগদানের জন্য আমন্ত্রণ জানায়।"
-},
-yo: {
-"A1 capsule": "Akwọṣe A1",
-"Santé et bien-être": "Ilera & Alafia",
-"Équipements de protection médicale": "Awọn Ohun Elo Aabo Iṣoogun",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 AFIKUN OUNJE TO GA JULO TI O N TUN ARA SE",
-"INVITATION SPÉCIALE": "IPE PATAKI",
-"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 IPE PATAKI — DAKPROÉLITE 🚀 Ọja DAKPROÉLITE n pe gbogbo olutaja, olura, ati oṣiṣẹ lati darapọ mọ ikanni osise wa."
-},
-fon: {
-"A1 capsule": "A1 kapslu",
-"Santé et bien-être": "Linsin kpo alɔgɔ kpo",
-"Équipements de protection médicale": "Alɔgɔ dotó tɔn",
-"A1 LE COMPLÉMENT ALIMENTAIRE DE HAUT NIVEAU QUI SOULAGE ET QUI RENFORCE": "A1 Nǔɖuɖu ɖagbe e nɔ d'alɔ bo nɔ d'usixu nú mɛ e",
-"INVITATION SPÉCIALE": "GBEƉÉDÉ TENTON",
-"🌟 INVITATION SPÉCIALE — DAKPROÉLITE 🚀 La Référence Marketplace DAKPROÉLITE invite tous les fabricants, grossistes, vendeurs, acheteurs, artisans, hommes de métier, entrepreneurs et prestataires de services à rejoindre son canal officiel. 🎯 Notre objectif : rassembler les acteurs du commerce dans une communauté organisée, dynamique et professionnelle pour favoriser les échanges, promouvoir les produits et services et développer de nouvelles opportunités d'affaires. 🤝 Votre savoir-faire, vos produits et vos ambitions ont leur place chez DAKPROÉLITE ! 🌍 Rejoignez-nous dès maintenant et participez à la construction d’un commerce plus accessible et dynamique. DAKPROÉLITE — Une plateforme, mille opportunités ! 🚀": "🌟 GBEƉÉDÉ TENTON — DAKPROÉLITE 🚀 DAKPROÉLITE nɔ ylɔ mɛ bǐ ɖò akɔ̀ tɔn mɛ bo na w'azɔ̌ ɖó kpɔ́."
-}
-};
-
 function getLocalizedText(obj, fieldBase, lang) {
 if(!obj) return "";
 if(lang !== 'fr' && (obj[fieldBase + '_' + lang] || obj['title_' + lang] || obj['description_' + lang])) {
 return obj[fieldBase + '_' + lang] || obj['title_' + lang] || obj['description_' + lang];
 }
-let originalText = obj[fieldBase] || obj['texte'] || obj['text'] || obj['description'] || obj['nom'] || obj['title'] || obj['name'] || "";
-if (lang !== 'fr' && dynamicTranslations[lang] && dynamicTranslations[lang][originalText]) {
-return dynamicTranslations[lang][originalText];
-}
-return originalText;
+return obj[fieldBase] || obj['texte'] || obj['text'] || obj['description'] || obj['nom'] || obj['title'] || obj['name'] || "";
 }
 
 function setLanguage(lang) {
@@ -788,6 +609,30 @@ menu?.classList.remove("show");
 });
 
 setLanguage(currentLang);
+
+// Affichage immédiat si le cache existe déjà
+if(window.allProductsData.length > 0){
+buildCategories();
+filterProducts();
+renderCarousels(window.allProductsData);
+}
+
+window.addEventListener("dakpro-category-selected", (e) => {
+if(e.detail && e.detail.category){
+currentCat = e.detail.category;
+const menu = document.getElementById("catMenu");
+if(menu){
+menu.querySelectorAll(".cat-btn").forEach(btn => {
+if(btn.dataset.category === currentCat) {
+btn.classList.add("active");
+} else {
+btn.classList.remove("active");
+}
+});
+}
+filterProducts();
+}
+});
 });
 
 onAuthStateChanged(auth, user=>{
@@ -818,19 +663,11 @@ return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>
 }
 function escapeAttribute(value){ return escapeHTML(value); }
 
-document.getElementById("logoButton")?.addEventListener("click", ()=>{ window.location.href = "index.html"; });
-
-/* CHARGEMENT DIRECT DES PUBLICATIONS */
+/* CHARGEMENT FIREBASE EN ARRIÈRE-PLAN AVEC MISE EN CACHE */
 function loadProducts(){
 onValue(ref(db,"publications"), snapshot=>{
 const data = snapshot.val();
-if(!data || typeof data!=="object"){
-window.allProductsData = [];
-buildCategories();
-renderProducts([]);
-renderCarousels([]);
-return;
-}
+if(!data || typeof data!=="object") return;
 
 window.allProductsData = Object.entries(data)
 .map(([id,product])=>{
@@ -838,6 +675,9 @@ if(!product || typeof product!=="object") return null;
 return { id, ...product };
 })
 .filter(product=>product && product.actif!==false);
+
+// Sauvegarde dans le cache local pour un affichage instantané ultérieur
+localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
 
 buildCategories();
 filterProducts();
@@ -857,8 +697,9 @@ currentCat = categories[0];
 
 menu.innerHTML = categories.map(category=>{
 const safe = escapeHTML(category);
+const icon = getCategoryIcon(category);
 const displayCatName = getLocalizedText({ cat: category }, 'cat', currentLang) || category;
-return `<button type="button" class="cat-btn ${category===currentCat?"active":""}" data-category="${safe}">${escapeHTML(displayCatName)}</button>`;
+return `<button type="button" class="cat-btn ${category===currentCat?"active":""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(displayCatName)}</span></button>`;
 }).join("");
 
 menu.querySelectorAll(".cat-btn").forEach(button=>{
@@ -897,8 +738,8 @@ renderProducts(getFilteredProducts());
 /* GÉNÉRATEUR DE CARTE UNIVERSEL */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
-const siteBase = "https://marketplace.acheteur.dakproelite.com";
-const affiliateURL = `${siteBase}/?id=${id}${uid ? "&ref="+encodeURIComponent(uid) : ""}`;
+const siteBase = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '');
+const affiliateURL = product.lienAffiliation || `${siteBase}/?produit=${id}${uid ? "&ref="+encodeURIComponent(uid) : ""}`;
 
 const image = product.image || product.imageUrl || product.photo || product.img || "";
 const video = product.video || product.videoUrl || "";
@@ -943,7 +784,7 @@ mediaHTML = `<div class="product-no-image"><strong>📦</strong><span>${t.imageU
 
 return `
 <article class="card" data-product-id="${escapeAttribute(product.id || "")}">
-${product.boost ? `<span class="badge-boost">🔥 HOT</span>` : ""}
+${product.isRecommande || product.boost ? `<span class="badge-boost">🔥 HOT</span>` : ""}
 ${discountBadgeHTML}
 <div class="media-container">${mediaHTML}</div>
 <div>
@@ -977,14 +818,10 @@ const uid = siteContext.currentUser?.uid || "";
 
 if(!allProducts || allProducts.length === 0) return;
 
-// 1. Isolation rigoureuse des promos et produits boostés
-const promoProducts = allProducts.filter(p => p.prixPromo || p.boost);
+const promoProducts = allProducts.filter(p => p.isFlash || p.prixPromo || p.boost);
 const promoIds = new Set(promoProducts.map(p => p.id));
-
-// 2. Isolation des produits restants pour la section Recommandés (sans doublon avec les promos)
 const nonPromoProducts = allProducts.filter(p => !promoIds.has(p.id));
 
-// Rendu du carrousel des Offres Flash & Promos
 if(containerPromos){
 if(promoProducts.length > 0){
 containerPromos.innerHTML = promoProducts.map(product => generateCardHTML(product, uid)).join("");
@@ -994,7 +831,6 @@ containerPromos.innerHTML = `<div class="empty-message" style="padding:10px;">${
 }
 }
 
-// Rendu du carrousel Recommandés & Sponsorisés (Anti-doublon garanti)
 if(containerRelated){
 const listToDisplay = nonPromoProducts.length > 0 ? nonPromoProducts : allProducts;
 containerRelated.innerHTML = listToDisplay.slice(0, 50).map(product => generateCardHTML(product, uid)).join("");
@@ -1002,7 +838,6 @@ attachCardEvents(containerRelated);
 }
 }
 
-/* ATTACHEMENT DES ÉVÉNEMENTS BOUTONS (COPIER & PANIER) */
 function attachCardEvents(container){
 const t = translations[currentLang];
 
@@ -1069,7 +904,7 @@ const imgVal = product.image || product.imageUrl || product.photo || "";
 const totalPrice = parseFloat((currentQty * unitPrice).toFixed(2));
 
 const payload = {
-id: product.id, nom: nameVal, prixUnitaire: unitPrice, devise: "FCFA",
+id: product.id, nom: nameVal, prixUnitaire: unitPrice, devise: product.devise || "FCFA",
 image: imgVal, quantite: currentQty, total: totalPrice, updatedAt: Date.now()
 };
 
@@ -1091,7 +926,7 @@ console.error("Erreur d'ajout au panier:", error);
 
 function checkUrlForSharedProduct(){
 const urlParams = new URLSearchParams(window.location.search);
-const productId = urlParams.get("pid") || urlParams.get("id");
+const productId = urlParams.get("produit") || urlParams.get("pid") || urlParams.get("id");
 if(!productId)return;
 const product = window.allProductsData.find(p=>String(p.id)===String(productId));
 if(!product)return;
