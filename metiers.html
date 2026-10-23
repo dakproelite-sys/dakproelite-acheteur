@@ -51,38 +51,88 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 .cat-btn{ flex:0 0 auto; padding:7px 12px; border:1px solid var(--gold); border-radius:16px; background:transparent; color:#fff; cursor:pointer; white-space:nowrap; font-size:11px; }
 .cat-btn.active{ background:var(--gold); color:#000; font-weight:800; }
 
-/* GRILLE HARMONISÉE - HAUTEURS STRICTEMENT ÉGALES */
-.products{ width:100%; max-width:1800px; margin:0 auto; padding:8px; background:#ffffff; border-radius:10px; display:grid; grid-template-columns:repeat(2,1fr); gap:10px; align-items:start; flex:1; }
-@media(min-width:600px){ .products{ grid-template-columns:repeat(3,1fr); gap:12px; padding:12px; } }
+/* GRILLE HARMONISÉE STRICTE */
+.products{ width:100%; max-width:1800px; margin:0 auto; padding:10px; background:#ffffff; border-radius:10px; display:grid; grid-template-columns:repeat(2,1fr); gap:12px; align-content:start; flex:1; }
+@media(min-width:600px){ .products{ grid-template-columns:repeat(3,1fr); gap:14px; padding:14px; } }
 @media(min-width:900px){ .products{ grid-template-columns:repeat(4,1fr); gap:16px; padding:16px; } }
 @media(min-width:1200px){ .products{ grid-template-columns:repeat(6,1fr); gap:18px; } }
 
-/* CARTE STRUCTURÉE ET SANS ÉTIREMENT PARASITE */
-.card{ display:flex; flex-direction:column; justify-content:space-between; padding:8px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; height:auto; min-height:360px; max-height:420px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+/* CARTE À HAUTEUR FIXE POUR ÉVITER TOUT DÉCALAGE OU ESPACE VIDE */
+.card{ 
+  display:flex; 
+  flex-direction:column; 
+  justify-content:space-between; 
+  padding:10px; 
+  background:#ffffff; 
+  border:1px solid #e2e8f0; 
+  border-radius:10px; 
+  height:410px; 
+  box-shadow:0 2px 8px rgba(0,0,0,0.05); 
+  overflow:hidden;
+}
 
-/* CONTENEUR D'IMAGE SANS DEFORMATION ET REMPLISSAGE PARFAIT */
-.media-container{ width:100%; height:160px; border-radius:6px; overflow:hidden; background:#f1f5f9; margin-bottom:8px; border:1px solid #e2e8f0; display:flex; align-items:center; justify-content:center; }
+/* CONTENEUR IMAGE STABLE ET PROPRE */
+.media-container{ 
+  width:100%; 
+  height:150px; 
+  border-radius:6px; 
+  overflow:hidden; 
+  background:#000; 
+  flex-shrink:0;
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  border:1px solid #f1f5f9; 
+}
 .card img{ width:100%; height:100%; object-fit:cover; display:block; }
 
-.card h3{ font-size:12px; font-weight:700; color:#1a1a1a; margin:4px 0 2px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; text-transform:uppercase; }
+.card-body-content {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  margin-top:4px;
+}
 
-/* DESCRIPTION STRICTEMENT LIMITÉE À 3 LIGNES MAX */
+.card h3{ 
+  font-size:11.5px; 
+  font-weight:700; 
+  color:#1a1a1a; 
+  margin:2px 0; 
+  display:-webkit-box; 
+  -webkit-line-clamp:1; 
+  -webkit-box-orient:vertical; 
+  overflow:hidden; 
+  text-transform:uppercase; 
+}
+
+/* LOCALISATION FIXE SUR UNE LIGNE */
+.card-location {
+  font-size:9.5px; 
+  color:#b48a00; 
+  font-weight:bold; 
+  margin-bottom:4px; 
+  white-space:nowrap; 
+  overflow:hidden; 
+  text-overflow:ellipsis;
+}
+
+/* DESCRIPTION STRICTEMENT LIMITÉE À 3 LIGNES POUR GARDER TOUTES LES CARTES À LA MÊME HAUTEUR */
 .description-apercu{ 
-  font-size:10px; 
+  font-size:9.5px; 
   color:#64748b; 
-  line-height:1.35; 
-  margin-bottom:8px; 
+  line-height:1.3; 
   display:-webkit-box; 
   -webkit-line-clamp:3; 
   -webkit-box-orient:vertical; 
   overflow:hidden; 
   text-overflow:ellipsis;
-  height:40px;
 }
 
-.tag-express{ background:rgba(212,175,55,0.15); color:#b48a00; border:1px solid rgba(212,175,55,0.3); font-size:8px; padding:2px 6px; border-radius:4px; font-weight:700; display:inline-block; margin-bottom:4px; }
-.card-actions-row{ display:flex; gap:6px; margin-top:auto; width:100%; padding-top:6px; border-top:1px dashed #e2e8f0; }
-.btn-action{ flex:1; min-width:0; padding:8px 4px; border-radius:6px; font-size:10px; font-weight:700; text-align:center; cursor:pointer; border:none; text-decoration:none; display:flex; align-items:center; justify-content:center; white-space:nowrap; color:#fff; }
+.tag-express{ background:rgba(212,175,55,0.15); color:#b48a00; border:1px solid rgba(212,175,55,0.3); font-size:7.5px; padding:1px 5px; border-radius:3px; font-weight:700; display:inline-block; }
+
+.card-actions-row{ display:flex; gap:6px; margin-top:auto; width:100%; padding-top:6px; border-top:1px solid #f1f5f9; flex-shrink:0; }
+.btn-action{ flex:1; min-width:0; padding:7px 2px; border-radius:5px; font-size:9.5px; font-weight:700; text-align:center; cursor:pointer; border:none; text-decoration:none; display:flex; align-items:center; justify-content:center; white-space:nowrap; color:#fff; }
 .btn-view{ background:var(--blue); }
 .btn-copy{ background:#334155; }
 
@@ -133,10 +183,10 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 <div style="grid-column:1/-1; text-align:center; color:#64748b; padding:30px 10px; font-size:12px;" data-i18n="loadingPros">Chargement des professionnels...</div>
 </main>
 
-<!-- MODAL DÉTAIL & PAIEMENT -->
+<!-- MODAL DÉTAIL & PAIEMENT AVEC DESCRIPTION COMPLÈTE DÉROULANTE -->
 <div class="modal-overlay" id="contactModal">
 <div class="modal-card">
-<div style="width:100%; height:160px; border-radius:8px; overflow:hidden; background:#000; margin-bottom:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+<div style="width:100%; height:150px; border-radius:8px; overflow:hidden; background:#000; margin-bottom:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
   <img id="modalImg" src="" alt="Atelier" style="width:100%; height:100%; object-fit:contain;">
 </div>
 <h3 id="modalName">Nom de l'Atelier / Professionnel</h3>
@@ -200,7 +250,7 @@ if (!firebase.apps.length) {
 const db = firebase.database();
 const auth = firebase.auth();
 
-// CHARGEMENT INSTANTANÉ DEPUIS LE CACHE LOCAL
+// CHARGEMENT INSTANTANÉ DEPUIS LE CACHE LOCAL (ANTI-BLOCAGE FAIBLES CONNEXIONS)
 let cachedMetiers = localStorage.getItem("dakpro_cached_metiers");
 window.allMetiersData = cachedMetiers ? JSON.parse(cachedMetiers) : [];
 
@@ -382,7 +432,7 @@ function renderList(list){
     const nomAtelier = item.nom || item.titre || "Atelier Professionnel";
     const metierCat = item.categorie || "Artisan";
     
-    // Construction propre du lieu (Quartier, Ville, Département, Pays)
+    // Construction de la localisation propre (Quartier, Ville, Département, Pays)
     const lieuArray = [item.quartier, item.ville, item.departement, item.pays || item.country].filter(Boolean);
     const lieuTexte = lieuArray.length > 0 ? lieuArray.join(", ") : "Localisation non spécifiée";
 
@@ -391,17 +441,15 @@ function renderList(list){
         <div class="media-container">
           <img src="${escapeAttribute(img)}" alt="${escapeAttribute(nomAtelier)}" loading="lazy" decoding="async">
         </div>
-        <div>
+        <div class="card-body-content">
           <div><span class="tag-express">🛠️ ${escapeHTML(metierCat)}</span></div>
           <h3>${escapeHTML(nomAtelier)}</h3>
-          <div style="font-size:10px; color:#b48a00; font-weight:bold; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📍 ${escapeHTML(lieuTexte)}</div>
+          <div class="card-location">📍 ${escapeHTML(lieuTexte)}</div>
           <div class="description-apercu">${escapeHTML(item.description || "Service certifié DAKPROÉLITE.")}</div>
         </div>
-        <div>
-          <div class="card-actions-row">
-            <button type="button" class="btn-action btn-view btn-inspect" data-id="${escapeAttribute(item.id || "")}">${t.viewBtn}</button>
-            <button type="button" class="btn-action btn-copy" data-aff="${escapeAttribute(affLink)}">${t.copyBtn}</button>
-          </div>
+        <div class="card-actions-row">
+          <button type="button" class="btn-action btn-view btn-inspect" data-id="${escapeAttribute(item.id || "")}">${t.viewBtn}</button>
+          <button type="button" class="btn-action btn-copy" data-aff="${escapeAttribute(affLink)}">${t.copyBtn}</button>
         </div>
       </article>
     `;
@@ -441,7 +489,7 @@ async function ouvrirFicheProfil(metierId) {
   const lieuComplet = [metier.quartier, metier.ville, metier.departement].filter(Boolean).join(" - ");
   document.getElementById("modalVille").textContent = lieuComplet || "Non spécifiée";
   
-  // AFFICHAGE COMPLET DE TOUTE LA DESCRIPTION SANS TRONCATURÉE
+  // AFFICHAGE INTÉGRAL DE TOUTE LA DESCRIPTION LONGUE DANS LE MODAL
   document.getElementById("modalDescText").textContent = metier.description || "Aucune description détaillée fournie.";
 
   let passValide = false;
