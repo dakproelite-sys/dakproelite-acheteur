@@ -2,8 +2,7 @@
 <html lang="fr" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="theme-color" content="#d4af37">
 <meta name="application-name" content="DAKPROÉLITE">
 <meta name="apple-mobile-web-app-title" content="DAKPROÉLITE">
@@ -17,6 +16,11 @@
 <link rel="apple-touch-icon" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+<!-- SDK FIREBASE COMPATIBILITÉ UNIVERSELLE (Faible RAM & Anciens/Nouveaux navigateurs) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
 <style>
 :root{
 --gold:#d4af37;
@@ -27,13 +31,10 @@
 --card:#ffffff;
 --card-text:#1a1a1a;
 --blue:#0066cc;
---blue-dark:#004a99;
 --green:#15803d;
---green-hover:#166534;
 --red:#dc2626;
 --white:#fff;
 --gray:#555;
---border:rgba(212,175,55,.30);
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -44,27 +45,21 @@ button,input,select,textarea{font-family:inherit;}
 button,a{-webkit-tap-highlight-color:transparent;}
 a{color:inherit;}
 
-/* HEADER */
+/* HEADER HAUTE PERFORMANCE */
 .header{
 position:sticky;top:0;z-index:5000;width:100%;min-height:70px;
-display:flex;align-items:center;gap:10px;
-padding:10px 12px;
+display:flex;align-items:center;gap:10px;padding:10px 12px;
 background:linear-gradient(to bottom,#131921,#050505);
 border-bottom:2px solid var(--gold);
 }
 
-/* LOGO FIXE COMPATIBLE PETITS ÉCRANS */
 .logo-container{
 width:50px !important;height:50px !important;min-width:50px !important;min-height:50px !important;flex:0 0 50px !important;
 border-radius:50% !important;border:2px solid var(--gold) !important;overflow:hidden !important;
 display:flex !important;align-items:center !important;justify-content:center !important;background:#000 !important;
 }
-.logo{
-display:block !important;width:100% !important;height:100% !important;
-object-fit:contain !important;object-position:center !important;background:#000 !important;
-}
+.logo{display:block !important;width:100% !important;height:100% !important;object-fit:contain !important;background:#000 !important;}
 
-/* RECHERCHE */
 .search-container{flex:1;min-width:0;display:flex;align-items:center;}
 #searchBar{
 width:100%;height:40px;border:1px solid var(--gold);border-radius:20px;
@@ -72,27 +67,19 @@ background:#000;color:#fff;padding:0 14px;outline:none;font-size:12px;
 }
 #searchBar::placeholder{color:#888;font-size:11px;}
 
-/* NAVIGATION */
 .nav-icons{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .nav-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:9px;cursor:pointer;}
 .nav-item>span:first-child{font-size:18px;line-height:20px;}
-.nav-item:hover{color:var(--gold);}
 .cart-badge{
 position:absolute;top:-4px;right:0px;background:var(--red);color:#fff;
 font-size:9px;font-weight:700;border-radius:8px;padding:1px 4px;
 min-width:14px;text-align:center;display:none;border:1px solid var(--black);
 }
 
-#btnInstall{
-display:none;width:calc(100% - 20px);max-width:600px;margin:10px auto;padding:10px;
-background:#333;border:1px solid var(--gold);border-radius:8px;text-align:center;color:#fff;cursor:pointer;font-size:12px;font-weight:600;
-}
-
 /* BANNIÈRES */
 .banner-container{
 display:none;position:relative;width:94%;max-width:1400px;margin:12px auto;
-overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:var(--soft-dark);
-min-height:180px;
+overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:var(--soft-dark);min-height:180px;
 }
 .banner-track{display:flex;width:100%;transition:transform .4s ease;}
 .banner-slide{position:relative;min-width:100%;}
@@ -128,7 +115,7 @@ display:inline-flex;align-items:center;gap:4px;
 }
 .cat-btn.active{background:var(--gold);color:#000;font-weight:800;}
 
-/* SECTIONS STYLE AMAZON */
+/* SECTIONS AMAZON */
 .amazon-section{
 width:96%;max-width:1800px;margin:12px auto;padding:12px;background:#ffffff;
 border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);
@@ -144,7 +131,7 @@ scroll-snap-type:x mandatory;padding-bottom:8px;min-height:240px;
 .amazon-carousel::-webkit-scrollbar{height:6px;}
 .amazon-carousel::-webkit-scrollbar-thumb{background:var(--gold);border-radius:8px;}
 
-/* CATALOGUE GÉNÉRAL EN GRILLE OPTIMISÉ TOUT ÉCRAN */
+/* CATALOGUE GÉNÉRAL EN GRILLE OPTIMISÉ */
 .products{
 width:100%;margin:0 auto;padding:8px;background:#ffffff;
 display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;align-items:stretch;
@@ -153,7 +140,7 @@ display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;align-items:stretch;
 @media(min-width:900px){.products{grid-template-columns:repeat(4, 1fr);gap:16px;padding:16px;}}
 @media(min-width:1200px){.products{grid-template-columns:repeat(6, 1fr);gap:18px;}}
 
-/* CARTE PRODUIT COMPATIBLE PETITS TÉLÉPHONES */
+/* CARTE PRODUIT LÉGÈRE */
 .card{
 position:relative;display:flex;flex-direction:column;justify-content:space-between;
 width:100%;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;
@@ -192,11 +179,11 @@ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hi
 .card-actions-row{display:flex;gap:4px;margin-top:auto;width:100%;}
 .btn-action{
 flex:1;min-width:0;padding:6px 2px;border-radius:5px;font-size:9px;font-weight:700;
-text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:center;justify-content:center;white-space:nowrap;border:none;
+text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:center;justify-content:center;white-space:nowrap;border:none;color:#fff;
 }
-.btn-view{background:var(--blue);color:#fff;}
-.btn-copy{background:#334155;color:#fff;}
-.btn-cart{background:var(--green);color:#fff;}
+.btn-view{background:var(--blue);}
+.btn-copy{background:#334155;}
+.btn-cart{background:var(--green);}
 .affiliate-input{display:none;width:100%;margin-top:4px;padding:3px;background:#fff;color:#000;border:1px solid #cbd5e1;border-radius:3px;font-size:7px;}
 
 /* MODAL & FOOTER */
@@ -242,7 +229,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 
 <header class="header">
 <div class="logo-container">
-<img class="logo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" loading="eager" decoding="sync">
+<img class="logo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" loading="eager" decoding="async">
 </div>
 <div class="search-container">
 <input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits...">
@@ -254,8 +241,6 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <a href="profil-acheteur.html" class="nav-item"><span>👤</span><span data-i18n="navAccount">Compte</span></a>
 </div>
 </header>
-
-<div id="btnInstall">Installer l'application</div>
 
 <!-- BANNIÈRE DÉFILANTE -->
 <section class="banner-container" id="bannerContainer">
@@ -274,8 +259,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <div class="cat-scroll" id="catMenu"></div>
 </div>
 
-<!-- =================O-R-D-R-E---D-E-S---S-E-C-T-I-O-N-S================= -->
-<!-- 1. OFFRES FLASH & PROMOS (EN HAUT) -->
+<!-- 1. OFFRES FLASH & PROMOS -->
 <section class="amazon-section">
   <div class="amazon-section-title">
     <span data-i18n="flashOffers">🔥 Offres Flash &amp; Promos</span>
@@ -284,7 +268,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
   <div class="amazon-carousel" id="carouselPromos"></div>
 </section>
 
-<!-- 2. CATALOGUE COMPLET & CATÉGORIES (AU MILIEU) -->
+<!-- 2. CATALOGUE COMPLET & CATÉGORIES -->
 <section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
   <div class="amazon-section-title" style="background:#fff; padding:10px; border-radius:6px;">
     <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
@@ -294,7 +278,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
   </main>
 </section>
 
-<!-- 3. PRODUITS RECOMMANDÉS & SPONSORISÉS (EN BAS) -->
+<!-- 3. PRODUITS RECOMMANDÉS & SPONSORISÉS -->
 <section class="amazon-section">
   <div class="amazon-section-title">
     <span data-i18n="sponsoredTitle">⭐ Recommandés &amp; Sponsorisés</span>
@@ -331,7 +315,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <h5 data-i18n="earnMoney">Gagner</h5>
 <ul>
 <li><a href="programme-ambassadeur.html" data-i18n="ambassadorProgram">Ambassadeur</a></li>
-<li><a href="https://vendeur.dakproelite.com" class="seller-link" data-i18n="becomeSeller">🛍️ Vendeur</a></li>
+<li><a href="https://vendeur.dakproelite.com" target="_self" class="seller-link" data-i18n="becomeSeller">🛍️ Vendeur</a></li>
 </ul>
 </div>
 </div>
@@ -358,11 +342,8 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 
 <script src="support-rapide.js"></script>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, onValue, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
+<script>
+// CONFIGURATION FIREBASE COMPATIBILITÉ UNIVERSELLE
 const firebaseConfig = {
 apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
 authDomain: "dakproelite.firebaseapp.com",
@@ -373,12 +354,16 @@ messagingSenderId: "580591769206",
 appId: "1:580591769206:web:4f67f8aadbf3d051087157"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
-window.dakproFirebase = { app, db, auth };
+const db = firebase.database();
+const auth = firebase.auth();
 
+window.dakproFirebase = { db, auth };
+
+// CHARGEMENT INSTANTANÉ EN CACHE LOCAL (ANTI-BLOCAGE FAIBLES FORFAITS)
 let cachedProducts = localStorage.getItem("dakpro_cached_products");
 window.allProductsData = cachedProducts ? JSON.parse(cachedProducts) : [];
 
@@ -404,7 +389,7 @@ if(catName.toLowerCase().includes(key.toLowerCase())) return categoryIconsMap[ke
 return "📦";
 }
 
-/* DICTIONNAIRE DE TRADUCTION COMPLET (Application, Menus, Pied de page, etc.) */
+/* DICTIONNAIRE DE TRADUCTION COMPLET */
 const translations = {
 fr: {
 name: "Français", currency: "FCFA", rate: 1,
@@ -554,15 +539,12 @@ converted = Math.round(converted);
 return `${converted} ${t.currency}`;
 }
 
-/* Règle d'or : On traduit uniquement la description ou les libellés génériques, mais on ne touche pas au nom d'origine du produit ni du vendeur */
 function getLocalizedText(obj, fieldBase, lang) {
 if(!obj) return "";
-// Si c'est un champ description ou texte d'annonce, on tente de récupérer la version multilingue si disponible
 if(fieldBase === 'description') {
 if(lang !== 'fr' && obj['description_' + lang]) return obj['description_' + lang];
 return obj.description || obj.texte || obj.text || "";
 }
-// Pour les titres et noms propres (produit, vendeur), on respecte la règle stricte : on garde le nom d'origine sans traduction automatique
 return obj[fieldBase] || obj.nom || obj.title || obj.name || "";
 }
 
@@ -617,7 +599,7 @@ renderCarousels(window.allProductsData);
 }
 });
 
-onAuthStateChanged(auth, user => {
+auth.onAuthStateChanged(user => {
 siteContext.currentUser = user || null;
 if(user){ listenToCartBadge(user.uid); } else { updateCartBadgeDisplay(0); }
 });
@@ -630,8 +612,8 @@ else{ badge.style.display = "none"; }
 }
 
 function listenToCartBadge(uid){
-const cartRef = ref(db, `users/${uid}/panier`);
-onValue(cartRef, snapshot => {
+const cartRef = db.ref(`users/${uid}/panier`);
+cartRef.on("value", snapshot => {
 const data = snapshot.val();
 if(!data || typeof data !== "object"){ updateCartBadgeDisplay(0); return; }
 let totalItems = 0;
@@ -646,7 +628,7 @@ return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>
 function escapeAttribute(value){ return escapeHTML(value); }
 
 function loadProducts(){
-onValue(ref(db,"publications"), snapshot => {
+db.ref("publications").on("value", snapshot => {
 const data = snapshot.val();
 if(!data || typeof data !== "object") return;
 
@@ -657,7 +639,9 @@ return { id, ...product };
 })
 .filter(product => product && product.actif !== false);
 
-localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
+try {
+  localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
+} catch(e) {}
 
 buildCategories();
 filterProducts();
@@ -723,7 +707,6 @@ const image = product.image || product.imageUrl || product.photo || product.img 
 const video = product.video || product.videoUrl || "";
 const documentUrl = product.document || product.documentUrl || "";
 
-// Règle respectée : Le nom du produit n'est pas traduit (nom d'origine conservé)
 const productName = product.nom || product.title || product.name || "Article";
 const safeName = escapeHTML(productName);
 
@@ -755,7 +738,7 @@ mediaHTML = `<video src="${escapeAttribute(mediaSrc)}" controls preload="metadat
 }else if(documentUrl){
 mediaHTML = `<a href="${escapeAttribute(documentUrl)}" target="_blank" rel="noopener noreferrer" class="doc-box"><span>📄</span><p>Document</p></a>`;
 }else if(image){
-mediaHTML = `<img src="${escapeAttribute(image)}" alt="${safeName}" loading="lazy">`;
+mediaHTML = `<img src="${escapeAttribute(image)}" alt="${safeName}" loading="lazy" decoding="async">`;
 }else{
 mediaHTML = `<div class="product-no-image"><strong>📦</strong><span>${t.imageUnavailable}</span></div>`;
 }
@@ -869,8 +852,8 @@ return;
 const product = window.allProductsData.find(p => String(p.id) === String(productId));
 if(product){
 try{
-const itemRef = ref(db, `users/${user.uid}/panier/${product.id}`);
-const snapshot = await get(itemRef);
+const itemRef = db.ref(`users/${user.uid}/panier/${product.id}`);
+const snapshot = await itemRef.once("value");
 
 let currentQty = 1;
 if(snapshot.exists()){ currentQty = parseInt(snapshot.val().quantite || 0, 10) + 1; }
@@ -888,7 +871,7 @@ image: imgVal, quantite: currentQty, total: totalPrice, updatedAt: Date.now()
 const updates = {};
 updates[`users/${user.uid}/panier/${product.id}`] = payload;
 updates[`users/${user.uid}/gs/cart/${product.id}`] = payload;
-await update(ref(db), updates);
+await db.ref().update(updates);
 
 if(buttonEl){
 const oldText = buttonEl.textContent;
@@ -942,7 +925,7 @@ document.getElementById("btnModalClose")?.addEventListener("click", () => modalC
 }
 
 function loadBanners(){
-onValue(ref(db,"bannieres"), snapshot => {
+db.ref("bannieres").on("value", snapshot => {
 const data = snapshot.val();
 const container = document.getElementById("bannerContainer");
 const track = document.getElementById("bannerTrack");
@@ -957,7 +940,7 @@ if(!banners.length){ container.style.display = "none"; return; }
 totalSlides = banners.length;
 track.innerHTML = banners.map(banner => `
 <div class="banner-slide">
-<img src="${escapeAttribute(banner.image || "")}" alt="Publicité" loading="lazy">
+<img src="${escapeAttribute(banner.image || "")}" alt="Publicité" loading="lazy" decoding="async">
 <div class="banner-content">
 ${banner.titre ? `<h3>${escapeHTML(getLocalizedText(banner, 'titre', currentLang))}</h3>` : ""}
 ${banner.description ? `<p>${escapeHTML(getLocalizedText(banner, 'description', currentLang))}</p>` : ""}
@@ -1007,11 +990,17 @@ text.textContent = localizedText;
 }
 
 function loadAnnouncement(){
-onValue(ref(db, "annonces/faya_buzz"), snapshot => {
+db.ref("annonces/faya_buzz").on("value", snapshot => {
 const data = snapshot.val();
 announcementDataCache = data;
 applyAnnouncement(data);
 });
+}
+
+// AFFICHAGE INSTANTANÉ DEPUIS LE CACHE LOCAL SI DISPONIBLE
+if(window.allProductsData.length > 0){
+  renderProducts(window.allProductsData);
+  renderCarousels(window.allProductsData);
 }
 
 loadProducts();

@@ -2,7 +2,7 @@
 <html lang="fr" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
 <meta name="theme-color" content="#d4af37">
 <title>DAKPROÉLITE | Annuaire des Métiers & Professionnels</title>
 <link rel="icon" type="image/png" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
@@ -53,19 +53,20 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 .card{ display:flex; flex-direction:column; justify-content:space-between; padding:8px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; height:100%; }
 .media-container{ width:100%; height:140px; border-radius:6px; overflow:hidden; background:#f8fafc; margin-bottom:8px; border:1px solid #f1f5f9; display:flex; align-items:center; justify-content:center; }
 .card img{ width:100%; height:100%; object-fit:contain; display:block; }
-.card h3{ font-size:11.5px; font-weight:600; color:#1a1a1a; margin:2px 0 4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:30px; }
+.card h3{ font-size:11.5px; font-weight:600; color:#1a1a1a; margin:2px 0 2px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
 
-/* DESCRIPTION JUSQU'À 10 LIGNES MAX */
-.description-complete{ 
+/* DESCRIPTION STRICTEMENT LIMITÉE À 2 LIGNES SUR L'ACCUEIL */
+.description-apercu{ 
   font-size:9.5px; 
   color:var(--gray); 
   line-height:1.3; 
   margin-bottom:6px; 
   display:-webkit-box; 
-  -webkit-line-clamp:10; 
+  -webkit-line-clamp:2; 
   -webkit-box-orient:vertical; 
   overflow:hidden; 
   text-overflow:ellipsis;
+  min-height:24px;
 }
 
 .tag-express{ background:rgba(212,175,55,0.15); color:#b48a00; border:1px solid rgba(212,175,55,0.3); font-size:7.5px; padding:1px 4px; border-radius:3px; font-weight:600; }
@@ -78,7 +79,6 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 .modal-overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:10000; padding:10px; }
 .modal-card{ background:#0a0d14; border:1px solid var(--gold); border-radius:12px; padding:15px; max-width:520px; width:100%; color:#fff; text-align:left; box-shadow:0 10px 25px rgba(0,0,0,0.5); max-height:90vh; overflow-y:auto; }
 .modal-card h3{ color:var(--gold); font-size:17px; margin-bottom:6px; text-align:center; }
-.modal-card p{ font-size:12px; color:#ccc; margin-bottom:10px; line-height:1.4; }
 .info-row{ background:#12161f; padding:8px 10px; border-radius:6px; border:1px solid #333; margin-bottom:8px; font-size:12px; }
 .info-row span{ color:var(--gold); font-weight:bold; }
 .btn-modal-action{ width:100%; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:12px; cursor:pointer; margin-top:6px; text-decoration:none; display:inline-block; text-align:center; }
@@ -126,15 +126,15 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 <!-- MODAL DÉTAIL & PAIEMENT -->
 <div class="modal-overlay" id="contactModal">
 <div class="modal-card">
-<div id="modalImageContainer" style="width:100%; height:160px; border-radius:8px; overflow:hidden; background:#000; margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
+<div style="width:100%; height:150px; border-radius:8px; overflow:hidden; background:#000; margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
   <img id="modalImg" src="" alt="Atelier" style="max-width:100%; max-height:100%; object-fit:contain;">
 </div>
-<h3 id="modalName">Nom du Professionnel / Atelier</h3>
-<p id="modalCategory" style="color:var(--gold); font-weight:600; text-align:center; margin-bottom:8px;"></p>
+<h3 id="modalName">Nom de l'Atelier / Professionnel</h3>
+<p id="modalCategory" style="color:var(--gold); font-weight:600; text-align:center; font-size:12px; margin-bottom:8px;"></p>
 
 <div class="info-row"><span data-i18n="modalCountry">🌍 Pays :</span> <span id="modalCountryText">-</span></div>
 <div class="info-row"><span data-i18n="modalCity">📍 Ville :</span> <span id="modalVille">-</span></div>
-<div class="info-row"><span data-i18n="modalDescLabel">📄 Description complète (jusqu'à 10 lignes) :</span><br><div id="modalDescText" style="color:#ddd; margin-top:4px; max-height:150px; overflow-y:auto; line-height:1.4; font-size:11.5px;">-</div></div>
+<div class="info-row"><span data-i18n="modalDescLabel">📄 Description complète :</span><br><div id="modalDescText" style="color:#ddd; margin-top:4px; max-height:140px; overflow-y:auto; line-height:1.4; font-size:11.5px;">-</div></div>
 
 <div id="contactInfoSection" style="display:none;">
   <div class="info-row"><span data-i18n="modalPhone">📞 Téléphone :</span> <span id="modalPhone">-</span></div>
@@ -185,7 +185,10 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-window.allMetiersData = [];
+// CHARGEMENT INSTANTANÉ DEPUIS LE CACHE LOCAL (ANTI-BLOCAGE FAIBLES CONNEXIONS)
+let cachedMetiers = localStorage.getItem("dakpro_cached_metiers");
+window.allMetiersData = cachedMetiers ? JSON.parse(cachedMetiers) : [];
+
 let currentCat = "Tous";
 let currentUser = null;
 
@@ -279,10 +282,10 @@ modalCountry: "🌍 দেশ:", modalCity: "📍 শহর:", modalDescLabel: "
 modalPhone: "📞 ফোন:", modalWhatsapp: "💬 WhatsApp:",
 waBtn: "💬 WhatsApp এ চ্যাট করুন", callBtn: "📞 সরাসরি কল করুন",
 unlockBtn: "🔒 যোগাযোগের বিবরণ দেখুন (৪ মাসের পাস - ২,০০০ FCFA)",
-loginAlert: "যোগাযোগের বিবরণ দেখতে অনুগ্রহ করে আপনার অ্যাকাউন্টে লগ ইন করুন।",
+loginAlert: "যোগাযোগের বিবরণ দেখতে অনুগ্রহ করে আপনার অ্যাকাউন্টে লগ ইন করুন።",
 paymentPrompt: "৪ মাসের জন্য সমস্ত পেশাদারদের অ্যাক্সেস করতে ২,০০০ FCFA পেমেন্ট প্রয়োজন।\n\nআপনি কি নিরাপদ পেমেন্ট করতে চান?",
 paymentSuccess: "🎉 পেমেন্ট সফল! আপনার ৪ মাসের পাস সক্রিয় করা হয়েছে।",
-paymentCanceled: "পেমেন্ট বাতিল করা হয়েছে।",
+paymentCanceled: "পেমেন্ট বাতিল করা হয়েছে።",
 paymentFailed: "লেনদেন যাচাই করা হয়নি। আবার চেষ্টা করুন।"
 },
 yo: {
@@ -370,6 +373,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   setLanguage(currentLang);
+  
+  if(window.allMetiersData.length > 0){
+    buildCategories();
+    filterMetiers();
+  }
 });
 
 onAuthStateChanged(auth, user => {
@@ -386,6 +394,10 @@ function loadMetiers(){
     window.allMetiersData = Object.entries(data)
       .map(([id, item])=>({ id, ...item }))
       .filter(item => item && item.actif !== false);
+
+    try {
+      localStorage.setItem("dakpro_cached_metiers", JSON.stringify(window.allMetiersData));
+    } catch(e) {}
 
     buildCategories();
     filterMetiers();
@@ -469,16 +481,20 @@ function renderList(list){
     const affLink = `${siteBase}/metiers.html?id=${id}${uid ? "&ref="+uid : ""}`;
     const img = item.images && item.images.length > 0 ? item.images[0] : (item.image || "https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png");
 
+    const nomAtelier = item.nom || item.titre || "Atelier Professionnel";
+    const metierCat = item.categorie || "Artisan";
+    const villePays = `${item.ville || "Ville"}, ${item.pays || item.country || "Pays"}`;
+
     return `
       <article class="card">
         <div class="media-container">
-          <img src="${escapeAttribute(img)}" alt="${escapeAttribute(item.nom || "Professionnel")}" loading="lazy">
+          <img src="${escapeAttribute(img)}" alt="${escapeAttribute(nomAtelier)}" loading="lazy" decoding="async">
         </div>
         <div>
-          <div style="margin-bottom:4px;"><span class="tag-express">🛠️ ${escapeHTML(item.categorie || "Artisan")}</span></div>
-          <h3>${escapeHTML(item.nom || item.titre || "Prestataire")}</h3>
-          <div style="font-size:10.5px; color:#b48a00; font-weight:bold; margin-bottom:3px;">📍 ${escapeHTML(item.ville || "Non spécifiée")}</div>
-          <div class="description-complete">${escapeHTML(item.description || "Service certifié DAKPROÉLITE.")}</div>
+          <div style="margin-bottom:3px;"><span class="tag-express">🛠️ ${escapeHTML(metierCat)}</span></div>
+          <h3>${escapeHTML(nomAtelier)}</h3>
+          <div style="font-size:10px; color:#b48a00; font-weight:bold; margin-bottom:3px;">📍 ${escapeHTML(villePays)}</div>
+          <div class="description-apercu">${escapeHTML(item.description || "Service certifié DAKPROÉLITE.")}</div>
         </div>
         <div>
           <div class="card-actions-row">
@@ -527,11 +543,13 @@ async function ouvrirFicheProfil(metierId) {
   const img = metier.images && metier.images.length > 0 ? metier.images[0] : (metier.image || "https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png");
 
   document.getElementById("modalImg").src = img;
-  document.getElementById("modalName").textContent = metier.nom || metier.titre || "Professionnel";
+  document.getElementById("modalName").textContent = metier.nom || metier.titre || "Atelier Professionnel";
   document.getElementById("modalCategory").textContent = `🛠️ ${metier.categorie || "Artisan"}`;
   document.getElementById("modalCountryText").textContent = metier.pays || metier.country || "Non spécifié";
   document.getElementById("modalVille").textContent = metier.ville || "Non spécifiée";
-  document.getElementById("modalDescText").textContent = metier.description || "Service certifié DAKPROÉLITE.";
+  
+  // Affichage complet de toute la description tirée de Realtime Database sans troncature
+  document.getElementById("modalDescText").textContent = metier.description || "Aucune description détaillée fournie.";
 
   // Vérifier si l'utilisateur possède un Pass 4 Mois actif
   let passValide = false;
@@ -550,7 +568,7 @@ async function ouvrirFicheProfil(metierId) {
   const modalActions = document.getElementById("modalActions");
 
   if (passValide) {
-    // Afficher directement les coordonnées et les boutons d'appel / WhatsApp
+    // Si le pass est valide, afficher les numéros. Aucun e-mail n'est affiché.
     document.getElementById("modalPhone").textContent = metier.telephone || metier.whatsapp || "Non renseigné";
     document.getElementById("modalWhatsapp").textContent = metier.whatsapp || "Non renseigné";
     contactSection.style.display = "block";
@@ -561,7 +579,7 @@ async function ouvrirFicheProfil(metierId) {
       <a href="tel:${numTel}" class="btn-modal-action btn-call">${t.callBtn}</a>
     `;
   } else {
-    // Masquer les numéros et afficher le bouton de paiement sécurisé FedaPay (2 000 FCFA / 4 mois)
+    // Si pas de pass valide, cacher les contacts et afficher le bouton FedaPay (Pass 4 Mois - 2 000 FCFA)
     contactSection.style.display = "none";
     modalActions.innerHTML = `
       <button type="button" class="btn-modal-action btn-unlock" onclick="declencherFedaPay('${metier.id}')">${t.unlockBtn}</button>
@@ -599,7 +617,6 @@ window.declencherFedaPay = function(metierId) {
         return;
       }
       
-      // Vérification stricte de l'approbation du paiement par FedaPay
       if (response.status === 'approved' || response.transaction?.status === 'approved') {
         const duree4Mois = 120 * 24 * 60 * 60 * 1000; // 120 jours (4 mois)
         const now = Date.now();
@@ -612,7 +629,7 @@ window.declencherFedaPay = function(metierId) {
         });
 
         alert(t.paymentSuccess);
-        ouvrirFicheProfil(metierId); // Rafraîchir la fiche pour afficher instantanément les coordonnées
+        ouvrirFicheProfil(metierId);
       } else {
         alert(t.paymentFailed);
       }
