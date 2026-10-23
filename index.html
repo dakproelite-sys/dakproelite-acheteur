@@ -627,27 +627,37 @@ return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>
 }
 function escapeAttribute(value){ return escapeHTML(value); }
 
-function loadProducts(){
-db.ref("publications").on("value", snapshot => {
-const data = snapshot.val();
-if(!data || typeof data !== "object") return;
+function loadProducts() {
+  // 1. Charger immédiatement le cache local (0 milliseconde d'attente)
+  const localData = localStorage.getItem("dakpro_cached_products");
+  if (localData) {
+    try {
+      window.allProductsData = JSON.parse(localData);
+      renderProducts(window.allProductsData);
+      renderCarousels(window.allProductsData);
+    } catch(e) {}
+  }
 
-window.allProductsData = Object.entries(data)
-.map(([id, product]) => {
-if(!product || typeof product !== "object") return null;
-return { id, ...product };
-})
-.filter(product => product && product.actif !== false);
+  // 2. Mettre à jour depuis Firebase Realtime Database
+  db.ref("publications").once("value").then(snapshot => {
+    const data = snapshot.val();
+    if (!data) return;
 
-try {
-  localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
-} catch(e) {}
+    window.allProductsData = Object.entries(data)
+      .map(([id, product]) => ({ id, ...product }))
+      .filter(product => product && product.actif !== false);
 
-buildCategories();
-filterProducts();
-renderCarousels(window.allProductsData);
-checkUrlForSharedProduct();
-}, error => { console.error("Erreur publications:", error); });
+    // Mettre à jour le cache local pour la prochaine visite
+    localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
+
+    // Rafraîchir l'affichage
+    buildCategories();
+    filterProducts();
+    renderCarousels(window.allProductsData);
+    checkUrlForSharedProduct();
+  }).catch(err => {
+    console.error("Erreur Firebase:", err);
+  });
 }
 
 function buildCategories(){

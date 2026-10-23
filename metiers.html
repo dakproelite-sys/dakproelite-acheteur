@@ -11,6 +11,11 @@
 <!-- FedaPay JS SDK -->
 <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
 
+<!-- SDK FIREBASE COMPATIBILITÉ UNIVERSELLE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
 <style>
 :root{
 --gold:#d4af37;
@@ -25,6 +30,7 @@
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
 body{ min-height:100vh; background:var(--black); color:var(--white); font-family:Poppins,sans-serif; display:flex; flex-direction:column; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
 
 .header{ position:sticky; top:0; z-index:5000; width:100%; min-height:70px; display:flex; align-items:center; gap:10px; padding:10px 12px; background:linear-gradient(to bottom, #131921, #050505); border-bottom:2px solid var(--gold); }
@@ -35,7 +41,7 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 #searchBar::placeholder{ color:#888; font-size:11px; }
 
 .nav-icons{ display:flex; align-items:center; gap:12px; flex-shrink:0; }
-.nav-item{ display:flex; flex-direction:column; align-items:center; color:#fff; text-decoration:none; font-size:9px; }
+.nav-item{ display:flex; flex-direction:column; align-items:center; color:#fff; text-decoration:none; font-size:9px; cursor:pointer; }
 .nav-item>span:first-child{ font-size:18px; line-height:20px; }
 
 .navigation-bar-container{ width:100%; padding:8px 12px; display:flex; gap:10px; align-items:center; background:rgba(11,14,19,0.9); border-bottom:1px solid rgba(212,175,55,0.2); overflow-x:auto; -webkit-overflow-scrolling:touch; }
@@ -45,39 +51,44 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 .cat-btn{ flex:0 0 auto; padding:7px 12px; border:1px solid var(--gold); border-radius:16px; background:transparent; color:#fff; cursor:pointer; white-space:nowrap; font-size:11px; }
 .cat-btn.active{ background:var(--gold); color:#000; font-weight:800; }
 
-.products{ width:100%; max-width:1800px; margin:0 auto; padding:8px; background:#ffffff; border-radius:10px; display:grid; grid-template-columns:repeat(2,1fr); gap:10px; align-items:stretch; flex:1; }
+/* GRILLE HARMONISÉE - HAUTEURS STRICTEMENT ÉGALES */
+.products{ width:100%; max-width:1800px; margin:0 auto; padding:8px; background:#ffffff; border-radius:10px; display:grid; grid-template-columns:repeat(2,1fr); gap:10px; align-items:start; flex:1; }
 @media(min-width:600px){ .products{ grid-template-columns:repeat(3,1fr); gap:12px; padding:12px; } }
 @media(min-width:900px){ .products{ grid-template-columns:repeat(4,1fr); gap:16px; padding:16px; } }
 @media(min-width:1200px){ .products{ grid-template-columns:repeat(6,1fr); gap:18px; } }
 
-.card{ display:flex; flex-direction:column; justify-content:space-between; padding:8px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; height:100%; }
-.media-container{ width:100%; height:140px; border-radius:6px; overflow:hidden; background:#f8fafc; margin-bottom:8px; border:1px solid #f1f5f9; display:flex; align-items:center; justify-content:center; }
-.card img{ width:100%; height:100%; object-fit:contain; display:block; }
-.card h3{ font-size:11.5px; font-weight:600; color:#1a1a1a; margin:2px 0 2px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+/* CARTE STRUCTURÉE ET SANS ÉTIREMENT PARASITE */
+.card{ display:flex; flex-direction:column; justify-content:space-between; padding:8px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; height:auto; min-height:360px; max-height:420px; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
 
-/* DESCRIPTION STRICTEMENT LIMITÉE À 2 LIGNES SUR L'ACCUEIL */
+/* CONTENEUR D'IMAGE SANS DEFORMATION ET REMPLISSAGE PARFAIT */
+.media-container{ width:100%; height:160px; border-radius:6px; overflow:hidden; background:#f1f5f9; margin-bottom:8px; border:1px solid #e2e8f0; display:flex; align-items:center; justify-content:center; }
+.card img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.card h3{ font-size:12px; font-weight:700; color:#1a1a1a; margin:4px 0 2px; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; text-transform:uppercase; }
+
+/* DESCRIPTION STRICTEMENT LIMITÉE À 3 LIGNES MAX */
 .description-apercu{ 
-  font-size:9.5px; 
-  color:var(--gray); 
-  line-height:1.3; 
-  margin-bottom:6px; 
+  font-size:10px; 
+  color:#64748b; 
+  line-height:1.35; 
+  margin-bottom:8px; 
   display:-webkit-box; 
-  -webkit-line-clamp:2; 
+  -webkit-line-clamp:3; 
   -webkit-box-orient:vertical; 
   overflow:hidden; 
   text-overflow:ellipsis;
-  min-height:24px;
+  height:40px;
 }
 
-.tag-express{ background:rgba(212,175,55,0.15); color:#b48a00; border:1px solid rgba(212,175,55,0.3); font-size:7.5px; padding:1px 4px; border-radius:3px; font-weight:600; }
-.card-actions-row{ display:flex; gap:4px; margin-top:auto; width:100%; }
-.btn-action{ flex:1; min-width:0; padding:6px 2px; border-radius:5px; font-size:9px; font-weight:700; text-align:center; cursor:pointer; border:none; text-decoration:none; display:flex; align-items:center; justify-content:center; white-space:nowrap; }
-.btn-view{ background:var(--blue); color:#fff; }
-.btn-copy{ background:#334155; color:#fff; }
+.tag-express{ background:rgba(212,175,55,0.15); color:#b48a00; border:1px solid rgba(212,175,55,0.3); font-size:8px; padding:2px 6px; border-radius:4px; font-weight:700; display:inline-block; margin-bottom:4px; }
+.card-actions-row{ display:flex; gap:6px; margin-top:auto; width:100%; padding-top:6px; border-top:1px dashed #e2e8f0; }
+.btn-action{ flex:1; min-width:0; padding:8px 4px; border-radius:6px; font-size:10px; font-weight:700; text-align:center; cursor:pointer; border:none; text-decoration:none; display:flex; align-items:center; justify-content:center; white-space:nowrap; color:#fff; }
+.btn-view{ background:var(--blue); }
+.btn-copy{ background:#334155; }
 
-/* MODAL DE DÉTAIL & PAIEMENT DU PROFESSIONNEL */
+/* MODAL DE DÉTAIL & PAIEMENT AVEC DÉROULEMENT COMPLET DE LA DESCRIPTION */
 .modal-overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:10000; padding:10px; }
-.modal-card{ background:#0a0d14; border:1px solid var(--gold); border-radius:12px; padding:15px; max-width:520px; width:100%; color:#fff; text-align:left; box-shadow:0 10px 25px rgba(0,0,0,0.5); max-height:90vh; overflow-y:auto; }
+.modal-card{ background:#0a0d14; border:1px solid var(--gold); border-radius:12px; padding:15px; max-width:520px; width:100%; color:#fff; text-align:left; box-shadow:0 10px 25px rgba(0,0,0,0.5); max-height:90vh; display:flex; flex-direction:column; }
 .modal-card h3{ color:var(--gold); font-size:17px; margin-bottom:6px; text-align:center; }
 .info-row{ background:#12161f; padding:8px 10px; border-radius:6px; border:1px solid #333; margin-bottom:8px; font-size:12px; }
 .info-row span{ color:var(--gold); font-weight:bold; }
@@ -87,7 +98,6 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 .btn-unlock{ background:var(--gold); color:#000; font-weight:800; }
 .btn-close{ background:#333; color:#fff; margin-top:8px; }
 
-/* FOOTER & SÉLECTEUR DE LANGUE STYLE AMAZON */
 .app-footer{ margin-top:20px; background:#131921; border-top:2px solid var(--gold); color:#ddd; font-size:11px; text-align:center; }
 .footer-language-container{ display:flex; justify-content:center; align-items:center; padding:12px; background:rgba(0,0,0,0.5); border-top:1px solid #222; border-bottom:1px solid #222; position:relative; }
 .lang-dropdown-wrapper{ position:relative; display:inline-block; }
@@ -126,19 +136,24 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 <!-- MODAL DÉTAIL & PAIEMENT -->
 <div class="modal-overlay" id="contactModal">
 <div class="modal-card">
-<div style="width:100%; height:150px; border-radius:8px; overflow:hidden; background:#000; margin-bottom:10px; display:flex; align-items:center; justify-content:center;">
-  <img id="modalImg" src="" alt="Atelier" style="max-width:100%; max-height:100%; object-fit:contain;">
+<div style="width:100%; height:160px; border-radius:8px; overflow:hidden; background:#000; margin-bottom:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+  <img id="modalImg" src="" alt="Atelier" style="width:100%; height:100%; object-fit:contain;">
 </div>
 <h3 id="modalName">Nom de l'Atelier / Professionnel</h3>
 <p id="modalCategory" style="color:var(--gold); font-weight:600; text-align:center; font-size:12px; margin-bottom:8px;"></p>
 
-<div class="info-row"><span data-i18n="modalCountry">🌍 Pays :</span> <span id="modalCountryText">-</span></div>
-<div class="info-row"><span data-i18n="modalCity">📍 Ville :</span> <span id="modalVille">-</span></div>
-<div class="info-row"><span data-i18n="modalDescLabel">📄 Description complète :</span><br><div id="modalDescText" style="color:#ddd; margin-top:4px; max-height:140px; overflow-y:auto; line-height:1.4; font-size:11.5px;">-</div></div>
+<div style="overflow-y:auto; flex:1; padding-right:4px;">
+  <div class="info-row"><span data-i18n="modalCountry">🌍 Pays :</span> <span id="modalCountryText">-</span></div>
+  <div class="info-row"><span data-i18n="modalCity">📍 Localité :</span> <span id="modalVille">-</span></div>
+  <div class="info-row">
+    <span data-i18n="modalDescLabel">📄 Description complète :</span><br>
+    <div id="modalDescText" style="color:#ddd; margin-top:6px; line-height:1.5; font-size:12px; white-space:pre-line; word-break:break-word;">-</div>
+  </div>
 
-<div id="contactInfoSection" style="display:none;">
-  <div class="info-row"><span data-i18n="modalPhone">📞 Téléphone :</span> <span id="modalPhone">-</span></div>
-  <div class="info-row"><span data-i18n="modalWhatsapp">💬 WhatsApp :</span> <span id="modalWhatsapp">-</span></div>
+  <div id="contactInfoSection" style="display:none;">
+    <div class="info-row"><span data-i18n="modalPhone">📞 Téléphone :</span> <span id="modalPhone">-</span></div>
+    <div class="info-row"><span data-i18n="modalWhatsapp">💬 WhatsApp :</span> <span id="modalWhatsapp">-</span></div>
+  </div>
 </div>
 
 <div id="modalActions"></div>
@@ -166,11 +181,8 @@ body{ min-height:100vh; background:var(--black); color:var(--white); font-family
 <div class="footer-bottom-bar">© 2026 DAKPROÉLITE. Tous droits réservés.</div>
 </footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
+<script>
+// CONFIGURATION FIREBASE COMPATIBILITÉ UNIVERSELLE
 const firebaseConfig = {
 apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
 authDomain: "dakproelite.firebaseapp.com",
@@ -181,11 +193,14 @@ messagingSenderId: "580591769206",
 appId: "1:580591769206:web:4f67f8aadbf3d051087157"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
-// CHARGEMENT INSTANTANÉ DEPUIS LE CACHE LOCAL (ANTI-BLOCAGE FAIBLES CONNEXIONS)
+const db = firebase.database();
+const auth = firebase.auth();
+
+// CHARGEMENT INSTANTANÉ DEPUIS LE CACHE LOCAL
 let cachedMetiers = localStorage.getItem("dakpro_cached_metiers");
 window.allMetiersData = cachedMetiers ? JSON.parse(cachedMetiers) : [];
 
@@ -194,159 +209,47 @@ let currentUser = null;
 
 const translations = {
 fr: {
-name: "Français",
-searchPlaceholder: "Rechercher un professionnel...",
-navCart: "Panier", navAccount: "Compte",
-loadingPros: "Chargement des professionnels...",
-allCategory: "Tous",
-viewBtn: "👁️ Voir", copyBtn: "🔗 Partager",
-copiedMsg: "✅ Copié !",
-closeBtn: "Fermer",
-modalCountry: "🌍 Pays :", modalCity: "📍 Ville :", modalDescLabel: "📄 Description complète :",
+name: "Français", searchPlaceholder: "Rechercher un professionnel...",
+navCart: "Panier", navAccount: "Compte", loadingPros: "Chargement des professionnels...",
+allCategory: "Tous", viewBtn: "👁️ Voir", copyBtn: "🔗 Partager", copiedMsg: "✅ Copié !", closeBtn: "Fermer",
+modalCountry: "🌍 Pays :", modalCity: "📍 Localité :", modalDescLabel: "📄 Description complète :",
 modalPhone: "📞 Téléphone :", modalWhatsapp: "💬 WhatsApp :",
 waBtn: "💬 Discuter sur WhatsApp", callBtn: "📞 Appeler directement",
 unlockBtn: "🔒 Voir les coordonnées (Pass 4 Mois - 2 000 FCFA)",
 loginAlert: "Veuillez vous connecter à votre compte pour accéder aux coordonnées.",
 paymentPrompt: "Pour accéder à tous les professionnels pendant 4 mois, un règlement de 2 000 FCFA est requis.\n\nVoulez-vous procéder au paiement sécurisé ?",
 paymentSuccess: "🎉 Paiement réussi ! Votre Pass 4 Mois est activé.",
-paymentCanceled: "Paiement annulé.",
-paymentFailed: "Transaction non validée. Veuillez réessayer."
+paymentCanceled: "Paiement annulé.", paymentFailed: "Transaction non validée. Veuillez réessayer."
 },
 en: {
-name: "English",
-searchPlaceholder: "Search for a professional...",
-navCart: "Cart", navAccount: "Account",
-loadingPros: "Loading professionals...",
-allCategory: "All",
-viewBtn: "👁️ View", copyBtn: "🔗 Share",
-copiedMsg: "✅ Copied!",
-closeBtn: "Close",
-modalCountry: "🌍 Country:", modalCity: "📍 City:", modalDescLabel: "📄 Full Description:",
+name: "English", searchPlaceholder: "Search for a professional...",
+navCart: "Cart", navAccount: "Account", loadingPros: "Loading professionals...",
+allCategory: "All", viewBtn: "👁️ View", copyBtn: "🔗 Share", copiedMsg: "✅ Copied!", closeBtn: "Close",
+modalCountry: "🌍 Country:", modalCity: "📍 Location:", modalDescLabel: "📄 Full Description:",
 modalPhone: "📞 Phone:", modalWhatsapp: "💬 WhatsApp:",
 waBtn: "💬 Chat on WhatsApp", callBtn: "📞 Call Directly",
 unlockBtn: "🔒 View Contact Details (4-Month Pass - 2,000 FCFA)",
 loginAlert: "Please log in to your account to view contact details.",
 paymentPrompt: "To access all professionals for 4 months, a payment of 2,000 FCFA is required.\n\nDo you want to proceed with secure payment?",
 paymentSuccess: "🎉 Payment successful! Your 4-Month Pass is activated.",
-paymentCanceled: "Payment canceled.",
-paymentFailed: "Transaction not validated. Please try again."
-},
-es: {
-name: "Español",
-searchPlaceholder: "Buscar un profesional...",
-navCart: "Carrito", navAccount: "Cuenta",
-loadingPros: "Cargando profesionales...",
-allCategory: "Todos",
-viewBtn: "👁️ Ver", copyBtn: "🔗 Compartir",
-copiedMsg: "✅ ¡Copiado!",
-closeBtn: "Cerrar",
-modalCountry: "🌍 País:", modalCity: "📍 Ciudad:", modalDescLabel: "📄 Descripción completa:",
-modalPhone: "📞 Teléfono:", modalWhatsapp: "💬 WhatsApp:",
-waBtn: "💬 Chatear en WhatsApp", callBtn: "📞 Llamar directamente",
-unlockBtn: "🔒 Ver datos de contacto (Pase de 4 Meses - 2,000 FCFA)",
-loginAlert: "Por favor inicie sesión para ver los datos de contacto.",
-paymentPrompt: "Para acceder a todos los profesionales durante 4 meses, se requiere un pago de 2,000 FCFA.\n\n¿Desea proceder con el pago seguro?",
-paymentSuccess: "🎉 ¡Pago exitoso! Su Pase de 4 Meses está activado.",
-paymentCanceled: "Pago cancelado.",
-paymentFailed: "Transacción no validada. Inténtelo de nuevo."
-},
-zh: {
-name: "中文",
-searchPlaceholder: "搜索专业人员...",
-navCart: "购物车", navAccount: "账户",
-loadingPros: "正在加载专业人员...",
-allCategory: "全部",
-viewBtn: "👁️ 查看", copyBtn: "🔗 分享",
-copiedMsg: "✅ 已复制！",
-closeBtn: "关闭",
-modalCountry: "🌍 国家：", modalCity: "📍 城市：", modalDescLabel: "📄 完整描述：",
-modalPhone: "📞 电话：", modalWhatsapp: "💬 WhatsApp：",
-waBtn: "💬 在 WhatsApp 上聊天", callBtn: "📞 直接呼叫",
-unlockBtn: "🔒 查看联系方式 (4个月通行证 - 2,000 FCFA)",
-loginAlert: "请登录您的账户以查看联系方式。",
-paymentPrompt: "要访问所有专业人员 4 个月，需支付 2,000 FCFA。\n\n您要进行安全支付吗？",
-paymentSuccess: "🎉 支付成功！您的 4 个月通行证已激活。",
-paymentCanceled: "支付已取消。",
-paymentFailed: "交易未验证，请重试。"
-},
-bn: {
-name: "বাংলা",
-searchPlaceholder: "পেশাদার খুঁজুন...",
-navCart: "কার্ট", navAccount: "অ্যাকাউন্ট",
-loadingPros: "পেশাদাররা লোড হচ্ছে...",
-allCategory: "সব",
-viewBtn: "👁️ দেখুন", copyBtn: "🔗 শেয়ার",
-copiedMsg: "✅ কপি!",
-closeBtn: "বন্ধ",
-modalCountry: "🌍 দেশ:", modalCity: "📍 শহর:", modalDescLabel: "📄 সম্পূর্ণ বিবরণ:",
-modalPhone: "📞 ফোন:", modalWhatsapp: "💬 WhatsApp:",
-waBtn: "💬 WhatsApp এ চ্যাট করুন", callBtn: "📞 সরাসরি কল করুন",
-unlockBtn: "🔒 যোগাযোগের বিবরণ দেখুন (৪ মাসের পাস - ২,০০০ FCFA)",
-loginAlert: "যোগাযোগের বিবরণ দেখতে অনুগ্রহ করে আপনার অ্যাকাউন্টে লগ ইন করুন።",
-paymentPrompt: "৪ মাসের জন্য সমস্ত পেশাদারদের অ্যাক্সেস করতে ২,০০০ FCFA পেমেন্ট প্রয়োজন।\n\nআপনি কি নিরাপদ পেমেন্ট করতে চান?",
-paymentSuccess: "🎉 পেমেন্ট সফল! আপনার ৪ মাসের পাস সক্রিয় করা হয়েছে।",
-paymentCanceled: "পেমেন্ট বাতিল করা হয়েছে።",
-paymentFailed: "লেনদেন যাচাই করা হয়নি। আবার চেষ্টা করুন।"
-},
-yo: {
-name: "Yorùbá",
-searchPlaceholder: "Wa alamọdaju...",
-navCart: "Kẹkẹ", navAccount: "Akọntẹ",
-loadingPros: "N ṣe agbega...",
-allCategory: "Gbogbo",
-viewBtn: "👁️ Wo", copyBtn: "🔗 Pin",
-copiedMsg: "✅ A daako!",
-closeBtn: "Pade",
-modalCountry: "🌍 Orilẹ-ede:", modalCity: "📍 Ilu:", modalDescLabel: "📄 Apejuwe kikun:",
-modalPhone: "📞 Foonu:", modalWhatsapp: "💬 WhatsApp:",
-waBtn: "💬 Sọrọ lori WhatsApp", callBtn: "📞 Pe Taara",
-unlockBtn: "🔒 Wo Awọn Alaye Olubasọrọ (Pass Osu 4 - 2,000 FCFA)",
-loginAlert: "Jọwọ wọle si akọntẹ rẹ lati wo awọn alaye olubasọrọ.",
-paymentPrompt: "Lati wọle si gbogbo awọn alamọdaju fun osu 4, o nilo lati san 2,000 FCFA.\n\nṢe o fẹ tẹsiwaju pẹlu sisanwo ailewu?",
-paymentSuccess: "🎉 Sisanwo yọori si rere! Pass Osu 4 rẹ ti ṣiṣẹ.",
-paymentCanceled: "A fagile sisanwo naa.",
-paymentFailed: "Idunadura naa ko ni ìmúdájú. Jọwọ tun gbiyanju."
-},
-fon: {
-name: "Fɔ̀ngbè",
-searchPlaceholder: "Ba azɔ̌watɔ...",
-navCart: "Tɛnmɛ", navAccount: "Akɔntá",
-loadingPros: "E ɖò azɔ̌watɔ lɛ ɖè wɛ...",
-allCategory: "Bǐ",
-viewBtn: "👁️ Kpé", copyBtn: "🔗 Sɔ́",
-copiedMsg: "✅ E kpé!",
-closeBtn: "Sɔ́",
-modalCountry: "🌍 Tò:", modalCity: "📍 Tò pɛvi:", modalDescLabel: "📄 Nǔ bǐ tɛnmɛ:",
-modalPhone: "📞 Telefon:", modalWhatsapp: "💬 WhatsApp:",
-waBtn: "💬 Xó ɖɔ ɖò WhatsApp", callBtn: "📞 Ylɔ tite",
-unlockBtn: "🔒 Kpé nǔ e kpo lɛ (Pass Hwenu 4 - 2,000 FCFA)",
-loginAlert: "Mɛɖé blo bo sɛkpɔ akɔntá towe bɔ a mɔ nǔ kpo kple.",
-paymentPrompt: "Bonu a mɔ azɔ̌watɔ lɛ bǐ nu hwenu 4, akwɛ 2,000 FCFA ɖò hudo.\n\nA jlo na xo akwɛ tɔn mɛ ya?",
-paymentSuccess: "🎉 Akwɛ xoxo! Pass Hwenu 4 towe zɔ́n.",
-paymentCanceled: "Akwɛxo sɔ́ ɖó tɛnmɛ ǎ.",
-paymentFailed: "Azɔ̌wiwa biɔ nu. Mi kàn lɛ kɔn."
+paymentCanceled: "Payment canceled.", paymentFailed: "Transaction not validated. Please try again."
 }
 };
 
 let currentLang = localStorage.getItem("dakpro_lang") || "fr";
 
 function setLanguage(lang) {
-  if(!translations[lang]) return;
+  if(!translations[lang]) lang = "fr";
   currentLang = lang;
   localStorage.setItem("dakpro_lang", lang);
 
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
-    if(translations[lang][key]) el.textContent = translations[lang][key];
-  });
-
-  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-    const key = el.getAttribute("data-i18n-placeholder");
-    if(translations[lang][key]) el.placeholder = translations[lang][key];
+    if(translations[lang] && translations[lang][key]) el.textContent = translations[lang][key];
   });
 
   const langLabel = document.getElementById("currentLangLabel");
-  if(langLabel) langLabel.textContent = translations[lang].name;
+  if(langLabel && translations[lang]) langLabel.textContent = translations[lang].name;
 
   buildCategories();
   filterMetiers();
@@ -356,20 +259,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const mainBtn = document.getElementById("langMainBtn");
   const menu = document.getElementById("langMenu");
 
-  mainBtn?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    menu.classList.toggle("show");
-  });
-
-  document.addEventListener("click", () => {
-    menu?.classList.remove("show");
-  });
+  mainBtn?.addEventListener("click", (e) => { e.stopPropagation(); menu.classList.toggle("show"); });
+  document.addEventListener("click", () => { menu?.classList.remove("show"); });
 
   document.querySelectorAll(".lang-option").forEach(btn => {
-    btn.addEventListener("click", () => {
-      setLanguage(btn.dataset.lang);
-      menu?.classList.remove("show");
-    });
+    btn.addEventListener("click", () => { setLanguage(btn.dataset.lang); menu?.classList.remove("show"); });
   });
 
   setLanguage(currentLang);
@@ -380,66 +274,69 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-onAuthStateChanged(auth, user => {
-  currentUser = user;
-});
+auth.onAuthStateChanged(user => { currentUser = user; });
 
-function loadMetiers(){
-  onValue(ref(db, "metiers_publications"), snapshot=>{
+function loadMetiers() {
+  // 1. Charger immédiatement le cache local (0 ms d'attente)
+  const localData = localStorage.getItem("dakpro_cached_metiers");
+  if (localData) {
+    try {
+      window.allMetiersData = JSON.parse(localData);
+      buildCategories();
+      filterMetiers();
+    } catch(e) {}
+  }
+
+  // 2. Mise à jour depuis Firebase Realtime Database
+  db.ref("metiers_publications").once("value").then(snapshot => {
     const data = snapshot.val();
-    if(!data){
-      loadFallbackPublications();
-      return;
-    }
+    if(!data){ loadFallbackPublications(); return; }
+
     window.allMetiersData = Object.entries(data)
-      .map(([id, item])=>({ id, ...item }))
+      .map(([id, item]) => ({ id, ...item }))
       .filter(item => item && item.actif !== false);
 
-    try {
-      localStorage.setItem("dakpro_cached_metiers", JSON.stringify(window.allMetiersData));
-    } catch(e) {}
-
+    localStorage.setItem("dakpro_cached_metiers", JSON.stringify(window.allMetiersData));
     buildCategories();
     filterMetiers();
-  }, error=>{
+  }).catch(error => {
     console.error("Erreur Firebase:", error);
-    document.getElementById("products").innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#dc2626; font-size:12px;">Erreur d'accès à la base de données.</div>`;
+    loadFallbackPublications();
   });
 }
 
-function loadFallbackPublications(){
-  onValue(ref(db, "publications"), snapshot=>{
+function loadFallbackPublications() {
+  db.ref("publications").once("value").then(snapshot => {
     const data = snapshot.val();
     if(!data){ renderList([]); return; }
 
     window.allMetiersData = Object.entries(data)
-      .map(([id, item])=>({ id, ...item }))
+      .map(([id, item]) => ({ id, ...item }))
       .filter(item => item && item.actif !== false);
 
+    localStorage.setItem("dakpro_cached_metiers", JSON.stringify(window.allMetiersData));
     buildCategories();
     filterMetiers();
   });
 }
 
 function buildCategories(){
-  const uniqueCats = [...new Set(window.allMetiersData.map(p=> p.categorie).filter(Boolean))];
-  const t = translations[currentLang];
+  const uniqueCats = [...new Set(window.allMetiersData.map(p => p.categorie).filter(Boolean))];
+  const t = translations[currentLang] || translations['fr'];
   const categories = [t.allCategory, ...uniqueCats];
   const menu = document.getElementById("catMenu");
   if(!menu) return;
 
-  if(!categories.includes(currentCat)){
-    currentCat = t.allCategory;
-  }
+  if(!categories.includes(currentCat)){ currentCat = t.allCategory; }
 
   menu.innerHTML = categories.map(cat => `
     <button type="button" class="cat-btn ${cat === currentCat ? "active" : ""}" data-cat="${escapeAttribute(cat)}">${escapeHTML(cat)}</button>
   `).join("");
 
-  menu.querySelectorAll(".cat-btn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
+  menu.querySelectorAll(".cat-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
       currentCat = btn.dataset.cat;
-      menu.querySelectorAll(".cat-btn").forEach(b=> b.classList.remove("active"));
+      menu.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       filterMetiers();
     });
@@ -448,28 +345,29 @@ function buildCategories(){
 
 document.getElementById("searchBar")?.addEventListener("input", filterMetiers);
 
-function filterMetiers(){
+function getFilteredMetiers(){
   const q = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
-  const t = translations[currentLang];
-  const filtered = window.allMetiersData.filter(item=>{
+  const t = translations[currentLang] || translations['fr'];
+  return window.allMetiersData.filter(item => {
     const name = String(item.nom || item.titre || "").toLowerCase();
     const desc = String(item.description || "").toLowerCase();
     const cat = String(item.categorie || "");
-    const ville = String(item.ville || "").toLowerCase();
+    const ville = String(item.ville || item.quartier || item.departement || "").toLowerCase();
 
     const matchCat = currentCat === t.allCategory || cat === currentCat;
     const matchQuery = !q || name.includes(q) || desc.includes(q) || cat.toLowerCase().includes(q) || ville.includes(q);
     return matchCat && matchQuery;
   });
-  renderList(filtered);
 }
+
+function filterMetiers(){ renderList(getFilteredMetiers()); }
 
 function renderList(list){
   const container = document.getElementById("products");
   if(!container) return;
-  const t = translations[currentLang];
+  const t = translations[currentLang] || translations['fr'];
 
-  if(list.length === 0){
+  if(!Array.isArray(list) || list.length === 0){
     container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:#64748b; font-size:12px; padding:30px;">Aucun professionnel disponible.</div>`;
     return;
   }
@@ -483,7 +381,10 @@ function renderList(list){
 
     const nomAtelier = item.nom || item.titre || "Atelier Professionnel";
     const metierCat = item.categorie || "Artisan";
-    const villePays = `${item.ville || "Ville"}, ${item.pays || item.country || "Pays"}`;
+    
+    // Construction propre du lieu (Quartier, Ville, Département, Pays)
+    const lieuArray = [item.quartier, item.ville, item.departement, item.pays || item.country].filter(Boolean);
+    const lieuTexte = lieuArray.length > 0 ? lieuArray.join(", ") : "Localisation non spécifiée";
 
     return `
       <article class="card">
@@ -491,9 +392,9 @@ function renderList(list){
           <img src="${escapeAttribute(img)}" alt="${escapeAttribute(nomAtelier)}" loading="lazy" decoding="async">
         </div>
         <div>
-          <div style="margin-bottom:3px;"><span class="tag-express">🛠️ ${escapeHTML(metierCat)}</span></div>
+          <div><span class="tag-express">🛠️ ${escapeHTML(metierCat)}</span></div>
           <h3>${escapeHTML(nomAtelier)}</h3>
-          <div style="font-size:10px; color:#b48a00; font-weight:bold; margin-bottom:3px;">📍 ${escapeHTML(villePays)}</div>
+          <div style="font-size:10px; color:#b48a00; font-weight:bold; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">📍 ${escapeHTML(lieuTexte)}</div>
           <div class="description-apercu">${escapeHTML(item.description || "Service certifié DAKPROÉLITE.")}</div>
         </div>
         <div>
@@ -507,68 +408,58 @@ function renderList(list){
   }).join("");
 
   container.querySelectorAll(".btn-inspect").forEach(btn => {
-    btn.addEventListener("click", () => {
-      ouvrirFicheProfil(btn.dataset.id);
-    });
+    btn.addEventListener("click", () => { ouvrirFicheProfil(btn.dataset.id); });
   });
 
-  container.querySelectorAll(".btn-copy").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
+  container.querySelectorAll(".btn-copy").forEach(btn => {
+    btn.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(btn.dataset.aff);
         const old = btn.textContent;
         btn.textContent = t.copiedMsg;
-        setTimeout(()=> btn.textContent = old, 1500);
-      } catch(e) {
-        console.error("Erreur copie", e);
-      }
+        setTimeout(() => btn.textContent = old, 1500);
+      } catch(e) { console.error("Erreur copie", e); }
     });
   });
 }
 
-function escapeHTML(value){
-  return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-}
+function escapeHTML(value){ return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
 function escapeAttribute(value){ return escapeHTML(value); }
-
-/* =====================================================
-GESTION FICHE PROFIL & VÉRIFICATION PASS 4 MOIS
-===================================================== */
 
 async function ouvrirFicheProfil(metierId) {
   const metier = window.allMetiersData.find(m => String(m.id) === String(metierId));
   if (!metier) return;
 
-  const t = translations[currentLang];
+  const t = translations[currentLang] || translations['fr'];
   const img = metier.images && metier.images.length > 0 ? metier.images[0] : (metier.image || "https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png");
 
   document.getElementById("modalImg").src = img;
   document.getElementById("modalName").textContent = metier.nom || metier.titre || "Atelier Professionnel";
   document.getElementById("modalCategory").textContent = `🛠️ ${metier.categorie || "Artisan"}`;
   document.getElementById("modalCountryText").textContent = metier.pays || metier.country || "Non spécifié";
-  document.getElementById("modalVille").textContent = metier.ville || "Non spécifiée";
   
-  // Affichage complet de toute la description tirée de Realtime Database sans troncature
+  const lieuComplet = [metier.quartier, metier.ville, metier.departement].filter(Boolean).join(" - ");
+  document.getElementById("modalVille").textContent = lieuComplet || "Non spécifiée";
+  
+  // AFFICHAGE COMPLET DE TOUTE LA DESCRIPTION SANS TRONCATURÉE
   document.getElementById("modalDescText").textContent = metier.description || "Aucune description détaillée fournie.";
 
-  // Vérifier si l'utilisateur possède un Pass 4 Mois actif
   let passValide = false;
   if (currentUser) {
-    const passSnap = await get(ref(db, `users/${currentUser.uid}/pass_metiers`));
-    const maintenant = Date.now();
-    if (passSnap.exists()) {
-      const pass = passSnap.val();
-      if (pass.actif && pass.date_expiration > maintenant) {
-        passValide = true;
+    try {
+      const passSnap = await db.ref(`users/${currentUser.uid}/pass_metiers`).once("value");
+      const maintenant = Date.now();
+      if (passSnap.exists()) {
+        const pass = passSnap.val();
+        if (pass.actif && pass.date_expiration > maintenant) { passValide = true; }
       }
-    }
+    } catch(e){}
   }
 
   const contactSection = document.getElementById("contactInfoSection");
   const modalActions = document.getElementById("modalActions");
 
   if (passValide) {
-    // Si le pass est valide, afficher les numéros. Aucun e-mail n'est affiché.
     document.getElementById("modalPhone").textContent = metier.telephone || metier.whatsapp || "Non renseigné";
     document.getElementById("modalWhatsapp").textContent = metier.whatsapp || "Non renseigné";
     contactSection.style.display = "block";
@@ -579,7 +470,6 @@ async function ouvrirFicheProfil(metierId) {
       <a href="tel:${numTel}" class="btn-modal-action btn-call">${t.callBtn}</a>
     `;
   } else {
-    // Si pas de pass valide, cacher les contacts et afficher le bouton FedaPay (Pass 4 Mois - 2 000 FCFA)
     contactSection.style.display = "none";
     modalActions.innerHTML = `
       <button type="button" class="btn-modal-action btn-unlock" onclick="declencherFedaPay('${metier.id}')">${t.unlockBtn}</button>
@@ -590,7 +480,7 @@ async function ouvrirFicheProfil(metierId) {
 }
 
 window.declencherFedaPay = function(metierId) {
-  const t = translations[currentLang];
+  const t = translations[currentLang] || translations['fr'];
   if (!currentUser) {
     alert(t.loginAlert);
     window.location.href = "profil-acheteur.html";
@@ -612,16 +502,13 @@ window.declencherFedaPay = function(metierId) {
       lastname: currentUser.displayName || 'Acheteur DAKPROÉLITE'
     },
     onComplete: async function(response) {
-      if (response.reason === FedaPay.DIALOG_DISMISSED) {
-        alert(t.paymentCanceled);
-        return;
-      }
+      if (response.reason === FedaPay.DIALOG_DISMISSED) { alert(t.paymentCanceled); return; }
       
       if (response.status === 'approved' || response.transaction?.status === 'approved') {
-        const duree4Mois = 120 * 24 * 60 * 60 * 1000; // 120 jours (4 mois)
+        const duree4Mois = 120 * 24 * 60 * 60 * 1000;
         const now = Date.now();
         
-        await set(ref(db, `users/${currentUser.uid}/pass_metiers`), {
+        await db.ref(`users/${currentUser.uid}/pass_metiers`).set({
           actif: true,
           date_paiement: now,
           date_expiration: now + duree4Mois,
@@ -630,9 +517,7 @@ window.declencherFedaPay = function(metierId) {
 
         alert(t.paymentSuccess);
         ouvrirFicheProfil(metierId);
-      } else {
-        alert(t.paymentFailed);
-      }
+      } else { alert(t.paymentFailed); }
     }
   });
 
