@@ -38,7 +38,7 @@
 
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
-body{min-height:100vh;background:var(--black);color:var(--white);font-family:Poppins,sans-serif;display:flex;flex-direction:column;overflow-x:hidden;}
+body{min-height:100vh;background:var(--black);color:var(--white);font-family:Poppins,sans-serif;display:flex;flex-direction:column;overflow-x:hidden;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}
 
 button,input,select,textarea{font-family:inherit;}
 button,a{-webkit-tap-highlight-color:transparent;}
@@ -46,203 +46,195 @@ a{color:inherit;}
 
 /* HEADER */
 .header{
-position:sticky;top:0;z-index:5000;width:100%;min-height:82px;
-display:flex;align-items:center;gap:16px;
-padding:12px max(16px,env(safe-area-inset-right)) 12px max(16px,env(safe-area-inset-left));
+position:sticky;top:0;z-index:5000;width:100%;min-height:70px;
+display:flex;align-items:center;gap:10px;
+padding:10px 12px;
 background:linear-gradient(to bottom,#131921,#050505);
 border-bottom:2px solid var(--gold);
 }
 
-/* LOGO FIXE, GRAVÉ ET INDESTRUCTIBLE (ZÉRO MOUVEMENT / ZÉRO ZOOM) */
+/* LOGO FIXE COMPATIBLE PETITS ÉCRANS */
 .logo-container{
-width:64px !important;height:64px !important;min-width:64px !important;min-height:64px !important;flex:0 0 64px !important;
+width:50px !important;height:50px !important;min-width:50px !important;min-height:50px !important;flex:0 0 50px !important;
 border-radius:50% !important;border:2px solid var(--gold) !important;overflow:hidden !important;
 display:flex !important;align-items:center !important;justify-content:center !important;background:#000 !important;
-box-shadow:inset 0 0 0 3px rgba(0,0,0,.95),inset 0 0 14px rgba(0,0,0,1),0 3px 8px rgba(0,0,0,.9) !important;
-user-select:none !important;pointer-events:none !important;-webkit-user-select:none !important;
-transform:none !important;transition:none !important;
 }
 .logo{
-display:block !important;width:100% !important;height:100% !important;max-width:100% !important;max-height:100% !important;
+display:block !important;width:100% !important;height:100% !important;
 object-fit:contain !important;object-position:center !important;background:#000 !important;
-transform:none !important;transition:none !important;
 }
 
 /* RECHERCHE */
-.search-container{flex:1;min-width:0;display:flex;align-items:center;gap:8px;}
+.search-container{flex:1;min-width:0;display:flex;align-items:center;}
 #searchBar{
-flex:1;min-width:0;height:46px;border:1px solid var(--gold);border-radius:23px;
-background:#000;color:#fff;padding:0 16px;outline:none;font-size:13px;
-box-shadow:0 0 8px rgba(212,175,55,.12);text-overflow:ellipsis;
+width:100%;height:40px;border:1px solid var(--gold);border-radius:20px;
+background:#000;color:#fff;padding:0 14px;outline:none;font-size:12px;
 }
-#searchBar::placeholder{color:#888;font-size:12px;}
+#searchBar::placeholder{color:#888;font-size:11px;}
 
 /* NAVIGATION */
-.nav-icons{display:flex;align-items:center;gap:16px;flex-shrink:0;}
-.nav-item{position:relative;min-width:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:10px;cursor:pointer;}
-.nav-item>span:first-child{font-size:20px;line-height:22px;}
+.nav-icons{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.nav-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:9px;cursor:pointer;}
+.nav-item>span:first-child{font-size:18px;line-height:20px;}
 .nav-item:hover{color:var(--gold);}
 .cart-badge{
-position:absolute;top:-4px;right:2px;background:var(--red);color:#fff;
-font-size:10px;font-weight:700;border-radius:10px;padding:1px 5px;
-min-width:16px;text-align:center;line-height:1.2;display:none;border:1px solid var(--black);
+position:absolute;top:-4px;right:0px;background:var(--red);color:#fff;
+font-size:9px;font-weight:700;border-radius:8px;padding:1px 4px;
+min-width:14px;text-align:center;display:none;border:1px solid var(--black);
 }
 
 #btnInstall{
-display:none;width:calc(100% - 30px);max-width:600px;margin:12px auto;padding:11px;
-background:#333;border:1px solid var(--gold);border-radius:10px;text-align:center;color:#fff;cursor:pointer;font-size:13px;font-weight:600;
+display:none;width:calc(100% - 20px);max-width:600px;margin:10px auto;padding:10px;
+background:#333;border:1px solid var(--gold);border-radius:8px;text-align:center;color:#fff;cursor:pointer;font-size:12px;font-weight:600;
 }
 
 /* BANNIÈRES */
 .banner-container{
-display:none;position:relative;width:94%;max-width:1400px;margin:15px auto;
-overflow:hidden;border:1px solid var(--gold);border-radius:15px;background:var(--soft-dark);
-box-shadow:0 5px 20px rgba(212,175,55,.15);min-height:220px;
+display:none;position:relative;width:94%;max-width:1400px;margin:12px auto;
+overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:var(--soft-dark);
+min-height:180px;
 }
-.banner-track{display:flex;width:100%;transition:transform .5s ease;}
+.banner-track{display:flex;width:100%;transition:transform .4s ease;}
 .banner-slide{position:relative;min-width:100%;}
-.banner-slide img{width:100%;height:220px;display:block;object-fit:cover;}
-.banner-content{position:absolute;left:0;right:0;bottom:0;padding:15px;background:linear-gradient(to top, rgba(0,0,0,.92), transparent);}
-.banner-content h3{color:var(--gold);font-size:15px;margin-bottom:3px;}
-.banner-content p{color:#ddd;font-size:11px;}
-.banner-controls{position:absolute;top:10px;right:10px;z-index:20;display:flex;gap:6px;background:rgba(0,0,0,0.6);padding:4px 8px;border-radius:20px;border:1px solid var(--gold);}
-.banner-btn{background:transparent;border:none;color:var(--gold);font-size:14px;cursor:pointer;padding:2px 6px;line-height:1;}
-.banner-dots{position:absolute;bottom:9px;right:12px;display:flex;gap:5px;z-index:10;}
-.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;}
+.banner-slide img{width:100%;height:180px;display:block;object-fit:cover;}
+.banner-content{position:absolute;left:0;right:0;bottom:0;padding:12px;background:linear-gradient(to top, rgba(0,0,0,.9), transparent);}
+.banner-content h3{color:var(--gold);font-size:13px;margin-bottom:2px;}
+.banner-content p{color:#ddd;font-size:10px;}
+.banner-controls{position:absolute;top:8px;right:8px;z-index:20;display:flex;gap:4px;background:rgba(0,0,0,0.6);padding:3px 6px;border-radius:15px;border:1px solid var(--gold);}
+.banner-btn{background:transparent;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:2px 4px;}
+.banner-dots{position:absolute;bottom:6px;right:10px;display:flex;gap:4px;z-index:10;}
+.dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;}
 .dot.active{background:var(--gold);}
 
-/* BARRE DE NAVIGATION (MÉTIERS + CATÉGORIES VISUELLES) */
+/* BARRE DE NAVIGATION (MÉTIERS + CATÉGORIES) */
 .navigation-bar-container{
-width:100%;padding:10px 15px;display:flex;gap:12px;align-items:center;
-background:rgba(11,14,19,0.85);border-bottom:1px solid rgba(212,175,55,0.2);overflow-x:auto;scrollbar-width:none;
+width:100%;padding:8px 12px;display:flex;gap:10px;align-items:center;
+background:rgba(11,14,19,0.9);border-bottom:1px solid rgba(212,175,55,0.2);overflow-x:auto;
+-webkit-overflow-scrolling:touch;
 }
 .navigation-bar-container::-webkit-scrollbar{display:none;}
 .btn-metiers-special{
-flex:0 0 auto;padding:9px 18px;border:1px solid var(--gold);border-radius:22px;
+flex:0 0 auto;padding:8px 14px;border:1px solid var(--gold);border-radius:20px;
 background:linear-gradient(135deg, #d4af37, #aa8c2c);color:#000;cursor:pointer;
-white-space:nowrap;font-size:12px;font-weight:800;text-decoration:none;
-display:inline-flex;align-items:center;gap:6px;box-shadow:0 0 12px rgba(212,175,55,0.3);
+white-space:nowrap;font-size:11px;font-weight:800;text-decoration:none;
+display:inline-flex;align-items:center;gap:4px;
 }
-.cat-scroll{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;align-items:center;}
+.cat-scroll{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;align-items:center;}
 .cat-scroll::-webkit-scrollbar{display:none;}
 .cat-btn{
-flex:0 0 auto;padding:8px 14px;border:1px solid var(--gold);border-radius:18px;
-background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-size:11.5px;
-display:inline-flex;align-items:center;gap:6px;transition:all .2s ease;
+flex:0 0 auto;padding:7px 12px;border:1px solid var(--gold);border-radius:16px;
+background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-size:11px;
+display:inline-flex;align-items:center;gap:4px;
 }
-.cat-btn .cat-ico{font-size:15px;}
-.cat-btn.active{background:var(--gold);color:#000;font-weight:800;box-shadow:0 0 10px rgba(212,175,55,0.4);}
+.cat-btn.active{background:var(--gold);color:#000;font-weight:800;}
 
 /* SECTIONS STYLE AMAZON */
 .amazon-section{
-width:96%;max-width:1800px;margin:15px auto;padding:16px;background:#ffffff;
-border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);
+width:96%;max-width:1800px;margin:12px auto;padding:12px;background:#ffffff;
+border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 .amazon-section-title{
-font-size:15px;font-weight:700;color:var(--black);margin-bottom:12px;
-display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:2px solid var(--gold);padding-bottom:6px;
+font-size:13px;font-weight:700;color:var(--black);margin-bottom:10px;
+display:flex;align-items:center;justify-content:space-between;gap:6px;border-bottom:2px solid var(--gold);padding-bottom:5px;
 }
 .amazon-carousel{
-display:flex;gap:14px;overflow-x:auto;scroll-behavior:smooth;
-scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin;min-height:260px;
+display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+scroll-snap-type:x mandatory;padding-bottom:8px;min-height:240px;
 }
-.amazon-carousel::-webkit-scrollbar{height:8px;}
-.amazon-carousel::-webkit-scrollbar-thumb{background:var(--gold);border-radius:10px;}
+.amazon-carousel::-webkit-scrollbar{height:6px;}
+.amazon-carousel::-webkit-scrollbar-thumb{background:var(--gold);border-radius:8px;}
 
-/* CATALOGUE GÉNÉRAL EN GRILLE CLASSIQUE */
+/* CATALOGUE GÉNÉRAL EN GRILLE OPTIMISÉ TOUT ÉCRAN */
 .products{
-width:96%;max-width:1800px;margin:10px auto;padding:16px;background:#ffffff;
-border-radius:12px;display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:stretch;flex:1;
-box-shadow:0 4px 15px rgba(0,0,0,0.1);min-height:300px;
+width:100%;margin:0 auto;padding:8px;background:#ffffff;
+display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;align-items:stretch;
 }
-@media(min-width:700px){.products{grid-template-columns:repeat(4,1fr);gap:18px;padding:22px;}}
-@media(min-width:1001px){.products{grid-template-columns:repeat(6,1fr);gap:20px;padding:24px;}}
-@media(min-width:1651px){.products{grid-template-columns:repeat(8,1fr);gap:20px;}}
+@media(min-width:600px){.products{grid-template-columns:repeat(3, 1fr);gap:12px;padding:12px;}}
+@media(min-width:900px){.products{grid-template-columns:repeat(4, 1fr);gap:16px;padding:16px;}}
+@media(min-width:1200px){.products{grid-template-columns:repeat(6, 1fr);gap:18px;}}
 
-/* CARTE PRODUIT */
+/* CARTE PRODUIT COMPATIBLE PETITS TÉLÉPHONES */
 .card{
 position:relative;display:flex;flex-direction:column;justify-content:space-between;
-width:100%;min-width:170px;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;
-padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.05);transition:transform .2s ease, box-shadow .2s ease;overflow:hidden;height:100%;
+width:100%;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;
+padding:8px;box-shadow:0 2px 8px rgba(0,0,0,.04);overflow:hidden;height:100%;
 scroll-snap-align:start;
 }
-.amazon-carousel .card{flex:0 0 200px;min-width:200px;}
-.card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(212,175,55,0.25);border-color:var(--gold);}
+.amazon-carousel .card{flex:0 0 160px;min-width:160px;}
+@media(min-width:400px){.amazon-carousel .card{flex:0 0 180px;min-width:180px;}}
 
-.badge-discount{position:absolute;top:10px;right:10px;z-index:5;padding:3px 7px;background:var(--red);color:#fff;border-radius:4px;font-size:9px;font-weight:800;}
-.badge-boost{position:absolute;top:10px;left:10px;z-index:5;padding:3px 7px;background:linear-gradient(45deg, #d97706, #b45309);color:#fff;border-radius:4px;font-size:8px;font-weight:800;text-transform:uppercase;}
+.badge-discount{position:absolute;top:6px;right:6px;z-index:5;padding:2px 5px;background:var(--red);color:#fff;border-radius:3px;font-size:8px;font-weight:800;}
+.badge-boost{position:absolute;top:6px;left:6px;z-index:5;padding:2px 5px;background:#d97706;color:#fff;border-radius:3px;font-size:7px;font-weight:800;text-transform:uppercase;}
 
 .media-container{
-width:100%;height:170px;position:relative;border-radius:8px;overflow:hidden;
-background:#f8fafc;display:flex;align-items:center;justify-content:center;padding:4px;margin-bottom:10px;border:1px solid #f1f5f9;
+width:100%;height:140px;position:relative;border-radius:6px;overflow:hidden;
+background:#f8fafc;display:flex;align-items:center;justify-content:center;margin-bottom:8px;border:1px solid #f1f5f9;
 }
-.card img{width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;}
-.card video{width:100%;height:100%;object-fit:contain;border-radius:6px;display:block;}
+.card img{width:100%;height:100%;object-fit:contain;display:block;}
+.card video{width:100%;height:100%;object-fit:contain;display:block;}
 
 .card h3{
-margin:4px 0 6px;font-size:12.5px;font-weight:600;line-height:1.35;word-break:break-word;
-color:var(--card-text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:34px;
+margin:2px 0 4px;font-size:11.5px;font-weight:600;line-height:1.3;
+color:var(--card-text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px;
 }
 .card .description-complete{
-font-size:10px;color:var(--gray);line-height:1.4;margin-bottom:8px;
-display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:28px;
+font-size:9.5px;color:var(--gray);line-height:1.3;margin-bottom:6px;
+display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:24px;
 }
-.market-tags{display:flex;gap:4px;margin-bottom:6px;flex-wrap:wrap;}
-.tag-express{background:rgba(22,163,74,0.1);color:#15803d;border:1px solid rgba(22,163,74,0.2);font-size:8.5px;padding:2px 5px;border-radius:4px;font-weight:600;}
+.market-tags{display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap;}
+.tag-express{background:rgba(22,163,74,0.1);color:#15803d;border:1px solid rgba(22,163,74,0.2);font-size:7.5px;padding:1px 4px;border-radius:3px;font-weight:600;}
 
 /* PRIX */
-.price-container{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:4px 0 8px;}
-.price{color:var(--red);font-size:14px;font-weight:800;}
-.price-old{text-decoration:line-through;color:var(--blue);font-size:10.5px;font-weight:600;}
+.price-container{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin:2px 0 6px;}
+.price{color:var(--red);font-size:12.5px;font-weight:800;}
+.price-old{text-decoration:line-through;color:var(--blue);font-size:9.5px;font-weight:600;}
 
-.card-actions-row{display:flex;gap:5px;margin-top:auto;width:100%;}
+.card-actions-row{display:flex;gap:4px;margin-top:auto;width:100%;}
 .btn-action{
-flex:1;min-width:0;padding:7px 3px;border-radius:6px;font-size:9.5px;font-weight:700;
+flex:1;min-width:0;padding:6px 2px;border-radius:5px;font-size:9px;font-weight:700;
 text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:center;justify-content:center;white-space:nowrap;border:none;
 }
 .btn-view{background:var(--blue);color:#fff;}
 .btn-copy{background:#334155;color:#fff;}
 .btn-cart{background:var(--green);color:#fff;}
-.affiliate-input{display:none;width:100%;margin-top:4px;padding:4px;background:#fff;color:#000;border:1px solid #cbd5e1;border-radius:4px;font-size:8px;}
+.affiliate-input{display:none;width:100%;margin-top:4px;padding:3px;background:#fff;color:#000;border:1px solid #cbd5e1;border-radius:3px;font-size:7px;}
 
 /* MODAL & FOOTER */
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:10000;padding:15px;}
-.modal-content{background:#0a0d14;border:1px solid var(--gold);border-radius:14px;padding:20px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;}
-.app-footer{margin-top:30px;background:#131921;border-top:2px solid var(--gold);color:#ddd;font-size:12px;}
-.footer-announcement{padding:16px 20px;text-align:center;background:var(--soft-dark);border-bottom:1px solid #333;}
-.footer-announcement h4{color:var(--gold);margin-bottom:5px;font-size:14px;}
-.footer-links-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%;max-width:1000px;margin:auto;padding:25px 20px;}
-.footer-column h5{color:var(--gold);font-size:12px;margin-bottom:10px;text-transform:uppercase;}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:10000;padding:10px;}
+.modal-content{background:#0a0d14;border:1px solid var(--gold);border-radius:12px;padding:15px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;}
+.app-footer{margin-top:20px;background:#131921;border-top:2px solid var(--gold);color:#ddd;font-size:11px;}
+.footer-announcement{padding:12px 15px;text-align:center;background:var(--soft-dark);border-bottom:1px solid #333;}
+.footer-announcement h4{color:var(--gold);margin-bottom:4px;font-size:12px;}
+.footer-links-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:1000px;margin:auto;padding:15px;}
+.footer-column h5{color:var(--gold);font-size:11px;margin-bottom:8px;text-transform:uppercase;}
 .footer-column ul{list-style:none;}
-.footer-column li{margin-bottom:8px;}
+.footer-column li{margin-bottom:6px;}
 .footer-column a{color:#aaa;text-decoration:none;}
 
 /* SÉLECTEUR DE LANGUE */
 .footer-language-container{
-display:flex;justify-content:center;align-items:center;padding:15px;
+display:flex;justify-content:center;align-items:center;padding:12px;
 background:rgba(0,0,0,0.5);border-top:1px solid #222;border-bottom:1px solid #222;position:relative;
 }
 .lang-dropdown-wrapper{position:relative;display:inline-block;}
 .lang-main-btn{
-background:#1a222d;border:1px solid var(--gold);color:#fff;padding:8px 16px;
-border-radius:20px;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:600;
-transition:background .2s;
+background:#1a222d;border:1px solid var(--gold);color:#fff;padding:6px 12px;
+border-radius:16px;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-weight:600;
 }
-.lang-main-btn:hover{background:#253041;}
 .lang-menu{
-display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:8px;
-background:#12161f;border:1px solid var(--gold);border-radius:10px;overflow:hidden;box-shadow:0 5px 15px rgba(0,0,0,0.5);z-index:100;
-min-width:170px;max-height:280px;overflow-y:auto;
+display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:6px;
+background:#12161f;border:1px solid var(--gold);border-radius:8px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.5);z-index:100;
+min-width:150px;max-height:240px;overflow-y:auto;
 }
 .lang-menu.show{display:block;}
 .lang-option{
-width:100%;padding:10px 14px;background:transparent;border:none;color:#fff;
-text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;
+width:100%;padding:8px 12px;background:transparent;border:none;color:#fff;
+text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:6px;
 }
 .lang-option:hover{background:var(--gold);color:#000;font-weight:700;}
 
-.footer-bottom-bar{padding:15px;background:#000;text-align:center;color:#777;font-size:10px;}
-.loading-message,.empty-message{grid-column:1 / -1;padding:40px 20px;text-align:center;color:#64748b;font-size:13px;}
+.footer-bottom-bar{padding:12px;background:#000;text-align:center;color:#777;font-size:9px;}
+.loading-message,.empty-message{grid-column:1 / -1;padding:30px 10px;text-align:center;color:#64748b;font-size:12px;}
 </style>
 </head>
 
@@ -253,7 +245,7 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 <img class="logo" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" loading="eager" decoding="sync">
 </div>
 <div class="search-container">
-<input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits, vêtements ou services...">
+<input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits...">
 </div>
 <div class="nav-icons">
 <a href="panier.html" class="nav-item" id="navCartLink">
@@ -263,9 +255,9 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 </div>
 </header>
 
-<div id="btnInstall">Installer l'application sur l'appareil</div>
+<div id="btnInstall">Installer l'application</div>
 
-<!-- BANNIÈRE DÉFILANTE PRINCIPALE -->
+<!-- BANNIÈRE DÉFILANTE -->
 <section class="banner-container" id="bannerContainer">
 <div class="banner-controls">
 <button type="button" class="banner-btn" id="btnBannerPrev">◄</button>
@@ -276,46 +268,39 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 <div class="banner-dots" id="bannerDots"></div>
 </section>
 
-<!-- BARRE DE NAVIGATION : BOUTON MÉTIERS FIXE + CATÉGORIES VISUELLES -->
+<!-- BARRE DE NAVIGATION (MÉTIERS + CATÉGORIES) -->
 <div class="navigation-bar-container">
-<a href="metiers.html" class="btn-metiers-special"><span data-i18n="allTrades">🛠️ Tous les Métiers</span></a>
+<a href="metiers.html" class="btn-metiers-special"><span data-i18n="allTrades">🛠️ Métiers</span></a>
 <div class="cat-scroll" id="catMenu"></div>
 </div>
 
-<!-- ===================================================== -->
-<!-- PANNEAUX DE ROULAGE STYLE AMAZON (ANTI-DOUBLONS INTÉGRÉ) -->
-<!-- ===================================================== -->
-
-<!-- PANNEAU 1 : OFFRES FLASH & PROMOTIONS DU JOUR -->
+<!-- =================O-R-D-R-E---D-E-S---S-E-C-T-I-O-N-S================= -->
+<!-- 1. OFFRES FLASH & PROMOS (EN HAUT) -->
 <section class="amazon-section">
   <div class="amazon-section-title">
-    <span data-i18n="flashOffers">🔥 Offres Flash &amp; Promos du jour</span>
-    <small style="color:#666; font-weight:400; font-size:11px;" data-i18n="swipeHint">Glissez pour voir plus →</small>
+    <span data-i18n="flashOffers">🔥 Offres Flash &amp; Promos</span>
+    <small style="color:#666; font-weight:400; font-size:10px;" data-i18n="swipeHint">Glisser →</small>
   </div>
-  <div class="amazon-carousel" id="carouselPromos">
-    <!-- Généré dynamiquement sans doublon -->
-  </div>
+  <div class="amazon-carousel" id="carouselPromos"></div>
 </section>
 
-<!-- PANNEAU 2 : PRODUITS RECOMMANDÉS & SPONSORISÉS -->
-<section class="amazon-section">
-  <div class="amazon-section-title">
-    <span data-i18n="sponsoredTitle">⭐ Produits recommandés &amp; Sponsorisés</span>
-    <small style="color:#666; font-weight:400; font-size:11px;" data-i18n="swipeHint">Glissez pour voir plus →</small>
-  </div>
-  <div class="amazon-carousel" id="carouselRelated">
-    <!-- Généré dynamiquement sans doublon -->
-  </div>
-</section>
-
-<!-- CATALOGUE GÉNÉRAL CLASSIQUE EN GRILLE -->
+<!-- 2. CATALOGUE COMPLET & CATÉGORIES (AU MILIEU) -->
 <section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
-  <div class="amazon-section-title" style="background:#fff; padding:12px; border-radius:8px;">
-    <span data-i18n="fullCatalog">📦 Catalogue Complet &amp; Catégories</span>
+  <div class="amazon-section-title" style="background:#fff; padding:10px; border-radius:6px;">
+    <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
   </div>
   <main class="products" id="products">
-    <div class="loading-message" data-i18n="loadingArticles">Chargement des articles de la marketplace...</div>
+    <div class="loading-message" data-i18n="loadingArticles">Chargement des articles...</div>
   </main>
+</section>
+
+<!-- 3. PRODUITS RECOMMANDÉS & SPONSORISÉS (EN BAS) -->
+<section class="amazon-section">
+  <div class="amazon-section-title">
+    <span data-i18n="sponsoredTitle">⭐ Recommandés &amp; Sponsorisés</span>
+    <small style="color:#666; font-weight:400; font-size:10px;" data-i18n="swipeHint">Glisser →</small>
+  </div>
+  <div class="amazon-carousel" id="carouselRelated"></div>
 </section>
 
 <div id="productModalContainer"></div>
@@ -323,35 +308,34 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 <footer class="app-footer">
 <section class="footer-announcement">
 <h4 id="fayaBuzzTitle" data-i18n="officialAnnouncement">⚡ Annonce Officielle</h4>
-<p id="fayaBuzzText" data-i18n="welcomeText">Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !</p>
+<p id="fayaBuzzText" data-i18n="welcomeText">Bienvenue sur DAKPROÉLITE !</p>
 </section>
 
 <div class="footer-links-grid">
 <div class="footer-column">
-<h5 data-i18n="navAndHelp">Navigation & Aide</h5>
+<h5 data-i18n="navAndHelp">Aide</h5>
 <ul>
-<li><a href="support-rapide.html" data-i18n="quickSupport">Support Rapide</a></li>
-<li><a href="aide.html" data-i18n="helpCenter">Centre d'aide général</a></li>
-<li><a href="profil-acheteur.html" data-i18n="myAccount">Mon Compte</a></li>
+<li><a href="support-rapide.html" data-i18n="quickSupport">Support</a></li>
+<li><a href="aide.html" data-i18n="helpCenter">Aide</a></li>
+<li><a href="profil-acheteur.html" data-i18n="myAccount">Compte</a></li>
 </ul>
 </div>
 <div class="footer-column">
-<h5 data-i18n="rulesAndLegal">Règles & Légal</h5>
+<h5 data-i18n="rulesAndLegal">Légal</h5>
 <ul>
-<li><a href="reglement-interieur.html" data-i18n="internalRules">Règlement Intérieur</a></li>
-<li><a href="politique-confidentialite.html" data-i18n="privacyPolicy">Politique de Confidentialité</a></li>
+<li><a href="reglement-interieur.html" data-i18n="internalRules">Règlement</a></li>
+<li><a href="politique-confidentialite.html" data-i18n="privacyPolicy">Confidentialité</a></li>
 </ul>
 </div>
 <div class="footer-column">
-<h5 data-i18n="earnMoney">Gagner de l'argent</h5>
+<h5 data-i18n="earnMoney">Gagner</h5>
 <ul>
-<li><a href="programme-ambassadeur.html" data-i18n="ambassadorProgram">Programme Ambassadeur</a></li>
-<li><a href="https://vendeur.dakproelite.com" class="seller-link" data-i18n="becomeSeller">🛍️ Devenir Vendeur</a></li>
+<li><a href="programme-ambassadeur.html" data-i18n="ambassadorProgram">Ambassadeur</a></li>
+<li><a href="https://vendeur.dakproelite.com" class="seller-link" data-i18n="becomeSeller">🛍️ Vendeur</a></li>
 </ul>
 </div>
 </div>
 
-<!-- SÉLECTEUR DE LANGUE STYLE AMAZON -->
 <div class="footer-language-container">
 <div class="lang-dropdown-wrapper">
 <button type="button" class="lang-main-btn" id="langMainBtn">
@@ -362,9 +346,9 @@ text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;ga
 <button type="button" class="lang-option" data-lang="en">🇬🇧 English</button>
 <button type="button" class="lang-option" data-lang="es">🇪🇸 Español</button>
 <button type="button" class="lang-option" data-lang="zh">🇨🇳 中文</button>
-<button type="button" class="lang-option" data-lang="bn">🇧🇩 বাংলা (Bangladesh)</button>
+<button type="button" class="lang-option" data-lang="bn">🇧🇩 বাংলা</button>
 <button type="button" class="lang-option" data-lang="yo">🇳🇬 Yorùbá</button>
-<button type="button" class="lang-option" data-lang="fon">🇧🇯 Fɔ̀ngbè (Fon)</button>
+<button type="button" class="lang-option" data-lang="fon">🇧🇯 Fɔ̀ngbè</button>
 </div>
 </div>
 </div>
@@ -395,19 +379,16 @@ const auth = getAuth(app);
 
 window.dakproFirebase = { app, db, auth };
 
-// CHARGEMENT INSTANTANÉ DEPUIS LE CACHE LOCAL S'IL EXISTE
 let cachedProducts = localStorage.getItem("dakpro_cached_products");
 window.allProductsData = cachedProducts ? JSON.parse(cachedProducts) : [];
 
 const siteContext = { currentUser: null };
-
 let currentCat = ""; 
 let currentIndex = 0;
 let totalSlides = 0;
 let autoPlay = null;
 let announcementDataCache = null;
 
-/* Dictionnaire des icônes associées par défaut aux catégories */
 const categoryIconsMap = {
 "Voitures": "🚗", "Smartphones": "📱", "Vêtements": "👕", "Chaussures": "👟",
 "Montres": "⌚", "Bijoux": "💍", "Parfums": "🌸", "Meubles": "🛋️",
@@ -423,121 +404,140 @@ if(catName.toLowerCase().includes(key.toLowerCase())) return categoryIconsMap[ke
 return "📦";
 }
 
-/* =====================================================
-DICTIONNAIRE DE TRADUCTION & DEVISES
-===================================================== */
+/* DICTIONNAIRE DE TRADUCTION COMPLET (Application, Menus, Pied de page, etc.) */
 const translations = {
 fr: {
 name: "Français", currency: "FCFA", rate: 1,
-searchPlaceholder: "Rechercher des produits, vêtements ou services...",
-navCart: "Panier", navAccount: "Compte", allTrades: "🛠️ Tous les Métiers",
-loadingArticles: "Chargement des articles de la marketplace...",
-emptyCategory: "Aucun article trouvé dans cette catégorie pour le moment.",
+searchPlaceholder: "Rechercher des produits...",
+navCart: "Panier", navAccount: "Compte", allTrades: "🛠️ Métiers",
+loadingArticles: "Chargement des articles...",
+emptyCategory: "Aucun article trouvé.",
 officialAnnouncement: "⚡ Annonce Officielle",
 welcomeText: "Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !",
-sponsoredTitle: "⭐ Produits recommandés & Sponsorisés",
-flashOffers: "🔥 Offres Flash & Promos du jour",
-fullCatalog: "📦 Catalogue Complet & Catégories",
-swipeHint: "Glissez pour voir plus →",
+sponsoredTitle: "⭐ Recommandés & Sponsorisés",
+flashOffers: "🔥 Offres Flash & Promos",
+fullCatalog: "📦 Catalogue & Catégories",
+swipeHint: "Glisser →",
 viewBtn: "👁️ Voir", copyBtn: "🔗 Copier", cartBtn: "🛒 Panier",
-copiedMsg: "✅ Copié !", addedMsg: "✅ Ajouté !", imageUnavailable: "Image indisponible",
-selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalBuy: "💳 Acheter", modalClose: "Fermer"
+copiedMsg: "✅ Copié !", addedMsg: "✅ Ajouté !", imageUnavailable: "Indisponible",
+selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalBuy: "💳 Acheter", modalClose: "Fermer",
+navAndHelp: "Aide", quickSupport: "Support", helpCenter: "Centre d'aide", myAccount: "Mon Compte",
+rulesAndLegal: "Légal", internalRules: "Règlement", privacyPolicy: "Confidentialité",
+earnMoney: "Gagner", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Vendeur"
 },
 en: {
 name: "English", currency: "USD", rate: 1 / 600,
-searchPlaceholder: "Search for products, clothing or services...",
-navCart: "Cart", navAccount: "Account", allTrades: "🛠️ All Trades",
-loadingArticles: "Loading marketplace items...",
-emptyCategory: "No items found in this category right now.",
+searchPlaceholder: "Search products...",
+navCart: "Cart", navAccount: "Account", allTrades: "🛠️ Trades",
+loadingArticles: "Loading items...",
+emptyCategory: "No items found.",
 officialAnnouncement: "⚡ Official Announcement",
 welcomeText: "Welcome to DAKPROÉLITE, your international benchmark marketplace!",
-sponsoredTitle: "⭐ Recommended & Sponsored Products",
-flashOffers: "🔥 Flash Offers & Daily Deals",
-fullCatalog: "📦 Full Catalog & Categories",
-swipeHint: "Swipe to see more →",
+sponsoredTitle: "⭐ Recommended & Sponsored",
+flashOffers: "🔥 Flash Offers",
+fullCatalog: "📦 Catalog & Categories",
+swipeHint: "Swipe →",
 viewBtn: "👁️ View", copyBtn: "🔗 Copy", cartBtn: "🛒 Cart",
-copiedMsg: "✅ Copied!", addedMsg: "✅ Added!", imageUnavailable: "Image unavailable",
-selectedArticle: "Selected item on DAKPROÉLITE.", modalBuy: "💳 Buy Now", modalClose: "Close"
+copiedMsg: "✅ Copied!", addedMsg: "✅ Added!", imageUnavailable: "Unavailable",
+selectedArticle: "Selected item on DAKPROÉLITE.", modalBuy: "💳 Buy Now", modalClose: "Close",
+navAndHelp: "Help & Nav", quickSupport: "Quick Support", helpCenter: "Help Center", myAccount: "My Account",
+rulesAndLegal: "Rules & Legal", internalRules: "Internal Rules", privacyPolicy: "Privacy Policy",
+earnMoney: "Earn Money", ambassadorProgram: "Ambassador Program", becomeSeller: "🛍️ Become Seller"
 },
 es: {
 name: "Español", currency: "EUR", rate: 1 / 655.957,
-searchPlaceholder: "Buscar productos, ropa o servicios...",
-navCart: "Carrito", navAccount: "Cuenta", allTrades: "🛠️ Todos los Oficios",
-loadingArticles: "Cargando artículos del mercado...",
-emptyCategory: "No se encontraron artículos en esta categoría por el momento.",
+searchPlaceholder: "Buscar productos...",
+navCart: "Carrito", navAccount: "Cuenta", allTrades: "🛠️ Oficios",
+loadingArticles: "Cargando artículos...",
+emptyCategory: "No se encontraron artículos.",
 officialAnnouncement: "⚡ Anuncio Oficial",
 welcomeText: "¡Bienvenido a DAKPROÉLITE, su plataforma internacional de referencia!",
-sponsoredTitle: "⭐ Productos recomendados y patrocinados",
-flashOffers: "🔥 Ofertas flash y promociones del día",
-fullCatalog: "📦 Catálogo completo y categorías",
-swipeHint: "Desliza para ver más →",
+sponsoredTitle: "⭐ Recomendados y patrocinados",
+flashOffers: "🔥 Ofertas flash",
+fullCatalog: "📦 Catálogo y categorías",
+swipeHint: "Deslizar →",
 viewBtn: "👁️ Ver", copyBtn: "🔗 Copiar", cartBtn: "🛒 Carrito",
-copiedMsg: "✅ ¡Copiado!", addedMsg: "✅ ¡Añadido!", imageUnavailable: "Imagen no disponible",
-selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalBuy: "💳 Comprar", modalClose: "Cerrar"
+copiedMsg: "✅ ¡Copiado!", addedMsg: "✅ ¡Añadido!", imageUnavailable: "No disponible",
+selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalBuy: "💳 Comprar", modalClose: "Cerrar",
+navAndHelp: "Ayuda", quickSupport: "Soporte Rápido", helpCenter: "Centro de Ayuda", myAccount: "Mi Cuenta",
+rulesAndLegal: "Normas y Legal", internalRules: "Reglamento", privacyPolicy: "Política de Privacidad",
+earnMoney: "Ganar Dinero", ambassadorProgram: "Programa Embajador", becomeSeller: "🛍️ Ser Vendedor"
 },
 zh: {
 name: "中文", currency: "CNY", rate: 1 / 85,
-searchPlaceholder: "搜索产品、服装或服务...",
-navCart: "购物车", navAccount: "账户", allTrades: "🛠️ 所有行业",
-loadingArticles: "正在加载市场商品...",
-emptyCategory: "当前分类下暂无商品。",
+searchPlaceholder: "搜索产品...",
+navCart: "购物车", navAccount: "账户", allTrades: "🛠️ 行业",
+loadingArticles: "正在加载商品...",
+emptyCategory: "暂无商品。",
 officialAnnouncement: "⚡ 官方公告",
 welcomeText: "欢迎来到 DAKPROÉLITE，您的国际基准市场！",
-sponsoredTitle: "⭐ 推荐与赞助商品",
-flashOffers: "🔥 限时抢购与每日特惠",
-fullCatalog: "📦 完整目录与分类",
-swipeHint: "滑动查看更多 →",
+sponsoredTitle: "⭐ 推荐与赞助",
+flashOffers: "🔥 限时特惠",
+fullCatalog: "📦 目录与分类",
+swipeHint: "滑动 →",
 viewBtn: "👁️ 查看", copyBtn: "🔗 复制", cartBtn: "🛒 购物车",
-copiedMsg: "✅ 已复制！", addedMsg: "✅ 已添加！", imageUnavailable: "图片不可用",
-selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalBuy: "💳 购买", modalClose: "关闭"
+copiedMsg: "✅ 已复制！", addedMsg: "✅ 已添加！", imageUnavailable: "不可用",
+selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalBuy: "💳 购买", modalClose: "关闭",
+navAndHelp: "导航与帮助", quickSupport: "快速支持", helpCenter: "帮助中心", myAccount: "我的账户",
+rulesAndLegal: "规则与法律", internalRules: "内部规则", privacyPolicy: "隐私政策",
+earnMoney: "赚钱", ambassadorProgram: "大使计划", becomeSeller: "🛍️ 成为卖家"
 },
 bn: {
 name: "বাংলা", currency: "BDT", rate: 1 / 5,
-searchPlaceholder: "পroducts, clothing or services search...",
-navCart: "কার্ট", navAccount: "অ্যাকাউন্ট", allTrades: "🛠️ সকল পেশা",
-loadingArticles: "মার্কেটপ্লেস আইটেম লোড হচ্ছে...",
-emptyCategory: "এই ক্যাটাগরিতে এই মুহূর্তে কোনো আইটেম পাওয়া যায়নি।",
+searchPlaceholder: "অনুসন্ধান...",
+navCart: "কার্ট", navAccount: "অ্যাকাউন্ট", allTrades: "🛠️ পেশা",
+loadingArticles: "লোড হচ্ছে...",
+emptyCategory: "কোনো আইটেম পাওয়া যায়নি।",
 officialAnnouncement: "⚡ অফিসিয়াল ঘোষণা",
 welcomeText: "DAKPROÉLITE-এ স্বাগতম, আপনার আন্তর্জাতিক বেঞ্চমার্ক মার্কেটপ্লেস!",
-sponsoredTitle: "⭐ প্রস্তাবিত এবং স্পনসরকৃত পণ্য",
-flashOffers: "🔥 ফ্ল্যাশ অফার এবং দৈনিক ডিল",
-fullCatalog: "📦 সম্পূর্ণ ক্যাটালগ এবং বিভাগ",
-swipeHint: "আরও দেখতে সোয়াইপ করুন →",
+sponsoredTitle: "⭐ প্রস্তাবিত",
+flashOffers: "🔥 ফ্ল্যাশ অফার",
+fullCatalog: "📦 ক্যাটালগ",
+swipeHint: "সোয়াইপ →",
 viewBtn: "👁️ দেখুন", copyBtn: "🔗 কপি", cartBtn: "🛒 কার্ট",
-copiedMsg: "✅ কপি হয়েছে!", addedMsg: "✅ যোগ করা হয়েছে!", imageUnavailable: "ছবি উপলব্ধ নেই",
-selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।", modalBuy: "💳 কিনুন", modalClose: "বন্ধ করুন"
+copiedMsg: "✅ কপি!", addedMsg: "✅ যোগ!", imageUnavailable: "নেই",
+selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।", modalBuy: "💳 কিনুন", modalClose: "বন্ধ",
+navAndHelp: "সহায়তা", quickSupport: "দ্রুত সহায়তা", helpCenter: "সহায়তা কেন্দ্র", myAccount: "অ্যাকাউন্ট",
+rulesAndLegal: "নিয়মাবলী", internalRules: "অভ্যন্তরীণ নিয়ম", privacyPolicy: "গোপনীয়তা নীতি",
+earnMoney: "আয় করুন", ambassadorProgram: "অ্যাম্বাসেডর প্রোগ্রাম", becomeSeller: "🛍️ বিক্রেতা হন"
 },
 yo: {
 name: "Yorùbá", currency: "NGN", rate: 1.2,
-searchPlaceholder: "Wa awọn ọja, aṣọ tabi iṣẹ...",
-navCart: "Kẹkẹ", navAccount: "Àsántì", allTrades: "🛠️ Gbogbo Iṣẹ",
-loadingArticles: "N ṣe agbega awọn ọja oja...",
-emptyCategory: "Ko si ọja ti a rii ni ẹka yii ni bayi.",
+searchPlaceholder: "Wa awọn ọja...",
+navCart: "Kẹkẹ", navAccount: "Àsántì", allTrades: "🛠️ Iṣẹ",
+loadingArticles: "N ṣe agbega...",
+emptyCategory: "Ko si ọja.",
 officialAnnouncement: "⚡ Ikede Oṣiṣẹ",
 welcomeText: "Kaabọ si DAKPROÉLITE, ọja agbaye ti o dara julọ!",
-sponsoredTitle: "⭐ Awọn ọja ti a ṣeduro",
-flashOffers: "🔥 Awọn ipese pataki",
-fullCatalog: "📦 Gbogbo Awọn Ọja",
-swipeHint: "Ra lati wo diẹ sii →",
+sponsoredTitle: "⭐ A ṣeduro",
+flashOffers: "🔥 Awọn ipese",
+fullCatalog: "📦 Awọn Ọja",
+swipeHint: "Ra →",
 viewBtn: "👁️ Wo", copyBtn: "🔗 Daako", cartBtn: "🛒 Kẹkẹ",
-copiedMsg: "✅ A daako re!", addedMsg: "✅ A fi kun!", imageUnavailable: "Aworan ko si",
-selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.", modalBuy: "💳 Ra Bayi", modalClose: "Pade"
+copiedMsg: "✅ A daako!", addedMsg: "✅ A fi kun!", imageUnavailable: "Ko si",
+selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.", modalBuy: "💳 Ra", modalClose: "Pade",
+navAndHelp: "Iranlọwọ", quickSupport: "Atilẹyin", helpCenter: "Ile-iṣẹ Iranlọwọ", myAccount: "Akọntẹ mi",
+rulesAndLegal: "Ofin", internalRules: "Awọn Ofin", privacyPolicy: "Asiri",
+earnMoney: "Gba Owo", ambassadorProgram: "Eto Aṣoju", becomeSeller: "🛍️ Di Olutaja"
 },
 fon: {
 name: "Fɔ̀ngbè", currency: "FCFA", rate: 1,
-searchPlaceholder: "Ba nǔ kpo avɔ kpo...",
-navCart: "Tɛnmɛ", navAccount: "Akɔntá", allTrades: "🛠️ Azɔ̌ bǐ",
+searchPlaceholder: "Ba nǔ...",
+navCart: "Tɛnmɛ", navAccount: "Akɔntá", allTrades: "🛠️ Azɔ̌",
 loadingArticles: "E ɖò nǔ lɛ ɖè wɛ...",
-emptyCategory: "Nǔ ɖebǔ mɛ e ma ɖò tɛnmɛ nɛ ɔ mɛ ǎ.",
+emptyCategory: "Nǔ ɖebǔ mɛ ǎ.",
 officialAnnouncement: "⚡ Gbeɖéɖé",
 welcomeText: "Wɛkɛ ɖò DAKPROÉLITE, akɔ̀ tɔn mɛ!",
-sponsoredTitle: "⭐ Nǔ e sɔ́ ɖó tɛnmɛ lɛ",
-flashOffers: "🔥 Hwenu ɖagbe kpo",
-fullCatalog: "📦 Nǔ bǐ tɛnmɛ",
-swipeHint: "Sɔ́ yì nukɔn →",
-viewBtn: "👁️ Kpé", copyBtn: "🔗 Kpé nǔ", cartBtn: "🛒 Tɛnmɛ",
-copiedMsg: "✅ E kpé!", addedMsg: "✅ E ɖó!", imageUnavailable: "Nɛ̌ nǔ ɖé ǎ",
-selectedArticle: "Nǔ e ɖò DAKPROÉLITE.", modalBuy: "💳 Hò", modalClose: "Sɔ́"
+sponsoredTitle: "⭐ Nǔ e sɔ́",
+flashOffers: "🔥 Hwenu ɖagbe",
+fullCatalog: "📦 Nǔ bǐ",
+swipeHint: "Sɔ́ →",
+viewBtn: "👁️ Kpé", copyBtn: "🔗 Kpé", cartBtn: "🛒 Tɛnmɛ",
+copiedMsg: "✅ E kpé!", addedMsg: "✅ E ɖó!", imageUnavailable: "Ǎ",
+selectedArticle: "Nǔ e ɖò DAKPROÉLITE.", modalBuy: "💳 Hò", modalClose: "Sɔ́",
+navAndHelp: "Alɔgɔ", quickSupport: "Alɔgɔ K館", helpCenter: "Alɔgɔ Tɛnmɛ", myAccount: "Akɔntá",
+rulesAndLegal: "Sɛ́n", internalRules: "Sɛ́n Xó", privacyPolicy: "Nǔ Gudo",
+earnMoney: "Ba Akuɛ", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Zɔ̌watɔ́"
 }
 };
 
@@ -546,7 +546,7 @@ let currentLang = localStorage.getItem("dakpro_lang") || "fr";
 function formatPrice(val) {
 const t = translations[currentLang];
 let converted = val * t.rate;
-if(t.currency === "USD" || t.currency === "EUR" || t.currency === "BDT" || t.currency === "NGN") {
+if(["USD", "EUR", "BDT", "NGN"].includes(t.currency)) {
 converted = converted.toFixed(2);
 } else {
 converted = Math.round(converted);
@@ -554,12 +554,16 @@ converted = Math.round(converted);
 return `${converted} ${t.currency}`;
 }
 
+/* Règle d'or : On traduit uniquement la description ou les libellés génériques, mais on ne touche pas au nom d'origine du produit ni du vendeur */
 function getLocalizedText(obj, fieldBase, lang) {
 if(!obj) return "";
-if(lang !== 'fr' && (obj[fieldBase + '_' + lang] || obj['title_' + lang] || obj['description_' + lang])) {
-return obj[fieldBase + '_' + lang] || obj['title_' + lang] || obj['description_' + lang];
+// Si c'est un champ description ou texte d'annonce, on tente de récupérer la version multilingue si disponible
+if(fieldBase === 'description') {
+if(lang !== 'fr' && obj['description_' + lang]) return obj['description_' + lang];
+return obj.description || obj.texte || obj.text || "";
 }
-return obj[fieldBase] || obj['texte'] || obj['text'] || obj['description'] || obj['nom'] || obj['title'] || obj['name'] || "";
+// Pour les titres et noms propres (produit, vendeur), on respecte la règle stricte : on garde le nom d'origine sans traduction automatique
+return obj[fieldBase] || obj.nom || obj.title || obj.name || "";
 }
 
 function setLanguage(lang) {
@@ -569,9 +573,7 @@ localStorage.setItem("dakpro_lang", lang);
 
 document.querySelectorAll("[data-i18n]").forEach(el => {
 const key = el.getAttribute("data-i18n");
-if(translations[lang][key]) {
-el.textContent = translations[lang][key];
-}
+if(translations[lang][key]) el.textContent = translations[lang][key];
 });
 
 const searchInput = document.getElementById("searchBar");
@@ -580,9 +582,7 @@ if(searchInput) searchInput.placeholder = translations[lang].searchPlaceholder;
 const langLabel = document.getElementById("currentLangLabel");
 if(langLabel) langLabel.textContent = translations[lang].name;
 
-if(announcementDataCache) {
-applyAnnouncement(announcementDataCache);
-}
+if(announcementDataCache) applyAnnouncement(announcementDataCache);
 
 filterProducts();
 renderCarousels(window.allProductsData);
@@ -610,50 +610,32 @@ menu?.classList.remove("show");
 
 setLanguage(currentLang);
 
-// Affichage immédiat si le cache existe déjà
 if(window.allProductsData.length > 0){
 buildCategories();
 filterProducts();
 renderCarousels(window.allProductsData);
 }
-
-window.addEventListener("dakpro-category-selected", (e) => {
-if(e.detail && e.detail.category){
-currentCat = e.detail.category;
-const menu = document.getElementById("catMenu");
-if(menu){
-menu.querySelectorAll(".cat-btn").forEach(btn => {
-if(btn.dataset.category === currentCat) {
-btn.classList.add("active");
-} else {
-btn.classList.remove("active");
-}
-});
-}
-filterProducts();
-}
-});
 });
 
-onAuthStateChanged(auth, user=>{
+onAuthStateChanged(auth, user => {
 siteContext.currentUser = user || null;
-if(user){ listenToCartBadge(user.uid); }else{ updateCartBadgeDisplay(0); }
+if(user){ listenToCartBadge(user.uid); } else { updateCartBadgeDisplay(0); }
 });
 
 function updateCartBadgeDisplay(count){
 const badge = document.getElementById("cartBadge");
-if(!badge)return;
-if(count>0){ badge.textContent = count; badge.style.display = "inline-block"; }
+if(!badge) return;
+if(count > 0){ badge.textContent = count; badge.style.display = "inline-block"; }
 else{ badge.style.display = "none"; }
 }
 
 function listenToCartBadge(uid){
 const cartRef = ref(db, `users/${uid}/panier`);
-onValue(cartRef, snapshot=>{
+onValue(cartRef, snapshot => {
 const data = snapshot.val();
-if(!data || typeof data!=="object"){ updateCartBadgeDisplay(0); return; }
-let totalItems=0;
-Object.values(data).forEach(item=>{ totalItems += parseInt(item.quantite || 1, 10); });
+if(!data || typeof data !== "object"){ updateCartBadgeDisplay(0); return; }
+let totalItems = 0;
+Object.values(data).forEach(item => { totalItems += parseInt(item.quantite || 1, 10); });
 updateCartBadgeDisplay(totalItems);
 });
 }
@@ -663,49 +645,46 @@ return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>
 }
 function escapeAttribute(value){ return escapeHTML(value); }
 
-/* CHARGEMENT FIREBASE EN ARRIÈRE-PLAN AVEC MISE EN CACHE */
 function loadProducts(){
-onValue(ref(db,"publications"), snapshot=>{
+onValue(ref(db,"publications"), snapshot => {
 const data = snapshot.val();
-if(!data || typeof data!=="object") return;
+if(!data || typeof data !== "object") return;
 
 window.allProductsData = Object.entries(data)
-.map(([id,product])=>{
-if(!product || typeof product!=="object") return null;
+.map(([id, product]) => {
+if(!product || typeof product !== "object") return null;
 return { id, ...product };
 })
-.filter(product=>product && product.actif!==false);
+.filter(product => product && product.actif !== false);
 
-// Sauvegarde dans le cache local pour un affichage instantané ultérieur
 localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
 
 buildCategories();
 filterProducts();
 renderCarousels(window.allProductsData);
 checkUrlForSharedProduct();
-}, error=>{ console.error("Erreur publications:", error); });
+}, error => { console.error("Erreur publications:", error); });
 }
 
 function buildCategories(){
-const categories=[...new Set(window.allProductsData.map(p=>p.categorie || p.category).filter(Boolean))];
+const categories = [...new Set(window.allProductsData.map(p => p.categorie || p.category).filter(Boolean))];
 const menu = document.getElementById("catMenu");
-if(!menu)return;
+if(!menu) return;
 
 if(!currentCat && categories.length > 0){
 currentCat = categories[0];
 }
 
-menu.innerHTML = categories.map(category=>{
+menu.innerHTML = categories.map(category => {
 const safe = escapeHTML(category);
 const icon = getCategoryIcon(category);
-const displayCatName = getLocalizedText({ cat: category }, 'cat', currentLang) || category;
-return `<button type="button" class="cat-btn ${category===currentCat?"active":""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(displayCatName)}</span></button>`;
+return `<button type="button" class="cat-btn ${category === currentCat ? "active" : ""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
 }).join("");
 
-menu.querySelectorAll(".cat-btn").forEach(button=>{
-button.addEventListener("click", ()=>{
+menu.querySelectorAll(".cat-btn").forEach(button => {
+button.addEventListener("click", () => {
 currentCat = button.dataset.category;
-menu.querySelectorAll(".cat-btn").forEach(item=>item.classList.remove("active"));
+menu.querySelectorAll(".cat-btn").forEach(item => item.classList.remove("active"));
 button.classList.add("active");
 filterProducts();
 });
@@ -717,9 +696,9 @@ document.getElementById("searchBar")?.addEventListener("input", filterProducts);
 function getFilteredProducts(){
 const search = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
 
-return window.allProductsData.filter(product=>{
-const name = String(getLocalizedText(product, 'nom', currentLang) || product.title || product.name || "").toLowerCase();
-const description = String(getLocalizedText(product, 'description', currentLang) || "").toLowerCase();
+return window.allProductsData.filter(product => {
+const name = String(product.nom || product.title || product.name || "").toLowerCase();
+const description = String(product.description || "").toLowerCase();
 const category = String(product.categorie || product.category || "").toLowerCase();
 const productCategory = product.categorie || product.category || "";
 
@@ -735,7 +714,6 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* GÉNÉRATEUR DE CARTE UNIVERSEL */
 function generateCardHTML(product, uid){
 const id = encodeURIComponent(product.id || "");
 const siteBase = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '');
@@ -745,21 +723,22 @@ const image = product.image || product.imageUrl || product.photo || product.img 
 const video = product.video || product.videoUrl || "";
 const documentUrl = product.document || product.documentUrl || "";
 
-const productName = getLocalizedText(product, 'nom', currentLang) || product.title || product.name || "Article";
+// Règle respectée : Le nom du produit n'est pas traduit (nom d'origine conservé)
+const productName = product.nom || product.title || product.name || "Article";
 const safeName = escapeHTML(productName);
 
-const rawDesc = String(getLocalizedText(product, 'description', currentLang) || product.description || "");
-const shortDesc = rawDesc.length>70 ? rawDesc.substring(0,70)+"..." : rawDesc;
+const rawDesc = String(getLocalizedText(product, 'description', currentLang));
+const shortDesc = rawDesc.length > 70 ? rawDesc.substring(0, 70) + "..." : rawDesc;
 const safeShortDesc = escapeHTML(shortDesc);
 
-const priceVal = parseFloat(product.prix!==undefined ? product.prix : (product.price!==undefined ? product.price : 0));
-const promoVal = product.prixPromo!==undefined ? parseFloat(product.prixPromo) : (product.promoPrice!==undefined ? parseFloat(product.promoPrice) : null);
+const priceVal = parseFloat(product.prix !== undefined ? product.prix : (product.price !== undefined ? product.price : 0));
+const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : (product.promoPrice !== undefined ? parseFloat(product.promoPrice) : null);
 
-const hasPromo = promoVal!==null && !isNaN(promoVal) && promoVal>0 && promoVal<priceVal;
+const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
 let discountBadgeHTML = "";
 
-if(hasPromo && priceVal>0){
-const discountPercent = Math.round(((priceVal-promoVal)/priceVal)*100);
+if(hasPromo && priceVal > 0){
+const discountPercent = Math.round(((priceVal - promoVal) / priceVal) * 100);
 discountBadgeHTML = `<span class="badge-discount">-${discountPercent}%</span>`;
 }
 
@@ -769,13 +748,12 @@ const oldPriceHTML = hasPromo ? `<span class="price-old">${formatPrice(priceVal)
 const isVideo = Boolean(video) || /\.(mp4|webm|ogg)(\?|$)/i.test(image);
 const mediaSrc = video || image;
 let mediaHTML = "";
-
 const t = translations[currentLang];
 
 if(isVideo && mediaSrc){
 mediaHTML = `<video src="${escapeAttribute(mediaSrc)}" controls preload="metadata"></video>`;
 }else if(documentUrl){
-mediaHTML = `<a href="${escapeAttribute(documentUrl)}" target="_blank" rel="noopener noreferrer" class="doc-box"><span>📄</span><p>Consulter le document</p></a>`;
+mediaHTML = `<a href="${escapeAttribute(documentUrl)}" target="_blank" rel="noopener noreferrer" class="doc-box"><span>📄</span><p>Document</p></a>`;
 }else if(image){
 mediaHTML = `<img src="${escapeAttribute(image)}" alt="${safeName}" loading="lazy">`;
 }else{
@@ -784,11 +762,11 @@ mediaHTML = `<div class="product-no-image"><strong>📦</strong><span>${t.imageU
 
 return `
 <article class="card" data-product-id="${escapeAttribute(product.id || "")}">
-${product.isRecommande || product.boost ? `<span class="badge-boost">🔥 HOT</span>` : ""}
+${product.isRecommande || product.boost ? `<span class="badge-boost">HOT</span>` : ""}
 ${discountBadgeHTML}
 <div class="media-container">${mediaHTML}</div>
 <div>
-<div class="market-tags"><span class="tag-express">⚡ DAKPROÉLITE</span></div>
+<div class="market-tags"><span class="tag-express">DAKPROÉLITE</span></div>
 <h3>${safeName}</h3>
 ${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : `<div class="description-complete">${t.selectedArticle}</div>`}
 </div>
@@ -810,7 +788,6 @@ ${oldPriceHTML}
 `;
 }
 
-/* RENDU DES CARROUSELS AVEC LOGIQUE ANTI-DOUBLONS STRICTE */
 function renderCarousels(allProducts){
 const containerRelated = document.getElementById("carouselRelated");
 const containerPromos = document.getElementById("carouselPromos");
@@ -841,15 +818,15 @@ attachCardEvents(containerRelated);
 function attachCardEvents(container){
 const t = translations[currentLang];
 
-container.querySelectorAll(".btn-copy").forEach(button=>{
-button.addEventListener("click", async event=>{
+container.querySelectorAll(".btn-copy").forEach(button => {
+button.addEventListener("click", async event => {
 event.stopPropagation();
 const link = button.dataset.affiliate;
 try{
 await navigator.clipboard.writeText(link);
 const oldText = button.textContent;
 button.textContent = t.copiedMsg;
-setTimeout(()=>{ button.textContent = oldText; }, 1800);
+setTimeout(() => { button.textContent = oldText; }, 1800);
 }catch{
 const input = button.closest(".card").querySelector(".affiliate-input");
 if(input){ input.style.display = "block"; input.focus(); input.select(); document.execCommand("copy"); input.style.display = "none"; }
@@ -857,8 +834,8 @@ if(input){ input.style.display = "block"; input.focus(); input.select(); documen
 });
 });
 
-container.querySelectorAll(".btn-cart").forEach(button=>{
-button.addEventListener("click", async event=>{
+container.querySelectorAll(".btn-cart").forEach(button => {
+button.addEventListener("click", async event => {
 event.stopPropagation();
 ajouterAuPanierDirect(button.dataset.id, button);
 });
@@ -867,16 +844,16 @@ ajouterAuPanierDirect(button.dataset.id, button);
 
 function renderProducts(list){
 const container = document.getElementById("products");
-if(!container)return;
+if(!container) return;
 const t = translations[currentLang];
 
-if(!Array.isArray(list) || list.length===0){
+if(!Array.isArray(list) || list.length === 0){
 container.innerHTML = `<div class="empty-message">${t.emptyCategory}</div>`;
 return;
 }
 
 const uid = siteContext.currentUser?.uid || "";
-container.innerHTML = list.map(product=>generateCardHTML(product, uid)).join("");
+container.innerHTML = list.map(product => generateCardHTML(product, uid)).join("");
 attachCardEvents(container);
 }
 
@@ -884,22 +861,22 @@ async function ajouterAuPanierDirect(productId, buttonEl){
 const user = auth.currentUser;
 const t = translations[currentLang];
 if(!user){
-alert(currentLang === 'en' ? "Please log in to add an item to your cart." : currentLang === 'es' ? "Por favor inicie sesión para agregar un artículo." : currentLang === 'zh' ? "请登录以添加商品。" : "Veuillez vous connecter pour ajouter un article à votre panier.");
+alert(currentLang === 'en' ? "Please log in." : "Veuillez vous connecter.");
 window.location.href = "profil-acheteur.html";
 return;
 }
 
-const product = window.allProductsData.find(p=>String(p.id)===String(productId));
+const product = window.allProductsData.find(p => String(p.id) === String(productId));
 if(product){
 try{
 const itemRef = ref(db, `users/${user.uid}/panier/${product.id}`);
 const snapshot = await get(itemRef);
 
 let currentQty = 1;
-if(snapshot.exists()){ currentQty = parseInt(snapshot.val().quantite || 0, 10)+1; }
+if(snapshot.exists()){ currentQty = parseInt(snapshot.val().quantite || 0, 10) + 1; }
 
 const unitPrice = parseFloat(product.prixPromo || product.prix || product.price || 0);
-const nameVal = getLocalizedText(product, 'nom', currentLang) || product.title || product.name || "Produit";
+const nameVal = product.nom || product.title || product.name || "Produit";
 const imgVal = product.image || product.imageUrl || product.photo || "";
 const totalPrice = parseFloat((currentQty * unitPrice).toFixed(2));
 
@@ -916,10 +893,10 @@ await update(ref(db), updates);
 if(buttonEl){
 const oldText = buttonEl.textContent;
 buttonEl.textContent = t.addedMsg;
-setTimeout(()=>{ buttonEl.textContent = oldText; }, 1500);
+setTimeout(() => { buttonEl.textContent = oldText; }, 1500);
 }
 }catch(error){
-console.error("Erreur d'ajout au panier:", error);
+console.error("Erreur panier:", error);
 }
 }
 }
@@ -927,58 +904,58 @@ console.error("Erreur d'ajout au panier:", error);
 function checkUrlForSharedProduct(){
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get("produit") || urlParams.get("pid") || urlParams.get("id");
-if(!productId)return;
-const product = window.allProductsData.find(p=>String(p.id)===String(productId));
-if(!product)return;
+if(!productId) return;
+const product = window.allProductsData.find(p => String(p.id) === String(productId));
+if(!product) return;
 
 const modalContainer = document.getElementById("productModalContainer");
-if(!modalContainer)return;
+if(!modalContainer) return;
 
 const t = translations[currentLang];
 const priceVal = parseFloat(product.prix || product.price || 0);
 const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : null;
 const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
 const effectivePrice = hasPromo ? promoVal : priceVal;
-const productName = getLocalizedText(product, 'nom', currentLang) || product.title || "Article";
-const productDesc = getLocalizedText(product, 'description', currentLang) || product.description || "";
+const productName = product.nom || product.title || "Article";
+const productDesc = getLocalizedText(product, 'description', currentLang);
 
 modalContainer.innerHTML = `
 <div class="modal-overlay">
 <div class="modal-content">
-<img src="${escapeAttribute(product.image || product.imageUrl || "")}" alt="Produit" style="width:100%;height:auto;max-height:220px;object-fit:contain;background:#080b10;border-radius:10px;margin-bottom:12px;">
-<h2 style="color:var(--gold);margin-bottom:8px;font-size:18px;">${escapeHTML(productName)}</h2>
-<div class="price-container" style="margin-bottom:12px;">
-<span class="price" style="font-size:18px;">${formatPrice(effectivePrice)}</span>
+<img src="${escapeAttribute(product.image || product.imageUrl || "")}" alt="Produit" style="width:100%;height:auto;max-height:180px;object-fit:contain;background:#080b10;border-radius:8px;margin-bottom:10px;">
+<h2 style="color:var(--gold);margin-bottom:6px;font-size:16px;">${escapeHTML(productName)}</h2>
+<div class="price-container" style="margin-bottom:10px;">
+<span class="price" style="font-size:16px;">${formatPrice(effectivePrice)}</span>
 ${hasPromo ? `<span class="price-old">${formatPrice(priceVal)}</span>` : ""}
 </div>
-<p style="color:#ccc;font-size:13px;line-height:1.5;margin-bottom:15px;">${escapeHTML(productDesc)}</p>
-<div style="display:flex;gap:10px;">
-<button class="btn-action btn-cart" id="btnModalAddToCart" style="padding:10px;">${t.modalBuy}</button>
+<p style="color:#ccc;font-size:12px;line-height:1.4;margin-bottom:12px;">${escapeHTML(productDesc)}</p>
+<div style="display:flex;gap:8px;">
+<button class="btn-action btn-cart" id="btnModalAddToCart" style="padding:8px;">${t.modalBuy}</button>
 <button class="btn-action" id="btnModalClose" style="background:#222;color:#fff;">${t.modalClose}</button>
 </div>
 </div>
 </div>
 `;
 
-document.getElementById("btnModalAddToCart")?.addEventListener("click", ()=>ajouterAuPanierDirect(productId, document.getElementById("btnModalAddToCart")));
-document.getElementById("btnModalClose")?.addEventListener("click", ()=>modalContainer.innerHTML = "");
+document.getElementById("btnModalAddToCart")?.addEventListener("click", () => ajouterAuPanierDirect(productId, document.getElementById("btnModalAddToCart")));
+document.getElementById("btnModalClose")?.addEventListener("click", () => modalContainer.innerHTML = "");
 }
 
 function loadBanners(){
-onValue(ref(db,"bannieres"), snapshot=>{
+onValue(ref(db,"bannieres"), snapshot => {
 const data = snapshot.val();
 const container = document.getElementById("bannerContainer");
 const track = document.getElementById("bannerTrack");
 const dots = document.getElementById("bannerDots");
-if(!container || !track || !dots)return;
+if(!container || !track || !dots) return;
 
-if(!data || typeof data!=="object"){ container.style.display = "none"; return; }
+if(!data || typeof data !== "object"){ container.style.display = "none"; return; }
 
-const banners = Object.entries(data).map(([id,banner])=>({ id, ...banner })).filter(banner=>banner && banner.actif!==false);
+const banners = Object.entries(data).map(([id,banner]) => ({ id, ...banner })).filter(banner => banner && banner.actif !== false);
 if(!banners.length){ container.style.display = "none"; return; }
 
 totalSlides = banners.length;
-track.innerHTML = banners.map(banner=>`
+track.innerHTML = banners.map(banner => `
 <div class="banner-slide">
 <img src="${escapeAttribute(banner.image || "")}" alt="Publicité" loading="lazy">
 <div class="banner-content">
@@ -988,39 +965,39 @@ ${banner.description ? `<p>${escapeHTML(getLocalizedText(banner, 'description', 
 </div>
 `).join("");
 
-dots.innerHTML = banners.map((_,index)=>`<span class="dot ${index===0?"active":""}" data-slide="${index}"></span>`).join("");
-dots.querySelectorAll(".dot").forEach(dot=>{
-dot.addEventListener("click", (e)=>{ e.stopPropagation(); currentIndex = Number(dot.dataset.slide); updateSlide(); });
+dots.innerHTML = banners.map((_, index) => `<span class="dot ${index === 0 ? "active" : ""}" data-slide="${index}"></span>`).join("");
+dots.querySelectorAll(".dot").forEach(dot => {
+dot.addEventListener("click", (e) => { e.stopPropagation(); currentIndex = Number(dot.dataset.slide); updateSlide(); });
 });
 
 currentIndex = 0; updateSlide();
 container.style.display = "block";
 if(autoPlay) clearInterval(autoPlay);
-autoPlay = setInterval(()=>{ currentIndex = (currentIndex+1)%totalSlides; updateSlide(); }, 4000);
+autoPlay = setInterval(() => { currentIndex = (currentIndex + 1) % totalSlides; updateSlide(); }, 4000);
 });
 }
 
 function updateSlide(){
 const track = document.getElementById("bannerTrack");
 const dots = document.querySelectorAll(".dot");
-if(!track)return;
-track.style.transform = `translateX(-${currentIndex*100}%)`;
-dots.forEach((dot,index)=>dot.classList.toggle("active", index===currentIndex));
+if(!track) return;
+track.style.transform = `translateX(-${currentIndex * 100}%)`;
+dots.forEach((dot, index) => dot.classList.toggle("active", index === currentIndex));
 }
 
-document.getElementById("btnBannerPrev")?.addEventListener("click", (e)=>{ e.stopPropagation(); if(totalSlides<=0)return; currentIndex=(currentIndex-1+totalSlides)%totalSlides; updateSlide(); });
-document.getElementById("btnBannerNext")?.addEventListener("click", (e)=>{ e.stopPropagation(); if(totalSlides<=0)return; currentIndex=(currentIndex+1)%totalSlides; updateSlide(); });
-document.getElementById("btnBannerPause")?.addEventListener("click", (e)=>{
+document.getElementById("btnBannerPrev")?.addEventListener("click", (e) => { e.stopPropagation(); if(totalSlides <= 0) return; currentIndex = (currentIndex - 1 + totalSlides) % totalSlides; updateSlide(); });
+document.getElementById("btnBannerNext")?.addEventListener("click", (e) => { e.stopPropagation(); if(totalSlides <= 0) return; currentIndex = (currentIndex + 1) % totalSlides; updateSlide(); });
+document.getElementById("btnBannerPause")?.addEventListener("click", (e) => {
 e.stopPropagation();
-if(autoPlay){ clearInterval(autoPlay); autoPlay=null; e.target.textContent="▶"; }
-else{ autoPlay=setInterval(()=>{ currentIndex=(currentIndex+1)%totalSlides; updateSlide(); },4000); e.target.textContent="⏸"; }
+if(autoPlay){ clearInterval(autoPlay); autoPlay = null; e.target.textContent = "▶"; }
+else{ autoPlay = setInterval(() => { currentIndex = (currentIndex + 1) % totalSlides; updateSlide(); }, 4000); e.target.textContent = "⏸"; }
 });
 
 function applyAnnouncement(data) {
 const title = document.getElementById("fayaBuzzTitle");
 const text = document.getElementById("fayaBuzzText");
 if(!title || !text) return;
-if(!data || data.actif===false) return;
+if(!data || data.actif === false) return;
 
 const localizedTitle = getLocalizedText(data, 'titre', currentLang) || data.titre || translations[currentLang].officialAnnouncement;
 const localizedText = getLocalizedText(data, 'texte', currentLang) || data.texte || "";
@@ -1030,14 +1007,13 @@ text.textContent = localizedText;
 }
 
 function loadAnnouncement(){
-onValue(ref(db, "annonces/faya_buzz"), snapshot=>{
+onValue(ref(db, "annonces/faya_buzz"), snapshot => {
 const data = snapshot.val();
 announcementDataCache = data;
 applyAnnouncement(data);
 });
 }
 
-/* LANCEMENT DES SERVICES */
 loadProducts();
 loadBanners();
 loadAnnouncement();
