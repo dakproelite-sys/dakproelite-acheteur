@@ -48,11 +48,14 @@ select option{background:#000;color:#fff;}
 .password-box{position:relative;}
 .password-box input{padding-right:50px;}
 .toggle-password{position:absolute;right:5px;top:50%;transform:translateY(-50%);width:40px;height:40px;border:none;background:transparent;color:#d4af37;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.privacy-box{display:flex;align-items:flex-start;gap:10px;margin:15px 0;padding:12px;background:#080808;border:1px solid #333;border-radius:10px;}
+
+.privacy-box{display:flex;align-items:flex-start;gap:10px;margin:12px 0;padding:12px;background:#080808;border:1px solid #333;border-radius:10px;}
 .privacy-box input{width:18px;height:18px;min-width:18px;margin-top:1px;accent-color:#d4af37;cursor:pointer;}
 .privacy-label{font-size:11px;line-height:1.5;color:#ccc;cursor:pointer;margin:0;}
 .privacy-label a{color:#d4af37;text-decoration:none;font-weight:bold;}
-button.submit{width:100%;padding:13px;border:none;border-radius:9px;background:#d4af37;color:#000;font-weight:bold;cursor:pointer;font-size:14px;}
+.privacy-label a:hover{text-decoration:underline;}
+
+button.submit{width:100%;padding:13px;border:none;border-radius:9px;background:#d4af37;color:#000;font-weight:bold;cursor:pointer;font-size:14px;margin-top:5px;}
 button.submit:disabled{opacity:.6;cursor:not-allowed;}
 
 /* BOUTON GOOGLE SITUÉ TOUT EN BAS */
@@ -115,7 +118,7 @@ button.submit:disabled{opacity:.6;cursor:not-allowed;}
 <p class="subtitle">Portail d'Inscription Acheteur. Créez votre compte pour accéder à nos services et produits de qualité.</p>
 
 <div class="notice">
-  🛒 Bienvenue ! Une fois inscrit, vous pourrez accéder à votre espace acheteur.
+  🛒 Bienvenue ! Remplissez tous les champs et acceptez les conditions pour activer votre espace acheteur.
 </div>
 
 <form id="registerForm">
@@ -395,10 +398,19 @@ button.submit:disabled{opacity:.6;cursor:not-allowed;}
 </div>
 </div>
 
+<!-- CASE 1 : CONDITIONS D'UTILISATION -->
+<div class="privacy-box">
+<input id="termsAccepted" type="checkbox" required>
+<label for="termsAccepted" class="privacy-label">
+J’ai lu et j’accepte les <a href="reglement-interieur.html" target="_blank" rel="noopener">Conditions Générales d'Utilisation</a>.
+</label>
+</div>
+
+<!-- CASE 2 : POLITIQUE DE CONFIDENTIALITÉ -->
 <div class="privacy-box">
 <input id="privacyAccepted" type="checkbox" required>
 <label for="privacyAccepted" class="privacy-label">
-J’ai lu et j’accepte les <a href="politique-confidentialite.html" target="_blank" rel="noopener">règles de confidentialité</a>.
+J’ai lu et j’accepte la <a href="politique-confidentialite.html" target="_blank" rel="noopener">Politique de Confidentialité</a>.
 </label>
 </div>
 
@@ -407,7 +419,7 @@ J’ai lu et j’accepte les <a href="politique-confidentialite.html" target="_b
 
 <div class="divider">OU CONTINUER AVEC</div>
 
-<!-- BOUTON CONTINUER AVEC GOOGLE DÉPLACÉ TOUT EN BAS -->
+<!-- BOUTON CONTINUER AVEC GOOGLE -->
 <button type="button" id="googleLoginBtn" class="btn-google">
   <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo">
   Continuer avec Google
@@ -513,7 +525,7 @@ googleBtn.addEventListener("click", async () => {
   }
 });
 
-// --- INSCRIPTION CLASSIQUE AVEC CONTRÔLE DE VALIDITÉ ---
+// --- INSCRIPTION CLASSIQUE AVEC CONTRÔLE DE VALIDITÉ STRICT ---
 form.addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -523,20 +535,27 @@ form.addEventListener("submit", async event => {
   const email = document.getElementById("email").value.trim().toLowerCase();
   const password = document.getElementById("password").value;
   const passwordConfirm = document.getElementById("passwordConfirm").value;
+  
+  const termsAccepted = document.getElementById("termsAccepted").checked;
   const privacyAccepted = document.getElementById("privacyAccepted").checked;
 
+  // VERIFICATION DU FORMULAIRE INCOMPLET
   if (!name || !phone || !email || !password || !passwordConfirm) {
-    showMessage("Veuillez remplir tous les champs obligatoires.");
+    showMessage("Erreur : Le formulaire n'est pas entièrement rempli. Veuillez compléter tous les champs.");
     return;
   }
-  if (!privacyAccepted) {
-    showMessage("Veuillez accepter les règles de confidentialité.");
+
+  // VERIFICATION DE L'ACCEPTATION DES CONDITIONS ET DE LA POLITIQUE
+  if (!termsAccepted || !privacyAccepted) {
+    showMessage("Vous devez obligatoirement accepter les Conditions d'Utilisation et la Politique de Confidentialité pour créer votre compte.");
     return;
   }
+
   if (password !== passwordConfirm) {
     showMessage("Les deux mots de passe ne correspondent pas.");
     return;
   }
+  
   if (password.length < 6) {
     showMessage("Le mot de passe doit contenir au moins 6 caractères.");
     return;

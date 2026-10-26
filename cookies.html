@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080808">
+    <meta name="description" content="Gestion sécurisée des cookies, des sessions et du cycle de paiement sur DAKPRO ÉLITE - La Référence Marketplace.">
+    <title>Gestion des Cookies & Sécurité des Transactions | DAKPRO ÉLITE</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --black: #080808;
+            --card-bg: #141414;
+            --gold: #d4af37;
+            --gold-bright: #ffd700;
+            --green: #20c997;
+            --text: #e5e5e5;
+            --muted: #a0a0a0;
+            --border: rgba(212, 175, 55, 0.35);
+            --danger: #ff5555;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--black); color: var(--text); line-height: 1.7; font-size: 14px; padding-bottom: 40px; }
+
+        .topbar { position: sticky; top: 0; z-index: 1000; background: rgba(8, 8, 8, 0.95); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .topbar-inner { max-width: 900px; margin: auto; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .brand img { width: 38px; height: 38px; object-fit: contain; }
+        .brand-name { color: var(--gold-bright); font-weight: 800; font-size: 15px; }
+
+        .back-link { padding: 7px 12px; color: var(--gold-bright); border: 1px solid var(--border); border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600; }
+        .back-link:hover { background: rgba(212, 175, 55, 0.15); }
+
+        .container { max-width: 850px; margin: 30px auto; padding: 0 20px; }
+        .hero { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(0,0,0,0.5)); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 25px; }
+        .hero h1 { color: var(--gold-bright); font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+        .hero p { color: var(--muted); font-size: 13px; max-width: 650px; margin: auto; }
+
+        .cookie-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin-bottom: 20px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 12px; margin-bottom: 15px; }
+        .section-title { color: var(--gold-bright); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+        /* Style des Toggles Switch */
+        .switch-box { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 14px 18px; border-radius: 10px; border: 1px solid #2a2a2a; margin-top: 10px; }
+        .switch-title { font-weight: 600; color: #fff; font-size: 14px; }
+        .switch-desc { font-size: 12px; color: var(--muted); }
+        
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; border: 1px solid #555; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--green); border-color: var(--green); }
+        input:checked + .slider:before { transform: translateX(22px); }
+        input:disabled + .slider { opacity: 0.6; cursor: not-allowed; }
+
+        .status-badge { display: inline-block; padding: 3px 8px; background: rgba(32, 201, 151, 0.15); color: var(--green); border: 1px solid var(--green); border-radius: 6px; font-size: 10px; font-weight: 700; }
+
+        /* Boutons d'actions */
+        .btn-group { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 25px; justify-content: center; }
+        .btn-main { padding: 13px 22px; background: linear-gradient(135deg, var(--gold-bright), var(--gold)); border: none; border-radius: 10px; color: #000; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-main:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn-sec { padding: 13px 22px; background: #222; border: 1px solid var(--border); border-radius: 10px; color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-sec:hover { background: #333; }
+        .btn-danger-outline { padding: 13px 22px; background: rgba(255, 85, 85, 0.1); border: 1px solid var(--danger); border-radius: 10px; color: var(--danger); font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-danger-outline:hover { background: rgba(255, 85, 85, 0.2); }
+
+        .copy-btn { padding: 6px 12px; background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); border-radius: 6px; color: var(--gold-bright); font-size: 11px; font-weight: 700; cursor: pointer; }
+        .copy-btn:hover { background: rgba(212, 175, 55, 0.3); }
+
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(50px); background: var(--green); color: #000; font-weight: 800; padding: 12px 22px; border-radius: 8px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 3000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .footer { text-align: center; margin-top: 40px; color: var(--muted); font-size: 12px; border-top: 1px solid #222; padding-top: 20px; }
+    </style>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <a href="index.html" class="brand">
+            <img src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPRO ÉLITE">
+            <span class="brand-name">DAKPRO ÉLITE</span>
+        </a>
+        <a href="aide.html" class="back-link">← Centre d'aide</a>
+    </div>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <h1>🍪 Centre de Confidentialité &amp; Cookies</h1>
+        <p>Gérez et personnalisez vos paramètres de sécurité, de panier et de cycle de paiement. Tout est synchronisé pour sécuriser vos transactions sur <strong>dakproelite.com</strong>.</p>
+    </section>
+
+    <!-- SECTION 1 : ESSENTIELS -->
+    <div class="cookie-section" id="secEssentiels">
+        <div class="section-header">
+            <div class="section-title">🔒 Session &amp; Sécurité Impératifs</div>
+            <button class="copy-btn" onclick="copierTexte('secEssentiels')">📋 Copier la section</button>
+        </div>
+        <p>Ces cookies sont indispensables au fonctionnement technique de DAKPRO ÉLITE. Ils enregistrent votre jeton d'authentification Firebase pour vous maintenir connecté en toute sécurité pendant votre navigation et sécurisent l'accès au panier.</p>
+        <div class="switch-box">
+            <div>
+                <div class="switch-title">Jeton de Session &amp; Sécurité <span class="status-badge">REQUIS (Toujours Actif)</span></div>
+                <div class="switch-desc">Protège votre compte et maintient votre session active.</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" checked disabled>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- SECTION 2 : PREFERENCES -->
+    <div class="cookie-section" id="secPreferences">
+        <div class="section-header">
+            <div class="section-title">🛒 Préférences de Panier, Devise (FCFA) &amp; Paiement</div>
+            <button class="copy-btn" onclick="copierTexte('secPreferences')">📋 Copier la section</button>
+        </div>
+        <p>Ces cookies mémorisent les articles de votre panier, la devise locale et nettoient automatiquement votre panier dès qu'un paiement (FedaPay, MoMo) est validé avec succès.</p>
+        <div class="switch-box">
+            <div>
+                <div class="switch-title">Mémorisation du Panier &amp; Synchronisation Paiement</div>
+                <div class="switch-desc">Sauvegarde le panier et gère sa purge post-paiement.</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="cookiePanierPref" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- SECTION 3 : ANALYTIQUES -->
+    <div class="cookie-section" id="secAnalytics">
+        <div class="section-header">
+            <div class="section-title">📊 Amélioration &amp; Performances Marketplace</div>
+            <button class="copy-btn" onclick="copierTexte('secAnalytics')">📋 Copier la section</button>
+        </div>
+        <p>Permettent d'analyser anonymement l'utilisation du site afin de corriger les erreurs d'affichage et d'améliorer la vitesse de chargement de la marketplace.</p>
+        <div class="switch-box">
+            <div>
+                <div class="switch-title">Analyse Anonyme des Performances</div>
+                <div class="switch-desc">Aide nos équipes techniques à optimiser le site.</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="cookieAnalytics">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-main" id="btnSauvegarder">Enregistrer mes choix</button>
+        <button class="btn-sec" id="btnToutAccepter">Tout Accepter</button>
+        <button class="btn-danger-outline" id="btnReinitialiser">Effacer les cookies non essentiels</button>
+    </div>
+</main>
+
+<footer class="footer">
+    <p><strong>DAKPRO ÉLITE — La Référence Marketplace</strong></p>
+    <p>Protection maximale des sessions conforme aux normes internationales de sécurité web.</p>
+    <p>© 2026 DAKPRO ÉLITE. Tous droits réservés.</p>
+</footer>
+
+<div class="toast" id="toastMsg">✅ Préférences enregistrées avec succès !</div>
+
+<!-- MOTEUR DE GESTION AVANCÉ : AUTH, PANIER ET PAIEMENT SÉCURISÉ -->
+<script type="module">
+    import { auth } from "./firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+    // 1. SYSTÈME DE COOKIE SÉCURISÉ NATIVE JS
+    window.DAKPRO_Cookie = {
+        set: function(name, value, days = 30) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            let isSecure = window.location.protocol === 'https:' ? '; Secure' : '';
+            document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/" + isSecure + "; SameSite=Lax";
+        },
+        get: function(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i].trim();
+                if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+            }
+            return null;
+        },
+        delete: function(name) {
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+    };
+
+    // 2. MODULE DE GESTION DU PANIER ET DU CYCLE DE PAIEMENT
+    window.DAKPRO_PaymentSync = {
+        // Enregistrer un article ou le panier complet
+        sauvegarderPanier: function(panierObj) {
+            window.DAKPRO_Cookie.set("dakpro_cart_data", JSON.stringify(panierObj), 7);
+        },
+        // Récupérer le panier
+        recupererPanier: function() {
+            let data = window.DAKPRO_Cookie.get("dakpro_cart_data");
+            return data ? JSON.parse(data) : [];
+        },
+        // 🌟 NETTOYAGE AUTOMATIQUE DU PANIER APRÈS CONFIRMATION DE PAIEMENT
+        nettoyerPanierApresPaiement: function(transactionId) {
+            window.DAKPRO_Cookie.delete("dakpro_cart_data");
+            window.DAKPRO_Cookie.set("dakpro_last_paid_tx", transactionId, 1);
+            console.log("✅ Paiement validé (Tx: " + transactionId + ") : Panier purgé et session maintenue en ordre.");
+            window.showToast("🎉 Paiement validé ! Votre panier a été vidé avec succès.");
+        }
+    };
+
+    // 3. SYNCHRONISATION JETON DE SESSION FIREBASE
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            try {
+                const token = await user.getIdToken();
+                window.DAKPRO_Cookie.set("dakpro_auth_session", token, 7);
+                window.DAKPRO_Cookie.set("dakpro_user_uid", user.uid, 7);
+            } catch (e) {
+                console.warn("Erreur d'obtention du jeton de session:", e);
+            }
+        }
+    });
+
+    // 4. NOTIFICATION TOAST
+    window.showToast = function(msg) {
+        const toast = document.getElementById("toastMsg");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 3000);
+    };
+
+    // 5. COPIER LE TEXTE D'UNE SECTION
+    window.copierTexte = function(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+
+        const clone = section.cloneNode(true);
+        clone.querySelectorAll("button, input, .switch, .copy-btn").forEach(el => el.remove());
+
+        const texte = clone.innerText.trim();
+        navigator.clipboard.writeText(texte).then(() => {
+            window.showToast("📋 Section copiée avec succès !");
+        }).catch(() => {
+            window.showToast("Impossible de copier la section.");
+        });
+    };
+
+    // 6. ÉVÉNEMENTS UTILISATEUR
+    document.addEventListener("DOMContentLoaded", () => {
+        const prefPanier = window.DAKPRO_Cookie.get("dakpro_pref_panier");
+        const prefAnalytics = window.DAKPRO_Cookie.get("dakpro_pref_analytics");
+
+        if (prefPanier !== null) {
+            document.getElementById("cookiePanierPref").checked = (prefPanier === "true");
+        }
+        if (prefAnalytics !== null) {
+            document.getElementById("cookieAnalytics").checked = (prefAnalytics === "true");
+        }
+
+        // Fixer la devise par défaut en FCFA
+        window.DAKPRO_Cookie.set("dakpro_currency", "FCFA", 365);
+    });
+
+    document.getElementById("btnSauvegarder").addEventListener("click", () => {
+        const isPanierActive = document.getElementById("cookiePanierPref").checked;
+        const isAnalyticsActive = document.getElementById("cookieAnalytics").checked;
+
+        window.DAKPRO_Cookie.set("dakpro_pref_panier", isPanierActive, 30);
+        window.DAKPRO_Cookie.set("dakpro_pref_analytics", isAnalyticsActive, 30);
+        window.DAKPRO_Cookie.set("dakpro_sec_policy", "accepted_v1", 365);
+
+        window.showToast("✅ Préférences et sécurité de paiement enregistrées !");
+    });
+
+    document.getElementById("btnToutAccepter").addEventListener("click", () => {
+        document.getElementById("cookiePanierPref").checked = true;
+        document.getElementById("cookieAnalytics").checked = true;
+
+        window.DAKPRO_Cookie.set("dakpro_pref_panier", "true", 90);
+        window.DAKPRO_Cookie.set("dakpro_pref_analytics", "true", 90);
+        window.DAKPRO_Cookie.set("dakpro_sec_policy", "accepted_all_v1", 365);
+
+        window.showToast("🌟 Tous les cookies et protections de transaction activés !");
+    });
+
+    document.getElementById("btnReinitialiser").addEventListener("click", () => {
+        document.getElementById("cookiePanierPref").checked = false;
+        document.getElementById("cookieAnalytics").checked = false;
+
+        window.DAKPRO_Cookie.delete("dakpro_pref_panier");
+        window.DAKPRO_Cookie.delete("dakpro_pref_analytics");
+
+        window.showToast("🧹 Cookies non essentiels effacés.");
+    });
+</script>
+</body>
+</html>

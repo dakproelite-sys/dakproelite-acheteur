@@ -5,26 +5,130 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centre d'Aide - DAKPRO ÉLITE</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:Segoe UI, sans-serif; }
-        body { background:#050505; color:#fff; }
-        .container { max-width:600px; margin:auto; padding:20px; }
-        .logo { text-align:center; font-size:60px; margin-top:10px; }
-        h1 { text-align:center; color:#d4af37; font-size:32px; margin-top:10px; }
-        .subtitle { text-align:center; color:#bbb; margin:10px 0 30px; font-size:15px; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background:#050505; color:#fff; padding-bottom: 40px; }
+        .container { max-width:650px; margin:auto; padding:20px; }
+        .logo { text-align:center; font-size:55px; margin-top:10px; }
+        h1 { text-align:center; color:#d4af37; font-size:30px; margin-top:10px; }
+        .subtitle { text-align:center; color:#bbb; margin:8px 0 25px; font-size:14px; }
+        .domain-badge { text-align:center; color:#d4af37; font-size:12px; font-weight:bold; letter-spacing:1px; margin-bottom:20px; text-transform:uppercase; }
+
         .menu-item {
             display:flex; justify-content:space-between; align-items:center;
             background:#151515; border:1px solid #2d2d2d; border-radius:12px;
-            padding:16px; margin-bottom:15px; cursor:pointer; transition:.3s;
+            padding:16px; margin-bottom:14px; cursor:pointer; transition:.3s;
+            text-decoration: none;
         }
         .menu-item:hover { border-color:#d4af37; background:#202020; }
         .left { display:flex; align-items:center; gap:15px; }
-        .icon { font-size:28px; }
-        .title { font-size:18px; font-weight:bold; color:#d4af37; }
-        .arrow { font-size:24px; color:#fff; }
-        .footer { margin-top:35px; }
-        .btn { width:100%; padding:15px; border:none; border-radius:10px; font-size:17px; font-weight:bold; cursor:pointer; margin-top:12px; }
-        .close { background:#444; color:white; }
-        .logout { background:#8B0000; color:white; }
+        .icon { font-size:26px; }
+        .title { font-size:16px; font-weight:bold; color:#d4af37; }
+        .arrow { font-size:20px; color:#fff; }
+        
+        .menu-item.danger { border-color: #551111; background: #1a0808; }
+        .menu-item.danger:hover { border-color: #ff4444; background: #260a0a; }
+        .menu-item.danger .title { color: #ff7777; }
+
+        /* Formulaire Support WhatsApp Direct */
+        .support-card {
+            background: #121212;
+            border: 1px solid #25d366;
+            border-radius: 14px;
+            padding: 22px;
+            margin-top: 30px;
+        }
+        .support-card h2 { color: #25d366; font-size: 20px; margin-bottom: 8px; text-align: center; }
+        .support-card p { color: #aaa; font-size: 13px; text-align: center; margin-bottom: 18px; }
+        
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; color: #ddd; font-size: 13px; margin-bottom: 6px; font-weight: 600; }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .form-control:focus { border-color: #25d366; }
+        textarea.form-control { resize: vertical; min-height: 90px; }
+
+        .btn-whatsapp-submit {
+            width: 100%;
+            padding: 14px;
+            background: #25d366;
+            border: none;
+            border-radius: 9px;
+            color: #111;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-whatsapp-submit:hover { background: #1eb954; }
+
+        /* Style des modales pop-up */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 15px;
+        }
+        .modal-card {
+            background: #161616;
+            border: 1px solid #ff4444;
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-title { color: #ff7777; font-size: 20px; margin-bottom: 10px; text-align: center; }
+        .modal-desc { color: #ccc; font-size: 13px; margin-bottom: 15px; line-height: 1.5; text-align: center; }
+
+        .btn-modal-danger {
+            width: 100%;
+            padding: 13px;
+            background: #b22222;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-modal-danger:hover { background: #d32f2f; }
+        .btn-modal-cancel {
+            width: 100%;
+            padding: 11px;
+            background: #333;
+            border: none;
+            border-radius: 8px;
+            color: #ccc;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .footer { margin-top:30px; text-align: center; }
+        .btn-close { width:100%; padding:14px; border:none; border-radius:10px; font-size:16px; font-weight:bold; cursor:pointer; background:#333; color:white; }
+        .btn-close:hover { background:#444; }
+        .footer-info { font-size: 11px; color: #777; margin-top: 20px; line-height: 1.6; }
+        .footer-info a { color: #d4af37; text-decoration: none; }
     </style>
 </head>
 
@@ -32,59 +136,246 @@
 <div class="container">
     <div class="logo">🛡️</div>
     <h1>Centre d'Aide<br>DAKPRO ÉLITE</h1>
-    <p class="subtitle">Choisissez une rubrique pour consulter toutes les informations.</p>
+    <p class="subtitle">Votre marketplace de confiance au Bénin et dans le monde entier.</p>
+    <div class="domain-badge">🌐 dakproelite.com</div>
 
-    <div class="menu-item" onclick="location.href='reglement-interieur.html'">
+    <!-- 1. Règlement Intérieur -->
+    <a href="reglement-interieur.html" class="menu-item">
         <div class="left">
             <div class="icon">📜</div>
             <div class="title">Règlement Intérieur</div>
         </div>
         <div class="arrow">➜</div>
-    </div>
+    </a>
 
-    <div class="menu-item" onclick="location.href='politique-confidentialite.html'">
+    <!-- 2. Politique de Confidentialité -->
+    <a href="politique-confidentialite.html" class="menu-item">
         <div class="left">
             <div class="icon">🛡️</div>
             <div class="title">Politique de Confidentialité</div>
         </div>
         <div class="arrow">➜</div>
-    </div>
+    </a>
 
-    <div class="menu-item" onclick="location.href='programme-ambassadeur.html'">
+    <!-- 3. Gestion des Cookies -->
+    <a href="cookies.html" class="menu-item">
+        <div class="left">
+            <div class="icon">🍪</div>
+            <div class="title">Gestion des Cookies</div>
+        </div>
+        <div class="arrow">➜</div>
+    </a>
+
+    <!-- 4. Programme Ambassadeur -->
+    <a href="programme-ambassadeur.html" class="menu-item">
         <div class="left">
             <div class="icon">📦</div>
             <div class="title">Programme Ambassadeur</div>
         </div>
         <div class="arrow">➜</div>
-    </div>
+    </a>
 
+    <!-- 5. Assistance WhatsApp Officielle Directe -->
     <div class="menu-item" onclick="window.open('https://wa.me/2290197455309','_blank')">
         <div class="left">
             <div class="icon">💬</div>
-            <div class="title">Contacter l'assistance</div>
+            <div class="title">WhatsApp Direct (+229 01 97 45 53 09)</div>
         </div>
         <div class="arrow">➜</div>
     </div>
 
+    <!-- 6. Demande de suppression de compte -->
+    <div class="menu-item danger" id="btnOuvrirModalSuppression">
+        <div class="left">
+            <div class="icon">⚠️</div>
+            <div class="title">Demander la suppression du compte</div>
+        </div>
+        <div class="arrow">➜</div>
+    </div>
+
+    <!-- FORMULAIRE DE CONTACT SUPPORT ENVOYANT DIRECTEMENT SUR WHATSAPP -->
+    <div class="support-card">
+        <h2>💬 Écrire au Support Administrateur sur WhatsApp</h2>
+        <p>Remplissez ce formulaire pour contacter directement l'inbox WhatsApp du support (+229 01 97 45 53 09)</p>
+        
+        <form id="formSupportWhatsApp">
+            <div class="form-group">
+                <label for="supNom">Nom et Prénom(s) *</label>
+                <input type="text" id="supNom" class="form-control" placeholder="Ex: Jean KPAHOUN" required>
+            </div>
+
+            <div class="form-group">
+                <label for="supTelephone">Votre Numéro de Téléphone / WhatsApp *</label>
+                <input type="tel" id="supTelephone" class="form-control" placeholder="Ex: +229 01 97 45 53 09" required>
+            </div>
+
+            <div class="form-group">
+                <label for="supEmail">Votre Adresse E-mail *</label>
+                <input type="email" id="supEmail" class="form-control" placeholder="Ex: votremail@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="supMessage">Votre Message ou Réclamation *</label>
+                <textarea id="supMessage" class="form-control" placeholder="Expliquez en détails votre demande..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-whatsapp-submit">
+                📲 Envoyer directement sur WhatsApp
+            </button>
+        </form>
+    </div>
+
     <div class="footer">
-        <button class="btn close" onclick="history.back()">Fermer</button>
-        <!-- Appel de la fonction de déconnexion Firebase -->
-        <button class="btn logout" onclick="deconnecter()">Déconnexion</button>
+        <button class="btn-close" onclick="history.back()">Fermer le Centre d'Aide</button>
+
+        <div class="footer-info">
+            <p>DAKPRO ÉLITE — La Référence Marketplace</p>
+            <p>Site Web : <a href="https://dakproelite.com" target="_blank">https://dakproelite.com</a></p>
+            <p>Email officiel : contact@dakproelite.com</p>
+            <p>© 2026 DAKPRO ÉLITE. Tous droits réservés.</p>
+        </div>
     </div>
 </div>
 
+
+<!-- MODAL DE CONFIRMATION DE SUPPRESSION DE COMPTE (REALTIME DATABASE) -->
+<div class="modal-overlay" id="modalSuppression">
+    <div class="modal-card">
+        <h3 class="modal-title">⚠️ Demande de Suppression de Compte</h3>
+        <p class="modal-desc">
+            Votre demande sera soumise dans la base de données de l'administration. 
+            <strong>Les administrateurs analyseront votre compte sous 30 jours</strong> 
+            avant de procéder à sa suppression définitive.
+        </p>
+
+        <form id="formSuppression">
+            <div class="form-group">
+                <label for="supNomCompte">Nom et Prénom(s) du Titulaire *</label>
+                <input type="text" id="supNomCompte" class="form-control" placeholder="Nom enregistré sur le compte" required>
+            </div>
+
+            <div class="form-group">
+                <label for="supTelCompte">Numéro de Téléphone *</label>
+                <input type="tel" id="supTelCompte" class="form-control" placeholder="+229 XX XX XX XX" required>
+            </div>
+
+            <div class="form-group">
+                <label for="supEmailCompte">Adresse E-mail du Compte *</label>
+                <input type="email" id="supEmailCompte" class="form-control" placeholder="votremail@exemple.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="supMotifCompte">Motif Détaillé de la Suppression *</label>
+                <textarea id="supMotifCompte" class="form-control" placeholder="Expliquez la raison exacte de votre demande..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-modal-danger" id="btnValiderSuppression">Envoyer la demande (Realtime Database)</button>
+            <button type="button" class="btn-modal-cancel" id="btnFermerModal">Annuler</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- SCRIPT FIREBASE & WHATSAPP -->
 <script type="module">
     import { auth } from "./firebase-config.js";
-    import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-    window.deconnecter = () => {
-        signOut(auth).then(() => {
-            alert("Déconnexion réussie.");
+    const db = getDatabase();
+    let utilisateurActuel = null;
+
+    // Suivi de l'état de connexion de l'utilisateur
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            utilisateurActuel = user;
+            if (user.email) {
+                document.getElementById("supEmail").value = user.email;
+                document.getElementById("supEmailCompte").value = user.email;
+            }
+        } else {
+            utilisateurActuel = null;
+        }
+    });
+
+    // 1. SUPPRESSION DE COMPTE : ENREGISTREMENT DIRECT DANS REALTIME DATABASE
+    const modalSuppression = document.getElementById("modalSuppression");
+    
+    document.getElementById("btnOuvrirModalSuppression").addEventListener("click", () => {
+        if (!utilisateurActuel) {
+            alert("Vous devez être connecté à votre compte DAKPRO ÉLITE pour formuler une demande de suppression.");
             window.location.href = "connexion.html";
+            return;
+        }
+        modalSuppression.style.display = "flex";
+    });
+
+    document.getElementById("btnFermerModal").addEventListener("click", () => {
+        modalSuppression.style.display = "none";
+    });
+
+    document.getElementById("formSuppression").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const nom = document.getElementById("supNomCompte").value.trim();
+        const telephone = document.getElementById("supTelCompte").value.trim();
+        const email = document.getElementById("supEmailCompte").value.trim();
+        const motif = document.getElementById("supMotifCompte").value.trim();
+
+        const btn = document.getElementById("btnValiderSuppression");
+        btn.disabled = true;
+        btn.textContent = "Enregistrement dans la base...";
+
+        // Écriture directe dans Firebase Realtime Database
+        const demandeRef = ref(db, 'demandes_suppression_compte/' + utilisateurActuel.uid);
+
+        set(demandeRef, {
+            uid: utilisateurActuel.uid,
+            nomComplet: nom,
+            telephone: telephone,
+            email: email,
+            motif: motif,
+            dateDemande: new Date().toISOString(),
+            statut: "En attente de validation administrative (Délai d'analyse jusqu'à 30 jours)",
+            valideParAdmin: false
+        }).then(() => {
+            alert("Votre demande de suppression a été enregistrée avec succès dans notre base de données Realtime Database.\n\nLes administrateurs analyseront votre dossier avant validation finale sous 30 jours max.");
+            modalSuppression.style.display = "none";
+            document.getElementById("formSuppression").reset();
         }).catch((error) => {
-            alert("Erreur lors de la déconnexion : " + error.message);
+            alert("Erreur lors de l'enregistrement dans la base de données : " + error.message);
+        }).finally(() => {
+            btn.disabled = false;
+            btn.textContent = "Envoyer la demande (Realtime Database)";
         });
-    };
+    });
+
+    // 2. FORMULAIRE DE SUPPORT : REDIRECTION DIRECTE VERS LE WHATSAPP DE L'ADMINISTRATEUR
+    document.getElementById("formSupportWhatsApp").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const nom = document.getElementById("supNom").value.trim();
+        const telephone = document.getElementById("supTelephone").value.trim();
+        const email = document.getElementById("supEmail").value.trim();
+        const message = document.getElementById("supMessage").value.trim();
+
+        const numeroWhatsAppAdmin = "2290197455309"; // Numéro officiel WhatsApp Administrateur
+
+        // Construction du message formaté
+        const texteMessage = 
+            `*📩 NOUVEAU MESSAGE SUPPORT - DAKPRO ÉLITE*\n\n` +
+            `*Nom & Prénom :* ${nom}\n` +
+            `*Téléphone :* ${telephone}\n` +
+            `*Email :* ${email}\n\n` +
+            `*Message / Réclamation :*\n${message}\n\n` +
+            `_Envoyé depuis le Centre d'Aide dakproelite.com_`;
+
+        // Encodage de l'URL pour WhatsApp
+        const urlWhatsApp = `https://wa.me/${numeroWhatsAppAdmin}?text=${encodeURIComponent(texteMessage)}`;
+
+        // Ouverture directe du WhatsApp de l'administrateur
+        window.open(urlWhatsApp, '_blank');
+    });
 </script>
 </body>
 </html>
