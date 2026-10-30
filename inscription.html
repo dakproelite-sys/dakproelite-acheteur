@@ -398,19 +398,11 @@ button.submit:disabled{opacity:.6;cursor:not-allowed;}
 </div>
 </div>
 
-<!-- CASE 1 : CONDITIONS D'UTILISATION -->
+<!-- CASE UNIQUE : CONDITIONS & CONFIDENTIALITÉ RÉUNIES -->
 <div class="privacy-box">
 <input id="termsAccepted" type="checkbox" required>
 <label for="termsAccepted" class="privacy-label">
-J’ai lu et j’accepte les <a href="reglement-interieur.html" target="_blank" rel="noopener">Conditions Générales d'Utilisation</a>.
-</label>
-</div>
-
-<!-- CASE 2 : POLITIQUE DE CONFIDENTIALITÉ -->
-<div class="privacy-box">
-<input id="privacyAccepted" type="checkbox" required>
-<label for="privacyAccepted" class="privacy-label">
-J’ai lu et j’accepte la <a href="politique-confidentialite.html" target="_blank" rel="noopener">Politique de Confidentialité</a>.
+J’ai lu et j’accepte les <a href="reglement-interieur.html" target="_blank" rel="noopener">Conditions Générales d'Utilisation</a> et la <a href="politique-confidentialite.html" target="_blank" rel="noopener">Politique de Confidentialité</a>.
 </label>
 </div>
 
@@ -537,7 +529,6 @@ form.addEventListener("submit", async event => {
   const passwordConfirm = document.getElementById("passwordConfirm").value;
   
   const termsAccepted = document.getElementById("termsAccepted").checked;
-  const privacyAccepted = document.getElementById("privacyAccepted").checked;
 
   // VERIFICATION DU FORMULAIRE INCOMPLET
   if (!name || !phone || !email || !password || !passwordConfirm) {
@@ -546,7 +537,7 @@ form.addEventListener("submit", async event => {
   }
 
   // VERIFICATION DE L'ACCEPTATION DES CONDITIONS ET DE LA POLITIQUE
-  if (!termsAccepted || !privacyAccepted) {
+  if (!termsAccepted) {
     showMessage("Vous devez obligatoirement accepter les Conditions d'Utilisation et la Politique de Confidentialité pour créer votre compte.");
     return;
   }
