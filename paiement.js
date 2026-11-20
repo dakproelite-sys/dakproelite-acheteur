@@ -444,14 +444,14 @@ export function init(
   if (!currentUid) {
     container.innerHTML = `
       <div style="
-        padding:45px 20px;
+        padding:40px 16px;
         text-align:center;
         background:#0a0d14;
-        border-radius:15px;
+        border-radius:14px;
         color:#fff;
         font-family:Poppins,Arial,sans-serif;
       ">
-        <div style="font-size:48px;margin-bottom:15px;">🔐</div>
+        <div style="font-size:44px;margin-bottom:12px;">🔐</div>
         <h2 style="color:#d4af37;">Connexion nécessaire</h2>
         <p style="color:#aaa;">Connectez-vous pour effectuer votre paiement.</p>
       </div>
@@ -461,51 +461,62 @@ export function init(
 
 
   /* ==========================================================
-     INTERFACE COMPLETE
+     INTERFACE COMPLETE (RESPONSIVE MOBILE SANS ZOOM FORCÉ)
      ========================================================== */
 
   container.innerHTML = `
     <style>
       .dak-payment {
         width:100%;
+        max-width:100%;
+        box-sizing:border-box;
         color:#fff;
         font-family:Poppins,Arial,sans-serif;
+        overflow-x:hidden;
       }
 
       .dak-payment-title {
         display:flex;
         justify-content:space-between;
         align-items:center;
-        gap:15px;
+        gap:10px;
         flex-wrap:wrap;
-        padding-bottom:14px;
-        margin-bottom:20px;
+        padding-bottom:12px;
+        margin-bottom:16px;
         border-bottom:1px solid #292d37;
         color:#d4af37;
-        font-size:21px;
+        font-size:18px;
         font-weight:800;
       }
 
       .dak-payment-grid {
         display:grid;
-        grid-template-columns:minmax(280px,0.9fr) minmax(320px,1.1fr);
-        gap:20px;
+        grid-template-columns:1fr;
+        gap:16px;
+      }
+
+      @media(min-width:960px) {
+        .dak-payment-grid {
+          grid-template-columns:minmax(280px,0.9fr) minmax(320px,1.1fr);
+          gap:20px;
+        }
       }
 
       .dak-box {
         background:#0a0d14;
         border:1px solid #252932;
-        border-radius:15px;
-        padding:20px;
-        box-shadow:0 10px 35px rgba(0,0,0,.18);
+        border-radius:14px;
+        padding:16px;
+        box-sizing:border-box;
+        max-width:100%;
       }
 
       .dak-box-title {
         color:#d4af37;
         font-weight:800;
-        font-size:16px;
+        font-size:15px;
         padding-bottom:10px;
-        margin-bottom:15px;
+        margin-bottom:14px;
         border-bottom:1px solid #242832;
       }
 
@@ -519,12 +530,13 @@ export function init(
       .dak-input {
         width:100%;
         box-sizing:border-box;
-        padding:12px;
+        padding:11px;
         border-radius:8px;
         border:1px solid #333;
         background:#12161f;
         color:#fff;
         outline:none;
+        font-size:14px;
       }
 
       .dak-input:focus {
@@ -532,15 +544,15 @@ export function init(
       }
 
       .dak-field {
-        margin-bottom:13px;
+        margin-bottom:12px;
       }
 
       .dak-methods-box {
         background:#12161f;
         border:1px solid #292d37;
         border-radius:12px;
-        padding:14px;
-        margin-bottom:16px;
+        padding:12px;
+        margin-bottom:14px;
       }
 
       .dak-methods-label {
@@ -553,8 +565,14 @@ export function init(
 
       .dak-methods-grid {
         display:grid;
-        grid-template-columns:repeat(5, minmax(0, 1fr));
+        grid-template-columns:repeat(3, minmax(0, 1fr));
         gap:8px;
+      }
+
+      @media(min-width:520px) {
+        .dak-methods-grid {
+          grid-template-columns:repeat(5, minmax(0, 1fr));
+        }
       }
 
       .dak-method-card {
@@ -577,13 +595,13 @@ export function init(
       }
 
       .dak-secure {
-        margin-top:12px;
-        padding:10px;
+        margin-top:10px;
+        padding:9px;
         background:rgba(34,197,94,.08);
         border:1px solid rgba(34,197,94,.25);
         border-radius:8px;
         color:#70e090;
-        font-size:12px;
+        font-size:11px;
       }
 
       .dak-preview-group {
@@ -604,16 +622,16 @@ export function init(
       }
 
       .dak-cart {
-        max-height:420px;
+        max-height:460px;
         overflow-y:auto;
-        margin-bottom:15px;
+        margin-bottom:14px;
       }
 
       .dak-cart-item {
         background:#12161f;
         border:1px solid #242936;
         border-radius:10px;
-        padding:12px;
+        padding:11px;
         margin-bottom:10px;
         font-size:13px;
       }
@@ -627,13 +645,13 @@ export function init(
         display:flex;
         justify-content:space-between;
         align-items:flex-start;
-        gap:12px;
+        gap:10px;
       }
 
       .dak-item-meta {
         display:flex;
         flex-wrap:wrap;
-        gap:8px;
+        gap:6px;
         margin-top:6px;
         font-size:11px;
         color:#cbd5e1;
@@ -651,9 +669,10 @@ export function init(
         display:flex;
         gap:6px;
         overflow-x:auto;
-        margin-top:10px;
+        margin-top:9px;
         padding-top:8px;
         border-top:1px dashed #292f3e;
+        -webkit-overflow-scrolling:touch;
       }
 
       .dak-var-pill {
@@ -685,31 +704,34 @@ export function init(
       .dak-summary {
         display:flex;
         justify-content:space-between;
+        align-items:center;
+        gap:8px;
         color:#ccc;
-        font-size:13px;
+        font-size:12px;
         margin-bottom:8px;
       }
 
       .dak-total {
         display:flex;
         justify-content:space-between;
-        padding-top:14px;
-        margin-top:12px;
+        align-items:center;
+        padding-top:12px;
+        margin-top:10px;
         border-top:1px dashed #333;
         color:#d4af37;
-        font-size:20px;
+        font-size:18px;
         font-weight:900;
       }
 
       .dak-pay-button {
         width:100%;
-        margin-top:18px;
-        padding:15px;
+        margin-top:16px;
+        padding:14px;
         border:0;
         border-radius:9px;
         background:#d4af37;
         color:#000;
-        font-size:16px;
+        font-size:15px;
         font-weight:900;
         cursor:pointer;
       }
@@ -727,17 +749,18 @@ export function init(
         border:1px solid #ef4444;
         background:transparent;
         color:#ef4444;
-        padding:8px 12px;
+        padding:7px 11px;
         border-radius:7px;
+        font-size:12px;
         cursor:pointer;
       }
 
       .dak-status {
         display:none;
-        margin-top:15px;
+        margin-top:14px;
         padding:12px;
         border-radius:8px;
-        font-size:13px;
+        font-size:12px;
         line-height:1.5;
       }
 
@@ -745,19 +768,10 @@ export function init(
         background:#12161f;
         border:1px solid #292d37;
         border-radius:10px;
-        padding:13px;
+        padding:12px;
         color:#aaa;
         font-size:12px;
         line-height:1.6;
-      }
-
-      @media(max-width:850px) {
-        .dak-payment-grid {
-          grid-template-columns:1fr;
-        }
-        .dak-methods-grid {
-          grid-template-columns:repeat(4, minmax(0, 1fr));
-        }
       }
     </style>
 
@@ -867,19 +881,19 @@ export function init(
             <input id="shippingAddress" class="dak-input" type="text" placeholder="Quartier, rue, maison...">
           </div>
 
-          <div style="display:flex;gap:10px;">
-            <div class="dak-field" style="flex:1;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div class="dak-field" style="flex:1;min-width:120px;">
               <label class="dak-label">Ville</label>
               <input id="shippingCity" class="dak-input" type="text" placeholder="Cotonou">
             </div>
 
-            <div class="dak-field" style="flex:1;">
+            <div class="dak-field" style="flex:1;min-width:120px;">
               <label class="dak-label">Pays</label>
               <input id="shippingCountry" class="dak-input" type="text" value="Bénin">
             </div>
           </div>
 
-          <div class="dak-box-title" style="margin-top:20px;">
+          <div class="dak-box-title" style="margin-top:16px;">
             🛒 Aperçu des produits &amp; variantes
           </div>
 
@@ -903,7 +917,7 @@ export function init(
           </div>
 
           <div class="dak-summary">
-            <span id="checkoutDiscountLabel">Remise volume (10+ : -3% • 50+ : -5%)</span>
+            <span id="checkoutDiscountLabel">Réduction : 3% dès 10 pièces • 5% dès 50 pièces</span>
             <strong id="checkoutDiscountAmount" style="color:#70e090;">-0 FCFA</strong>
           </div>
 
@@ -1088,7 +1102,7 @@ export function init(
 
 
   /* ==========================================================
-     2 — PANIER (users/{uid}/panier + compatibilité gs/cart)
+     2 — PANIER (users/{uid}/panier + gs/cart + réception directe)
      ========================================================== */
 
   const primaryCartRef = ref(db, `users/${currentUid}/panier`);
@@ -1276,6 +1290,29 @@ export function init(
     updateCartSummary();
   }
 
+  // Réception directe lorsqu'un autre module (ex: index / panier) envoie des articles
+  window.dakproRecevoirPanier = function(cartData) {
+    if (!cartData) return;
+    if (Array.isArray(cartData)) {
+      const mapObj = {};
+      cartData.forEach((it, i) => {
+        if (it && typeof it === "object") {
+          mapObj[it.id || it.produitId || `item_${i}`] = it;
+        }
+      });
+      latestPrimaryCart = mapObj;
+    } else if (typeof cartData === "object") {
+      latestPrimaryCart = cartData;
+    }
+    renderCartSnapshot(latestPrimaryCart);
+  };
+
+  window.addEventListener("dakpro:cart-updated", event => {
+    if (event && event.detail) {
+      window.dakproRecevoirPanier(event.detail);
+    }
+  });
+
   onValue(
     primaryCartRef,
     snapshot => {
@@ -1301,7 +1338,7 @@ export function init(
 
 
   /* ==========================================================
-     TOTAL & LOGISTIQUE
+     TOTAL & LOGISTIQUE (RÉDUCTION EN DIRECT DÈS 10 ET 50 PIÈCES)
      ========================================================== */
 
   function updateCartSummary() {
@@ -1321,8 +1358,8 @@ export function init(
 
     if (checkoutDiscountLabel) {
       checkoutDiscountLabel.textContent = d.remisePourcent > 0
-        ? `🎉 Remise volume active (-${d.remisePourcent}% • ${currentCartCount} art.)`
-        : "Remise volume (10+ : -3% • 50+ : -5%)";
+        ? `🎉 Réduction active : -${d.remisePourcent}% (${currentCartCount} pièces)`
+        : "Réduction : 3% dès 10 pièces • 5% dès 50 pièces";
     }
 
     if (checkoutDiscountAmount) {
@@ -1367,6 +1404,9 @@ export function init(
         updates[`users/${currentUid}/panier`] = null;
         updates[`users/${currentUid}/gs/cart`] = null;
         updates[`users/${currentUid}/gs/total`] = 0;
+
+        latestPrimaryCart = null;
+        latestFallbackCart = null;
 
         await update(ref(db), updates);
         showStatus("✅ Panier vidé.", "success");
