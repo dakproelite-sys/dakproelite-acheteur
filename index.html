@@ -61,6 +61,7 @@ display:flex !important;align-items:center !important;justify-content:center !im
 background:radial-gradient(circle at 35% 30%, #1d222b, #030406) !important;
 box-shadow:inset 0 2px 6px rgba(0,0,0,0.9), inset 0 -1px 2px rgba(212,175,55,0.35), 0 1px 2px rgba(255,255,255,0.12) !important;
 user-select:none !important;-webkit-user-select:none !important;pointer-events:none !important;
+transform:none !important;animation:none !important;transition:none !important;
 }
 .logo-container::after{
 content:"";
@@ -73,6 +74,7 @@ display:block !important;width:100% !important;height:100% !important;object-fit
 background:transparent !important;
 filter:contrast(1.08) brightness(0.96) drop-shadow(0 1px 1px rgba(0,0,0,0.9)) !important;
 user-select:none !important;-webkit-user-select:none !important;pointer-events:none !important;
+transform:none !important;animation:none !important;transition:none !important;
 }
 
 .search-container{flex:1;min-width:0;display:flex;align-items:center;}
@@ -352,6 +354,83 @@ text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:c
 .footer-column li{margin-bottom:6px;}
 .footer-column a{color:#aaa;text-decoration:none;}
 
+/* LOGOS MOYENS DE PAIEMENT AU-DESSUS DU FOOTER (6 COLONNES SUR ANDROID/TABLETTE, ROULANT 8-10 SUR PC/GRAND ÉCRAN) */
+.payment-logos-strip{
+width:100%;
+background:#0b0e13;
+border-top:1px solid rgba(212,175,55,0.35);
+padding:10px 8px;
+overflow:hidden;
+}
+.payment-logos-label{
+text-align:center;
+font-size:10px;
+color:var(--gold);
+font-weight:600;
+margin-bottom:8px;
+letter-spacing:0.3px;
+}
+.payment-logos-grid{
+display:grid;
+grid-template-columns:repeat(6, 1fr);
+gap:6px;
+max-width:1000px;
+margin:0 auto;
+}
+.payment-logo-item{
+background:#ffffff;
+border-radius:6px;
+padding:5px 4px;
+min-height:34px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+border:1px solid #e2e8f0;
+overflow:hidden;
+}
+.payment-logo-item svg{
+max-width:100%;
+height:auto;
+display:block;
+}
+.payment-logo-item span{
+font-size:7.5px;
+font-weight:800;
+line-height:1.1;
+white-space:nowrap;
+}
+.payment-logo-item.dup-only{
+display:none;
+}
+@media(min-width:900px){
+.payment-logos-grid{
+display:flex;
+flex-wrap:nowrap;
+max-width:none;
+width:max-content;
+gap:12px;
+animation:paymentRollDesktop 24s linear infinite;
+will-change:transform;
+}
+.payment-logos-strip:hover .payment-logos-grid{
+animation-play-state:paused;
+}
+.payment-logo-item{
+flex:0 0 110px;
+width:110px;
+min-height:40px;
+padding:6px 8px;
+}
+.payment-logo-item.dup-only{
+display:flex;
+}
+@keyframes paymentRollDesktop{
+0%{transform:translateX(0);}
+100%{transform:translateX(-50%);}
+}
+}
+
 /* SÉLECTEUR DE LANGUE */
 .footer-language-container{
 display:flex;justify-content:center;align-items:center;padding:12px;
@@ -456,6 +535,157 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 </section>
 
 <div id="productModalContainer"></div>
+
+<!-- LOGOS MOYENS DE PAIEMENT (FEDAPAY, MOBILE MONEY & CARTES BANCAIRES) -->
+<div class="payment-logos-strip" aria-label="Moyens de paiement acceptés via FedaPay">
+  <div class="payment-logos-label">💳 Paiements acceptés via FedaPay (Mobile Money &amp; Cartes Bancaires)</div>
+  <div class="payment-logos-grid">
+    <!-- 1. Visa -->
+    <div class="payment-logo-item" title="Visa">
+      <svg width="42" height="14" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="13" fill="#1A1F71" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="16">VISA</text>
+      </svg>
+      <span style="color:#1A1F71;">VISA</span>
+    </div>
+    <!-- 2. Mastercard -->
+    <div class="payment-logo-item" title="Mastercard">
+      <svg width="30" height="18" viewBox="0 0 32 20" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="10" r="8" fill="#EB001B"/>
+        <circle cx="21" cy="10" r="8" fill="#F79E1B" fill-opacity="0.85"/>
+      </svg>
+      <span style="color:#111827;">Mastercard</span>
+    </div>
+    <!-- 3. MTN Mobile Money -->
+    <div class="payment-logo-item" style="background:#FFCC00;" title="MTN Mobile Money">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="14" cy="9" rx="13" ry="8" fill="#004F71"/>
+        <text x="5" y="12" fill="#FFCC00" font-family="Arial, sans-serif" font-weight="900" font-size="7.5">MTN</text>
+      </svg>
+      <span style="color:#004F71;">MTN MoMo</span>
+    </div>
+    <!-- 4. Moov Money -->
+    <div class="payment-logo-item" style="background:#0066B3;" title="Moov Money">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="9" r="7" fill="#FF6600"/>
+      </svg>
+      <span style="color:#ffffff;">Moov Money</span>
+    </div>
+    <!-- 5. Celtiis Cash -->
+    <div class="payment-logo-item" style="background:#00A859;" title="Celtiis Cash">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="3" width="16" height="12" rx="4" fill="#ffffff"/>
+        <circle cx="14" cy="9" r="3" fill="#00A859"/>
+      </svg>
+      <span style="color:#ffffff;">Celtiis Cash</span>
+    </div>
+    <!-- 6. Orange Money -->
+    <div class="payment-logo-item" style="background:#FF7900;" title="Orange Money">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="2" width="16" height="14" rx="2" fill="#000000"/>
+        <text x="8" y="12" fill="#FF7900" font-family="Arial, sans-serif" font-weight="900" font-size="8">OM</text>
+      </svg>
+      <span style="color:#ffffff;">Orange Money</span>
+    </div>
+    <!-- 7. Wave -->
+    <div class="payment-logo-item" style="background:#1DC4FF;" title="Wave">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 11 Q9 4 14 11 T24 11" stroke="#0052CC" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span style="color:#002B5B;">Wave</span>
+    </div>
+    <!-- 8. Mixx by Yas -->
+    <div class="payment-logo-item" style="background:#FFF200;" title="Mixx by Yas">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="9" r="7" fill="#E60000"/>
+        <text x="9.5" y="12" fill="#FFF200" font-family="Arial, sans-serif" font-weight="900" font-size="8">Y</text>
+      </svg>
+      <span style="color:#111827;">Mixx by Yas</span>
+    </div>
+    <!-- 9. Coris Money -->
+    <div class="payment-logo-item" style="background:#8B0000;" title="Coris Money">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="14,2 25,9 14,16 3,9" fill="#FFD700"/>
+      </svg>
+      <span style="color:#ffffff;">Coris Money</span>
+    </div>
+    <!-- 10. FedaPay -->
+    <div class="payment-logo-item" style="background:#0EA5E9;" title="FedaPay">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="9" r="7" fill="#ffffff"/>
+        <text x="10.5" y="12" fill="#0284C7" font-family="Arial, sans-serif" font-weight="900" font-size="8.5">F</text>
+      </svg>
+      <span style="color:#ffffff;">FedaPay</span>
+    </div>
+
+    <!-- Duplicats pour le défilement continu sur PC et grand écran -->
+    <div class="payment-logo-item dup-only" title="Visa">
+      <svg width="42" height="14" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="13" fill="#1A1F71" font-family="Arial, sans-serif" font-weight="900" font-style="italic" font-size="16">VISA</text>
+      </svg>
+      <span style="color:#1A1F71;">VISA</span>
+    </div>
+    <div class="payment-logo-item dup-only" title="Mastercard">
+      <svg width="30" height="18" viewBox="0 0 32 20" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="10" r="8" fill="#EB001B"/>
+        <circle cx="21" cy="10" r="8" fill="#F79E1B" fill-opacity="0.85"/>
+      </svg>
+      <span style="color:#111827;">Mastercard</span>
+    </div>
+    <div class="payment-logo-item dup-only" style="background:#FFCC00;" title="MTN Mobile Money">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="14" cy="9" rx="13" ry="8" fill="#004F71"/>
+        <text x="5" y="12" fill="#FFCC00" font-family="Arial, sans-serif" font-weight="900" font-size="7.5">MTN</text>
+      </svg>
+      <span style="color:#004F71;">MTN MoMo</span>
+    </div>
+    <div class="payment-logo-item dup-only" style="background:#0066B3;" title="Moov Money">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="9" r="7" fill="#FF6600"/>
+      </svg>
+      <span style="color:#ffffff;">Moov Money</span>
+    </div>
+    <div class="payment-logo-item dup-only" style="background:#00A859;" title="Celtiis Cash">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="3" width="16" height="12" rx="4" fill="#ffffff"/>
+        <circle cx="14" cy="9" r="3" fill="#00A859"/>
+      </svg>
+      <span style="color:#ffffff;">Celtiis Cash</span>
+    </div>
+    <div class="payment-logo-item dup-only" style="background:#FF7900;" title="Orange Money">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="2" width="16" height="14" rx="2" fill="#000000"/>
+        <text x="8" y="12" fill="#FF7900" font-family="Arial, sans-serif" font-weight="900" font-size="8">OM</text>
+      </svg>
+      <span style="color:#ffffff;">Orange Money</span>
+    </div>
+    <div class="payment-logo-item dup-only" style="background:#1DC4FF;" title="Wave">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 11 Q9 4 14 11 T24 11" stroke="#0052CC" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span style="color:#002B5B;">Wave</span>
+    </div>
+    <div class="payment-logo-item dup-only" style="background:#FFF200;" title="Mixx by Yas">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="9" r="7" fill="#E60000"/>
+        <text x="9.5" y="12" fill="#FFF200" font-family="Arial, sans-serif" font-weight="900" font-size="8">Y</text>
+      </svg>
+      <span style="color:#111827;">Mixx by Yas</span>
+    </div>
+    <div class="payment-logo-item dup-only" style="background:#8B0000;" title="Coris Money">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="14,2 25,9 14,16 3,9" fill="#FFD700"/>
+      </svg>
+      <span style="color:#ffffff;">Coris Money</span>
+    </div>
+    <div class="payment-logo-item dup-only" style="background:#0EA5E9;" title="FedaPay">
+      <svg width="24" height="16" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="14" cy="9" r="7" fill="#ffffff"/>
+        <text x="10.5" y="12" fill="#0284C7" font-family="Arial, sans-serif" font-weight="900" font-size="8.5">F</text>
+      </svg>
+      <span style="color:#ffffff;">FedaPay</span>
+    </div>
+  </div>
+</div>
 
 <footer class="app-footer">
 <section class="footer-announcement">
@@ -576,6 +806,9 @@ let totalSlides = 0;
 let autoPlay = null;
 let announcementDataCache = null;
 let flashVariantTimer = null;
+let autoCategoryTimer = null;
+let autoFlashListTimer = null;
+let flashRotationOffset = 0;
 
 const categoryIconsMap = {
 "Voitures": "🚗", "Smartphones": "📱", "Vêtements": "👕", "Chaussures": "👟",
@@ -820,6 +1053,8 @@ if(window.allProductsData.length > 0){
 buildCategories();
 filterProducts();
 renderCarousels(window.allProductsData);
+startAutoCategoryRotation();
+startAutoFlashListRotation();
 }
 });
 
@@ -916,14 +1151,20 @@ function loadProducts() {
     buildCategories();
     filterProducts();
     renderCarousels(window.allProductsData);
+    startAutoCategoryRotation();
+    startAutoFlashListRotation();
     checkUrlForSharedProduct();
   }).catch(err => {
     console.error("Erreur Firebase:", err);
   });
 }
 
+function getAvailableCategories(){
+return [...new Set(window.allProductsData.map(p => p.categorie || p.category).filter(Boolean))];
+}
+
 function buildCategories(){
-const categories = [...new Set(window.allProductsData.map(p => p.categorie || p.category).filter(Boolean))];
+const categories = getAvailableCategories();
 const menu = document.getElementById("catMenu");
 if(!menu) return;
 
@@ -943,8 +1184,54 @@ currentCat = button.dataset.category;
 menu.querySelectorAll(".cat-btn").forEach(item => item.classList.remove("active"));
 button.classList.add("active");
 filterProducts();
+startAutoCategoryRotation();
 });
 });
+}
+
+// Changement automatique des catégories toutes les 2 minutes (120 000 ms) depuis publications
+function startAutoCategoryRotation(){
+if(autoCategoryTimer){
+clearInterval(autoCategoryTimer);
+autoCategoryTimer = null;
+}
+autoCategoryTimer = setInterval(() => {
+const searchVal = (document.getElementById("searchBar")?.value || "").trim();
+if(searchVal.length > 0) return;
+
+const categories = getAvailableCategories();
+if(categories.length <= 1) return;
+
+const idx = categories.indexOf(currentCat);
+const nextIdx = idx >= 0 ? (idx + 1) % categories.length : 0;
+currentCat = categories[nextIdx];
+
+const menu = document.getElementById("catMenu");
+if(menu){
+const buttons = Array.from(menu.querySelectorAll(".cat-btn"));
+buttons.forEach(item => {
+const isMatch = item.dataset.category === currentCat;
+item.classList.toggle("active", isMatch);
+if(isMatch){
+item.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+}
+});
+}
+filterProducts();
+}, 120000);
+}
+
+// Renouvellement automatique de la sélection Offres Flash toutes les 2 minutes (120 000 ms)
+function startAutoFlashListRotation(){
+if(autoFlashListTimer){
+clearInterval(autoFlashListTimer);
+autoFlashListTimer = null;
+}
+autoFlashListTimer = setInterval(() => {
+if(!window.allProductsData || window.allProductsData.length === 0) return;
+flashRotationOffset += 1;
+renderCarousels(window.allProductsData);
+}, 120000);
 }
 
 document.getElementById("searchBar")?.addEventListener("input", filterProducts);
@@ -1122,12 +1409,15 @@ const containerPromos = document.getElementById("carouselPromos");
 if(!allProducts || allProducts.length === 0) return;
 
 const promoProducts = allProducts.filter(p => p.isFlash || p.prixPromo || p.boost);
+const promoSourcePool = promoProducts.length > 0 ? promoProducts : allProducts;
+const rotatedFlashPool = promoSourcePool.map((_, i) => promoSourcePool[(i + flashRotationOffset) % promoSourcePool.length]);
+
 const promoIds = new Set(promoProducts.map(p => p.id));
 const nonPromoProducts = allProducts.filter(p => !promoIds.has(p.id));
 
 if(containerPromos){
-if(promoProducts.length > 0){
-containerPromos.innerHTML = promoProducts.map((product, idx) => generateCardHTML(product, { isFlashCard: true, uniqueSuffix: `_flash_${idx}` })).join("");
+if(rotatedFlashPool.length > 0){
+containerPromos.innerHTML = rotatedFlashPool.map((product, idx) => generateCardHTML(product, { isFlashCard: true, uniqueSuffix: `_flash_${flashRotationOffset}_${idx}` })).join("");
 attachCardEvents(containerPromos);
 startFlashVariantsAnimation(containerPromos);
 } else {
@@ -1341,6 +1631,8 @@ applyAnnouncement(data);
 if(window.allProductsData.length > 0){
   renderProducts(window.allProductsData);
   renderCarousels(window.allProductsData);
+  startAutoCategoryRotation();
+  startAutoFlashListRotation();
 }
 
 loadProducts();

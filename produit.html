@@ -104,12 +104,9 @@
       <div class="lg:col-span-7 space-y-6">
         <div class="glass-card rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-2xl space-y-4">
           <div id="mediaContainer" class="relative rounded-2xl bg-slate-900 border border-slate-800/80 overflow-hidden flex items-center justify-center min-h-[260px] max-h-[600px] h-auto w-full">
-            <div id="loaderMedia" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 z-10">
-              <div class="w-8 h-8 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin mb-2"></div>
-              <span class="text-xs text-slate-400 font-medium">Chargement du visuel...</span>
-            </div>
+            <div id="loaderMedia" class="hidden"></div>
             <img id="produitImageBg" src="" alt="" class="absolute inset-0 w-full h-full object-cover filter blur-xl opacity-30 pointer-events-none hidden">
-            <img id="produitImage" src="" alt="Photo Produit" class="relative z-1 w-full h-auto max-h-[550px] object-contain rounded-xl hidden transition-all duration-300">
+            <img id="produitImage" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Photo Produit" class="relative z-1 w-full h-auto max-h-[550px] object-contain rounded-xl transition-all duration-300">
             <video id="produitVideo" src="" class="relative z-1 w-full h-auto max-h-[550px] object-contain rounded-xl hidden" controls autoplay loop muted></video>
           </div>
 
@@ -150,7 +147,7 @@
               <span id="badgeCategorie" class="text-[10px] font-black uppercase tracking-wider text-[#d4af37] bg-[#d4af37]/10 border border-[#d4af37]/25 px-3 py-1 rounded-full inline-block">Offre Officielle</span>
               <span id="badgeStockGlobal" class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">En stock</span>
             </div>
-            <h1 id="produitNom" class="text-xl sm:text-2xl font-extrabold text-white leading-snug">Chargement...</h1>
+            <h1 id="produitNom" class="text-xl sm:text-2xl font-extrabold text-white leading-snug">Article DAKPROÉLITE</h1>
             <div class="flex items-baseline gap-3 pt-1">
               <span id="prixPromo" class="text-2xl font-black text-[#d4af37]">0 FCFA</span>
               <span id="prixNormal" class="text-sm font-semibold text-slate-500 line-through hidden">0 FCFA</span>
@@ -160,7 +157,7 @@
           <!-- Description de l'offre -->
           <div class="space-y-2">
             <h3 class="text-xs font-bold uppercase text-slate-300 tracking-wider">Description de l'offre</h3>
-            <div id="produitDescription" class="text-xs sm:text-sm text-slate-400 leading-relaxed whitespace-pre-line">Chargement des détails du produit...</div>
+            <div id="produitDescription" class="text-xs sm:text-sm text-slate-400 leading-relaxed whitespace-pre-line">Article importé de haute qualité, disponible en plusieurs coloris et tailles.</div>
           </div>
 
           <!-- CARROUSEL HORIZONTAL DES VARIANTES JUSTE EN BAS DE LA DESCRIPTION -->
@@ -189,7 +186,7 @@
             <div id="listeArticlesPanier" class="space-y-2"></div>
           </div>
 
-          <!-- Bloc Quantité (variante active) + Poids (g & kg) + Calcul Douane & Transport -->
+          <!-- Bloc Quantité (variante active) + Paliers Remise Volume (10: 3%, 20: 5%, 30: 7%) + Calcul Douane & Transport -->
           <div id="blocQuantitePanier" class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-slate-300">Quantité (variante active) :</span>
@@ -198,6 +195,12 @@
                 <span id="quantitePanier" class="text-sm font-extrabold text-white px-2">1</span>
                 <button type="button" onclick="modifierQuantite(1)" class="w-8 h-8 rounded-lg bg-slate-800 text-[#d4af37] font-extrabold">+</button>
               </div>
+            </div>
+
+            <!-- Indicateur de remise automatique selon le nombre d'articles (10 -> 3%, 20 -> 5%, 30 -> 7%) -->
+            <div class="p-2.5 rounded-xl bg-slate-950/90 border border-[#d4af37]/30 flex items-center justify-between text-[11px]">
+              <span id="badgePalierRemise" class="font-bold text-[#d4af37]">Remise volume : 10+ (-3%) • 20+ (-5%) • 30+ (-7%)</span>
+              <span id="montantRemiseVolume" class="font-extrabold text-emerald-400">-0 FCFA</span>
             </div>
 
             <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
@@ -252,6 +255,49 @@
             </div>
           </div>
 
+          <!-- Logos des moyens de paiement acceptés avant le bouton FedaPay -->
+          <div class="pt-3 border-t border-slate-800 space-y-2">
+            <div class="text-[10px] font-bold text-slate-300 text-center">
+              Moyens de paiement acceptés via FedaPay (Mobile Money &amp; Cartes Bancaires)
+            </div>
+            <div class="grid grid-cols-5 gap-1.5">
+              <div class="bg-white rounded-lg py-1.5 px-1 flex flex-col items-center justify-center border border-slate-200" title="Visa">
+                <span class="text-[9px] font-black italic text-[#1A1F71] leading-none">VISA</span>
+              </div>
+              <div class="bg-white rounded-lg py-1.5 px-1 flex flex-col items-center justify-center border border-slate-200" title="Mastercard">
+                <svg width="20" height="12" viewBox="0 0 32 20" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="11" cy="10" r="8" fill="#EB001B"/>
+                  <circle cx="21" cy="10" r="8" fill="#F79E1B" fill-opacity="0.85"/>
+                </svg>
+                <span class="text-[7px] font-extrabold text-slate-900 leading-none mt-0.5">Mastercard</span>
+              </div>
+              <div class="bg-[#FFCC00] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="MTN Mobile Money">
+                <span class="text-[8px] font-black text-[#004F71] leading-none">MTN MoMo</span>
+              </div>
+              <div class="bg-[#0066B3] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Moov Money">
+                <span class="text-[8px] font-black text-white leading-none">Moov Money</span>
+              </div>
+              <div class="bg-[#00A859] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Celtiis Cash">
+                <span class="text-[8px] font-black text-white leading-none">Celtiis</span>
+              </div>
+              <div class="bg-[#FF7900] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Orange Money">
+                <span class="text-[8px] font-black text-white leading-none">Orange</span>
+              </div>
+              <div class="bg-[#1DC4FF] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Wave">
+                <span class="text-[8px] font-black text-[#002B5B] leading-none">Wave</span>
+              </div>
+              <div class="bg-[#FFF200] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Mixx by Yas">
+                <span class="text-[8px] font-black text-slate-900 leading-none">Mixx Yas</span>
+              </div>
+              <div class="bg-[#8B0000] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Coris Money">
+                <span class="text-[8px] font-black text-[#FFD700] leading-none">Coris</span>
+              </div>
+              <div class="bg-[#0EA5E9] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="FedaPay">
+                <span class="text-[8px] font-black text-white leading-none">FedaPay</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Bouton Paiement FedaPay -->
           <div id="zoneBoutonsActions" class="space-y-3 pt-2">
             <button type="button" id="btnPayFedaPay" onclick="procederPaiementFedaPay()" class="w-full py-3.5 dpe-gold-btn font-black text-xs sm:text-sm rounded-xl shadow-xl shadow-[#d4af37]/20 active:scale-95 transition-all flex items-center justify-center space-x-2">
@@ -294,6 +340,14 @@
       customsDutyPercent: 15,       // Droits de douane & TVA sur la valeur marchandise (%)
       customsHandlingPerKg: 1000    // Frais de dédouanement / manutention au kg (FCFA / kg)
     };
+
+    // Paliers de remise automatique selon le nombre d'articles (10 -> 3%, 20 -> 5%, 30 -> 7%)
+    function obtenirRemiseVolume(totalArticles) {
+      if (totalArticles >= 30) return { pourcent: 7, palier: 30 };
+      if (totalArticles >= 20) return { pourcent: 5, palier: 20 };
+      if (totalArticles >= 10) return { pourcent: 3, palier: 10 };
+      return { pourcent: 0, palier: 0 };
+    }
 
     // Dictionnaire de reconnaissance automatique des couleurs exactes
     const COLOR_MAP = [
@@ -340,7 +394,6 @@
     function parserPoidsEnGrammes(rawWeight) {
       if (rawWeight === null || rawWeight === undefined || rawWeight === '') return 0;
       if (typeof rawWeight === 'number' && !isNaN(rawWeight)) {
-        // Si < 15 et décimal (ex: 0.25), c'est probablement en kg -> convertir en grammes
         if (rawWeight > 0 && rawWeight < 10 && !Number.isInteger(rawWeight)) {
           return Math.round(rawWeight * 1000);
         }
@@ -350,7 +403,6 @@
       const isKg = /kg/.test(str);
       const matches = str.match(/(\d+(?:\.\d+)?)/g);
       if (!matches || matches.length === 0) return 0;
-      // Si fourchette ex "150-200", prendre la moyenne ou la valeur haute
       const val = matches.length > 1
         ? (parseFloat(matches[0]) + parseFloat(matches[1])) / 2
         : parseFloat(matches[0]);
@@ -369,7 +421,7 @@
       if (/t-shirt|shirt|polo|haut|top|blouse|chemise/.test(cat)) return 220;
       if (/montre|watch|bijou|jewelry|lunette|glass|coque|case/.test(cat)) return 120;
       if (/appareil|electromenager|machine|blender/.test(cat)) return 1500;
-      return 250; // Poids moyen standard par défaut (250 g = 0.25 kg)
+      return 250;
     }
 
     function detecterCouleurExacte(texte, explicitColor) {
@@ -398,7 +450,6 @@
       const mainImg = p.image || p.imageUrl || p.bigImage || p.photo || '';
       const fallbackPrix = Number(p.prixPromo) || Number(p.prix) || Number(p.sellPrice) || Number(p.prixNormal) || 0;
 
-      // Lecture de tous les champs possibles du poids fournisseur
       const rawGlobalWeight = p.poids ?? p.weight ?? p.productWeight ?? p.packingWeight ?? p.skuWeight ?? p.grossWeight ?? p.netWeight ?? 0;
       let fallbackPoids = parserPoidsEnGrammes(rawGlobalWeight);
       if (fallbackPoids <= 0) {
@@ -495,7 +546,6 @@
       const largeur = Number(p.largeur || p.width || p.packWidth || 0) || 0;
       const hauteur = Number(p.hauteur || p.height || p.packHeight || 0) || 0;
 
-      // Poids volumétrique aérien standard : (L × l × h en cm) / 5000
       const poidsVolumetriqueKg = (longueur > 0 && largeur > 0 && hauteur > 0)
         ? ((longueur * largeur * hauteur) / 5000) * totalItemsCount
         : 0;
@@ -557,7 +607,6 @@
         return;
       }
 
-      // Sélectionner visuellement cette variante
       selectionnerVariante(index, false);
 
       const existant = window.panierVariantes.find(item => item.id === v.id && item.nom === v.nom);
@@ -608,7 +657,6 @@
       window.quantitePanierCount = prochaineQte;
       document.getElementById('quantitePanier').innerText = window.quantitePanierCount;
 
-      // Synchroniser aussi si la variante est dans panierVariantes
       if (v && window.panierVariantes.length > 0) {
         const itemPanier = window.panierVariantes.find(it => it.id === v.id && it.nom === v.nom);
         if (itemPanier) {
@@ -622,12 +670,11 @@
 
     function calculerTotal() {
       if (!window.produitCourant) {
-        return { unitaire: 0, sousTotal: 0, transport: 0, douane: 0, total: 0, poidsKg: 0, poidsGr: 0, articles: [] };
+        return { unitaire: 0, sousTotalBrut: 0, remisePourcent: 0, remiseMontant: 0, sousTotal: 0, transport: 0, douane: 0, total: 0, poidsKg: 0, poidsGr: 0, articles: [] };
       }
       const p = window.produitCourant;
       const devise = p.devise || "FCFA";
 
-      // Si le client a ajouté une ou plusieurs variantes dans le panier, on somme tout ; sinon on calcule sur la variante active
       let lignes = [];
       if (window.panierVariantes.length > 0) {
         lignes = window.panierVariantes.map(item => ({
@@ -656,18 +703,21 @@
         }];
       }
 
-      const sousTotal = lignes.reduce((sum, l) => sum + (l.prix * l.quantite), 0);
+      const sousTotalBrut = lignes.reduce((sum, l) => sum + (l.prix * l.quantite), 0);
       const poidsTotalGr = lignes.reduce((sum, l) => sum + (l.poidsGr * l.quantite), 0);
       const totalArticles = lignes.reduce((sum, l) => sum + l.quantite, 0);
 
+      // Calcul automatique des remises volume : 10 -> 3%, 20 -> 5%, 30 -> 7%
+      const remiseInfo = obtenirRemiseVolume(totalArticles);
+      const remiseMontant = Math.round(sousTotalBrut * (remiseInfo.pourcent / 100));
+      const sousTotal = Math.max(0, sousTotalBrut - remiseMontant);
+
       const { poidsNetGr, poidsReelKg, poidsFacturableKg } = calculerPoidsChargeableKg(p, poidsTotalGr, totalArticles);
 
-      // Calcul Transport : prix fixe si défini dans Firebase, sinon tarif au kg avec forfait minimum
       const transport = Number(p.fraisTransport ?? p.shippingPrice ?? 0) > 0
         ? (Number(p.fraisTransport ?? p.shippingPrice) * totalArticles)
         : Math.max(LOGISTICS_CONFIG.minShippingFee, Math.round(poidsFacturableKg * LOGISTICS_CONFIG.ratePerKgAir));
 
-      // Calcul Douane / Dédouanement : droits % sur valeur marchandise + manutention douanière au kg
       const douane = Number(p.fraisDouane ?? p.customsFee ?? 0) > 0
         ? (Number(p.fraisDouane ?? p.customsFee) * totalArticles)
         : Math.round((sousTotal * (LOGISTICS_CONFIG.customsDutyPercent / 100)) + (poidsFacturableKg * LOGISTICS_CONFIG.customsHandlingPerKg));
@@ -676,6 +726,17 @@
 
       const prixAffiche = window.varianteSelectionnee?.prix || lignes[0]?.prix || 0;
       document.getElementById('prixPromo').innerText = `${prixAffiche.toLocaleString('fr-FR')} ${devise}`;
+
+      const badgePalier = document.getElementById('badgePalierRemise');
+      const montantRemiseEl = document.getElementById('montantRemiseVolume');
+      if (remiseInfo.pourcent > 0) {
+        badgePalier.innerText = `🎉 Remise active (-${remiseInfo.pourcent}%) • ${totalArticles} articles (palier ${remiseInfo.palier}+)`;
+        montantRemiseEl.innerText = `-${remiseMontant.toLocaleString('fr-FR')} ${devise}`;
+      } else {
+        badgePalier.innerText = `Remise volume (${totalArticles} art.) : 10 (-3%) • 20 (-5%) • 30 (-7%)`;
+        montantRemiseEl.innerText = `-0 ${devise}`;
+      }
+
       document.getElementById('poidsTotalCalcul').innerText = `${Math.round(poidsNetGr).toLocaleString('fr-FR')} g (${poidsReelKg.toFixed(2)} kg)`;
       document.getElementById('detailTarifKg').innerText = `${poidsFacturableKg.toFixed(2)} kg`;
       document.getElementById('sousTotalArticles').innerText = `${sousTotal.toLocaleString('fr-FR')} ${devise}`;
@@ -685,6 +746,9 @@
 
       return {
         unitaire: prixAffiche,
+        sousTotalBrut,
+        remisePourcent: remiseInfo.pourcent,
+        remiseMontant,
         sousTotal,
         transport,
         douane,
@@ -725,6 +789,8 @@
         articlesCommandes: calculDetails.articles,
         varianteSku: window.varianteSelectionnee ? window.varianteSelectionnee.sku : (p.sku || ""),
         prixUnitaire: calculDetails.unitaire,
+        remisePourcent: calculDetails.remisePourcent,
+        remiseMontant: calculDetails.remiseMontant,
         sousTotalArticles: calculDetails.sousTotal,
         fraisTransport: calculDetails.transport,
         fraisDouane: calculDetails.douane,
@@ -774,6 +840,21 @@
       }
     }
 
+    function trouverProduitEnCache(produitId) {
+      if (!produitId) return null;
+      try {
+        const cachedRaw = localStorage.getItem("dakpro_cached_products");
+        if (cachedRaw) {
+          const list = JSON.parse(cachedRaw);
+          if (Array.isArray(list)) {
+            const found = list.find(item => String(item.id) === String(produitId));
+            if (found) return found;
+          }
+        }
+      } catch (e) {}
+      return null;
+    }
+
     async function chargerProduitDynamique() {
       const urlParams = new URLSearchParams(window.location.search);
       const produitId = urlParams.get('id');
@@ -783,6 +864,13 @@
       if (!produitId) {
         afficherToast("Aucun identifiant de produit fourni.");
         return;
+      }
+
+      // Affichage instantané depuis le cache local si disponible (sans attendre ni bloquer)
+      const cachedProduct = trouverProduitEnCache(produitId);
+      if (cachedProduct) {
+        window.produitCourant = cachedProduct;
+        afficherDonneesProduit(window.produitCourant);
       }
 
       try {
@@ -795,12 +883,14 @@
         if (snapshot.exists()) {
           window.produitCourant = snapshot.val();
           afficherDonneesProduit(window.produitCourant);
-        } else {
+        } else if (!cachedProduct) {
           afficherToast("Produit introuvable dans le catalogue.");
         }
       } catch (e) {
         console.error("Erreur de chargement :", e);
-        afficherToast("Erreur lors du chargement des informations.");
+        if (!cachedProduct) {
+          afficherToast("Erreur lors du chargement des informations.");
+        }
       }
     }
 
@@ -969,12 +1059,18 @@
       if (p.video && !p.image && !p.imageUrl) {
         video.src = p.video;
         video.classList.remove('hidden');
+        img.classList.add('hidden');
         loader.classList.add('hidden');
       } else if (mediaUrl) {
         img.src = mediaUrl;
         imgBg.src = mediaUrl;
-        img.onload = () => { loader.classList.add('hidden'); img.classList.remove('hidden'); imgBg.classList.remove('hidden'); };
-        img.onerror = () => { loader.classList.add('hidden'); img.src = 'https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png'; img.classList.remove('hidden'); };
+        img.classList.remove('hidden');
+        imgBg.classList.remove('hidden');
+        loader.classList.add('hidden');
+        img.onerror = () => {
+          img.src = 'https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png';
+          img.classList.remove('hidden');
+        };
       } else {
         loader.classList.add('hidden');
         img.src = 'https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png';
