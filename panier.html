@@ -88,7 +88,7 @@ body {
 
 .cart-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -97,13 +97,12 @@ body {
 }
 
 .cart-item-img {
-  width: 74px;
-  height: 74px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
   border-radius: 8px;
   background: #080b10;
   flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cart-item-info {
@@ -115,64 +114,16 @@ body {
   font-size: 14px;
   font-weight: 600;
   color: #fff;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.cart-item-variant-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: #e2e8f0;
-  background: #101520;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  padding: 2px 8px;
-  margin-bottom: 5px;
 }
 
 .cart-item-price {
   font-size: 13px;
   font-weight: 700;
   color: var(--gold);
-}
-
-.cart-variants-list {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-top: 8px;
-  margin-top: 8px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.1);
-  -webkit-overflow-scrolling: touch;
-}
-
-.btn-variant-item {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 8px;
-  border-radius: 7px;
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  background: #101520;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-variant-item.active {
-  border-color: var(--green);
-  background: rgba(34, 197, 94, 0.14);
-  color: #86efac;
-}
-
-.btn-variant-item:hover {
-  border-color: var(--gold);
 }
 
 .qty-controls {
@@ -215,7 +166,7 @@ body {
   font-size: 20px;
   cursor: pointer;
   padding: 6px;
-  margin-left: 4px;
+  margin-left: 8px;
 }
 
 .cart-summary {
@@ -229,8 +180,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-  font-size: 13px;
+  margin-bottom: 12px;
+  font-size: 14px;
 }
 
 .summary-row.total {
@@ -239,7 +190,6 @@ body {
   color: var(--gold);
   border-top: 1px dashed var(--border);
   padding-top: 12px;
-  margin-top: 10px;
   margin-bottom: 20px;
 }
 
@@ -325,26 +275,6 @@ body {
       <span>Nombre d'articles :</span>
       <span id="totalItemsCount">0</span>
     </div>
-    <div class="summary-row">
-      <span>Poids total :</span>
-      <span id="totalWeightSummary">0 g (0.00 kg)</span>
-    </div>
-    <div class="summary-row">
-      <span>Sous-total articles :</span>
-      <span id="subtotalAmount">0 FCFA</span>
-    </div>
-    <div class="summary-row">
-      <span id="discountLabel">Réduction (3% dès 10 pièces • 5% dès 50 pièces) :</span>
-      <span id="discountAmount" style="color:var(--green);">-0 FCFA</span>
-    </div>
-    <div class="summary-row">
-      <span>Frais de transport :</span>
-      <span id="shippingAmount">0 FCFA</span>
-    </div>
-    <div class="summary-row">
-      <span>Douane / Dédouanement :</span>
-      <span id="customsAmount">0 FCFA</span>
-    </div>
     <div class="summary-row total">
       <span>Total à payer :</span>
       <span id="grandTotal">0 FCFA</span>
@@ -360,7 +290,7 @@ body {
 <!-- SCRIPT PANIER & REALTIME DATABASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, onValue, get, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -378,240 +308,7 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 
 let currentUser = null;
-let currentCartData = {};
-let currentPreparedItems = [];
-let currentTotals = calculerTotauxPanier([]);
-
-const LOGISTICS_CONFIG = {
-  minShippingFee: 2500,
-  ratePerKgAir: 8500,
-  customsDutyPercent: 15,
-  customsHandlingPerKg: 1000
-};
-
-const COLOR_MAP = [
-  { keys: ["black", "noir", "noire", "blk"], label: "Noir", hex: "#111827" },
-  { keys: ["white", "blanc", "blanche", "wht", "ivory", "ivoire"], label: "Blanc", hex: "#f8fafc" },
-  { keys: ["red", "rouge", "wine", "burgundy", "bordeaux"], label: "Rouge", hex: "#dc2626" },
-  { keys: ["blue", "bleu", "navy", "marine", "sky", "cyan"], label: "Bleu", hex: "#2563eb" },
-  { keys: ["green", "vert", "verte", "olive", "army", "khaki", "kaki"], label: "Vert", hex: "#16a34a" },
-  { keys: ["yellow", "jaune", "gold", "or", "doré"], label: "Jaune / Doré", hex: "#eab308" },
-  { keys: ["orange", "coral", "corail", "apricot", "abricot"], label: "Orange", hex: "#ea580c" },
-  { keys: ["pink", "rose", "blush"], label: "Rose", hex: "#ec4899" },
-  { keys: ["purple", "violet", "violette", "lavender", "lilac"], label: "Violet", hex: "#9333ea" },
-  { keys: ["brown", "marron", "coffee", "café", "chocolate", "camel", "tan", "beige", "sand", "sable"], label: "Marron / Beige", hex: "#92400e" },
-  { keys: ["grey", "gray", "gris", "grise", "silver", "argent"], label: "Gris", hex: "#6b7280" }
-];
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function parserPoidsEnGrammes(rawWeight) {
-  if (rawWeight === null || rawWeight === undefined || rawWeight === "") return 0;
-  if (typeof rawWeight === "number" && !isNaN(rawWeight)) {
-    if (rawWeight > 0 && rawWeight < 10 && !Number.isInteger(rawWeight)) {
-      return Math.round(rawWeight * 1000);
-    }
-    return rawWeight > 0 ? Math.round(rawWeight) : 0;
-  }
-  const str = String(rawWeight).trim().toLowerCase().replace(",", ".");
-  const isKg = /kg/.test(str);
-  const matches = str.match(/(\d+(?:\.\d+)?)/g);
-  if (!matches || matches.length === 0) return 0;
-  const val = matches.length > 1
-    ? (parseFloat(matches[0]) + parseFloat(matches[1])) / 2
-    : parseFloat(matches[0]);
-  if (isNaN(val) || val <= 0) return 0;
-  if (isKg || (val < 10 && !Number.isInteger(val))) {
-    return Math.round(val * 1000);
-  }
-  return Math.round(val);
-}
-
-function estimerPoidsSecuriteGrammes(p = {}) {
-  const cat = `${p.categorie || p.category || ""} ${p.nom || p.title || ""}`.toLowerCase();
-  if (/chaussure|shoe|sneaker|boot|sandal|sac|bag/.test(cat)) return 650;
-  if (/robe|dress|veste|jacket|manteau|coat|pantalon|jean/.test(cat)) return 420;
-  if (/t-shirt|shirt|polo|haut|top|blouse|chemise/.test(cat)) return 220;
-  if (/montre|watch|bijou|jewelry|lunette|glass|coque|case/.test(cat)) return 120;
-  if (/appareil|electromenager|machine|blender/.test(cat)) return 1500;
-  return 250;
-}
-
-function detecterCouleurExacte(texte, explicitColor) {
-  const source = `${explicitColor || ""} ${texte || ""}`.toLowerCase();
-  for (const item of COLOR_MAP) {
-    for (const k of item.keys) {
-      const regex = new RegExp(`\\b${k}\\b`, "i");
-      if (regex.test(source)) {
-        return {
-          couleurExacte: explicitColor ? String(explicitColor).trim() : item.label,
-          couleurHex: item.hex
-        };
-      }
-    }
-  }
-  if (explicitColor && String(explicitColor).trim()) {
-    return { couleurExacte: String(explicitColor).trim(), couleurHex: "#d4af37" };
-  }
-  return { couleurExacte: "Couleur modèle", couleurHex: "#d4af37" };
-}
-
-function extraireVariantesProduit(p = {}, fallbackPrix = 0, fallbackPoidsGr = 250) {
-  const source = p.variantes || p.variants || p.variantList || p.skus || p.stanProducts || [];
-  const entries = Array.isArray(source)
-    ? source
-    : (source && typeof source === "object" ? Object.values(source) : []);
-  const mainImg = p.image || p.imageUrl || p.bigImage || p.photo || "";
-  const list = [];
-
-  entries.forEach((v, idx) => {
-    if (typeof v === "string" && v.trim()) {
-      const col = detecterCouleurExacte(p.nom || p.title || "", "");
-      list.push({
-        id: `var_${idx}`,
-        nom: `Modèle ${idx + 1}`,
-        couleurExacte: col.couleurExacte,
-        couleurHex: col.couleurHex,
-        sku: p.sku || p.productSku || "",
-        image: v.trim(),
-        prix: fallbackPrix,
-        poidsGr: fallbackPoidsGr
-      });
-    } else if (v && typeof v === "object") {
-      const img = v.image || v.imageUrl || v.url || v.img || v.variantImage || v.bigImage || mainImg || "";
-      const prixVar = Number(
-        v.prixPromo ?? v.prix ?? v.price ?? v.variantSellPrice ?? v.sellPrice ?? fallbackPrix
-      ) || 0;
-      const rawVarWeight = v.poids ?? v.weight ?? v.variantWeight ?? v.packingWeight ?? v.skuWeight ?? v.productWeight ?? 0;
-      const poidsVar = parserPoidsEnGrammes(rawVarWeight) || fallbackPoidsGr;
-      const explicitColor = v.couleur || v.color || v.variantColor || "";
-      const explicitSize = v.taille || v.size || v.variantSize || "";
-      const rawLabel = v.nom || v.name || v.variantNameEn || v.variantName || v.variantKey || v.variantProperty || "";
-
-      let nomAffiche = rawLabel;
-      if (!nomAffiche && (explicitColor || explicitSize)) {
-        nomAffiche = [explicitColor, explicitSize].filter(Boolean).join(" - ");
-      }
-      if (!nomAffiche) {
-        nomAffiche = `Modèle ${idx + 1}`;
-      }
-
-      const colInfo = detecterCouleurExacte(`${nomAffiche} ${v.variantKey || ""}`, explicitColor);
-      list.push({
-        id: v.vid || v.id || `var_${idx}`,
-        nom: nomAffiche,
-        couleurExacte: colInfo.couleurExacte,
-        couleurHex: colInfo.couleurHex,
-        sku: v.sku || v.variantSku || p.sku || p.productSku || "",
-        image: img,
-        prix: prixVar > 0 ? prixVar : fallbackPrix,
-        poidsGr: poidsVar
-      });
-    }
-  });
-
-  if (list.length === 0 && mainImg) {
-    const col = detecterCouleurExacte(p.nom || p.title || "", p.couleur || p.color || "");
-    list.push({
-      id: "var_default",
-      nom: p.variantName || "Modèle Standard",
-      couleurExacte: col.couleurExacte,
-      couleurHex: col.couleurHex,
-      sku: p.sku || p.productSku || "",
-      image: mainImg,
-      prix: fallbackPrix,
-      poidsGr: fallbackPoidsGr
-    });
-  }
-
-  return list;
-}
-
-// Paliers de remise : 10 pièces -> 3%, 50 pièces et plus -> 5%
-function obtenirRemiseVolume(totalArticles) {
-  if (totalArticles >= 50) return { pourcent: 5, palier: 50 };
-  if (totalArticles >= 10) return { pourcent: 3, palier: 10 };
-  return { pourcent: 0, palier: 0 };
-}
-
-function calculerTotauxPanier(itemsList) {
-  const sousTotalBrut = itemsList.reduce(
-    (acc, it) => acc + (Number(it.prixUnitaire || 0) * Number(it.quantite || 1)),
-    0
-  );
-  const totalArticles = itemsList.reduce(
-    (acc, it) => acc + Number(it.quantite || 1),
-    0
-  );
-  const poidsTotalGr = itemsList.reduce((acc, it) => {
-    const pUnit = Number(it.poidsGr || 0) > 0 ? Number(it.poidsGr) : estimerPoidsSecuriteGrammes(it);
-    return acc + (pUnit * Number(it.quantite || 1));
-  }, 0);
-
-  let poidsFacturableKg = poidsTotalGr / 1000;
-  let transportFixe = 0;
-  let douaneFixe = 0;
-
-  itemsList.forEach(it => {
-    const qte = Number(it.quantite || 1);
-    const pub = it.publication || {};
-    const l = Number(pub.longueur || pub.length || pub.packLength || 0) || 0;
-    const w = Number(pub.largeur || pub.width || pub.packWidth || 0) || 0;
-    const h = Number(pub.hauteur || pub.height || pub.packHeight || 0) || 0;
-
-    if (l > 0 && w > 0 && h > 0) {
-      const volKg = ((l * w * h) / 5000) * qte;
-      const realKg = ((Number(it.poidsGr || 0) || estimerPoidsSecuriteGrammes(pub)) * qte) / 1000;
-      if (volKg > realKg) {
-        poidsFacturableKg += (volKg - realKg);
-      }
-    }
-
-    const fTrans = Number(pub.fraisTransport ?? pub.shippingPrice ?? 0) || 0;
-    const fDouane = Number(pub.fraisDouane ?? pub.customsFee ?? 0) || 0;
-    if (fTrans > 0) transportFixe += fTrans * qte;
-    if (fDouane > 0) douaneFixe += fDouane * qte;
-  });
-
-  const remiseInfo = totalArticles > 0 ? obtenirRemiseVolume(totalArticles) : { pourcent: 0, palier: 0 };
-  const remiseMontant = Math.round(sousTotalBrut * (remiseInfo.pourcent / 100));
-  const sousTotal = Math.max(0, sousTotalBrut - remiseMontant);
-
-  const transport = totalArticles <= 0
-    ? 0
-    : (transportFixe > 0
-      ? transportFixe
-      : Math.max(LOGISTICS_CONFIG.minShippingFee, Math.round(poidsFacturableKg * LOGISTICS_CONFIG.ratePerKgAir)));
-
-  const douane = totalArticles <= 0
-    ? 0
-    : (douaneFixe > 0
-      ? douaneFixe
-      : Math.round((sousTotal * (LOGISTICS_CONFIG.customsDutyPercent / 100)) + (poidsFacturableKg * LOGISTICS_CONFIG.customsHandlingPerKg)));
-
-  const total = sousTotal + transport + douane;
-
-  return {
-    totalArticles,
-    sousTotalBrut,
-    remisePourcent: remiseInfo.pourcent,
-    remiseMontant,
-    sousTotal,
-    transport,
-    douane,
-    total,
-    poidsGr: Math.round(poidsTotalGr),
-    poidsKg: poidsTotalGr / 1000,
-    poidsFacturableKg
-  };
-}
+let currentCartPayload = null;
 
 // Vérification de la connexion de l'utilisateur
 onAuthStateChanged(auth, user => {
@@ -631,11 +328,12 @@ onAuthStateChanged(auth, user => {
 });
 
 // Navigation sécurisée pour éviter les pages blanches sur Vercel/Netlify
-window.redirigerVers = function(moduleOuPage) {
-  if (typeof window.chargerModule === 'function') {
+window.redirigerVers = function(moduleOuPage, params = "") {
+  const cible = moduleOuPage.endsWith('.html') ? moduleOuPage : moduleOuPage + '.html';
+  if (typeof window.chargerModule === 'function' && !params) {
     window.chargerModule(moduleOuPage);
   } else {
-    window.location.href = moduleOuPage.endsWith('.html') ? moduleOuPage : moduleOuPage + '.html';
+    window.location.href = cible + params;
   }
 };
 
@@ -648,15 +346,14 @@ document.getElementById("btnBackHome")?.addEventListener("click", (e) => {
 function ecouterPanier(uid) {
   const cartRef = ref(db, `users/${uid}/panier`);
 
-  onValue(cartRef, async snapshot => {
+  onValue(cartRef, snapshot => {
     const data = snapshot.val();
-    currentCartData = data || {};
     const cartList = document.getElementById("cartList");
     const cartSummary = document.getElementById("cartSummary");
 
     if (!data || typeof data !== "object" || Object.keys(data).length === 0) {
-      currentPreparedItems = [];
-      currentTotals = calculerTotauxPanier([]);
+      currentCartPayload = null;
+      sessionStorage.removeItem("dakpro_checkout_panier");
       cartList.innerHTML = `
         <div class="empty-state">
           <h3>Votre panier est vide 🛒</h3>
@@ -668,177 +365,75 @@ function ecouterPanier(uid) {
     }
 
     let itemsHTML = "";
+    let totalArticles = 0;
+    let grandTotal = 0;
     let mainCurrency = "FCFA";
-    const preparedList = [];
+    const itemsList = [];
 
-    for (const [productId, item] of Object.entries(data)) {
-      if (!item) continue;
-
-      const prodId = item.id || item.produitId || productId;
-      const qty = Math.max(1, parseInt(item.quantite || 1, 10));
-
-      let publication = null;
-      try {
-        let pubSnap = await get(ref(db, `publications/${prodId}`));
-        if (!pubSnap.exists()) {
-          pubSnap = await get(ref(db, `vendeur_publications/${prodId}`));
-        }
-        if (pubSnap.exists()) {
-          publication = pubSnap.val() || {};
-        }
-      } catch (err) {
-        console.warn("Publication introuvable :", err);
-      }
-
-      let price = parseFloat(item.prixUnitaire || item.prix || 0);
-      if (publication) {
-        const normal = Number(publication.prixNormal || publication.prix || 0);
-        const promo = Number(publication.prixPromo || 0);
-        if (promo > 0 && normal > 0 && promo < normal) {
-          price = promo;
-        } else if (normal > 0) {
-          price = normal;
-        }
-      }
-      if (!Number.isFinite(price) || price < 0) price = 0;
-
-      const rawWeight = item.poidsGr ?? item.poids ?? item.weight
-        ?? publication?.poids ?? publication?.weight ?? publication?.productWeight ?? publication?.packingWeight ?? 0;
-      const poidsGr = parserPoidsEnGrammes(rawWeight) || estimerPoidsSecuriteGrammes(publication || item);
-
-      const variantesList = publication
-        ? extraireVariantesProduit(publication, price, poidsGr)
-        : [];
-
-      const couleurInfo = detecterCouleurExacte(
-        `${item.variante || item.nom || ""} ${publication?.nom || ""}`,
-        item.couleurChoisie || item.couleur || item.color || ""
-      );
-
-      const varianteChoisie = item.variante || item.variantName || (variantesList[0]?.nom || "Standard");
+    Object.entries(data).forEach(([productId, item]) => {
+      const qty = parseInt(item.quantite || 1, 10);
+      const price = parseFloat(item.prixUnitaire || item.prix || 0);
+      const itemTotal = parseFloat((qty * price).toFixed(2));
       const currency = item.devise || "FCFA";
       mainCurrency = currency;
 
-      const normalImgUrl = publication?.image || publication?.imageUrl || item.image || "https://via.placeholder.com/70";
-      const currentImgUrl = item.image || normalImgUrl;
-      const prodName = item.nom || publication?.nom || publication?.title || "Produit DAKPRO ÉLITE";
+      totalArticles += qty;
+      grandTotal += itemTotal;
 
-      const preparedEntry = {
-        cartKey: productId,
-        id: prodId,
-        produitId: prodId,
-        nom: prodName,
-        variante: varianteChoisie,
-        couleurChoisie: couleurInfo.couleurExacte,
-        couleurHex: couleurInfo.couleurHex,
-        image: currentImgUrl,
-        imageNormale: normalImgUrl,
+      const imgUrl = item.image || "https://via.placeholder.com/70";
+      const nomProduit = item.nom || "Produit DAKPRO ÉLITE";
+
+      itemsList.push({
+        id: productId,
+        nom: nomProduit,
         prixUnitaire: price,
-        poidsGr,
         quantite: qty,
-        total: Number((qty * price).toFixed(2)),
+        total: itemTotal,
         devise: currency,
-        publication: publication || {},
-        variantesList
-      };
-
-      preparedList.push(preparedEntry);
-
-      const variantsButtonsHTML = variantesList.length > 0
-        ? `
-          <div class="cart-variants-list">
-            ${variantesList.map((v, idx) => {
-              const isSelected = String(varianteChoisie).toLowerCase() === String(v.nom).toLowerCase();
-              return `
-                <button
-                  type="button"
-                  class="btn-variant-item ${isSelected ? "active" : ""}"
-                  data-cart-id="${escapeHtml(productId)}"
-                  data-var-index="${idx}"
-                >
-                  <span style="width:8px;height:8px;border-radius:50%;background:${escapeHtml(v.couleurHex)};display:inline-block;"></span>
-                  <span>${escapeHtml(v.nom)}</span>
-                </button>
-              `;
-            }).join("")}
-          </div>
-        `
-        : "";
+        image: imgUrl,
+        raw: item
+      });
 
       itemsHTML += `
-        <div class="cart-item" data-id="${escapeHtml(productId)}">
-          <img src="${escapeHtml(currentImgUrl)}" alt="${escapeHtml(prodName)}" class="cart-item-img" onerror="this.src='https://via.placeholder.com/70'">
+        <div class="cart-item" data-id="${productId}">
+          <img src="${imgUrl}" alt="${nomProduit}" class="cart-item-img" onerror="this.src='https://via.placeholder.com/70'">
           <div class="cart-item-info">
-            <div class="cart-item-title">${escapeHtml(prodName)}</div>
-            <div class="cart-item-variant-badge">
-              <span style="width:7px;height:7px;border-radius:50%;background:${escapeHtml(couleurInfo.couleurHex)};display:inline-block;"></span>
-              <span>Variante : <strong>${escapeHtml(varianteChoisie)}</strong></span>
-            </div>
+            <div class="cart-item-title">${nomProduit}</div>
             <div class="cart-item-price">${price.toLocaleString('fr-FR')} ${currency}</div>
-            ${variantsButtonsHTML}
             <div class="qty-controls">
-              <button type="button" class="btn-qty btn-minus" data-id="${escapeHtml(productId)}" data-qty="${qty}" data-price="${price}">-</button>
+              <button class="btn-qty btn-minus" data-id="${productId}" data-qty="${qty}" data-price="${price}">-</button>
               <span class="qty-val">${qty}</span>
-              <button type="button" class="btn-qty btn-plus" data-id="${escapeHtml(productId)}" data-qty="${qty}" data-price="${price}">+</button>
+              <button class="btn-qty btn-plus" data-id="${productId}" data-qty="${qty}" data-price="${price}">+</button>
             </div>
           </div>
-          <button type="button" class="btn-remove" data-id="${escapeHtml(productId)}">🗑️</button>
+          <button class="btn-remove" data-id="${productId}">🗑️</button>
         </div>
       `;
-    }
+    });
 
-    currentPreparedItems = preparedList;
-    currentTotals = calculerTotauxPanier(preparedList);
+    currentCartPayload = {
+      uid: uid,
+      items: itemsList,
+      totalArticles: totalArticles,
+      grandTotal: grandTotal,
+      devise: mainCurrency,
+      updatedAt: Date.now()
+    };
+
+    // Préparation des données pour produit.html sans vider le panier
+    sessionStorage.setItem("dakpro_checkout_panier", JSON.stringify(currentCartPayload));
 
     cartList.innerHTML = itemsHTML;
-    document.getElementById("totalItemsCount").textContent = currentTotals.totalArticles;
-    document.getElementById("totalWeightSummary").textContent = `${currentTotals.poidsGr} g (${currentTotals.poidsKg.toFixed(2)} kg)`;
-    document.getElementById("subtotalAmount").textContent = `${currentTotals.sousTotalBrut.toLocaleString('fr-FR')} ${mainCurrency}`;
-    document.getElementById("discountLabel").textContent = currentTotals.remisePourcent > 0
-      ? `🎉 Réduction active (-${currentTotals.remisePourcent}% • ${currentTotals.totalArticles} pièces) :`
-      : "Réduction (3% dès 10 pièces • 5% dès 50 pièces) :";
-    document.getElementById("discountAmount").textContent = `-${currentTotals.remiseMontant.toLocaleString('fr-FR')} ${mainCurrency}`;
-    document.getElementById("shippingAmount").textContent = `${currentTotals.transport.toLocaleString('fr-FR')} ${mainCurrency}`;
-    document.getElementById("customsAmount").textContent = `${currentTotals.douane.toLocaleString('fr-FR')} ${mainCurrency}`;
-    document.getElementById("grandTotal").textContent = `${currentTotals.total.toLocaleString('fr-FR')} ${mainCurrency}`;
+    document.getElementById("totalItemsCount").textContent = totalArticles;
+    document.getElementById("grandTotal").textContent = `${grandTotal.toLocaleString('fr-FR')} ${mainCurrency}`;
     cartSummary.style.display = "block";
 
     attacherEvenements(uid);
   });
 }
 
-// Attachement des événements de variantes / mise à jour / suppression
+// Attachement des événements de mise à jour / suppression
 function attacherEvenements(uid) {
-  document.querySelectorAll(".btn-variant-item").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const cartId = btn.dataset.cartId;
-      const varIdx = parseInt(btn.dataset.varIndex, 10);
-      const item = currentCartData[cartId];
-      const prepared = currentPreparedItems.find(p => p.cartKey === cartId);
-      const variant = prepared?.variantesList?.[varIdx];
-      if (!item || !variant) return;
-
-      const qty = Math.max(1, parseInt(item.quantite || 1, 10));
-      const newPrice = Number(variant.prix) > 0 ? Number(variant.prix) : parseFloat(item.prixUnitaire || item.prix || 0);
-      const newWeight = Number(variant.poidsGr) > 0 ? Number(variant.poidsGr) : (prepared.poidsGr || 250);
-      const newImg = variant.image || item.image || prepared.imageNormale || "https://via.placeholder.com/70";
-
-      const patch = {
-        variante: variant.nom,
-        couleurChoisie: variant.couleurExacte,
-        image: newImg,
-        sku: variant.sku || item.sku || "",
-        prixUnitaire: newPrice,
-        poidsGr: newWeight,
-        total: parseFloat((qty * newPrice).toFixed(2)),
-        updatedAt: Date.now()
-      };
-
-      update(ref(db, `users/${uid}/panier/${cartId}`), patch);
-      update(ref(db, `users/${uid}/gs/cart/${cartId}`), patch);
-    });
-  });
-
   document.querySelectorAll(".btn-plus").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.id;
@@ -894,64 +489,28 @@ function attacherEvenements(uid) {
 // Vider tout le panier manuellement si demandé
 document.getElementById("btnClearCart")?.addEventListener("click", () => {
   if (currentUser && confirm("Voulez-vous vraiment vider l'ensemble de votre panier ?")) {
+    sessionStorage.removeItem("dakpro_checkout_panier");
     remove(ref(db, `users/${currentUser.uid}/panier`));
     remove(ref(db, `users/${currentUser.uid}/gs/cart`));
     update(ref(db, `users/${currentUser.uid}/gs`), { total: 0 });
   }
 });
 
-// Envoi complet vers le paiement et ouverture (SANS vider le panier à ce stade)
-document.getElementById("btnGoToPayment")?.addEventListener("click", async () => {
-  if (!currentUser || currentPreparedItems.length === 0) return;
+// Redirection directe vers produit.html avec toutes les informations produits et prix
+document.getElementById("btnGoToPayment")?.addEventListener("click", () => {
+  if (!currentCartPayload || !currentCartPayload.items.length) return;
 
-  const cartPayload = {};
-  currentPreparedItems.forEach(it => {
-    cartPayload[it.cartKey] = {
-      id: it.id,
-      produitId: it.produitId,
-      nom: it.nom,
-      variante: it.variante,
-      couleurChoisie: it.couleurChoisie,
-      image: it.image,
-      imageNormale: it.imageNormale,
-      prixUnitaire: it.prixUnitaire,
-      poidsGr: it.poidsGr,
-      quantite: it.quantite,
-      total: it.total,
-      devise: it.devise,
-      remisePourcent: currentTotals.remisePourcent,
-      fraisTransport: currentTotals.transport,
-      fraisDouane: currentTotals.douane,
-      montantTotal: currentTotals.total
-    };
+  sessionStorage.setItem("dakpro_checkout_panier", JSON.stringify(currentCartPayload));
+
+  const params = new URLSearchParams({
+    source: "panier",
+    total: String(currentCartPayload.grandTotal),
+    devise: currentCartPayload.devise,
+    articles: String(currentCartPayload.totalArticles),
+    produits: encodeURIComponent(JSON.stringify(currentCartPayload.items))
   });
 
-  try {
-    await set(ref(db, `users/${currentUser.uid}/gs/cart`), cartPayload);
-    await set(ref(db, `users/${currentUser.uid}/gs/total`), currentTotals.total);
-  } catch (err) {
-    console.warn("Sync gs/cart non bloquante :", err);
-  }
-
-  try {
-    sessionStorage.setItem("dakpro_checkout_cart", JSON.stringify(cartPayload));
-    sessionStorage.setItem("dakpro_checkout_totals", JSON.stringify(currentTotals));
-  } catch (_) {}
-
-  if (typeof window.dakproRecevoirPanier === "function") {
-    window.dakproRecevoirPanier(cartPayload);
-  }
-
-  window.dispatchEvent(
-    new CustomEvent("dakpro:cart-updated", { detail: cartPayload })
-  );
-
-  if (typeof window.chargerModule === "function") {
-    window.chargerModule("paiement");
-    return;
-  }
-
-  window.location.href = "paiement.html";
+  window.location.href = `produit.html?${params.toString()}`;
 });
 </script>
 
