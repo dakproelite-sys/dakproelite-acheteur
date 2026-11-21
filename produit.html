@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-950">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAKPROÉLITE - Détails du Produit</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- SDK FedaPay Checkout -->
+  <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+
+  <style>
+    :root { --dpe-gold: #d4af37; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .dpe-gold-text { color: #d4af37; }
+    .dpe-gold-border { border-color: #d4af37; }
+    .dpe-gold-btn {
+      background: linear-gradient(135deg, #d4af37, #b89222);
+      color: #050505;
+    }
+    .dpe-gold-btn:hover {
+      background: linear-gradient(135deg, #e2c158, #c79f2b);
+    }
+    /* Défilement horizontal fluide vers la gauche */
+    .dpe-carousel-scroll {
+      display: flex;
+      gap: 0.75rem;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 0.5rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    .dpe-carousel-scroll::-webkit-scrollbar {
+      height: 5px;
+    }
+    .dpe-carousel-scroll::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 9999px;
+    }
+    .dpe-carousel-scroll::-webkit-scrollbar-thumb {
+      background: rgba(212, 175, 55, 0.5);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-full flex flex-col antialiased selection:bg-[#d4af37] selection:text-slate-950">
+
+  <!-- En-tête Principal -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="relative w-11 h-11 rounded-full border-2 border-[#d4af37] bg-slate-900 flex items-center justify-center overflow-hidden">
+          <img id="logoApp" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Logo DAKPROÉLITE" class="w-full h-full object-cover hidden" onload="this.classList.remove('hidden')" onerror="document.getElementById('logoFallback').classList.remove('hidden'); this.remove();">
+          <div id="logoFallback" class="hidden font-black text-[#d4af37] text-lg">DE</div>
+        </a>
+        <div>
+          <span class="text-base font-extrabold text-white block leading-none">DAKPROÉLITE</span>
+          <span class="text-[10px] font-bold text-[#d4af37] uppercase tracking-wider">Boutique Officielle</span>
+        </div>
+      </div>
+
+      <a href="index.html" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all flex items-center space-x-1 border border-slate-700">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        <span>Catalogue</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white text-xs font-semibold px-4 py-3.5 rounded-2xl shadow-2xl border border-[#d4af37]/50 flex items-center space-x-3 transition-all duration-300">
+      <div class="w-7 h-7 rounded-xl bg-[#d4af37]/20 border border-[#d4af37]/30 flex items-center justify-center text-[#d4af37] flex-shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <span id="toastMessage">Notification</span>
+    </div>
+
+    <!-- Bannière Succès Paiement -->
+    <div id="bannerPaiementSucces" class="hidden mb-6 p-4 bg-emerald-500/15 border border-emerald-500/40 rounded-2xl flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <div>
+          <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wide">Paiement Confirmé !</h4>
+          <p id="bannerPaiementDetails" class="text-[11px] text-slate-200">Merci pour votre achat. Votre commande et les couleurs choisies ont été enregistrées avec succès.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grille produit -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Visuel / Média Produit -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="glass-card rounded-3xl p-4 sm:p-6 border border-slate-800 shadow-2xl space-y-4">
+          <div id="mediaContainer" class="relative rounded-2xl bg-slate-900 border border-slate-800/80 overflow-hidden flex items-center justify-center min-h-[260px] max-h-[600px] h-auto w-full">
+            <div id="loaderMedia" class="hidden"></div>
+            <img id="produitImageBg" src="" alt="" class="absolute inset-0 w-full h-full object-cover filter blur-xl opacity-30 pointer-events-none hidden">
+            <img id="produitImage" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Photo Produit" class="relative z-1 w-full h-auto max-h-[550px] object-contain rounded-xl transition-all duration-300">
+            <video id="produitVideo" src="" class="relative z-1 w-full h-auto max-h-[550px] object-contain rounded-xl hidden" controls autoplay loop muted></video>
+          </div>
+
+          <!-- Bandeau récapitulatif de la variante active sous l'image -->
+          <div id="detailsVarianteSelectionnee" class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span id="detailVarColorDot" class="w-3.5 h-3.5 rounded-full border border-white/30 inline-block bg-slate-600"></span>
+              <span><strong>Couleur / Variante :</strong> <span id="detailVarNom" class="text-white font-bold">Standard</span></span>
+            </div>
+            <span><strong>Stock :</strong> <span id="detailVarStock" class="text-emerald-400 font-bold">Disponible</span></span>
+            <span><strong>Poids unitaire :</strong> <span id="detailVarPoids" class="text-[#d4af37] font-bold">0 g (0.00 kg)</span></span>
+            <span id="detailVarSkuWrap" class="hidden"><strong>SKU :</strong> <span id="detailVarSku" class="text-slate-400"></span></span>
+          </div>
+
+          <div id="sectionRessources" class="hidden bg-slate-900/90 rounded-2xl p-4 border border-[#d4af37]/25 space-y-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#d4af37] flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              Ressources & Documents Associés
+            </h4>
+            <p id="ressourceNotice" class="text-[11px] text-slate-400">Ce produit inclut un accès à des supports PDF / Cours exclusifs après validation.</p>
+            <a id="lienRessource" href="#" target="_blank" class="inline-flex items-center space-x-2 text-xs font-bold text-[#d4af37] hover:underline pt-1 hidden">
+              <span>Consulter l'aperçu du document/cours</span>
+            </a>
+            <div id="zoneTelechargementApresPaiement" class="hidden pt-2">
+              <a id="btnTelechargerDocument" href="#" download target="_blank" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center space-x-2 transition-all">
+                <span>Accéder aux ressources complètes</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Détails, Carrousel Variantes sous la Description & Formulaire -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="glass-card rounded-3xl p-6 border border-slate-800 shadow-2xl space-y-6">
+          <div class="space-y-3 border-b border-slate-800 pb-5">
+            <div class="flex items-center justify-between gap-2">
+              <span id="badgeCategorie" class="text-[10px] font-black uppercase tracking-wider text-[#d4af37] bg-[#d4af37]/10 border border-[#d4af37]/25 px-3 py-1 rounded-full inline-block">Offre Officielle</span>
+              <span id="badgeStockGlobal" class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">En stock</span>
+            </div>
+            <h1 id="produitNom" class="text-xl sm:text-2xl font-extrabold text-white leading-snug">Article DAKPROÉLITE</h1>
+            <div class="flex items-baseline gap-3 pt-1">
+              <span id="prixPromo" class="text-2xl font-black text-[#d4af37]">0 FCFA</span>
+              <span id="prixNormal" class="text-sm font-semibold text-slate-500 line-through hidden">0 FCFA</span>
+            </div>
+          </div>
+
+          <!-- Description de l'offre -->
+          <div class="space-y-2">
+            <h3 class="text-xs font-bold uppercase text-slate-300 tracking-wider">Description de l'offre</h3>
+            <div id="produitDescription" class="text-xs sm:text-sm text-slate-400 leading-relaxed whitespace-pre-line">Article importé de haute qualité, disponible en plusieurs coloris et tailles.</div>
+          </div>
+
+          <!-- CARROUSEL HORIZONTAL DES VARIANTES JUSTE EN BAS DE LA DESCRIPTION -->
+          <div id="sectionVariantes" class="pt-3 border-t border-slate-800 space-y-3">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[#d4af37]">Choisir une variante / couleur</h4>
+                <p class="text-[10px] text-slate-400">Faites défiler vers la gauche et cliquez sur « Ajouter au panier »</p>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="deplacerCarrouselVariantes(-220)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#d4af37] font-bold text-xs flex items-center justify-center border border-slate-700" title="Défiler à gauche">‹</button>
+                <button type="button" onclick="deplacerCarrouselVariantes(220)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#d4af37] font-bold text-xs flex items-center justify-center border border-slate-700" title="Défiler à droite">›</button>
+              </div>
+            </div>
+
+            <!-- Liste défilante horizontale -->
+            <div id="listeVariantes" class="dpe-carousel-scroll"></div>
+          </div>
+
+          <!-- Récapitulatif du Panier (variantes ajoutées + couleurs exactes) -->
+          <div id="blocArticlesPanier" class="hidden p-3.5 bg-emerald-950/30 rounded-2xl border border-emerald-500/30 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Panier sélectionné</span>
+              <span id="compteurArticlesPanier" class="text-[11px] font-bold text-emerald-300">1 article</span>
+            </div>
+            <div id="listeArticlesPanier" class="space-y-2"></div>
+          </div>
+
+          <!-- Bloc Quantité (variante active) + Paliers Remise Volume (10: 3%, 20: 5%, 30: 7%) + Calcul Douane & Transport -->
+          <div id="blocQuantitePanier" class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-300">Quantité (variante active) :</span>
+              <div class="flex items-center space-x-3 bg-slate-950 border border-slate-700 rounded-xl p-1">
+                <button type="button" onclick="modifierQuantite(-1)" class="w-8 h-8 rounded-lg bg-slate-800 text-[#d4af37] font-extrabold">-</button>
+                <span id="quantitePanier" class="text-sm font-extrabold text-white px-2">1</span>
+                <button type="button" onclick="modifierQuantite(1)" class="w-8 h-8 rounded-lg bg-slate-800 text-[#d4af37] font-extrabold">+</button>
+              </div>
+            </div>
+
+            <!-- Indicateur de remise automatique selon le nombre d'articles (10 -> 3%, 20 -> 5%, 30 -> 7%) -->
+            <div class="p-2.5 rounded-xl bg-slate-950/90 border border-[#d4af37]/30 flex items-center justify-between text-[11px]">
+              <span id="badgePalierRemise" class="font-bold text-[#d4af37]">Remise volume : 10+ (-3%) • 20+ (-5%) • 30+ (-7%)</span>
+              <span id="montantRemiseVolume" class="font-extrabold text-emerald-400">-0 FCFA</span>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+              <span>Poids total exact :</span>
+              <span id="poidsTotalCalcul" class="font-bold text-slate-200">0 g (0.00 kg)</span>
+            </div>
+
+            <div class="space-y-1.5 pt-2 border-t border-slate-800 text-xs">
+              <div class="flex items-center justify-between text-slate-300">
+                <span>Sous-total articles :</span>
+                <span id="sousTotalArticles" class="font-bold">0 FCFA</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-300">
+                <span>Frais de transport (<span id="detailTarifKg">selon poids</span>) :</span>
+                <span id="fraisTransportCalcul" class="font-bold text-sky-400">0 FCFA</span>
+              </div>
+              <div class="flex items-center justify-between text-slate-300">
+                <span>Douane / Dédouanement :</span>
+                <span id="fraisDouaneCalcul" class="font-bold text-amber-300">0 FCFA</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+              <span class="text-xs font-bold text-slate-300">Total Complet (avant dépôt) :</span>
+              <span id="montantTotalCalcul" class="text-base font-black text-[#d4af37]">0 FCFA</span>
+            </div>
+          </div>
+
+          <!-- Formulaire Client -->
+          <div id="formulaireLivraison" class="space-y-4 pt-2 border-t border-slate-800">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 mb-1">Nom et Prénom *</label>
+              <input type="text" id="clientNom" placeholder="Ex: Jean Marc" class="w-full bg-slate-900 border border-slate-700 focus:border-[#d4af37] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 mb-1">Numéro Téléphone (MoMo / WhatsApp) *</label>
+              <input type="tel" id="clientTelephone" placeholder="Ex: +229 01 00 00 00" class="w-full bg-slate-900 border border-slate-700 focus:border-[#d4af37] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">Pays *</label>
+                <input type="text" id="clientPays" value="Bénin" oninput="calculerTotal()" class="w-full bg-slate-900 border border-slate-700 focus:border-[#d4af37] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-400 mb-1">Ville *</label>
+                <input type="text" id="clientVille" placeholder="Cotonou" class="w-full bg-slate-900 border border-slate-700 focus:border-[#d4af37] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
+              </div>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 mb-1">Adresse complète *</label>
+              <input type="text" id="clientAdresse" placeholder="Quartier, Maison..." class="w-full bg-slate-900 border border-slate-700 focus:border-[#d4af37] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Logos des moyens de paiement acceptés avant le bouton FedaPay -->
+          <div class="pt-3 border-t border-slate-800 space-y-2">
+            <div class="text-[10px] font-bold text-slate-300 text-center">
+              Moyens de paiement acceptés via FedaPay (Mobile Money &amp; Cartes Bancaires)
+            </div>
+            <div class="grid grid-cols-5 gap-1.5">
+              <div class="bg-white rounded-lg py-1.5 px-1 flex flex-col items-center justify-center border border-slate-200" title="Visa">
+                <span class="text-[9px] font-black italic text-[#1A1F71] leading-none">VISA</span>
+              </div>
+              <div class="bg-white rounded-lg py-1.5 px-1 flex flex-col items-center justify-center border border-slate-200" title="Mastercard">
+                <svg width="20" height="12" viewBox="0 0 32 20" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="11" cy="10" r="8" fill="#EB001B"/>
+                  <circle cx="21" cy="10" r="8" fill="#F79E1B" fill-opacity="0.85"/>
+                </svg>
+                <span class="text-[7px] font-extrabold text-slate-900 leading-none mt-0.5">Mastercard</span>
+              </div>
+              <div class="bg-[#FFCC00] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="MTN Mobile Money">
+                <span class="text-[8px] font-black text-[#004F71] leading-none">MTN MoMo</span>
+              </div>
+              <div class="bg-[#0066B3] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Moov Money">
+                <span class="text-[8px] font-black text-white leading-none">Moov Money</span>
+              </div>
+              <div class="bg-[#00A859] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Celtiis Cash">
+                <span class="text-[8px] font-black text-white leading-none">Celtiis</span>
+              </div>
+              <div class="bg-[#FF7900] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Orange Money">
+                <span class="text-[8px] font-black text-white leading-none">Orange</span>
+              </div>
+              <div class="bg-[#1DC4FF] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Wave">
+                <span class="text-[8px] font-black text-[#002B5B] leading-none">Wave</span>
+              </div>
+              <div class="bg-[#FFF200] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Mixx by Yas">
+                <span class="text-[8px] font-black text-slate-900 leading-none">Mixx Yas</span>
+              </div>
+              <div class="bg-[#8B0000] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="Coris Money">
+                <span class="text-[8px] font-black text-[#FFD700] leading-none">Coris</span>
+              </div>
+              <div class="bg-[#0EA5E9] rounded-lg py-1.5 px-1 flex flex-col items-center justify-center" title="FedaPay">
+                <span class="text-[8px] font-black text-white leading-none">FedaPay</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bouton Paiement FedaPay -->
+          <div id="zoneBoutonsActions" class="space-y-3 pt-2">
+            <button type="button" id="btnPayFedaPay" onclick="procederPaiementFedaPay()" class="w-full py-3.5 dpe-gold-btn font-black text-xs sm:text-sm rounded-xl shadow-xl shadow-[#d4af37]/20 active:scale-95 transition-all flex items-center justify-center space-x-2">
+              <span>Payer en ligne (MoMo / Carte - FedaPay)</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Module Firebase v10 & Synchronisation Database -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, push, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AfzaSyDR7INHKaazaqZt-xlcjk10jFIy58uXKO8",
+      authDomain: "dakproelite.firebaseapp.com",
+      databaseURL: "https://dakproelite-default-rtdb.firebaseio.com",
+      projectId: "dakproelite",
+      storageBucket: "dakproelite.appspot.com",
+      messagingSenderId: "580591769206",
+      appId: "1:580591769206:web:9dc5fc1ba7d6db46087157"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    const FEDAPAY_PUBLIC_KEY = "pk_live_DUGntocyIWTtfHBOvFpPtq54";
+    const PENDING_CHECKOUT_KEY = "dakpro_pending_checkout";
+
+    // Grille tarifaire Transport International (Chine -> Afrique de l'Ouest / Bénin) & Douane
+    const LOGISTICS_CONFIG = {
+      minShippingFee: 2500,         // Forfait minimum petit colis léger (< 200 g) en FCFA
+      ratePerKgAir: 8500,           // Tarif fret aérien au kilogramme (FCFA / kg)
+      customsDutyPercent: 15,       // Droits de douane & TVA sur la valeur marchandise (%)
+      customsHandlingPerKg: 1000    // Frais de dédouanement / manutention au kg (FCFA / kg)
+    };
+
+    // Paliers de remise automatique selon le nombre d'articles (10 -> 3%, 20 -> 5%, 30 -> 7%)
+    function obtenirRemiseVolume(totalArticles) {
+      if (totalArticles >= 30) return { pourcent: 7, palier: 30 };
+      if (totalArticles >= 20) return { pourcent: 5, palier: 20 };
+      if (totalArticles >= 10) return { pourcent: 3, palier: 10 };
+      return { pourcent: 0, palier: 0 };
+    }
+
+    // Dictionnaire de reconnaissance automatique des couleurs exactes
+    const COLOR_MAP = [
+      { keys: ['black', 'noir', 'noire', 'blk'], label: 'Noir', hex: '#111827' },
+      { keys: ['white', 'blanc', 'blanche', 'wht', 'ivory', 'ivoire'], label: 'Blanc', hex: '#f8fafc' },
+      { keys: ['red', 'rouge', 'wine', 'burgundy', 'bordeaux'], label: 'Rouge', hex: '#dc2626' },
+      { keys: ['blue', 'bleu', 'navy', 'marine', 'sky', 'cyan'], label: 'Bleu', hex: '#2563eb' },
+      { keys: ['green', 'vert', 'verte', 'olive', 'army', 'khaki', 'kaki'], label: 'Vert', hex: '#16a34a' },
+      { keys: ['yellow', 'jaune', 'gold', 'or', 'doré'], label: 'Jaune / Doré', hex: '#eab308' },
+      { keys: ['orange', 'coral', 'corail', 'apricot', 'abricot'], label: 'Orange', hex: '#ea580c' },
+      { keys: ['pink', 'rose', 'blush'], label: 'Rose', hex: '#ec4899' },
+      { keys: ['purple', 'violet', 'violette', 'lavender', 'lilac'], label: 'Violet', hex: '#9333ea' },
+      { keys: ['brown', 'marron', 'coffee', 'café', 'chocolate', 'camel', 'tan', 'beige', 'sand', 'sable'], label: 'Marron / Beige', hex: '#92400e' },
+      { keys: ['grey', 'gray', 'gris', 'grise', 'silver', 'argent'], label: 'Gris', hex: '#6b7280' }
+    ];
+
+    window.produitCourant = null;
+    window.variantesCourantes = [];
+    window.varianteSelectionnee = null;
+    window.panierVariantes = [];
+    window.quantitePanierCount = 1;
+    window.produitIdCourant = null;
+    window.currentUserUID = auth.currentUser ? auth.currentUser.uid : null;
+    window.currentUserEmail = auth.currentUser ? auth.currentUser.email : null;
+    window.isUserConnected = Boolean(auth.currentUser);
+    window.parrainAffilie = "aucun";
+    window.paiementDejaEffectue = false;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.currentUserUID = user.uid;
+        window.currentUserEmail = user.email;
+        window.isUserConnected = true;
+      } else {
+        window.currentUserUID = null;
+        window.currentUserEmail = null;
+        window.isUserConnected = false;
+      }
+    });
+
+    function afficherToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastMessage').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => { toast.classList.add('hidden'); }, 3500);
+    }
+
+    window.deplacerCarrouselVariantes = function(offset) {
+      const el = document.getElementById('listeVariantes');
+      if (el) el.scrollBy({ left: offset, behavior: 'smooth' });
+    };
+
+    function parserPoidsEnGrammes(rawWeight) {
+      if (rawWeight === null || rawWeight === undefined || rawWeight === '') return 0;
+      if (typeof rawWeight === 'number' && !isNaN(rawWeight)) {
+        if (rawWeight > 0 && rawWeight < 10 && !Number.isInteger(rawWeight)) {
+          return Math.round(rawWeight * 1000);
+        }
+        return rawWeight > 0 ? Math.round(rawWeight) : 0;
+      }
+      const str = String(rawWeight).trim().toLowerCase().replace(',', '.');
+      const isKg = /kg/.test(str);
+      const matches = str.match(/(\d+(?:\.\d+)?)/g);
+      if (!matches || matches.length === 0) return 0;
+      const val = matches.length > 1
+        ? (parseFloat(matches[0]) + parseFloat(matches[1])) / 2
+        : parseFloat(matches[0]);
+      if (isNaN(val) || val <= 0) return 0;
+      if (isKg || (val < 10 && !Number.isInteger(val))) {
+        return Math.round(val * 1000);
+      }
+      return Math.round(val);
+    }
+
+    function estimerPoidsSecuriteGrammes(p) {
+      const cat = `${p.categorie || ''} ${p.nom || ''}`.toLowerCase();
+      if (/chaussure|shoe|sneaker|boot|sandal|sac|bag/.test(cat)) return 650;
+      if (/robe|dress|veste|jacket|manteau|coat|pantalon|jean/.test(cat)) return 420;
+      if (/t-shirt|shirt|polo|haut|top|blouse|chemise/.test(cat)) return 220;
+      if (/montre|watch|bijou|jewelry|lunette|glass|coque|case/.test(cat)) return 120;
+      if (/appareil|electromenager|machine|blender/.test(cat)) return 1500;
+      return 250;
+    }
+
+    function detecterCouleurExacte(texte, explicitColor) {
+      const source = `${explicitColor || ''} ${texte || ''}`.toLowerCase();
+      for (const item of COLOR_MAP) {
+        for (const k of item.keys) {
+          const regex = new RegExp(`\\b${k}\\b`, 'i');
+          if (regex.test(source)) {
+            return {
+              couleurExacte: explicitColor ? String(explicitColor).trim() : item.label,
+              couleurHex: item.hex
+            };
+          }
+        }
+      }
+      if (explicitColor && String(explicitColor).trim()) {
+        return { couleurExacte: String(explicitColor).trim(), couleurHex: '#d4af37' };
+      }
+      return { couleurExacte: 'Couleur modèle', couleurHex: '#d4af37' };
+    }
+
+    function extraireVariantes(p) {
+      const source = p.variantes || p.variants || p.variantList || p.skus || p.stanProducts || [];
+      const list = [];
+      const entries = Array.isArray(source) ? source : (source && typeof source === 'object' ? Object.values(source) : []);
+      const mainImg = p.image || p.imageUrl || p.bigImage || p.photo || '';
+      const fallbackPrix = Number(p.prixPromo) || Number(p.prix) || Number(p.sellPrice) || Number(p.prixNormal) || 0;
+
+      const rawGlobalWeight = p.poids ?? p.weight ?? p.productWeight ?? p.packingWeight ?? p.skuWeight ?? p.grossWeight ?? p.netWeight ?? 0;
+      let fallbackPoids = parserPoidsEnGrammes(rawGlobalWeight);
+      if (fallbackPoids <= 0) {
+        fallbackPoids = estimerPoidsSecuriteGrammes(p);
+      }
+
+      const fallbackStock = p.stock ?? p.quantiteStock ?? p.inventory ?? p.warehouseInventoryNum ?? p.qte ?? null;
+
+      entries.forEach((v, idx) => {
+        if (typeof v === 'string' && v.trim()) {
+          const col = detecterCouleurExacte(p.nom || '', '');
+          list.push({
+            id: `var_${idx}`,
+            nom: `Modèle ${idx + 1}`,
+            couleurExacte: col.couleurExacte,
+            couleurHex: col.couleurHex,
+            taille: '',
+            sku: p.sku || p.productSku || '',
+            image: v.trim(),
+            prix: fallbackPrix,
+            poidsGr: fallbackPoids,
+            stock: fallbackStock
+          });
+        } else if (v && typeof v === 'object') {
+          const img = v.image || v.imageUrl || v.url || v.img || v.variantImage || v.bigImage || mainImg || '';
+          const prixVar = Number(v.prixPromo ?? v.prix ?? v.price ?? v.variantSellPrice ?? v.sellPrice ?? fallbackPrix) || 0;
+          const rawVarWeight = v.poids ?? v.weight ?? v.variantWeight ?? v.packingWeight ?? v.skuWeight ?? v.productWeight ?? 0;
+          const poidsVar = parserPoidsEnGrammes(rawVarWeight) || fallbackPoids;
+          const stockVar = v.stock ?? v.quantiteStock ?? v.inventory ?? v.warehouseInventoryNum ?? v.qte ?? fallbackStock;
+
+          const explicitColor = v.couleur || v.color || v.variantColor || '';
+          const explicitSize = v.taille || v.size || v.variantSize || '';
+          const rawLabel = v.nom || v.name || v.variantNameEn || v.variantName || v.variantKey || v.variantProperty || '';
+
+          let nomAffiche = rawLabel;
+          if (!nomAffiche && (explicitColor || explicitSize)) {
+            nomAffiche = [explicitColor, explicitSize].filter(Boolean).join(' - ');
+          }
+          if (!nomAffiche) {
+            nomAffiche = `Modèle ${idx + 1}`;
+          }
+
+          const colInfo = detecterCouleurExacte(`${nomAffiche} ${v.variantKey || ''}`, explicitColor);
+
+          list.push({
+            id: v.vid || v.id || `var_${idx}`,
+            nom: nomAffiche,
+            couleurExacte: colInfo.couleurExacte,
+            couleurHex: colInfo.couleurHex,
+            taille: explicitSize,
+            sku: v.sku || v.variantSku || p.sku || p.productSku || '',
+            image: img,
+            prix: prixVar,
+            poidsGr: poidsVar,
+            stock: stockVar
+          });
+        }
+      });
+
+      if (list.length === 0 && mainImg) {
+        const col = detecterCouleurExacte(p.nom || '', p.couleur || p.color || '');
+        list.push({
+          id: 'var_default',
+          nom: p.variantName || 'Modèle Standard',
+          couleurExacte: col.couleurExacte,
+          couleurHex: col.couleurHex,
+          taille: '',
+          sku: p.sku || p.productSku || '',
+          image: mainImg,
+          prix: fallbackPrix,
+          poidsGr: fallbackPoids,
+          stock: fallbackStock
+        });
+      }
+      return list;
+    }
+
+    function formaterStock(stockVal) {
+      if (stockVal === null || stockVal === undefined || stockVal === '') {
+        return { texte: 'Disponible', estEpuise: false, maxQte: null };
+      }
+      const num = Number(stockVal);
+      if (!isNaN(num)) {
+        if (num <= 0) return { texte: 'Rupture de stock', estEpuise: true, maxQte: 0 };
+        return { texte: `${num} en stock`, estEpuise: false, maxQte: num };
+      }
+      const str = String(stockVal).trim();
+      const epuise = /rupture|out|0|épuisé|indisponible/i.test(str);
+      return { texte: str, estEpuise: epuise, maxQte: null };
+    }
+
+    function calculerPoidsChargeableKg(p, poidsTotalGr, totalItemsCount) {
+      const longueur = Number(p.longueur || p.length || p.packLength || 0) || 0;
+      const largeur = Number(p.largeur || p.width || p.packWidth || 0) || 0;
+      const hauteur = Number(p.hauteur || p.height || p.packHeight || 0) || 0;
+
+      const poidsVolumetriqueKg = (longueur > 0 && largeur > 0 && hauteur > 0)
+        ? ((longueur * largeur * hauteur) / 5000) * totalItemsCount
+        : 0;
+
+      const poidsReelKg = poidsTotalGr / 1000;
+      const poidsFacturableKg = Math.max(poidsReelKg, poidsVolumetriqueKg);
+      return { poidsNetGr: poidsTotalGr, poidsReelKg, poidsFacturableKg };
+    }
+
+    function rendrePanierVariantes() {
+      const bloc = document.getElementById('blocArticlesPanier');
+      const liste = document.getElementById('listeArticlesPanier');
+      const compteur = document.getElementById('compteurArticlesPanier');
+      if (!bloc || !liste) return;
+
+      if (window.panierVariantes.length === 0) {
+        bloc.classList.add('hidden');
+        return;
+      }
+
+      bloc.classList.remove('hidden');
+      const totalQte = window.panierVariantes.reduce((acc, item) => acc + item.quantite, 0);
+      compteur.innerText = `${totalQte} article${totalQte > 1 ? 's' : ''}`;
+
+      const devise = window.produitCourant?.devise || 'FCFA';
+      liste.innerHTML = window.panierVariantes.map((item, idx) => `
+        <div class="flex items-center justify-between gap-2 bg-slate-950/90 border border-emerald-500/40 rounded-xl px-3 py-2 text-[11px]">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-3 h-3 rounded-full border border-white/40 flex-shrink-0" style="background:${item.couleurHex};"></span>
+            <div class="truncate">
+              <span class="font-bold text-emerald-300">${item.nom}</span>
+              <span class="text-slate-400 block text-[10px]">Couleur : ${item.couleurExacte} • ${(item.poidsGr * item.quantite)} g</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <span class="font-bold text-white">x${item.quantite}</span>
+            <span class="font-extrabold text-[#d4af37]">${(item.prix * item.quantite).toLocaleString('fr-FR')} ${devise}</span>
+            <button type="button" onclick="window.retirerDuPanier(${idx})" class="text-rose-400 hover:text-rose-300 font-black px-1.5" title="Retirer">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.retirerDuPanier = function(idx) {
+      window.panierVariantes.splice(idx, 1);
+      rendrePanierVariantes();
+      rafraichirStyleCartesVariantes();
+      calculerTotal();
+    };
+
+    window.ajouterVarianteAuPanier = function(index, event) {
+      if (event) event.stopPropagation();
+      const v = window.variantesCourantes[index];
+      if (!v) return;
+
+      const stockInfo = formaterStock(v.stock);
+      if (stockInfo.estEpuise) {
+        afficherToast("Cette variante est en rupture de stock.");
+        return;
+      }
+
+      selectionnerVariante(index, false);
+
+      const existant = window.panierVariantes.find(item => item.id === v.id && item.nom === v.nom);
+      if (existant) {
+        if (stockInfo.maxQte !== null && existant.quantite + 1 > stockInfo.maxQte) {
+          afficherToast(`Stock maximum atteint (${stockInfo.maxQte}).`);
+          return;
+        }
+        existant.quantite += 1;
+        window.quantitePanierCount = existant.quantite;
+      } else {
+        window.panierVariantes.push({
+          id: v.id,
+          nom: v.nom,
+          couleurExacte: v.couleurExacte,
+          couleurHex: v.couleurHex,
+          sku: v.sku,
+          image: v.image,
+          prix: v.prix,
+          poidsGr: v.poidsGr,
+          quantite: 1
+        });
+        window.quantitePanierCount = 1;
+      }
+
+      document.getElementById('quantitePanier').innerText = window.quantitePanierCount;
+      rendrePanierVariantes();
+      rafraichirStyleCartesVariantes();
+      calculerTotal();
+      afficherToast(`Ajouté au panier : ${v.nom} (${v.couleurExacte})`);
+    };
+
+    window.modifierQuantite = function(delta) {
+      const v = window.varianteSelectionnee;
+      const stockInfo = formaterStock(v ? v.stock : window.produitCourant?.stock);
+      if (stockInfo.estEpuise) {
+        afficherToast("Cette variante est actuellement en rupture de stock.");
+        return;
+      }
+
+      let prochaineQte = window.quantitePanierCount + delta;
+      if (prochaineQte < 1) prochaineQte = 1;
+      if (stockInfo.maxQte !== null && prochaineQte > stockInfo.maxQte) {
+        prochaineQte = stockInfo.maxQte;
+        afficherToast(`Stock maximum disponible : ${stockInfo.maxQte}`);
+      }
+
+      window.quantitePanierCount = prochaineQte;
+      document.getElementById('quantitePanier').innerText = window.quantitePanierCount;
+
+      if (v && window.panierVariantes.length > 0) {
+        const itemPanier = window.panierVariantes.find(it => it.id === v.id && it.nom === v.nom);
+        if (itemPanier) {
+          itemPanier.quantite = prochaineQte;
+          rendrePanierVariantes();
+        }
+      }
+
+      calculerTotal();
+    };
+
+    function calculerTotal() {
+      if (!window.produitCourant) {
+        return { unitaire: 0, sousTotalBrut: 0, remisePourcent: 0, remiseMontant: 0, sousTotal: 0, transport: 0, douane: 0, total: 0, poidsKg: 0, poidsGr: 0, articles: [] };
+      }
+      const p = window.produitCourant;
+      const devise = p.devise || "FCFA";
+
+      let lignes = [];
+      if (window.panierVariantes.length > 0) {
+        lignes = window.panierVariantes.map(item => ({
+          ...item,
+          poidsGr: item.poidsGr > 0 ? item.poidsGr : estimerPoidsSecuriteGrammes(p)
+        }));
+      } else {
+        const qty = window.quantitePanierCount || 1;
+        const basePrixProduit = Number(p.prixPromo) || Number(p.prix) || Number(p.prixNormal) || 0;
+        const unitaire = (window.varianteSelectionnee && Number(window.varianteSelectionnee.prix) > 0)
+          ? Number(window.varianteSelectionnee.prix)
+          : basePrixProduit;
+        const poidsUnit = (window.varianteSelectionnee && Number(window.varianteSelectionnee.poidsGr) > 0)
+          ? Number(window.varianteSelectionnee.poidsGr)
+          : (parserPoidsEnGrammes(p.poids ?? p.weight ?? p.productWeight ?? p.packingWeight) || estimerPoidsSecuriteGrammes(p));
+
+        lignes = [{
+          id: window.varianteSelectionnee?.id || 'default',
+          nom: window.varianteSelectionnee?.nom || 'Standard',
+          couleurExacte: window.varianteSelectionnee?.couleurExacte || 'Standard',
+          couleurHex: window.varianteSelectionnee?.couleurHex || '#d4af37',
+          sku: window.varianteSelectionnee?.sku || p.sku || '',
+          prix: unitaire,
+          poidsGr: poidsUnit,
+          quantite: qty
+        }];
+      }
+
+      const sousTotalBrut = lignes.reduce((sum, l) => sum + (l.prix * l.quantite), 0);
+      const poidsTotalGr = lignes.reduce((sum, l) => sum + (l.poidsGr * l.quantite), 0);
+      const totalArticles = lignes.reduce((sum, l) => sum + l.quantite, 0);
+
+      const remiseInfo = obtenirRemiseVolume(totalArticles);
+      const remiseMontant = Math.round(sousTotalBrut * (remiseInfo.pourcent / 100));
+      const sousTotal = Math.max(0, sousTotalBrut - remiseMontant);
+
+      const { poidsNetGr, poidsReelKg, poidsFacturableKg } = calculerPoidsChargeableKg(p, poidsTotalGr, totalArticles);
+
+      const transport = Number(p.fraisTransport ?? p.shippingPrice ?? 0) > 0
+        ? (Number(p.fraisTransport ?? p.shippingPrice) * totalArticles)
+        : Math.max(LOGISTICS_CONFIG.minShippingFee, Math.round(poidsFacturableKg * LOGISTICS_CONFIG.ratePerKgAir));
+
+      const douane = Number(p.fraisDouane ?? p.customsFee ?? 0) > 0
+        ? (Number(p.fraisDouane ?? p.customsFee) * totalArticles)
+        : Math.round((sousTotal * (LOGISTICS_CONFIG.customsDutyPercent / 100)) + (poidsFacturableKg * LOGISTICS_CONFIG.customsHandlingPerKg));
+
+      const total = sousTotal + transport + douane;
+
+      const prixAffiche = window.varianteSelectionnee?.prix || lignes[0]?.prix || 0;
+      document.getElementById('prixPromo').innerText = `${prixAffiche.toLocaleString('fr-FR')} ${devise}`;
+
+      const badgePalier = document.getElementById('badgePalierRemise');
+      const montantRemiseEl = document.getElementById('montantRemiseVolume');
+      if (remiseInfo.pourcent > 0) {
+        badgePalier.innerText = `🎉 Remise active (-${remiseInfo.pourcent}%) • ${totalArticles} articles (palier ${remiseInfo.palier}+)`;
+        montantRemiseEl.innerText = `-${remiseMontant.toLocaleString('fr-FR')} ${devise}`;
+      } else {
+        badgePalier.innerText = `Remise volume (${totalArticles} art.) : 10 (-3%) • 20 (-5%) • 30 (-7%)`;
+        montantRemiseEl.innerText = `-0 ${devise}`;
+      }
+
+      document.getElementById('poidsTotalCalcul').innerText = `${Math.round(poidsNetGr).toLocaleString('fr-FR')} g (${poidsReelKg.toFixed(2)} kg)`;
+      document.getElementById('detailTarifKg').innerText = `${poidsFacturableKg.toFixed(2)} kg`;
+      document.getElementById('sousTotalArticles').innerText = `${sousTotal.toLocaleString('fr-FR')} ${devise}`;
+      document.getElementById('fraisTransportCalcul').innerText = `${transport.toLocaleString('fr-FR')} ${devise}`;
+      document.getElementById('fraisDouaneCalcul').innerText = `${douane.toLocaleString('fr-FR')} ${devise}`;
+      document.getElementById('montantTotalCalcul').innerText = `${total.toLocaleString('fr-FR')} ${devise}`;
+
+      return {
+        unitaire: prixAffiche,
+        sousTotalBrut,
+        remisePourcent: remiseInfo.pourcent,
+        remiseMontant,
+        sousTotal,
+        transport,
+        douane,
+        total,
+        poidsKg: poidsReelKg,
+        poidsGr: poidsNetGr,
+        articles: lignes
+      };
+    }
+
+    function viderPanier() {
+      window.quantitePanierCount = 0;
+      document.getElementById('quantitePanier').innerText = "0";
+      document.getElementById('montantTotalCalcul').innerText = "0 FCFA";
+      document.getElementById('blocQuantitePanier')?.classList.add('hidden');
+      document.getElementById('formulaireLivraison')?.classList.add('hidden');
+      document.getElementById('zoneBoutonsActions')?.classList.add('hidden');
+    }
+
+    async function enregistrerPaiementEtNotifications(clientData, transactionId, calculDetails) {
+      const timestamp = Date.now();
+      const txKey = transactionId || ("TX-" + Math.floor(10000000 + Math.random() * 90000000));
+      const p = window.produitCourant || {};
+      const prodId = window.produitIdCourant || "PROD-DEFAULT";
+      const totalMontant = calculDetails.total;
+      const uidActuel = auth.currentUser?.uid || window.currentUserUID || "ANONYMOUS_USER";
+
+      const couleursChoisies = calculDetails.articles.map(a => `${a.couleurExacte} (${a.nom} x${a.quantite})`).join(', ');
+      const couleurPrincipaleExacte = calculDetails.articles[0]?.couleurExacte || window.varianteSelectionnee?.couleurExacte || 'Standard';
+
+      const payloadTransaction = {
+        client: clientData,
+        parrain: window.parrainAffilie || p.parrain || p.vendeurUid || "aucun",
+        vendeurUid: p.vendeurUid || p.createdBy || "system",
+        vendeurNom: p.vendeurNom || p.auteur || "DAKPROÉLITE",
+        variante: window.varianteSelectionnee ? window.varianteSelectionnee.nom : "Standard",
+        couleurChoisie: couleurPrincipaleExacte,
+        couleursToutesVariantes: couleursChoisies,
+        articlesCommandes: calculDetails.articles,
+        varianteSku: window.varianteSelectionnee ? window.varianteSelectionnee.sku : (p.sku || ""),
+        prixUnitaire: calculDetails.unitaire,
+        remisePourcent: calculDetails.remisePourcent,
+        remiseMontant: calculDetails.remiseMontant,
+        sousTotalArticles: calculDetails.sousTotal,
+        fraisTransport: calculDetails.transport,
+        fraisDouane: calculDetails.douane,
+        poidsGr: calculDetails.poidsGr,
+        poidsKg: calculDetails.poidsKg,
+        produitId: prodId,
+        produitNom: p.nom || "Produit DAKPROÉLITE",
+        quantite: calculDetails.articles.reduce((s, a) => s + a.quantite, 0) || 1,
+        statut: "Succès",
+        statutCouleur: "vert",
+        gateway: "FedaPay",
+        timestamp: timestamp,
+        total: String(totalMontant),
+        uid: uidActuel
+      };
+
+      try {
+        await set(ref(db, `transactions/${txKey}`), payloadTransaction);
+        await set(ref(db, `paiement/${txKey}`), payloadTransaction);
+        await set(ref(db, `paiements/${txKey}`), payloadTransaction);
+
+        await set(push(ref(db, `notifications_utilisateurs/${uidActuel}`)), {
+          titre: "Paiement Confirmé !",
+          message: `Commande "${p.nom || 'Produit'}" — Couleur(s) : ${couleursChoisies} — Total : ${totalMontant.toLocaleString('fr-FR')} FCFA (transport & douane inclus).`,
+          couleurChoisie: couleurPrincipaleExacte,
+          date: new Date().toISOString(),
+          timestamp: timestamp,
+          lu: false,
+          type: "commande_succes",
+          transactionId: txKey
+        });
+
+        await set(push(ref(db, "messages_support")), {
+          titre: "Nouvelle Commande Validée",
+          message: `Client: ${clientData.nom} (${clientData.tel}) - Produit: ${p.nom} - Couleur(s): ${couleursChoisies} - Total: ${totalMontant} FCFA`,
+          client: clientData,
+          couleurChoisie: couleurPrincipaleExacte,
+          transactionId: txKey,
+          timestamp: timestamp,
+          type: "nouvelle_commande"
+        });
+
+        afficherToast("Paiement validé et couleur enregistrée !");
+      } catch (err) {
+        console.error("Erreur enregistrement Database :", err);
+        afficherToast("Erreur lors de l'enregistrement de la commande.");
+      }
+    }
+
+    function trouverProduitEnCache(produitId) {
+      if (!produitId) return null;
+      try {
+        const cachedRaw = localStorage.getItem("dakpro_cached_products");
+        if (cachedRaw) {
+          const list = JSON.parse(cachedRaw);
+          if (Array.isArray(list)) {
+            const found = list.find(item => String(item.id) === String(produitId));
+            if (found) return found;
+          }
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    function restaurerEtatAvantConnexion() {
+      try {
+        const raw = localStorage.getItem(PENDING_CHECKOUT_KEY);
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        if (!saved || String(saved.produitId) !== String(window.produitIdCourant || '')) return;
+
+        if (saved.client) {
+          if (saved.client.nom) document.getElementById('clientNom').value = saved.client.nom;
+          if (saved.client.tel) document.getElementById('clientTelephone').value = saved.client.tel;
+          if (saved.client.pays) document.getElementById('clientPays').value = saved.client.pays;
+          if (saved.client.ville) document.getElementById('clientVille').value = saved.client.ville;
+          if (saved.client.adresse) document.getElementById('clientAdresse').value = saved.client.adresse;
+        }
+
+        if (Array.isArray(saved.panierVariantes) && saved.panierVariantes.length > 0) {
+          window.panierVariantes = saved.panierVariantes;
+          rendrePanierVariantes();
+        }
+
+        if (Number(saved.quantitePanierCount) > 0) {
+          window.quantitePanierCount = Number(saved.quantitePanierCount);
+          document.getElementById('quantitePanier').innerText = window.quantitePanierCount;
+        }
+
+        if (saved.varianteId && Array.isArray(window.variantesCourantes) && window.variantesCourantes.length > 0) {
+          const idx = window.variantesCourantes.findIndex(v => String(v.id) === String(saved.varianteId));
+          if (idx >= 0) {
+            selectionnerVariante(idx, false);
+          }
+        }
+
+        rafraichirStyleCartesVariantes();
+        calculerTotal();
+        localStorage.removeItem(PENDING_CHECKOUT_KEY);
+      } catch (e) {
+        console.error("Erreur restauration commande :", e);
+      }
+    }
+
+    async function chargerProduitDynamique() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const produitId = urlParams.get('id');
+      window.parrainAffilie = urlParams.get('ref') || urlParams.get('aff') || "aucun";
+      window.produitIdCourant = produitId;
+
+      if (!produitId) {
+        afficherToast("Aucun identifiant de produit fourni.");
+        return;
+      }
+
+      const cachedProduct = trouverProduitEnCache(produitId);
+      if (cachedProduct) {
+        window.produitCourant = cachedProduct;
+        afficherDonneesProduit(window.produitCourant);
+        restaurerEtatAvantConnexion();
+      }
+
+      try {
+        let snapshot = await get(ref(db, `publications/${produitId}`));
+        
+        if (!snapshot.exists()) {
+          snapshot = await get(ref(db, `vendeur_publications/${produitId}`));
+        }
+
+        if (snapshot.exists()) {
+          window.produitCourant = snapshot.val();
+          afficherDonneesProduit(window.produitCourant);
+          restaurerEtatAvantConnexion();
+        } else if (!cachedProduct) {
+          afficherToast("Produit introuvable dans le catalogue.");
+        }
+      } catch (e) {
+        console.error("Erreur de chargement :", e);
+        if (!cachedProduct) {
+          afficherToast("Erreur lors du chargement des informations.");
+        }
+      }
+    }
+
+    function mettreAJourDetailsVariante(v) {
+      const p = window.produitCourant || {};
+      const devise = p.devise || "FCFA";
+      const stockInfo = formaterStock(v ? v.stock : p.stock);
+      const poidsVal = Number(v?.poidsGr || parserPoidsEnGrammes(p.poids ?? p.weight ?? p.productWeight) || estimerPoidsSecuriteGrammes(p)) || 0;
+      const skuVal = v?.sku || p.sku || '';
+
+      document.getElementById('detailVarNom').innerText = v ? `${v.nom} (${v.couleurExacte})` : 'Standard';
+      const dot = document.getElementById('detailVarColorDot');
+      if (dot && v?.couleurHex) dot.style.background = v.couleurHex;
+
+      const elStock = document.getElementById('detailVarStock');
+      elStock.innerText = stockInfo.texte;
+      elStock.className = stockInfo.estEpuise ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold';
+
+      const elBadgeGlobal = document.getElementById('badgeStockGlobal');
+      elBadgeGlobal.innerText = stockInfo.texte;
+      elBadgeGlobal.className = stockInfo.estEpuise
+        ? 'text-[10px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 rounded-full'
+        : 'text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full';
+
+      document.getElementById('detailVarPoids').innerText = `${poidsVal} g (${(poidsVal / 1000).toFixed(2)} kg)`;
+
+      const skuWrap = document.getElementById('detailVarSkuWrap');
+      if (skuVal) {
+        document.getElementById('detailVarSku').innerText = skuVal;
+        skuWrap.classList.remove('hidden');
+      } else {
+        skuWrap.classList.add('hidden');
+      }
+
+      if (v && Number(v.prix) > 0) {
+        document.getElementById('prixPromo').innerText = `${Number(v.prix).toLocaleString('fr-FR')} ${devise}`;
+      }
+    }
+
+    function rafraichirStyleCartesVariantes() {
+      document.querySelectorAll('.dpe-var-card').forEach((card, i) => {
+        const v = window.variantesCourantes[i];
+        const dansPanier = v && window.panierVariantes.some(it => it.id === v.id && it.nom === v.nom);
+        const estActive = v && window.varianteSelectionnee && window.varianteSelectionnee.id === v.id && window.varianteSelectionnee.nom === v.nom;
+        const btnAdd = card.querySelector('.dpe-var-add-btn');
+
+        card.classList.remove('border-emerald-500', 'bg-emerald-950/30', 'border-[#d4af37]', 'ring-2', 'ring-[#d4af37]/40', 'border-slate-700');
+
+        if (window.paiementDejaEffectue && (dansPanier || estActive)) {
+          card.classList.add('border-emerald-500', 'bg-emerald-950/40', 'ring-2', 'ring-emerald-500/50');
+          if (btnAdd) {
+            btnAdd.innerText = '✓ Payé & Validé';
+            btnAdd.className = 'dpe-var-add-btn w-full py-1.5 rounded-lg bg-emerald-600 text-white font-extrabold text-[10px]';
+          }
+        } else if (dansPanier) {
+          card.classList.add('border-emerald-500', 'bg-emerald-950/25');
+          if (btnAdd) {
+            btnAdd.innerText = '✓ Ajouté (vert)';
+            btnAdd.className = 'dpe-var-add-btn w-full py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[10px] transition-all';
+          }
+        } else if (estActive) {
+          card.classList.add('border-[#d4af37]', 'ring-2', 'ring-[#d4af37]/40');
+          if (btnAdd) {
+            btnAdd.innerText = '+ Ajouter au panier';
+            btnAdd.className = 'dpe-var-add-btn w-full py-1.5 rounded-lg dpe-gold-btn font-extrabold text-[10px] transition-all';
+          }
+        } else {
+          card.classList.add('border-slate-700');
+          if (btnAdd) {
+            btnAdd.innerText = '+ Ajouter au panier';
+            btnAdd.className = 'dpe-var-add-btn w-full py-1.5 rounded-lg dpe-gold-btn font-extrabold text-[10px] transition-all';
+          }
+        }
+      });
+    }
+
+    function selectionnerVariante(index, recalculer = true) {
+      const v = window.variantesCourantes[index];
+      if (!v) return;
+      window.varianteSelectionnee = v;
+
+      const img = document.getElementById('produitImage');
+      const imgBg = document.getElementById('produitImageBg');
+      const video = document.getElementById('produitVideo');
+      if (v.image) {
+        video.classList.add('hidden');
+        img.src = v.image;
+        imgBg.src = v.image;
+        img.classList.remove('hidden');
+        imgBg.classList.remove('hidden');
+      }
+
+      mettreAJourDetailsVariante(v);
+      rafraichirStyleCartesVariantes();
+      if (recalculer) calculerTotal();
+    }
+
+    function afficherDonneesProduit(p) {
+      document.getElementById('produitNom').innerText = p.nom || 'Article DAKPROÉLITE';
+      document.getElementById('produitDescription').innerText = p.description || 'Article importé de haute qualité, disponible en plusieurs coloris et tailles.';
+      
+      if (p.categorie) {
+        document.getElementById('badgeCategorie').innerText = p.categorie;
+      }
+
+      const pPromo = Number(p.prixPromo) || Number(p.prix) || 0;
+      const pNormal = Number(p.prixNormal) || (pPromo ? Math.round(pPromo * 1.25) : 0);
+      const devise = p.devise || "FCFA";
+
+      document.getElementById('prixPromo').innerText = `${pPromo.toLocaleString('fr-FR')} ${devise}`;
+      
+      if (pNormal > pPromo) {
+        const elPrixNormal = document.getElementById('prixNormal');
+        elPrixNormal.innerText = `${pNormal.toLocaleString('fr-FR')} ${devise}`;
+        elPrixNormal.classList.remove('hidden');
+      }
+
+      window.variantesCourantes = extraireVariantes(p);
+      window.varianteSelectionnee = window.variantesCourantes[0] || null;
+      const varContainer = document.getElementById('listeVariantes');
+      const varSection = document.getElementById('sectionVariantes');
+
+      if (window.variantesCourantes.length > 0) {
+        varSection.classList.remove('hidden');
+        varContainer.innerHTML = window.variantesCourantes.map((v, idx) => {
+          const st = formaterStock(v.stock);
+          const prixTxt = Number(v.prix) > 0 ? `${Number(v.prix).toLocaleString('fr-FR')} ${devise}` : '';
+          return `
+            <div onclick="window.selectDpeVariant(${idx})" class="dpe-var-card flex-shrink-0 w-[165px] rounded-2xl bg-slate-950 border ${idx === 0 ? 'border-[#d4af37] ring-2 ring-[#d4af37]/40' : 'border-slate-700'} p-2.5 flex flex-col justify-between gap-2 cursor-pointer transition-all">
+              <div>
+                <div class="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 mb-2">
+                  ${v.image ? `<img src="${v.image}" alt="${v.nom}" class="w-full h-full object-cover">` : ''}
+                  <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-slate-950/85 text-[9px] font-bold text-white flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full inline-block" style="background:${v.couleurHex};"></span>
+                    ${v.couleurExacte}
+                  </span>
+                </div>
+                <div class="text-[11px] font-extrabold text-white truncate" title="${v.nom}">${v.nom}</div>
+                <div class="flex items-center justify-between text-[10px] mt-0.5">
+                  <span class="${st.estEpuise ? 'text-rose-400' : 'text-emerald-400'} font-semibold">${st.texte}</span>
+                  <span class="text-slate-400">${v.poidsGr}g</span>
+                </div>
+                ${prixTxt ? `<div class="text-xs font-black text-[#d4af37] mt-1">${prixTxt}</div>` : ''}
+              </div>
+              <button type="button" onclick="window.ajouterVarianteAuPanier(${idx}, event)" class="dpe-var-add-btn w-full py-1.5 rounded-lg dpe-gold-btn font-extrabold text-[10px] transition-all">
+                + Ajouter au panier
+              </button>
+            </div>
+          `;
+        }).join('');
+        mettreAJourDetailsVariante(window.varianteSelectionnee);
+      } else {
+        varSection.classList.add('hidden');
+        mettreAJourDetailsVariante(null);
+      }
+
+      calculerTotal();
+
+      const loader = document.getElementById('loaderMedia');
+      const img = document.getElementById('produitImage');
+      const imgBg = document.getElementById('produitImageBg');
+      const video = document.getElementById('produitVideo');
+
+      const mediaUrl = (window.varianteSelectionnee && window.varianteSelectionnee.image) || p.video || p.image || p.imageUrl;
+
+      if (p.video && !p.image && !p.imageUrl) {
+        video.src = p.video;
+        video.classList.remove('hidden');
+        img.classList.add('hidden');
+        loader.classList.add('hidden');
+      } else if (mediaUrl) {
+        img.src = mediaUrl;
+        imgBg.src = mediaUrl;
+        img.classList.remove('hidden');
+        imgBg.classList.remove('hidden');
+        loader.classList.add('hidden');
+        img.onerror = () => {
+          img.src = 'https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png';
+          img.classList.remove('hidden');
+        };
+      } else {
+        loader.classList.add('hidden');
+        img.src = 'https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png';
+        img.classList.remove('hidden');
+      }
+
+      if (p.document) {
+        const sectionRessources = document.getElementById('sectionRessources');
+        const lienRessource = document.getElementById('lienRessource');
+        const btnTelecharger = document.getElementById('btnTelechargerDocument');
+        sectionRessources.classList.remove('hidden');
+        lienRessource.href = p.document;
+        btnTelecharger.href = p.document;
+        lienRessource.classList.remove('hidden');
+      }
+    }
+
+    window.selectDpeVariant = (idx) => selectionnerVariante(idx, true);
+
+    function validerFormulaire() {
+      const stockInfo = formaterStock(window.varianteSelectionnee ? window.varianteSelectionnee.stock : window.produitCourant?.stock);
+      if (stockInfo.estEpuise && window.panierVariantes.length === 0) {
+        afficherToast("Ce produit ou cette variante est en rupture de stock.");
+        return null;
+      }
+
+      const nom = document.getElementById('clientNom').value.trim();
+      const tel = document.getElementById('clientTelephone').value.trim();
+      const pays = document.getElementById('clientPays').value.trim();
+      const ville = document.getElementById('clientVille').value.trim();
+      const adresse = document.getElementById('clientAdresse').value.trim();
+
+      if (!nom || !tel || !pays || !ville || !adresse) {
+        afficherToast("Veuillez remplir l'ensemble des champs du formulaire !");
+        return null;
+      }
+      return { nom, tel, pays, ville, adresse };
+    }
+
+    function redirigerVersConnexion(client) {
+      try {
+        localStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify({
+          produitId: window.produitIdCourant,
+          varianteId: window.varianteSelectionnee?.id || null,
+          panierVariantes: window.panierVariantes,
+          quantitePanierCount: window.quantitePanierCount,
+          client
+        }));
+      } catch (e) {}
+
+      const returnUrl = encodeURIComponent(window.location.href);
+      afficherToast("Veuillez vous connecter pour finaliser le paiement...");
+      setTimeout(() => {
+        window.location.href = `connexion.html?redirect=${returnUrl}`;
+      }, 600);
+    }
+
+    window.procederPaiementFedaPay = function() {
+      const client = validerFormulaire();
+      if (!client) return;
+
+      // Vérification de la connexion juste au moment du paiement
+      const utilisateurActuel = auth.currentUser;
+      if (!utilisateurActuel || !window.isUserConnected) {
+        redirigerVersConnexion(client);
+        return;
+      }
+
+      window.currentUserUID = utilisateurActuel.uid;
+      window.currentUserEmail = utilisateurActuel.email || `${utilisateurActuel.uid.toLowerCase()}@dakproelite.com`;
+
+      if (typeof FedaPay === 'undefined') {
+        afficherToast("Le module FedaPay est indisponible. Réessayez.");
+        return;
+      }
+
+      const p = window.produitCourant || {};
+      const calculDetails = calculerTotal();
+      const totalMontant = calculDetails.total > 0 ? calculDetails.total : 2000;
+      const couleursResume = calculDetails.articles.map(a => a.couleurExacte).join(', ');
+
+      const splitNom = client.nom.split(' ');
+      const prenom = splitNom[0] || client.nom;
+      const nomFamille = splitNom.slice(1).join(' ') || prenom;
+      const telSecurise = client.tel.replace(/[^0-9+]/g, '');
+
+      const widget = FedaPay.init({
+        public_key: FEDAPAY_PUBLIC_KEY,
+        transaction: {
+          amount: totalMontant,
+          description: `Commande DAKPROÉLITE - ${p.nom || 'Produit'} [${couleursResume}] (${calculDetails.poidsKg.toFixed(2)} kg)`
+        },
+        customer: {
+          email: window.currentUserEmail,
+          lastname: nomFamille,
+          firstname: prenom,
+          phone_number: {
+            number: telSecurise
+          }
+        },
+        onComplete: async function(response) {
+          if (response.reason === FedaPay.CHECKOUT_COMPLETED) {
+            const txId = response.transaction && response.transaction.id ? `FEDA-${response.transaction.id}` : `TX-${Math.floor(10000000 + Math.random() * 90000000)}`;
+            
+            await enregistrerPaiementEtNotifications(client, txId, calculDetails);
+
+            window.paiementDejaEffectue = true;
+            rafraichirStyleCartesVariantes();
+
+            const banner = document.getElementById('bannerPaiementSucces');
+            const bannerDetails = document.getElementById('bannerPaiementDetails');
+            if (bannerDetails) {
+              bannerDetails.innerText = `Paiement validé ! Couleur(s) enregistrée(s) : ${couleursResume}.`;
+            }
+            banner?.classList.remove('hidden');
+            document.getElementById('zoneTelechargementApresPaiement')?.classList.remove('hidden');
+            viderPanier();
+          } else {
+            afficherToast("Le paiement n'a pas été finalisé.");
+          }
+        }
+      });
+
+      widget.open();
+    };
+
+    window.addEventListener('DOMContentLoaded', chargerProduitDynamique);
+  </script>
+
+</body>
+</html>

@@ -38,7 +38,7 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;touch-action:manipulation pinch-zoom;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation pinch-zoom;}
 body{min-height:100vh;background:var(--black);color:var(--white);font-family:Poppins,sans-serif;display:flex;flex-direction:column;overflow-x:hidden;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;touch-action:manipulation pinch-zoom;}
 
 button,input,select,textarea{font-family:inherit;}
@@ -47,7 +47,7 @@ a{color:inherit;}
 
 /* HEADER HAUTE PERFORMANCE & LOGO GRAVÉ FIXE */
 .header{
-position:sticky;top:0;z-index:5000;width:100%;min-height:70px;
+position:sticky;top:0;z-index:5000;width:100%;min-height:74px;
 display:flex;align-items:center;gap:10px;padding:10px 12px;
 background:linear-gradient(to bottom,#131921,#050505);
 border-bottom:2px solid var(--gold);
@@ -55,7 +55,7 @@ border-bottom:2px solid var(--gold);
 
 .logo-container{
 position:relative;
-width:50px !important;height:50px !important;min-width:50px !important;min-height:50px !important;flex:0 0 50px !important;
+width:58px !important;height:58px !important;min-width:58px !important;min-height:58px !important;flex:0 0 58px !important;
 border-radius:50% !important;border:2px solid var(--gold) !important;overflow:hidden !important;
 display:flex !important;align-items:center !important;justify-content:center !important;
 background:radial-gradient(circle at 35% 30%, #1d222b, #030406) !important;
@@ -87,11 +87,6 @@ background:#000;color:#fff;padding:0 14px;outline:none;font-size:12px;
 .nav-icons{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .nav-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:9px;cursor:pointer;}
 .nav-item>span:first-child{font-size:18px;line-height:20px;}
-.cart-badge{
-position:absolute;top:-4px;right:0px;background:var(--red);color:#fff;
-font-size:9px;font-weight:700;border-radius:8px;padding:1px 4px;
-min-width:14px;text-align:center;display:none;border:1px solid var(--black);
-}
 
 /* BANNIÈRE D'INSTALLATION DE L'APPLICATION (PRO & PUISSANTE) */
 .install-app-banner {
@@ -169,9 +164,15 @@ display:inline-flex;align-items:center;gap:4px;
 .cat-btn{
 flex:0 0 auto;padding:7px 12px;border:1px solid var(--gold);border-radius:16px;
 background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-size:11px;
-display:inline-flex;align-items:center;gap:4px;
+display:inline-flex;align-items:center;gap:5px;
 }
+.cat-btn .cat-ico{font-size:13px;line-height:1;flex-shrink:0;}
 .cat-btn.active{background:var(--gold);color:#000;font-weight:800;}
+
+.article-item-logo{
+display:inline-flex;align-items:center;justify-content:center;
+margin-right:4px;font-size:12px;line-height:1;vertical-align:middle;flex-shrink:0;
+}
 
 /* SECTIONS AMAZON */
 .amazon-section{
@@ -239,7 +240,7 @@ display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;align-items:stretch;
 position:relative;display:flex;flex-direction:column;justify-content:space-between;
 width:100%;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;
 padding:8px;box-shadow:0 2px 8px rgba(0,0,0,.04);overflow:hidden;height:100%;
-scroll-snap-align:start;
+scroll-snap-align:start;cursor:pointer;
 }
 .amazon-carousel .card{flex:0 0 160px;min-width:160px;}
 @media(min-width:400px){.amazon-carousel .card{flex:0 0 180px;min-width:180px;}}
@@ -250,6 +251,9 @@ scroll-snap-align:start;
 .media-container{
 width:100%;height:140px;position:relative;border-radius:6px;overflow:hidden;
 background:#f8fafc;display:flex;align-items:center;justify-content:center;margin-bottom:8px;border:1px solid #f1f5f9;
+}
+.product-media-link{
+display:flex;align-items:center;justify-content:center;width:100%;height:100%;text-decoration:none;
 }
 .card img{width:100%;height:100%;object-fit:contain;display:block;}
 .card video{width:100%;height:100%;object-fit:contain;display:block;}
@@ -330,17 +334,14 @@ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hi
 .tag-express{background:rgba(22,163,74,0.1);color:#15803d;border:1px solid rgba(22,163,74,0.2);font-size:7.5px;padding:1px 4px;border-radius:3px;font-weight:600;}
 
 /* PRIX (PROMO/ACTUEL EN ROUGE, ANCIEN EN BLEU) */
-.price-container{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin:2px 0 6px;}
+.price-container{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin:2px 0 2px;}
 .price{color:var(--red);font-size:12.5px;font-weight:800;}
 .price-old{text-decoration:line-through;color:var(--blue);font-size:9.5px;font-weight:600;}
 
-.card-actions-row{display:flex;gap:4px;margin-top:auto;width:100%;}
 .btn-action{
 flex:1;min-width:0;padding:6px 2px;border-radius:5px;font-size:9px;font-weight:700;
 text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:center;justify-content:center;white-space:nowrap;border:none;color:#fff;
 }
-.btn-view{background:var(--blue);}
-.btn-cart{background:var(--green);}
 
 /* MODAL & FOOTER */
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:10000;padding:10px;}
@@ -468,9 +469,6 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits...">
 </div>
 <div class="nav-icons">
-<a href="panier.html" class="nav-item" id="navCartLink">
-<span>🛒</span><span class="cart-badge" id="cartBadge">0</span><span data-i18n="navCart">Panier</span>
-</a>
 <a href="profil-acheteur.html" class="nav-item"><span>👤</span><span data-i18n="navAccount">Compte</span></a>
 </div>
 </header>
@@ -752,12 +750,20 @@ messagingSenderId: "580591769206",
 appId: "1:580591769206:web:4f67f8aadbf3d051087157"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+let db = null;
+let auth = null;
 
-const db = firebase.database();
-const auth = firebase.auth();
+try {
+  if (typeof firebase !== "undefined") {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    db = firebase.database();
+    auth = firebase.auth();
+  }
+} catch (e) {
+  console.warn("Firebase hors ligne ou indisponible:", e);
+}
 
 window.dakproFirebase = { db, auth };
 
@@ -781,12 +787,10 @@ btnInstallApp?.addEventListener("click", async () => {
     }
     deferredPrompt = null;
   } else {
-    // Fallback pour les navigateurs où beforeinstallprompt ne se déclenche pas directement (iOS / navigateurs légers)
     alert(currentLang === 'en' ? "To install, use your browser menu and select 'Add to Home Screen'." : "Pour installer l'application, ouvrez le menu de votre navigateur et sélectionnez 'Ajouter à l'écran d'accueil'.");
   }
 });
 
-// Afficher par défaut si non installé et non en mode standalone
 if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
   setTimeout(() => {
     if(installBanner && installBanner.style.display !== "flex") {
@@ -795,9 +799,19 @@ if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.stand
   }, 1000);
 }
 
-// CHARGEMENT INSTANTANÉ EN CACHE LOCAL
-let cachedProducts = localStorage.getItem("dakpro_cached_products");
-window.allProductsData = cachedProducts ? JSON.parse(cachedProducts) : [];
+// CHARGEMENT INSTANTANÉ EN CACHE LOCAL (STABLE MÊME HORS LIGNE OU CONNEXION FAIBLE)
+function readCachedProducts(){
+  try {
+    const raw = localStorage.getItem("dakpro_cached_products");
+    if(!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter(p => p && p.actif !== false) : [];
+  } catch(e) {
+    return [];
+  }
+}
+
+window.allProductsData = readCachedProducts();
 
 const siteContext = { currentUser: null };
 let currentCat = ""; 
@@ -810,19 +824,95 @@ let autoCategoryTimer = null;
 let autoFlashListTimer = null;
 let flashRotationOffset = 0;
 
+// MAPPING EXACT FR / EN / ES POUR ROBE BÉBÉ, TÉLÉPHONE, ORDINATEUR ET TOUTES CATÉGORIES / ARTICLES
+const EXACT_ITEM_ICONS = [
+  { icon: "👶👗", keys: ["robe bébé", "robe bebe", "bébé robe", "bebe robe", "baby dress", "infant dress", "toddler dress", "vestido bebe", "vestido bebé"] },
+  { icon: "👶", keys: ["bébé", "bebe", "nourrisson", "baby", "infant", "toddler", "bebe", "bebé"] },
+  { icon: "👗", keys: ["robe", "dress", "vestido"] },
+  { icon: "📱", keys: ["téléphone", "telephone", "smartphone", "portable", "phone", "cellphone", "mobile", "iphone", "android", "telefono", "teléfono", "celular", "móvil", "movil"] },
+  { icon: "💻", keys: ["ordinateur", "ordi", "laptop", "pc", "notebook", "macbook", "ordinateur portable", "ordenador", "computadora", "portátil", "portatil"] },
+  { icon: "⌚", keys: ["montre", "smartwatch", "watch", "reloj"] },
+  { icon: "👟", keys: ["chaussure", "chaussures", "basket", "baskets", "sneaker", "shoe", "shoes", "zapato", "zapatos", "zapatilla", "zapatillas"] },
+  { icon: "👕", keys: ["vêtement", "vetement", "vêtements", "vetements", "t-shirt", "tshirt", "chemise", "polo", "haut", "cloth", "clothes", "clothing", "shirt", "ropa", "camisa", "camiseta"] },
+  { icon: "💍", keys: ["bijou", "bijoux", "bague", "collier", "bracelet", "jewelry", "jewellery", "ring", "necklace", "joya", "joyas", "anillo", "collar"] },
+  { icon: "🌸", keys: ["parfum", "parfums", "perfume", "fragrance", "perfumes", "fragancia"] },
+  { icon: "🛋️", keys: ["meuble", "meubles", "canapé", "canape", "table", "chaise", "furniture", "sofa", "chair", "mueble", "muebles", "sofá", "sofa", "silla"] },
+  { icon: "🍳", keys: ["cuisine", "casserole", "poêle", "poele", "kitchen", "cookware", "cocina", "sartén", "sarten", "olla"] },
+  { icon: "🧸", keys: ["jouet", "jouets", "peluche", "toy", "toys", "juguete", "juguetes"] },
+  { icon: "⚽", keys: ["sport", "sports", "ballon", "fitness", "ball", "deporte", "deportes", "balón", "balon"] },
+  { icon: "🩺", keys: ["santé", "sante", "médical", "medical", "health", "salud", "médico", "medico"] },
+  { icon: "📚", keys: ["livre", "livres", "book", "books", "libro", "libros"] },
+  { icon: "🔨", keys: ["outil", "outils", "marteau", "tool", "tools", "herramienta", "herramientas"] },
+  { icon: "🌱", keys: ["agriculture", "agricole", "graine", "farming", "agricultura", "semilla"] },
+  { icon: "🍚", keys: ["alimentation", "aliment", "riz", "food", "grocery", "comida", "alimento", "arroz"] },
+  { icon: "🚗", keys: ["voiture", "voitures", "auto", "car", "cars", "coche", "coches", "auto"] },
+  { icon: "🎧", keys: ["écouteur", "ecouteur", "casque", "audio", "earphone", "earphones", "headphone", "headphones", "auricular", "auriculares"] },
+  { icon: "📷", keys: ["caméra", "camera", "appareil photo", "photo", "cámara", "camara", "foto"] },
+  { icon: "👜", keys: ["sac", "sacs", "bag", "bags", "handbag", "bolso", "bolsos", "mochila"] },
+  { icon: "💇‍♀️", keys: ["perruque", "perruques", "mèche", "meche", "wig", "wigs", "hair", "peluca", "pelucas", "cabello"] }
+];
+
 const categoryIconsMap = {
-"Voitures": "🚗", "Smartphones": "📱", "Vêtements": "👕", "Chaussures": "👟",
-"Montres": "⌚", "Bijoux": "💍", "Parfums": "🌸", "Meubles": "🛋️",
-"Cuisine": "🍳", "Jouets": "🧸", "Sport": "⚽", "Santé": "🩺",
-"Livres": "📚", "Outils": "🔨", "Agriculture": "🌱", "Alimentation": "🍚"
+  "Voitures": "🚗", "Smartphones": "📱", "Téléphones": "📱", "Ordinateurs": "💻",
+  "Vêtements": "👕", "Chaussures": "👟", "Montres": "⌚", "Bijoux": "💍",
+  "Parfums": "🌸", "Meubles": "🛋️", "Cuisine": "🍳", "Jouets": "🧸",
+  "Sport": "⚽", "Santé": "🩺", "Livres": "📚", "Outils": "🔨",
+  "Agriculture": "🌱", "Alimentation": "🍚", "Bébé": "👶", "Robes": "👗"
 };
 
-function getCategoryIcon(catName){
-if(!catName) return "📦";
-for(let key in categoryIconsMap){
-if(catName.toLowerCase().includes(key.toLowerCase())) return categoryIconsMap[key];
+function normalizeTextForMatch(str){
+  return String(str || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
-return "📦";
+
+function matchExactIconFromText(rawText){
+  const norm = normalizeTextForMatch(rawText);
+  if(!norm) return null;
+
+  for(let i = 0; i < EXACT_ITEM_ICONS.length; i++){
+    const entry = EXACT_ITEM_ICONS[i];
+    for(let j = 0; j < entry.keys.length; j++){
+      const keyNorm = normalizeTextForMatch(entry.keys[j]);
+      if(norm === keyNorm || norm.includes(keyNorm)){
+        return entry.icon;
+      }
+    }
+  }
+  return null;
+}
+
+function getCategoryIcon(catName){
+  if(!catName) return "📦";
+  const exactFromKeys = matchExactIconFromText(catName);
+  if(exactFromKeys) return exactFromKeys;
+
+  const normCat = normalizeTextForMatch(catName);
+  for(let key in categoryIconsMap){
+    if(normCat.includes(normalizeTextForMatch(key))) return categoryIconsMap[key];
+  }
+  return "📦";
+}
+
+// Vérifie en même temps le nom écrit de l'article (FR / EN / ES) et sa catégorie dans publications
+function getProductExactLogo(product){
+  if(!product || typeof product !== "object") return "📦";
+  const allNames = [
+    product.nom,
+    product.title,
+    product.name,
+    product.titre,
+    product.categorie,
+    product.category
+  ].filter(Boolean).join(" ");
+
+  const matched = matchExactIconFromText(allNames);
+  if(matched) return matched;
+
+  return getCategoryIcon(product.categorie || product.category || "");
 }
 
 /* DICTIONNAIRE DE TRADUCTION COMPLET */
@@ -830,7 +920,7 @@ const translations = {
 fr: {
 name: "Français", currency: "FCFA", rate: 1,
 searchPlaceholder: "Rechercher des produits...",
-navCart: "Panier", navAccount: "Compte", allTrades: "🛠️ Métiers",
+navAccount: "Compte", allTrades: "🛠️ Métiers",
 loadingArticles: "Chargement des articles...",
 emptyCategory: "Aucun article trouvé.",
 officialAnnouncement: "⚡ Annonce Officielle",
@@ -839,9 +929,8 @@ sponsoredTitle: "⭐ Recommandés & Sponsorisés",
 flashOffers: "🔥 Offres Flash & Promos",
 fullCatalog: "📦 Catalogue & Catégories",
 swipeHint: "Glisser →",
-viewBtn: "👁️ Voir", cartBtn: "🛒 Panier",
-addedMsg: "✅ Ajouté !", imageUnavailable: "Indisponible",
-selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalBuy: "💳 Acheter", modalClose: "Fermer",
+imageUnavailable: "Indisponible",
+selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalClose: "Fermer",
 navAndHelp: "Aide", quickSupport: "Support", helpCenter: "Centre d'aide", myAccount: "Mon Compte",
 rulesAndLegal: "Légal", internalRules: "Règlement", privacyPolicy: "Confidentialité",
 earnMoney: "Gagner", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Vendeur",
@@ -852,7 +941,7 @@ installAppBtn: "Installer"
 en: {
 name: "English", currency: "USD", rate: 1 / 600,
 searchPlaceholder: "Search products...",
-navCart: "Cart", navAccount: "Account", allTrades: "🛠️ Trades",
+navAccount: "Account", allTrades: "🛠️ Trades",
 loadingArticles: "Loading items...",
 emptyCategory: "No items found.",
 officialAnnouncement: "⚡ Official Announcement",
@@ -861,9 +950,8 @@ sponsoredTitle: "⭐ Recommended & Sponsored",
 flashOffers: "🔥 Flash Offers",
 fullCatalog: "📦 Catalog & Categories",
 swipeHint: "Swipe →",
-viewBtn: "👁️ View", cartBtn: "🛒 Cart",
-addedMsg: "✅ Added!", imageUnavailable: "Unavailable",
-selectedArticle: "Selected item on DAKPROÉLITE.", modalBuy: "💳 Buy Now", modalClose: "Close",
+imageUnavailable: "Unavailable",
+selectedArticle: "Selected item on DAKPROÉLITE.", modalClose: "Close",
 navAndHelp: "Help & Nav", quickSupport: "Quick Support", helpCenter: "Help Center", myAccount: "My Account",
 rulesAndLegal: "Rules & Legal", internalRules: "Internal Rules", privacyPolicy: "Privacy Policy",
 earnMoney: "Earn Money", ambassadorProgram: "Ambassador Program", becomeSeller: "🛍️ Become Seller",
@@ -874,7 +962,7 @@ installAppBtn: "Install"
 es: {
 name: "Español", currency: "EUR", rate: 1 / 655.957,
 searchPlaceholder: "Buscar productos...",
-navCart: "Carrito", navAccount: "Cuenta", allTrades: "🛠️ Oficios",
+navAccount: "Cuenta", allTrades: "🛠️ Oficios",
 loadingArticles: "Cargando artículos...",
 emptyCategory: "No se encontraron artículos.",
 officialAnnouncement: "⚡ Anuncio Oficial",
@@ -883,9 +971,8 @@ sponsoredTitle: "⭐ Recomendados y patrocinados",
 flashOffers: "🔥 Ofertas flash",
 fullCatalog: "📦 Catálogo y categorías",
 swipeHint: "Deslizar →",
-viewBtn: "👁️ Ver", cartBtn: "🛒 Carrito",
-addedMsg: "✅ ¡Añadido!", imageUnavailable: "No disponible",
-selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalBuy: "💳 Comprar", modalClose: "Cerrar",
+imageUnavailable: "No disponible",
+selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalClose: "Cerrar",
 navAndHelp: "Ayuda", quickSupport: "Soporte Rápido", helpCenter: "Centro de Ayuda", myAccount: "Mi Cuenta",
 rulesAndLegal: "Normas y Legal", internalRules: "Reglamento", privacyPolicy: "Política de Privacidad",
 earnMoney: "Ganar Dinero", ambassadorProgram: "Programa Embajador", becomeSeller: "🛍️ Ser Vendedor",
@@ -896,7 +983,7 @@ installAppBtn: "Instalar"
 zh: {
 name: "中文", currency: "CNY", rate: 1 / 85,
 searchPlaceholder: "搜索产品...",
-navCart: "购物车", navAccount: "账户", allTrades: "🛠️ 行业",
+navAccount: "账户", allTrades: "🛠️ 行业",
 loadingArticles: "正在加载商品...",
 emptyCategory: "暂无商品。",
 officialAnnouncement: "⚡ 官方公告",
@@ -905,9 +992,8 @@ sponsoredTitle: "⭐ 推荐与赞助",
 flashOffers: "🔥 限时特惠",
 fullCatalog: "📦 目录与分类",
 swipeHint: "滑动 →",
-viewBtn: "👁️ 查看", cartBtn: "🛒 购物车",
-addedMsg: "✅ 已添加！", imageUnavailable: "不可用",
-selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalBuy: "💳 购买", modalClose: "关闭",
+imageUnavailable: "不可用",
+selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalClose: "关闭",
 navAndHelp: "导航与帮助", quickSupport: "快速支持", helpCenter: "帮助中心", myAccount: "我的账户",
 rulesAndLegal: "规则与法律", internalRules: "内部规则", privacyPolicy: "隐私政策",
 earnMoney: "赚钱", ambassadorProgram: "大使计划", becomeSeller: "🛍️ 成为卖家",
@@ -918,7 +1004,7 @@ installAppBtn: "安装"
 bn: {
 name: "বাংলা", currency: "BDT", rate: 1 / 5,
 searchPlaceholder: "অনুসন্ধান...",
-navCart: "কার্ট", navAccount: "অ্যাকাউন্ট", allTrades: "🛠️ পেশা",
+navAccount: "অ্যাকাউন্ট", allTrades: "🛠️ পেশা",
 loadingArticles: "লোড হচ্ছে...",
 emptyCategory: "কোনো আইটেম পাওয়া যায়নি।",
 officialAnnouncement: "⚡ অফিসিয়াল ঘোষণা",
@@ -927,9 +1013,8 @@ sponsoredTitle: "⭐ প্রস্তাবিত",
 flashOffers: "🔥 ফ্ল্যাশ অফার",
 fullCatalog: "📦 ক্যাটালগ",
 swipeHint: "সোয়াইপ →",
-viewBtn: "👁️ দেখুন", cartBtn: "🛒 কার্ট",
-addedMsg: "✅ যোগ!", imageUnavailable: "নেই",
-selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।", modalBuy: "💳 কিনুন", modalClose: "বন্ধ",
+imageUnavailable: "নেই",
+selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।", modalClose: "বন্ধ",
 navAndHelp: "সহায়তা", quickSupport: "দ্রুত সহায়তা", helpCenter: "সহায়তা কেন্দ্র", myAccount: "অ্যাকাউন্ট",
 rulesAndLegal: "নিয়মাবলী", internalRules: "অভ্যন্তরীণ নিয়ম", privacyPolicy: "গোপনীয়তা নীতি",
 earnMoney: "আয় করুন", ambassadorProgram: "অ্যাম্বাসেডর প্রোগ্রাম", becomeSeller: "🛍️ বিক্রেতা হন",
@@ -940,7 +1025,7 @@ installAppBtn: "ইনস্টল"
 yo: {
 name: "Yorùbá", currency: "NGN", rate: 1.2,
 searchPlaceholder: "Wa awọn ọja...",
-navCart: "Kẹkẹ", navAccount: "Àsántì", allTrades: "🛠️ Iṣẹ",
+navAccount: "Àsántì", allTrades: "🛠️ Iṣẹ",
 loadingArticles: "N ṣe agbega...",
 emptyCategory: "Ko si ọja.",
 officialAnnouncement: "⚡ Ikede Oṣiṣẹ",
@@ -949,9 +1034,8 @@ sponsoredTitle: "⭐ A ṣeduro",
 flashOffers: "🔥 Awọn ipese",
 fullCatalog: "📦 Awọn Ọja",
 swipeHint: "Ra →",
-viewBtn: "👁️ Wo", cartBtn: "🛒 Kẹkẹ",
-addedMsg: "✅ A fi kun!", imageUnavailable: "Ko si",
-selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.", modalBuy: "💳 Ra", modalClose: "Pade",
+imageUnavailable: "Ko si",
+selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.", modalClose: "Pade",
 navAndHelp: "Iranlọwọ", quickSupport: "Atilẹyin", helpCenter: "Ile-iṣẹ Iranlọwọ", myAccount: "Akọntẹ mi",
 rulesAndLegal: "Ofin", internalRules: "Awọn Ofin", privacyPolicy: "Asiri",
 earnMoney: "Gba Owo", ambassadorProgram: "Eto Aṣoju", becomeSeller: "🛍️ Di Olutaja",
@@ -962,7 +1046,7 @@ installAppBtn: "Fi sori ẹrọ"
 fon: {
 name: "Fɔ̀ngbè", currency: "FCFA", rate: 1,
 searchPlaceholder: "Ba nǔ...",
-navCart: "Tɛnmɛ", navAccount: "Akɔntá", allTrades: "🛠️ Azɔ̌",
+navAccount: "Akɔntá", allTrades: "🛠️ Azɔ̌",
 loadingArticles: "E ɖò nǔ lɛ ɖè wɛ...",
 emptyCategory: "Nǔ ɖebǔ mɛ ǎ.",
 officialAnnouncement: "⚡ Gbeɖéɖé",
@@ -971,9 +1055,8 @@ sponsoredTitle: "⭐ Nǔ e sɔ́",
 flashOffers: "🔥 Hwenu ɖagbe",
 fullCatalog: "📦 Nǔ bǐ",
 swipeHint: "Sɔ́ →",
-viewBtn: "👁️ Kpé", cartBtn: "🛒 Tɛnmɛ",
-addedMsg: "✅ E ɖó!", imageUnavailable: "Ǎ",
-selectedArticle: "Nǔ e ɖò DAKPROÉLITE.", modalBuy: "💳 Hò", modalClose: "Sɔ́",
+imageUnavailable: "Ǎ",
+selectedArticle: "Nǔ e ɖò DAKPROÉLITE.", modalClose: "Sɔ́",
 navAndHelp: "Alɔgɔ", quickSupport: "Alɔgɔ K館", helpCenter: "Alɔgɔ Tɛnmɛ", myAccount: "Akɔntá",
 rulesAndLegal: "Sɛ́n", internalRules: "Sɛ́n Xó", privacyPolicy: "Nǔ Gudo",
 earnMoney: "Ba Akuɛ", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Zɔ̌watɔ́",
@@ -1058,33 +1141,20 @@ startAutoFlashListRotation();
 }
 });
 
-auth.onAuthStateChanged(user => {
-siteContext.currentUser = user || null;
-if(user){ listenToCartBadge(user.uid); } else { updateCartBadgeDisplay(0); }
-});
-
-function updateCartBadgeDisplay(count){
-const badge = document.getElementById("cartBadge");
-if(!badge) return;
-if(count > 0){ badge.textContent = count; badge.style.display = "inline-block"; }
-else{ badge.style.display = "none"; }
-}
-
-function listenToCartBadge(uid){
-const cartRef = db.ref(`users/${uid}/panier`);
-cartRef.on("value", snapshot => {
-const data = snapshot.val();
-if(!data || typeof data !== "object"){ updateCartBadgeDisplay(0); return; }
-let totalItems = 0;
-Object.values(data).forEach(item => { totalItems += parseInt(item.quantite || 1, 10); });
-updateCartBadgeDisplay(totalItems);
-});
+if(auth && typeof auth.onAuthStateChanged === "function"){
+  auth.onAuthStateChanged(user => {
+    siteContext.currentUser = user || null;
+  });
 }
 
 function escapeHTML(value){
 return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 }
 function escapeAttribute(value){ return escapeHTML(value); }
+
+function getProductDetailUrl(productId){
+return `produit.html?id=${encodeURIComponent(String(productId || ""))}`;
+}
 
 // Extraction des URLs de variantes depuis les champs Firebase (CJdropshipping / publications)
 function extractProductVariants(product, mainImage){
@@ -1128,34 +1198,57 @@ return [mainImage];
 return cleaned.slice(0, 4);
 }
 
+function applyProductsSnapshot(data){
+  if(!data || typeof data !== "object") return;
+
+  const list = Object.entries(data)
+    .map(([id, product]) => ({ id, ...product }))
+    .filter(product => product && product.actif !== false);
+
+  window.allProductsData = list;
+  try {
+    localStorage.setItem("dakpro_cached_products", JSON.stringify(list));
+  } catch(e) {}
+
+  buildCategories();
+  filterProducts();
+  renderCarousels(list);
+  startAutoCategoryRotation();
+  startAutoFlashListRotation();
+  checkUrlForSharedProduct();
+}
+
 function loadProducts() {
-  const localData = localStorage.getItem("dakpro_cached_products");
-  if (localData) {
-    try {
-      window.allProductsData = JSON.parse(localData);
-      renderProducts(window.allProductsData);
-      renderCarousels(window.allProductsData);
-    } catch(e) {}
-  }
-
-  db.ref("publications").once("value").then(snapshot => {
-    const data = snapshot.val();
-    if (!data) return;
-
-    window.allProductsData = Object.entries(data)
-      .map(([id, product]) => ({ id, ...product }))
-      .filter(product => product && product.actif !== false);
-
-    localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
-
+  const localData = readCachedProducts();
+  if (localData.length > 0) {
+    window.allProductsData = localData;
     buildCategories();
-    filterProducts();
-    renderCarousels(window.allProductsData);
+    renderProducts(getFilteredProducts());
+    renderCarousels(localData);
     startAutoCategoryRotation();
     startAutoFlashListRotation();
-    checkUrlForSharedProduct();
-  }).catch(err => {
-    console.error("Erreur Firebase:", err);
+  }
+
+  if(!db) return;
+
+  // Écoute dynamique temps réel + récupération fiable même sur connexion lente
+  const pubRef = db.ref("publications");
+  pubRef.on("value", snapshot => {
+    const data = snapshot.val();
+    if(data){
+      applyProductsSnapshot(data);
+    }
+  }, err => {
+    console.warn("Synchronisation publications en attente / faible connexion:", err);
+    if(window.allProductsData.length === 0){
+      const fallback = readCachedProducts();
+      if(fallback.length > 0){
+        window.allProductsData = fallback;
+        buildCategories();
+        renderProducts(getFilteredProducts());
+        renderCarousels(fallback);
+      }
+    }
   });
 }
 
@@ -1169,6 +1262,8 @@ const menu = document.getElementById("catMenu");
 if(!menu) return;
 
 if(!currentCat && categories.length > 0){
+currentCat = categories[0];
+} else if(currentCat && !categories.includes(currentCat) && categories.length > 0){
 currentCat = categories[0];
 }
 
@@ -1237,16 +1332,16 @@ renderCarousels(window.allProductsData);
 document.getElementById("searchBar")?.addEventListener("input", filterProducts);
 
 function getFilteredProducts(){
-const search = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
+const search = normalizeTextForMatch(document.getElementById("searchBar")?.value || "");
 
 return window.allProductsData.filter(product => {
-const name = String(product.nom || product.title || product.name || "").toLowerCase();
-const description = String(product.description || "").toLowerCase();
-const category = String(product.categorie || product.category || "").toLowerCase();
+const name = normalizeTextForMatch(product.nom || product.title || product.name || "");
+const description = normalizeTextForMatch(product.description || "");
+const categoryNorm = normalizeTextForMatch(product.categorie || product.category || "");
 const productCategory = product.categorie || product.category || "";
 
 if(search.length > 0){
-return name.includes(search) || description.includes(search) || category.includes(search);
+return name.includes(search) || description.includes(search) || categoryNorm.includes(search);
 }
 
 return productCategory === currentCat;
@@ -1261,6 +1356,8 @@ function generateCardHTML(product, options = {}){
 const isFlashCard = Boolean(options.isFlashCard);
 const uniqueSuffix = options.uniqueSuffix || "";
 const cardDomId = `${product.id || "prod"}${uniqueSuffix}`;
+const detailUrl = escapeAttribute(getProductDetailUrl(product.id || ""));
+const exactItemLogo = escapeHTML(getProductExactLogo(product));
 
 const image = product.image || product.imageUrl || product.photo || product.img || "";
 const video = product.video || product.videoUrl || "";
@@ -1308,42 +1405,38 @@ const thumbsHTML = variantsList.map((vUrl, idx) => `
 
 mediaHTML = `
 <div class="flash-media-layout" data-flash-animator="true">
-  <div class="flash-main-stage">
+  <a href="${detailUrl}" class="flash-main-stage">
     <img src="${escapeAttribute(mainDisplaySrc)}" alt="${safeName}" class="flash-stage-img" loading="lazy" decoding="async">
-  </div>
+  </a>
   <div class="flash-variants-pane" data-variants-pane="true">
     ${thumbsHTML}
   </div>
 </div>
 `;
 }else if(isVideo && mediaSrc){
-mediaHTML = `<video src="${escapeAttribute(mediaSrc)}" controls preload="metadata"></video>`;
+mediaHTML = `<a href="${detailUrl}" class="product-media-link"><video src="${escapeAttribute(mediaSrc)}" autoplay loop muted playsinline preload="metadata"></video></a>`;
 }else if(documentUrl){
-mediaHTML = `<a href="${escapeAttribute(documentUrl)}" target="_blank" rel="noopener noreferrer" class="doc-box"><span>📄</span><p>Document</p></a>`;
+mediaHTML = `<a href="${detailUrl}" class="doc-box"><span>📄</span><p>Document</p></a>`;
 }else if(image){
-mediaHTML = `<img src="${escapeAttribute(image)}" alt="${safeName}" loading="lazy" decoding="async">`;
+mediaHTML = `<a href="${detailUrl}" class="product-media-link"><img src="${escapeAttribute(image)}" alt="${safeName}" loading="lazy" decoding="async"></a>`;
 }else{
-mediaHTML = `<div class="product-no-image"><strong>📦</strong><span>${t.imageUnavailable}</span></div>`;
+mediaHTML = `<a href="${detailUrl}" class="product-media-link"><div class="product-no-image"><strong>📦</strong><span>${t.imageUnavailable}</span></div></a>`;
 }
 
 return `
-<article class="card" data-product-id="${escapeAttribute(cardDomId)}">
+<article class="card" data-product-id="${escapeAttribute(cardDomId)}" data-detail-url="${detailUrl}">
 ${product.isRecommande || product.boost ? `<span class="badge-boost">HOT</span>` : ""}
 ${discountBadgeHTML}
 <div class="media-container">${mediaHTML}</div>
 <div>
-<div class="market-tags"><span class="tag-express">DAKPROÉLITE</span></div>
-<h3>${safeName}</h3>
+<div class="market-tags"><span class="tag-express">${exactItemLogo} DAKPROÉLITE</span></div>
+<h3><span class="article-item-logo" aria-hidden="true">${exactItemLogo}</span>${safeName}</h3>
 ${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : `<div class="description-complete">${t.selectedArticle}</div>`}
 </div>
 <div>
 <div class="price-container">
 <span class="price">${displayPrice}</span>
 ${oldPriceHTML}
-</div>
-<div class="card-actions-row">
-<a href="produit.html?id=${escapeAttribute(product.id || "")}" class="btn-action btn-view">${t.viewBtn}</a>
-<button type="button" class="btn-action btn-cart" data-id="${escapeAttribute(product.id || "")}">${t.cartBtn}</button>
 </div>
 </div>
 </article>
@@ -1449,10 +1542,11 @@ containerRelated.innerHTML = `<div class="empty-message" style="padding:10px;">$
 }
 
 function attachCardEvents(container){
-container.querySelectorAll(".btn-cart").forEach(button => {
-button.addEventListener("click", async event => {
-event.stopPropagation();
-ajouterAuPanierDirect(button.dataset.id, button);
+container.querySelectorAll(".card[data-detail-url]").forEach(card => {
+card.addEventListener("click", (e) => {
+if(e.target.closest("a") || e.target.closest(".flash-variant-thumb")) return;
+const url = card.getAttribute("data-detail-url");
+if(url) window.location.href = url;
 });
 });
 }
@@ -1471,50 +1565,6 @@ container.innerHTML = list.map(product => generateCardHTML(product)).join("");
 attachCardEvents(container);
 }
 
-async function ajouterAuPanierDirect(productId, buttonEl){
-const user = auth.currentUser;
-const t = translations[currentLang];
-if(!user){
-alert(currentLang === 'en' ? "Please log in." : "Veuillez vous connecter.");
-window.location.href = "profil-acheteur.html";
-return;
-}
-
-const product = window.allProductsData.find(p => String(p.id) === String(productId));
-if(product){
-try{
-const itemRef = db.ref(`users/${user.uid}/panier/${product.id}`);
-const snapshot = await itemRef.once("value");
-
-let currentQty = 1;
-if(snapshot.exists()){ currentQty = parseInt(snapshot.val().quantite || 0, 10) + 1; }
-
-const unitPrice = parseFloat(product.prixPromo || product.prix || product.price || 0);
-const nameVal = product.nom || product.title || product.name || "Produit";
-const imgVal = product.image || product.imageUrl || product.photo || "";
-const totalPrice = parseFloat((currentQty * unitPrice).toFixed(2));
-
-const payload = {
-id: product.id, nom: nameVal, prixUnitaire: unitPrice, devise: product.devise || "FCFA",
-image: imgVal, quantite: currentQty, total: totalPrice, updatedAt: Date.now()
-};
-
-const updates = {};
-updates[`users/${user.uid}/panier/${product.id}`] = payload;
-updates[`users/${user.uid}/gs/cart/${product.id}`] = payload;
-await db.ref().update(updates);
-
-if(buttonEl){
-const oldText = buttonEl.textContent;
-buttonEl.textContent = t.addedMsg;
-setTimeout(() => { buttonEl.textContent = oldText; }, 1500);
-}
-}catch(error){
-console.error("Erreur panier:", error);
-}
-}
-}
-
 function checkUrlForSharedProduct(){
 const urlParams = new URLSearchParams(window.location.search);
 const productId = urlParams.get("produit") || urlParams.get("pid") || urlParams.get("id");
@@ -1526,17 +1576,20 @@ const modalContainer = document.getElementById("productModalContainer");
 if(!modalContainer) return;
 
 const t = translations[currentLang];
-const priceVal = parseFloat(product.prix || product.price || 0);
-const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : null;
+const priceVal = parseFloat(product.prix !== undefined ? product.prix : (product.price !== undefined ? product.price : 0));
+const promoVal = product.prixPromo !== undefined ? parseFloat(product.prixPromo) : (product.promoPrice !== undefined ? parseFloat(product.promoPrice) : null);
 const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoVal < priceVal;
 const effectivePrice = hasPromo ? promoVal : priceVal;
 const productName = product.nom || product.title || "Article";
 const productDesc = getLocalizedText(product, 'description', currentLang);
+const detailUrl = escapeAttribute(getProductDetailUrl(product.id || ""));
 
 modalContainer.innerHTML = `
 <div class="modal-overlay">
 <div class="modal-content">
+<a href="${detailUrl}" style="display:block;">
 <img src="${escapeAttribute(product.image || product.imageUrl || "")}" alt="Produit" style="width:100%;height:auto;max-height:180px;object-fit:contain;background:#080b10;border-radius:8px;margin-bottom:10px;">
+</a>
 <h2 style="color:var(--gold);margin-bottom:6px;font-size:16px;">${escapeHTML(productName)}</h2>
 <div class="price-container" style="margin-bottom:10px;">
 <span class="price" style="font-size:16px;">${formatPrice(effectivePrice)}</span>
@@ -1544,18 +1597,17 @@ ${hasPromo ? `<span class="price-old">${formatPrice(priceVal)}</span>` : ""}
 </div>
 <p style="color:#ccc;font-size:12px;line-height:1.4;margin-bottom:12px;">${escapeHTML(productDesc)}</p>
 <div style="display:flex;gap:8px;">
-<button class="btn-action btn-cart" id="btnModalAddToCart" style="padding:8px;">${t.modalBuy}</button>
-<button class="btn-action" id="btnModalClose" style="background:#222;color:#fff;">${t.modalClose}</button>
+<button type="button" class="btn-action" id="btnModalClose" style="background:#222;color:#fff;padding:8px;">${t.modalClose}</button>
 </div>
 </div>
 </div>
 `;
 
-document.getElementById("btnModalAddToCart")?.addEventListener("click", () => ajouterAuPanierDirect(productId, document.getElementById("btnModalAddToCart")));
 document.getElementById("btnModalClose")?.addEventListener("click", () => modalContainer.innerHTML = "");
 }
 
 function loadBanners(){
+if(!db) return;
 db.ref("bannieres").on("value", snapshot => {
 const data = snapshot.val();
 const container = document.getElementById("bannerContainer");
@@ -1588,6 +1640,8 @@ currentIndex = 0; updateSlide();
 container.style.display = "block";
 if(autoPlay) clearInterval(autoPlay);
 autoPlay = setInterval(() => { currentIndex = (currentIndex + 1) % totalSlides; updateSlide(); }, 4000);
+}, err => {
+console.warn("Bannières en attente / hors ligne:", err);
 });
 }
 
@@ -1621,15 +1675,19 @@ text.textContent = localizedText;
 }
 
 function loadAnnouncement(){
+if(!db) return;
 db.ref("annonces/faya_buzz").on("value", snapshot => {
 const data = snapshot.val();
 announcementDataCache = data;
 applyAnnouncement(data);
+}, err => {
+console.warn("Annonce en attente / hors ligne:", err);
 });
 }
 
 if(window.allProductsData.length > 0){
-  renderProducts(window.allProductsData);
+  buildCategories();
+  renderProducts(getFilteredProducts());
   renderCarousels(window.allProductsData);
   startAutoCategoryRotation();
   startAutoFlashListRotation();
