@@ -332,7 +332,6 @@
     const auth = getAuth(app);
 
     const FEDAPAY_PUBLIC_KEY = "pk_live_DUGntocyIWTtfHBOvFpPtq54";
-    const PENDING_CHECKOUT_KEY = "dakpro_pending_checkout";
 
     // Grille tarifaire Transport International (Chine -> Afrique de l'Ouest / Bénin) & Douane
     const LOGISTICS_CONFIG = {
@@ -368,25 +367,15 @@
     window.produitCourant = null;
     window.variantesCourantes = [];
     window.varianteSelectionnee = null;
-    window.panierVariantes = [];
+    window.panierVariantes = []; // Liste des variantes ajoutées au panier
     window.quantitePanierCount = 1;
     window.produitIdCourant = null;
-    window.currentUserUID = auth.currentUser ? auth.currentUser.uid : null;
-    window.currentUserEmail = auth.currentUser ? auth.currentUser.email : null;
-    window.isUserConnected = Boolean(auth.currentUser);
+    window.currentUserUID = "ANONYMOUS_USER";
     window.parrainAffilie = "aucun";
     window.paiementDejaEffectue = false;
 
     onAuthStateChanged(auth, (user) => {
-      if (user) {
-        window.currentUserUID = user.uid;
-        window.currentUserEmail = user.email;
-        window.isUserConnected = true;
-      } else {
-        window.currentUserUID = null;
-        window.currentUserEmail = null;
-        window.isUserConnected = false;
-      }
+      if (user) window.currentUserUID = user.uid;
     });
 
     function afficherToast(msg) {
@@ -401,6 +390,7 @@
       if (el) el.scrollBy({ left: offset, behavior: 'smooth' });
     };
 
+    // Parseur intelligent du poids fournisseur (gère "170", "170g", "0.25kg", "150-200", etc.)
     function parserPoidsEnGrammes(rawWeight) {
       if (rawWeight === null || rawWeight === undefined || rawWeight === '') return 0;
       if (typeof rawWeight === 'number' && !isNaN(rawWeight)) {
@@ -423,6 +413,7 @@
       return Math.round(val);
     }
 
+    // Poids par défaut réaliste si le fournisseur n'a pas renseigné de champ poids dans Firebase
     function estimerPoidsSecuriteGrammes(p) {
       const cat = `${p.categorie || ''} ${p.nom || ''}`.toLowerCase();
       if (/chaussure|shoe|sneaker|boot|sandal|sac|bag/.test(cat)) return 650;
@@ -716,6 +707,7 @@
       const poidsTotalGr = lignes.reduce((sum, l) => sum + (l.poidsGr * l.quantite), 0);
       const totalArticles = lignes.reduce((sum, l) => sum + l.quantite, 0);
 
+      // Calcul automatique des remises volume : 10 -> 3%, 20 -> 5%, 30 -> 7%
       const remiseInfo = obtenirRemiseVolume(totalArticles);
       const remiseMontant = Math.round(sousTotalBrut * (remiseInfo.pourcent / 100));
       const sousTotal = Math.max(0, sousTotalBrut - remiseMontant);
@@ -782,7 +774,6 @@
       const p = window.produitCourant || {};
       const prodId = window.produitIdCourant || "PROD-DEFAULT";
       const totalMontant = calculDetails.total;
-      const uidActuel = auth.currentUser?.uid || window.currentUserUID || "ANONYMOUS_USER";
 
       const couleursChoisies = calculDetails.articles.map(a => `${a.couleurExacte} (${a.nom} x${a.quantite})`).join(', ');
       const couleurPrincipaleExacte = calculDetails.articles[0]?.couleurExacte || window.varianteSelectionnee?.couleurExacte || 'Standard';
@@ -813,7 +804,7 @@
         gateway: "FedaPay",
         timestamp: timestamp,
         total: String(totalMontant),
-        uid: uidActuel
+        uid: window.currentUserUID
       };
 
       try {
@@ -821,7 +812,7 @@
         await set(ref(db, `paiement/${txKey}`), payloadTransaction);
         await set(ref(db, `paiements/${txKey}`), payloadTransaction);
 
-        await set(push(ref(db, `notifications_utilisateurs/${uidActuel}`)), {
+        await set(push(ref(db, `notifications_utilisateurs/${window.currentUserUID}`)), {
           titre: "Paiement Confirmé !",
           message: `Commande "${p.nom || 'Produit'}" — Couleur(s) : ${couleursChoisies} — Total : ${totalMontant.toLocaleString('fr-FR')} FCFA (transport & douane inclus).`,
           couleurChoisie: couleurPrincipaleExacte,
@@ -864,46 +855,6 @@
       return null;
     }
 
-    function restaurerEtatAvantConnexion() {
-      try {
-        const raw = localStorage.getItem(PENDING_CHECKOUT_KEY);
-        if (!raw) return;
-        const saved = JSON.parse(raw);
-        if (!saved || String(saved.produitId) !== String(window.produitIdCourant || '')) return;
-
-        if (saved.client) {
-          if (saved.client.nom) document.getElementById('clientNom').value = saved.client.nom;
-          if (saved.client.tel) document.getElementById('clientTelephone').value = saved.client.tel;
-          if (saved.client.pays) document.getElementById('clientPays').value = saved.client.pays;
-          if (saved.client.ville) document.getElementById('clientVille').value = saved.client.ville;
-          if (saved.client.adresse) document.getElementById('clientAdresse').value = saved.client.adresse;
-        }
-
-        if (Array.isArray(saved.panierVariantes) && saved.panierVariantes.length > 0) {
-          window.panierVariantes = saved.panierVariantes;
-          rendrePanierVariantes();
-        }
-
-        if (Number(saved.quantitePanierCount) > 0) {
-          window.quantitePanierCount = Number(saved.quantitePanierCount);
-          document.getElementById('quantitePanier').innerText = window.quantitePanierCount;
-        }
-
-        if (saved.varianteId && Array.isArray(window.variantesCourantes) && window.variantesCourantes.length > 0) {
-          const idx = window.variantesCourantes.findIndex(v => String(v.id) === String(saved.varianteId));
-          if (idx >= 0) {
-            selectionnerVariante(idx, false);
-          }
-        }
-
-        rafraichirStyleCartesVariantes();
-        calculerTotal();
-        localStorage.removeItem(PENDING_CHECKOUT_KEY);
-      } catch (e) {
-        console.error("Erreur restauration commande :", e);
-      }
-    }
-
     async function chargerProduitDynamique() {
       const urlParams = new URLSearchParams(window.location.search);
       const produitId = urlParams.get('id');
@@ -915,11 +866,11 @@
         return;
       }
 
+      // Affichage instantané depuis le cache local si disponible (sans attendre ni bloquer)
       const cachedProduct = trouverProduitEnCache(produitId);
       if (cachedProduct) {
         window.produitCourant = cachedProduct;
         afficherDonneesProduit(window.produitCourant);
-        restaurerEtatAvantConnexion();
       }
 
       try {
@@ -932,7 +883,6 @@
         if (snapshot.exists()) {
           window.produitCourant = snapshot.val();
           afficherDonneesProduit(window.produitCourant);
-          restaurerEtatAvantConnexion();
         } else if (!cachedProduct) {
           afficherToast("Produit introuvable dans le catalogue.");
         }
@@ -1160,37 +1110,9 @@
       return { nom, tel, pays, ville, adresse };
     }
 
-    function redirigerVersConnexion(client) {
-      try {
-        localStorage.setItem(PENDING_CHECKOUT_KEY, JSON.stringify({
-          produitId: window.produitIdCourant,
-          varianteId: window.varianteSelectionnee?.id || null,
-          panierVariantes: window.panierVariantes,
-          quantitePanierCount: window.quantitePanierCount,
-          client
-        }));
-      } catch (e) {}
-
-      const returnUrl = encodeURIComponent(window.location.href);
-      afficherToast("Veuillez vous connecter pour finaliser le paiement...");
-      setTimeout(() => {
-        window.location.href = `connexion.html?redirect=${returnUrl}`;
-      }, 600);
-    }
-
     window.procederPaiementFedaPay = function() {
       const client = validerFormulaire();
       if (!client) return;
-
-      // Vérification de la connexion juste au moment du paiement
-      const utilisateurActuel = auth.currentUser;
-      if (!utilisateurActuel || !window.isUserConnected) {
-        redirigerVersConnexion(client);
-        return;
-      }
-
-      window.currentUserUID = utilisateurActuel.uid;
-      window.currentUserEmail = utilisateurActuel.email || `${utilisateurActuel.uid.toLowerCase()}@dakproelite.com`;
 
       if (typeof FedaPay === 'undefined') {
         afficherToast("Le module FedaPay est indisponible. Réessayez.");
@@ -1214,7 +1136,7 @@
           description: `Commande DAKPROÉLITE - ${p.nom || 'Produit'} [${couleursResume}] (${calculDetails.poidsKg.toFixed(2)} kg)`
         },
         customer: {
-          email: window.currentUserEmail,
+          email: `${window.currentUserUID.toLowerCase()}@dakproelite.com`,
           lastname: nomFamille,
           firstname: prenom,
           phone_number: {

@@ -87,6 +87,11 @@ background:#000;color:#fff;padding:0 14px;outline:none;font-size:12px;
 .nav-icons{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .nav-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:9px;cursor:pointer;}
 .nav-item>span:first-child{font-size:18px;line-height:20px;}
+.cart-badge{
+position:absolute;top:-4px;right:0px;background:var(--red);color:#fff;
+font-size:9px;font-weight:700;border-radius:8px;padding:1px 4px;
+min-width:14px;text-align:center;display:none;border:1px solid var(--black);
+}
 
 /* BANNIÈRE D'INSTALLATION DE L'APPLICATION (PRO & PUISSANTE) */
 .install-app-banner {
@@ -325,14 +330,17 @@ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hi
 .tag-express{background:rgba(22,163,74,0.1);color:#15803d;border:1px solid rgba(22,163,74,0.2);font-size:7.5px;padding:1px 4px;border-radius:3px;font-weight:600;}
 
 /* PRIX (PROMO/ACTUEL EN ROUGE, ANCIEN EN BLEU) */
-.price-container{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin:2px 0 2px;}
+.price-container{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin:2px 0 6px;}
 .price{color:var(--red);font-size:12.5px;font-weight:800;}
 .price-old{text-decoration:line-through;color:var(--blue);font-size:9.5px;font-weight:600;}
 
+.card-actions-row{display:flex;gap:4px;margin-top:auto;width:100%;}
 .btn-action{
 flex:1;min-width:0;padding:6px 2px;border-radius:5px;font-size:9px;font-weight:700;
 text-align:center;text-decoration:none;cursor:pointer;display:flex;align-items:center;justify-content:center;white-space:nowrap;border:none;color:#fff;
 }
+.btn-view{background:var(--blue);}
+.btn-cart{background:var(--green);}
 
 /* MODAL & FOOTER */
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:flex;justify-content:center;align-items:center;z-index:10000;padding:10px;}
@@ -460,6 +468,9 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits...">
 </div>
 <div class="nav-icons">
+<a href="panier.html" class="nav-item" id="navCartLink">
+<span>🛒</span><span class="cart-badge" id="cartBadge">0</span><span data-i18n="navCart">Panier</span>
+</a>
 <a href="profil-acheteur.html" class="nav-item"><span>👤</span><span data-i18n="navAccount">Compte</span></a>
 </div>
 </header>
@@ -770,10 +781,12 @@ btnInstallApp?.addEventListener("click", async () => {
     }
     deferredPrompt = null;
   } else {
+    // Fallback pour les navigateurs où beforeinstallprompt ne se déclenche pas directement (iOS / navigateurs légers)
     alert(currentLang === 'en' ? "To install, use your browser menu and select 'Add to Home Screen'." : "Pour installer l'application, ouvrez le menu de votre navigateur et sélectionnez 'Ajouter à l'écran d'accueil'.");
   }
 });
 
+// Afficher par défaut si non installé et non en mode standalone
 if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
   setTimeout(() => {
     if(installBanner && installBanner.style.display !== "flex") {
@@ -817,7 +830,7 @@ const translations = {
 fr: {
 name: "Français", currency: "FCFA", rate: 1,
 searchPlaceholder: "Rechercher des produits...",
-navAccount: "Compte", allTrades: "🛠️ Métiers",
+navCart: "Panier", navAccount: "Compte", allTrades: "🛠️ Métiers",
 loadingArticles: "Chargement des articles...",
 emptyCategory: "Aucun article trouvé.",
 officialAnnouncement: "⚡ Annonce Officielle",
@@ -826,8 +839,9 @@ sponsoredTitle: "⭐ Recommandés & Sponsorisés",
 flashOffers: "🔥 Offres Flash & Promos",
 fullCatalog: "📦 Catalogue & Catégories",
 swipeHint: "Glisser →",
-imageUnavailable: "Indisponible",
-selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalClose: "Fermer",
+viewBtn: "👁️ Voir", cartBtn: "🛒 Panier",
+addedMsg: "✅ Ajouté !", imageUnavailable: "Indisponible",
+selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalBuy: "💳 Acheter", modalClose: "Fermer",
 navAndHelp: "Aide", quickSupport: "Support", helpCenter: "Centre d'aide", myAccount: "Mon Compte",
 rulesAndLegal: "Légal", internalRules: "Règlement", privacyPolicy: "Confidentialité",
 earnMoney: "Gagner", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Vendeur",
@@ -838,7 +852,7 @@ installAppBtn: "Installer"
 en: {
 name: "English", currency: "USD", rate: 1 / 600,
 searchPlaceholder: "Search products...",
-navAccount: "Account", allTrades: "🛠️ Trades",
+navCart: "Cart", navAccount: "Account", allTrades: "🛠️ Trades",
 loadingArticles: "Loading items...",
 emptyCategory: "No items found.",
 officialAnnouncement: "⚡ Official Announcement",
@@ -847,8 +861,9 @@ sponsoredTitle: "⭐ Recommended & Sponsored",
 flashOffers: "🔥 Flash Offers",
 fullCatalog: "📦 Catalog & Categories",
 swipeHint: "Swipe →",
-imageUnavailable: "Unavailable",
-selectedArticle: "Selected item on DAKPROÉLITE.", modalClose: "Close",
+viewBtn: "👁️ View", cartBtn: "🛒 Cart",
+addedMsg: "✅ Added!", imageUnavailable: "Unavailable",
+selectedArticle: "Selected item on DAKPROÉLITE.", modalBuy: "💳 Buy Now", modalClose: "Close",
 navAndHelp: "Help & Nav", quickSupport: "Quick Support", helpCenter: "Help Center", myAccount: "My Account",
 rulesAndLegal: "Rules & Legal", internalRules: "Internal Rules", privacyPolicy: "Privacy Policy",
 earnMoney: "Earn Money", ambassadorProgram: "Ambassador Program", becomeSeller: "🛍️ Become Seller",
@@ -859,7 +874,7 @@ installAppBtn: "Install"
 es: {
 name: "Español", currency: "EUR", rate: 1 / 655.957,
 searchPlaceholder: "Buscar productos...",
-navAccount: "Cuenta", allTrades: "🛠️ Oficios",
+navCart: "Carrito", navAccount: "Cuenta", allTrades: "🛠️ Oficios",
 loadingArticles: "Cargando artículos...",
 emptyCategory: "No se encontraron artículos.",
 officialAnnouncement: "⚡ Anuncio Oficial",
@@ -868,8 +883,9 @@ sponsoredTitle: "⭐ Recomendados y patrocinados",
 flashOffers: "🔥 Ofertas flash",
 fullCatalog: "📦 Catálogo y categorías",
 swipeHint: "Deslizar →",
-imageUnavailable: "No disponible",
-selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalClose: "Cerrar",
+viewBtn: "👁️ Ver", cartBtn: "🛒 Carrito",
+addedMsg: "✅ ¡Añadido!", imageUnavailable: "No disponible",
+selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalBuy: "💳 Comprar", modalClose: "Cerrar",
 navAndHelp: "Ayuda", quickSupport: "Soporte Rápido", helpCenter: "Centro de Ayuda", myAccount: "Mi Cuenta",
 rulesAndLegal: "Normas y Legal", internalRules: "Reglamento", privacyPolicy: "Política de Privacidad",
 earnMoney: "Ganar Dinero", ambassadorProgram: "Programa Embajador", becomeSeller: "🛍️ Ser Vendedor",
@@ -880,7 +896,7 @@ installAppBtn: "Instalar"
 zh: {
 name: "中文", currency: "CNY", rate: 1 / 85,
 searchPlaceholder: "搜索产品...",
-navAccount: "账户", allTrades: "🛠️ 行业",
+navCart: "购物车", navAccount: "账户", allTrades: "🛠️ 行业",
 loadingArticles: "正在加载商品...",
 emptyCategory: "暂无商品。",
 officialAnnouncement: "⚡ 官方公告",
@@ -889,8 +905,9 @@ sponsoredTitle: "⭐ 推荐与赞助",
 flashOffers: "🔥 限时特惠",
 fullCatalog: "📦 目录与分类",
 swipeHint: "滑动 →",
-imageUnavailable: "不可用",
-selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalClose: "关闭",
+viewBtn: "👁️ 查看", cartBtn: "🛒 购物车",
+addedMsg: "✅ 已添加！", imageUnavailable: "不可用",
+selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalBuy: "💳 购买", modalClose: "关闭",
 navAndHelp: "导航与帮助", quickSupport: "快速支持", helpCenter: "帮助中心", myAccount: "我的账户",
 rulesAndLegal: "规则与法律", internalRules: "内部规则", privacyPolicy: "隐私政策",
 earnMoney: "赚钱", ambassadorProgram: "大使计划", becomeSeller: "🛍️ 成为卖家",
@@ -901,7 +918,7 @@ installAppBtn: "安装"
 bn: {
 name: "বাংলা", currency: "BDT", rate: 1 / 5,
 searchPlaceholder: "অনুসন্ধান...",
-navAccount: "অ্যাকাউন্ট", allTrades: "🛠️ পেশা",
+navCart: "কার্ট", navAccount: "অ্যাকাউন্ট", allTrades: "🛠️ পেশা",
 loadingArticles: "লোড হচ্ছে...",
 emptyCategory: "কোনো আইটেম পাওয়া যায়নি।",
 officialAnnouncement: "⚡ অফিসিয়াল ঘোষণা",
@@ -910,8 +927,9 @@ sponsoredTitle: "⭐ প্রস্তাবিত",
 flashOffers: "🔥 ফ্ল্যাশ অফার",
 fullCatalog: "📦 ক্যাটালগ",
 swipeHint: "সোয়াইপ →",
-imageUnavailable: "নেই",
-selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।", modalClose: "বন্ধ",
+viewBtn: "👁️ দেখুন", cartBtn: "🛒 কার্ট",
+addedMsg: "✅ যোগ!", imageUnavailable: "নেই",
+selectedArticle: "DAKPROÉLITE এ নির্বাচিত আইটেম।", modalBuy: "💳 কিনুন", modalClose: "বন্ধ",
 navAndHelp: "সহায়তা", quickSupport: "দ্রুত সহায়তা", helpCenter: "সহায়তা কেন্দ্র", myAccount: "অ্যাকাউন্ট",
 rulesAndLegal: "নিয়মাবলী", internalRules: "অভ্যন্তরীণ নিয়ম", privacyPolicy: "গোপনীয়তা নীতি",
 earnMoney: "আয় করুন", ambassadorProgram: "অ্যাম্বাসেডর প্রোগ্রাম", becomeSeller: "🛍️ বিক্রেতা হন",
@@ -922,7 +940,7 @@ installAppBtn: "ইনস্টল"
 yo: {
 name: "Yorùbá", currency: "NGN", rate: 1.2,
 searchPlaceholder: "Wa awọn ọja...",
-navAccount: "Àsántì", allTrades: "🛠️ Iṣẹ",
+navCart: "Kẹkẹ", navAccount: "Àsántì", allTrades: "🛠️ Iṣẹ",
 loadingArticles: "N ṣe agbega...",
 emptyCategory: "Ko si ọja.",
 officialAnnouncement: "⚡ Ikede Oṣiṣẹ",
@@ -931,8 +949,9 @@ sponsoredTitle: "⭐ A ṣeduro",
 flashOffers: "🔥 Awọn ipese",
 fullCatalog: "📦 Awọn Ọja",
 swipeHint: "Ra →",
-imageUnavailable: "Ko si",
-selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.", modalClose: "Pade",
+viewBtn: "👁️ Wo", cartBtn: "🛒 Kẹkẹ",
+addedMsg: "✅ A fi kun!", imageUnavailable: "Ko si",
+selectedArticle: "Ọja ti a yan lori DAKPROÉLITE.", modalBuy: "💳 Ra", modalClose: "Pade",
 navAndHelp: "Iranlọwọ", quickSupport: "Atilẹyin", helpCenter: "Ile-iṣẹ Iranlọwọ", myAccount: "Akọntẹ mi",
 rulesAndLegal: "Ofin", internalRules: "Awọn Ofin", privacyPolicy: "Asiri",
 earnMoney: "Gba Owo", ambassadorProgram: "Eto Aṣoju", becomeSeller: "🛍️ Di Olutaja",
@@ -943,7 +962,7 @@ installAppBtn: "Fi sori ẹrọ"
 fon: {
 name: "Fɔ̀ngbè", currency: "FCFA", rate: 1,
 searchPlaceholder: "Ba nǔ...",
-navAccount: "Akɔntá", allTrades: "🛠️ Azɔ̌",
+navCart: "Tɛnmɛ", navAccount: "Akɔntá", allTrades: "🛠️ Azɔ̌",
 loadingArticles: "E ɖò nǔ lɛ ɖè wɛ...",
 emptyCategory: "Nǔ ɖebǔ mɛ ǎ.",
 officialAnnouncement: "⚡ Gbeɖéɖé",
@@ -952,8 +971,9 @@ sponsoredTitle: "⭐ Nǔ e sɔ́",
 flashOffers: "🔥 Hwenu ɖagbe",
 fullCatalog: "📦 Nǔ bǐ",
 swipeHint: "Sɔ́ →",
-imageUnavailable: "Ǎ",
-selectedArticle: "Nǔ e ɖò DAKPROÉLITE.", modalClose: "Sɔ́",
+viewBtn: "👁️ Kpé", cartBtn: "🛒 Tɛnmɛ",
+addedMsg: "✅ E ɖó!", imageUnavailable: "Ǎ",
+selectedArticle: "Nǔ e ɖò DAKPROÉLITE.", modalBuy: "💳 Hò", modalClose: "Sɔ́",
 navAndHelp: "Alɔgɔ", quickSupport: "Alɔgɔ K館", helpCenter: "Alɔgɔ Tɛnmɛ", myAccount: "Akɔntá",
 rulesAndLegal: "Sɛ́n", internalRules: "Sɛ́n Xó", privacyPolicy: "Nǔ Gudo",
 earnMoney: "Ba Akuɛ", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Zɔ̌watɔ́",
@@ -1040,7 +1060,26 @@ startAutoFlashListRotation();
 
 auth.onAuthStateChanged(user => {
 siteContext.currentUser = user || null;
+if(user){ listenToCartBadge(user.uid); } else { updateCartBadgeDisplay(0); }
 });
+
+function updateCartBadgeDisplay(count){
+const badge = document.getElementById("cartBadge");
+if(!badge) return;
+if(count > 0){ badge.textContent = count; badge.style.display = "inline-block"; }
+else{ badge.style.display = "none"; }
+}
+
+function listenToCartBadge(uid){
+const cartRef = db.ref(`users/${uid}/panier`);
+cartRef.on("value", snapshot => {
+const data = snapshot.val();
+if(!data || typeof data !== "object"){ updateCartBadgeDisplay(0); return; }
+let totalItems = 0;
+Object.values(data).forEach(item => { totalItems += parseInt(item.quantite || 1, 10); });
+updateCartBadgeDisplay(totalItems);
+});
+}
 
 function escapeHTML(value){
 return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
@@ -1302,6 +1341,10 @@ ${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : `
 <span class="price">${displayPrice}</span>
 ${oldPriceHTML}
 </div>
+<div class="card-actions-row">
+<a href="produit.html?id=${escapeAttribute(product.id || "")}" class="btn-action btn-view">${t.viewBtn}</a>
+<button type="button" class="btn-action btn-cart" data-id="${escapeAttribute(product.id || "")}">${t.cartBtn}</button>
+</div>
 </div>
 </article>
 `;
@@ -1406,7 +1449,12 @@ containerRelated.innerHTML = `<div class="empty-message" style="padding:10px;">$
 }
 
 function attachCardEvents(container){
-// Prêt pour les interactions futures sur les cartes si nécessaire
+container.querySelectorAll(".btn-cart").forEach(button => {
+button.addEventListener("click", async event => {
+event.stopPropagation();
+ajouterAuPanierDirect(button.dataset.id, button);
+});
+});
 }
 
 function renderProducts(list){
@@ -1421,6 +1469,50 @@ return;
 
 container.innerHTML = list.map(product => generateCardHTML(product)).join("");
 attachCardEvents(container);
+}
+
+async function ajouterAuPanierDirect(productId, buttonEl){
+const user = auth.currentUser;
+const t = translations[currentLang];
+if(!user){
+alert(currentLang === 'en' ? "Please log in." : "Veuillez vous connecter.");
+window.location.href = "profil-acheteur.html";
+return;
+}
+
+const product = window.allProductsData.find(p => String(p.id) === String(productId));
+if(product){
+try{
+const itemRef = db.ref(`users/${user.uid}/panier/${product.id}`);
+const snapshot = await itemRef.once("value");
+
+let currentQty = 1;
+if(snapshot.exists()){ currentQty = parseInt(snapshot.val().quantite || 0, 10) + 1; }
+
+const unitPrice = parseFloat(product.prixPromo || product.prix || product.price || 0);
+const nameVal = product.nom || product.title || product.name || "Produit";
+const imgVal = product.image || product.imageUrl || product.photo || "";
+const totalPrice = parseFloat((currentQty * unitPrice).toFixed(2));
+
+const payload = {
+id: product.id, nom: nameVal, prixUnitaire: unitPrice, devise: product.devise || "FCFA",
+image: imgVal, quantite: currentQty, total: totalPrice, updatedAt: Date.now()
+};
+
+const updates = {};
+updates[`users/${user.uid}/panier/${product.id}`] = payload;
+updates[`users/${user.uid}/gs/cart/${product.id}`] = payload;
+await db.ref().update(updates);
+
+if(buttonEl){
+const oldText = buttonEl.textContent;
+buttonEl.textContent = t.addedMsg;
+setTimeout(() => { buttonEl.textContent = oldText; }, 1500);
+}
+}catch(error){
+console.error("Erreur panier:", error);
+}
+}
 }
 
 function checkUrlForSharedProduct(){
@@ -1452,12 +1544,14 @@ ${hasPromo ? `<span class="price-old">${formatPrice(priceVal)}</span>` : ""}
 </div>
 <p style="color:#ccc;font-size:12px;line-height:1.4;margin-bottom:12px;">${escapeHTML(productDesc)}</p>
 <div style="display:flex;gap:8px;">
-<button type="button" class="btn-action" id="btnModalClose" style="background:#222;color:#fff;padding:8px;">${t.modalClose}</button>
+<button class="btn-action btn-cart" id="btnModalAddToCart" style="padding:8px;">${t.modalBuy}</button>
+<button class="btn-action" id="btnModalClose" style="background:#222;color:#fff;">${t.modalClose}</button>
 </div>
 </div>
 </div>
 `;
 
+document.getElementById("btnModalAddToCart")?.addEventListener("click", () => ajouterAuPanierDirect(productId, document.getElementById("btnModalAddToCart")));
 document.getElementById("btnModalClose")?.addEventListener("click", () => modalContainer.innerHTML = "");
 }
 
