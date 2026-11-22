@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DAKPROÉLITE - Détails du Produit</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
+
   <!-- SDK FedaPay Checkout -->
   <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
 
@@ -123,14 +123,14 @@
           <div id="sectionRessources" class="hidden bg-slate-900/90 rounded-2xl p-4 border border-[#d4af37]/25 space-y-2">
             <h4 class="text-xs font-bold uppercase tracking-wider text-[#d4af37] flex items-center gap-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              Ressources & Documents Associés
+              Ressources &amp; Documents Associés
             </h4>
             <p id="ressourceNotice" class="text-[11px] text-slate-400">Ce produit inclut un accès à des supports PDF / Cours exclusifs après validation.</p>
-            <a id="lienRessource" href="#" target="_blank" class="inline-flex items-center space-x-2 text-xs font-bold text-[#d4af37] hover:underline pt-1 hidden">
+            <a id="lienRessource" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-2 text-xs font-bold text-[#d4af37] hover:underline pt-1 hidden">
               <span>Consulter l'aperçu du document/cours</span>
             </a>
             <div id="zoneTelechargementApresPaiement" class="hidden pt-2">
-              <a id="btnTelechargerDocument" href="#" download target="_blank" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center space-x-2 transition-all">
+              <a id="btnTelechargerDocument" href="#" download target="_blank" rel="noopener noreferrer" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center space-x-2 transition-all">
                 <span>Accéder aux ressources complètes</span>
               </a>
             </div>
@@ -329,10 +329,9 @@
     const db = getDatabase(app);
     const auth = getAuth(app);
 
-    // Configuration centralisée du jeton public FedaPay
     const FEDAPAY_CONFIG = {
       publicKey: "pk_live_DUGntocyIWTtfHBOvFpPtq54",
-      environment: "live", // "live" ou "sandbox"
+      environment: "live",
       currencyIso: "XOF",
       locale: "fr",
       phoneCountry: "bj"
@@ -345,7 +344,19 @@
       customsHandlingPerKg: 1000
     };
 
-    // Remise volume : 1% à partir de 10 articles, 2% à partir de 50 articles et plus (plafonné à 2%)
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str);
+    }
+
     function obtenirRemiseVolume(totalArticles) {
       if (totalArticles >= 50) return { pourcent: 2, palier: 50 };
       if (totalArticles >= 10) return { pourcent: 1, palier: 10 };
@@ -381,9 +392,22 @@
       if (user) window.currentUserUID = user.uid;
     });
 
+    // Nettoyage des anciens caches d'affichage à la réception de CACHE_UPDATED sans toucher aux paiements/session
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        if (event.data && event.data.type === "CACHE_UPDATED") {
+          try {
+            localStorage.removeItem("dakpro_cached_products");
+          } catch (e) {}
+        }
+      });
+    }
+
     function afficherToast(msg) {
       const toast = document.getElementById('toastNotification');
-      document.getElementById('toastMessage').innerText = msg;
+      const msgEl = document.getElementById('toastMessage');
+      if (!toast || !msgEl) return;
+      msgEl.innerText = msg;
       toast.classList.remove('hidden');
       clearTimeout(window._dpeToastTimer);
       window._dpeToastTimer = setTimeout(() => { toast.classList.add('hidden'); }, 3200);
@@ -511,7 +535,6 @@
         }
       });
 
-      // Ajoute automatiquement les images transmises (allImages / variantsList) si aucune variante détaillée n'existe
       const extraImgs = Array.isArray(p.allImages) ? p.allImages : (Array.isArray(p.variantsList) ? p.variantsList : []);
       if (list.length === 0 && extraImgs.length > 0) {
         extraImgs.forEach((imgUrl, idx) => {
@@ -597,15 +620,15 @@
       liste.innerHTML = window.panierVariantes.map((item, idx) => `
         <div class="flex items-center justify-between gap-2 bg-slate-950/90 border border-emerald-500/40 rounded-xl px-3 py-2 text-[11px]">
           <div class="flex items-center gap-2 min-w-0">
-            <span class="w-3 h-3 rounded-full border border-white/40 flex-shrink-0" style="background:${item.couleurHex};"></span>
+            <span class="w-3 h-3 rounded-full border border-white/40 flex-shrink-0" style="background:${escapeAttr(item.couleurHex)};"></span>
             <div class="truncate">
-              <span class="font-bold text-emerald-300">${item.nom}</span>
-              <span class="text-slate-400 block text-[10px]">Couleur : ${item.couleurExacte} • ${(item.poidsGr * item.quantite)} g</span>
+              <span class="font-bold text-emerald-300">${escapeHtml(item.nom)}</span>
+              <span class="text-slate-400 block text-[10px]">Couleur : ${escapeHtml(item.couleurExacte)} • ${escapeHtml(item.poidsGr * item.quantite)} g</span>
             </div>
           </div>
           <div class="flex items-center gap-2 flex-shrink-0">
-            <span class="font-bold text-white">x${item.quantite}</span>
-            <span class="font-extrabold text-[#d4af37]">${(item.prix * item.quantite).toLocaleString('fr-FR')} ${devise}</span>
+            <span class="font-bold text-white">x${escapeHtml(item.quantite)}</span>
+            <span class="font-extrabold text-[#d4af37]">${escapeHtml((item.prix * item.quantite).toLocaleString('fr-FR'))} ${escapeHtml(devise)}</span>
             <button type="button" onclick="window.retirerDuPanier(${idx})" class="text-rose-400 hover:text-rose-300 font-black px-1.5" title="Retirer">✕</button>
           </div>
         </div>
@@ -691,7 +714,7 @@
       calculerTotal();
     };
 
-    function calculerTotal() {
+    window.calculerTotal = function() {
       if (!window.produitCourant) {
         return { unitaire: 0, sousTotalBrut: 0, remisePourcent: 0, remiseMontant: 0, sousTotal: 0, transport: 0, douane: 0, total: 0, poidsKg: 0, poidsGr: 0, articles: [] };
       }
@@ -730,7 +753,6 @@
       const poidsTotalGr = lignes.reduce((sum, l) => sum + (l.poidsGr * l.quantite), 0);
       const totalArticles = lignes.reduce((sum, l) => sum + l.quantite, 0);
 
-      // Remise volume : 1% à partir de 10 articles, 2% à partir de 50 articles et plus (max 2%)
       const remiseInfo = obtenirRemiseVolume(totalArticles);
       const remiseMontant = Math.round(sousTotalBrut * (remiseInfo.pourcent / 100));
       const sousTotal = Math.max(0, sousTotalBrut - remiseMontant);
@@ -780,10 +802,12 @@
         poidsGr: poidsNetGr,
         articles: lignes
       };
-    }
+    };
 
     function viderPanier() {
+      window.panierVariantes = [];
       window.quantitePanierCount = 0;
+      document.getElementById('blocArticlesPanier')?.classList.add('hidden');
       document.getElementById('quantitePanier').innerText = "0";
       document.getElementById('montantTotalCalcul').innerText = "0 FCFA";
       document.getElementById('blocQuantitePanier')?.classList.add('hidden');
@@ -863,7 +887,6 @@
       }
     }
 
-    // Lecture immédiate (~0,1 s) des données transmises par la page précédente ou le cache
     function trouverProduitTransmisOuCache(produitId) {
       const storageKeys = [
         produitId ? `dakpro_product_${produitId}` : null,
@@ -906,7 +929,6 @@
       window.parrainAffilie = urlParams.get('ref') || urlParams.get('aff') || "aucun";
       window.produitIdCourant = produitId;
 
-      // Affichage immédiat (~0,1 s) des informations et images transmises
       const transmitted = trouverProduitTransmisOuCache(produitId);
       if (transmitted) {
         window.produitCourant = transmitted;
@@ -1027,6 +1049,11 @@
       if (!v) return;
       window.varianteSelectionnee = v;
 
+      const dansPanier = window.panierVariantes.find(it => it.id === v.id && it.nom === v.nom);
+      window.quantitePanierCount = dansPanier ? dansPanier.quantite : 1;
+      const qteEl = document.getElementById('quantitePanier');
+      if (qteEl) qteEl.innerText = String(window.quantitePanierCount);
+
       const img = document.getElementById('produitImage');
       const imgBg = document.getElementById('produitImageBg');
       const video = document.getElementById('produitVideo');
@@ -1047,7 +1074,7 @@
       const titre = p.nom || p.title || p.name || 'Article DAKPROÉLITE';
       document.getElementById('produitNom').innerText = titre;
       document.getElementById('produitDescription').innerText = p.description || 'Article importé de haute qualité, disponible en plusieurs coloris et tailles.';
-      
+
       const cat = p.categorie || p.category;
       if (cat) {
         document.getElementById('badgeCategorie').innerText = cat;
@@ -1058,7 +1085,7 @@
       const devise = p.devise || "FCFA";
 
       document.getElementById('prixPromo').innerText = `${pPromo.toLocaleString('fr-FR')} ${devise}`;
-      
+
       if (pNormal > pPromo) {
         const elPrixNormal = document.getElementById('prixNormal');
         elPrixNormal.innerText = `${pNormal.toLocaleString('fr-FR')} ${devise}`;
@@ -1079,18 +1106,18 @@
             <div onclick="window.selectDpeVariant(${idx})" class="dpe-var-card flex-shrink-0 w-[165px] rounded-2xl bg-slate-950 border ${idx === 0 ? 'border-[#d4af37] ring-2 ring-[#d4af37]/40' : 'border-slate-700'} p-2.5 flex flex-col justify-between gap-2 cursor-pointer transition-all">
               <div>
                 <div class="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 mb-2">
-                  ${v.image ? `<img src="${v.image}" alt="${v.nom}" class="w-full h-full object-cover" loading="eager" decoding="sync">` : ''}
+                  ${v.image ? `<img src="${escapeAttr(v.image)}" alt="${escapeAttr(v.nom)}" class="w-full h-full object-cover" loading="eager" decoding="sync">` : ''}
                   <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-slate-950/85 text-[9px] font-bold text-white flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full inline-block" style="background:${v.couleurHex};"></span>
-                    ${v.couleurExacte}
+                    <span class="w-2 h-2 rounded-full inline-block" style="background:${escapeAttr(v.couleurHex)};"></span>
+                    ${escapeHtml(v.couleurExacte)}
                   </span>
                 </div>
-                <div class="text-[11px] font-extrabold text-white truncate" title="${v.nom}">${v.nom}</div>
+                <div class="text-[11px] font-extrabold text-white truncate" title="${escapeAttr(v.nom)}">${escapeHtml(v.nom)}</div>
                 <div class="flex items-center justify-between text-[10px] mt-0.5">
-                  <span class="${st.estEpuise ? 'text-rose-400' : 'text-emerald-400'} font-semibold">${st.texte}</span>
-                  <span class="text-slate-400">${v.poidsGr}g</span>
+                  <span class="${st.estEpuise ? 'text-rose-400' : 'text-emerald-400'} font-semibold">${escapeHtml(st.texte)}</span>
+                  <span class="text-slate-400">${escapeHtml(v.poidsGr)}g</span>
                 </div>
-                ${prixTxt ? `<div class="text-xs font-black text-[#d4af37] mt-1">${prixTxt}</div>` : ''}
+                ${prixTxt ? `<div class="text-xs font-black text-[#d4af37] mt-1">${escapeHtml(prixTxt)}</div>` : ''}
               </div>
               <button type="button" onclick="window.ajouterVarianteAuPanier(${idx}, event)" class="dpe-var-add-btn w-full py-1.5 rounded-lg dpe-gold-btn font-extrabold text-[10px] transition-all">
                 + Ajouter au panier
@@ -1188,10 +1215,10 @@
       const totalMontant = Math.max(100, Math.round(calculDetails.total > 0 ? calculDetails.total : 2000));
       const couleursResume = calculDetails.articles.map(a => a.couleurExacte).join(', ');
 
-      const splitNom = client.nom.split(' ');
+      const splitNom = client.nom.split(/\s+/);
       const prenom = splitNom[0] || client.nom;
       const nomFamille = splitNom.slice(1).join(' ') || prenom;
-      const telSecurise = client.tel.replace(/[^0-9+]/g, '');
+      const telNettoye = client.tel.replace(/[^0-9]/g, '');
       const customerEmail = (window.currentUserUID && window.currentUserUID !== "ANONYMOUS_USER")
         ? `${window.currentUserUID.toLowerCase()}@dakproelite.com`
         : "client@dakproelite.com";
@@ -1218,7 +1245,7 @@
             lastname: nomFamille,
             firstname: prenom,
             phone_number: {
-              number: telSecurise,
+              number: telNettoye,
               country: FEDAPAY_CONFIG.phoneCountry
             }
           },
@@ -1228,7 +1255,7 @@
 
             if (response && (response.reason === FedaPay.CHECKOUT_COMPLETED || response.transaction?.status === 'approved')) {
               const txId = response.transaction && response.transaction.id ? `FEDA-${response.transaction.id}` : `TX-${Math.floor(10000000 + Math.random() * 90000000)}`;
-              
+
               await enregistrerPaiementEtNotifications(client, txId, calculDetails);
 
               window.paiementDejaEffectue = true;
@@ -1267,7 +1294,6 @@
       }
     };
 
-    // Exécution immédiate et au DOMContentLoaded pour un affichage quasi instantané (~0,1 s)
     if (document.readyState === 'loading') {
       window.addEventListener('DOMContentLoaded', chargerProduitDynamique);
     } else {
