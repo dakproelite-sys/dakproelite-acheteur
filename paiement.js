@@ -3,7 +3,7 @@
    ============================================================
 
    PAIEMENT :
-   FedaPay Checkout (LIVE / SANDBOX)
+   FedaPay Checkout LIVE
 
    IMPORTANT :
    - La clé PUBLIQUE peut être dans ce fichier.
@@ -24,21 +24,17 @@ import {
 
 
 /* ============================================================
-   CONFIGURATION FEDAPAY, VERSION & LOGISTIQUE
+   CONFIGURATION
    ============================================================ */
 
-const PAYMENT_MODULE_VERSION = "dpe-pay-v6-20261122";
+const FEDAPAY_PUBLIC_KEY =
+  "pk_live_DUGntocyIWTtfHBOvFpPtq54";
 
-const FEDAPAY_CONFIG = {
-  // Vérifiez dans votre tableau de bord FedaPay que cette clé publique
-  // correspond bien à l'environnement choisi ("live" -> pk_live_... / "sandbox" -> pk_sandbox_...)
-  publicKey: "pk_live_DUGntocyIWTtfHBOvFpPtq54",
-  environment: "live", // "live" ou "sandbox"
-  scriptUrl: "https://cdn.fedapay.com/checkout.js?v=1.1.7",
-  defaultCurrency: "XOF",
-  defaultLocale: "fr",
-  defaultPhoneCountry: "bj"
-};
+const FEDAPAY_ENVIRONMENT =
+  "live";
+
+const FEDAPAY_SCRIPT_URL =
+  "https://cdn.fedapay.com/checkout.js?v=1.1.7";
 
 const LOGISTICS_CONFIG = {
   minShippingFee: 2500,
@@ -60,35 +56,6 @@ const COLOR_MAP = [
   { keys: ["brown", "marron", "coffee", "café", "chocolate", "camel", "tan", "beige", "sand", "sable"], label: "Marron / Beige", hex: "#92400e" },
   { keys: ["grey", "gray", "gris", "grise", "silver", "argent"], label: "Gris", hex: "#6b7280" }
 ];
-
-
-/* ============================================================
-   NETTOYAGE DES ANCIENNES VERSIONS (SANS TOUCHER AUX PAIEMENTS)
-   ============================================================ */
-
-async function nettoyerAnciennesVersionsEtCaches() {
-  try {
-    const versionKey = "dakpro_payment_module_version";
-    const lastVersion = localStorage.getItem(versionKey);
-
-    if (lastVersion !== PAYMENT_MODULE_VERSION) {
-      localStorage.removeItem("dakpro_cached_products");
-      sessionStorage.removeItem("dakpro_cached_products");
-      localStorage.setItem(versionKey, PAYMENT_MODULE_VERSION);
-    }
-  } catch (e) {}
-
-  if (typeof caches !== "undefined" && typeof caches.keys === "function") {
-    try {
-      const cacheNames = await caches.keys();
-      await Promise.all(
-        cacheNames
-          .filter(name => !name.includes(PAYMENT_MODULE_VERSION) && (/dakpro/i.test(name) || /old|temp|stale|v\d+/i.test(name)))
-          .map(name => caches.delete(name).catch(() => false))
-      );
-    } catch (e) {}
-  }
-}
 
 
 /* ============================================================
@@ -160,38 +127,6 @@ function cleanPhone(phone) {
   return String(phone || "")
     .trim()
     .replace(/[^\d+]/g, "");
-}
-
-function validateFedaPayTokenConfig() {
-  const key = String(FEDAPAY_CONFIG.publicKey || "").trim();
-  const env = String(FEDAPAY_CONFIG.environment || "live").trim().toLowerCase();
-
-  if (!key || key.length < 10) {
-    return {
-      ok: false,
-      reason: "La clé publique FedaPay est manquante."
-    };
-  }
-
-  if (env === "live" && key.startsWith("pk_sandbox_")) {
-    return {
-      ok: false,
-      reason: "Environnement 'live' détecté avec une clé 'pk_sandbox_'."
-    };
-  }
-
-  if (env === "sandbox" && key.startsWith("pk_live_")) {
-    return {
-      ok: false,
-      reason: "Environnement 'sandbox' détecté avec une clé 'pk_live_'."
-    };
-  }
-
-  return {
-    ok: true,
-    publicKey: key,
-    environment: env === "sandbox" ? "sandbox" : "live"
-  };
 }
 
 function parserPoidsEnGrammes(rawWeight) {
@@ -335,7 +270,7 @@ function extraireVariantesProduit(p = {}, fallbackPrix = 0, fallbackPoidsGr = 25
   return list;
 }
 
-// Paliers de remise identiques à produit.html : 10 articles -> 1%, 50 articles et plus -> 2%
+// Paliers de remise : 10 articles -> 1%, 50 articles et plus -> 2%
 function obtenirRemiseVolume(totalArticles) {
   if (totalArticles >= 50) return { pourcent: 2, palier: 50 };
   if (totalArticles >= 10) return { pourcent: 1, palier: 10 };
@@ -435,7 +370,7 @@ function loadFedaPayScript() {
             return;
           }
 
-          elapsed += 120;
+          elapsed += 100;
 
           if (elapsed >= 15000) {
             clearInterval(timer);
@@ -445,13 +380,13 @@ function loadFedaPayScript() {
               )
             );
           }
-        }, 120);
+        }, 100);
 
         return;
       }
 
       const script = document.createElement("script");
-      script.src = FEDAPAY_CONFIG.scriptUrl;
+      script.src = FEDAPAY_SCRIPT_URL;
       script.async = true;
       script.dataset.dakproFedapay = "true";
 
@@ -491,8 +426,6 @@ export function init(
   auth,
   userId
 ) {
-  nettoyerAnciennesVersionsEtCaches();
-
   if (!container || !db) {
     console.error(
       "DAKPRO : paiement impossible à initialiser."
@@ -528,27 +461,29 @@ export function init(
 
 
   /* ==========================================================
-     INTERFACE COMPLETE (RESPONSIVE PC, GRANDS ÉCRANS, TABLETTE, ANDROID)
+     INTERFACE COMPLETE (STABLE, SANS DILATATION NI JEU)
      ========================================================== */
 
   container.innerHTML = `
     <style>
-      .dak-payment {
-        width:100%;
-        max-width:1440px;
-        margin:0 auto;
-        color:#fff;
-        font-family:Poppins,Arial,sans-serif;
+      .dak-payment,
+      .dak-payment *,
+      .dak-payment *::before,
+      .dak-payment *::after {
+        box-sizing:border-box;
         touch-action:manipulation;
-        -webkit-text-size-adjust:100%;
+        animation:none !important;
+        transition:none !important;
       }
 
-      .dak-payment,
-      .dak-payment .dak-box,
-      .dak-payment .dak-cart-item,
-      .dak-payment .dak-var-pill,
-      .dak-payment .dak-pay-button {
-        box-sizing:border-box;
+      .dak-payment {
+        width:100%;
+        max-width:100%;
+        overflow:hidden;
+        color:#fff;
+        font-family:Poppins,Arial,sans-serif;
+        transform:none !important;
+        zoom:1;
       }
 
       .dak-payment-title {
@@ -561,22 +496,25 @@ export function init(
         margin-bottom:20px;
         border-bottom:1px solid #292d37;
         color:#d4af37;
-        font-size:clamp(17px, 2vw, 22px);
+        font-size:21px;
         font-weight:800;
       }
 
       .dak-payment-grid {
         display:grid;
-        grid-template-columns:minmax(290px, 0.92fr) minmax(320px, 1.08fr);
+        grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
         gap:20px;
+        width:100%;
       }
 
       .dak-box {
+        width:100%;
+        min-width:0;
         background:#0a0d14;
         border:1px solid #252932;
         border-radius:15px;
-        padding:clamp(15px, 2vw, 24px);
-        box-shadow:0 8px 24px rgba(0,0,0,.18);
+        padding:20px;
+        box-shadow:0 10px 35px rgba(0,0,0,.18);
       }
 
       .dak-box-title {
@@ -602,9 +540,8 @@ export function init(
         border:1px solid #333;
         background:#12161f;
         color:#fff;
-        font-size:15px;
+        font-size:14px;
         outline:none;
-        touch-action:manipulation;
       }
 
       .dak-input:focus {
@@ -641,7 +578,7 @@ export function init(
         background:#ffffff;
         border-radius:8px;
         padding:6px 4px;
-        min-height:36px;
+        height:36px;
         display:flex;
         flex-direction:column;
         align-items:center;
@@ -684,9 +621,10 @@ export function init(
       }
 
       .dak-cart {
-        max-height:420px;
+        height:320px;
+        max-height:320px;
         overflow-y:auto;
-        -webkit-overflow-scrolling:touch;
+        overflow-x:hidden;
         margin-bottom:15px;
       }
 
@@ -697,7 +635,6 @@ export function init(
         padding:12px;
         margin-bottom:10px;
         font-size:13px;
-        transition:border-color .18s ease, background-color .18s ease;
       }
 
       .dak-cart-item.primary-item {
@@ -733,7 +670,6 @@ export function init(
         display:flex;
         gap:6px;
         overflow-x:auto;
-        -webkit-overflow-scrolling:touch;
         margin-top:10px;
         padding-top:8px;
         border-top:1px dashed #292f3e;
@@ -745,31 +681,19 @@ export function init(
         border:1px solid #334155;
         color:#e2e8f0;
         border-radius:7px;
-        padding:6px 10px;
-        font-size:11px;
+        padding:5px 8px;
+        font-size:10px;
         font-weight:700;
         cursor:pointer;
         display:inline-flex;
         align-items:center;
         gap:5px;
-        touch-action:manipulation;
-        transition:border-color .18s ease, background-color .18s ease, color .18s ease;
-      }
-
-      .dak-var-pill:hover {
-        border-color:#d4af37;
-        color:#d4af37;
       }
 
       .dak-var-pill.active {
         border-color:#22c55e;
         color:#86efac;
         background:rgba(34,197,94,.08);
-      }
-
-      .dak-var-pill:disabled {
-        opacity:.55;
-        cursor:not-allowed;
       }
 
       .dak-summary {
@@ -787,14 +711,15 @@ export function init(
         margin-top:12px;
         border-top:1px dashed #333;
         color:#d4af37;
-        font-size:clamp(18px, 2vw, 22px);
+        font-size:20px;
         font-weight:900;
       }
 
       .dak-pay-button {
         width:100%;
+        height:52px;
         margin-top:18px;
-        padding:15px;
+        padding:0 15px;
         border:0;
         border-radius:9px;
         background:#d4af37;
@@ -802,12 +727,9 @@ export function init(
         font-size:15px;
         font-weight:900;
         cursor:pointer;
-        touch-action:manipulation;
-        transition:background-color .18s ease;
-      }
-
-      .dak-pay-button:hover {
-        background:#f3e5ab;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
       }
 
       .dak-pay-button:disabled {
@@ -823,7 +745,6 @@ export function init(
         border-radius:7px;
         font-size:12px;
         cursor:pointer;
-        touch-action:manipulation;
       }
 
       .dak-status {
@@ -845,13 +766,10 @@ export function init(
         line-height:1.6;
       }
 
-      @media(max-width:900px) {
+      @media(max-width:850px) {
         .dak-payment-grid {
           grid-template-columns:1fr;
         }
-      }
-
-      @media(max-width:520px) {
         .dak-methods-grid {
           grid-template-columns:repeat(3, minmax(0, 1fr));
         }
@@ -964,13 +882,13 @@ export function init(
             <input id="shippingAddress" class="dak-input" type="text" placeholder="Quartier, rue, maison...">
           </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <div class="dak-field" style="flex:1;min-width:140px;">
+          <div style="display:flex;gap:10px;">
+            <div class="dak-field" style="flex:1;min-width:0;">
               <label class="dak-label">Ville</label>
               <input id="shippingCity" class="dak-input" type="text" placeholder="Cotonou">
             </div>
 
-            <div class="dak-field" style="flex:1;min-width:140px;">
+            <div class="dak-field" style="flex:1;min-width:0;">
               <label class="dak-label">Pays</label>
               <input id="shippingCountry" class="dak-input" type="text" value="Bénin">
             </div>
@@ -1043,7 +961,6 @@ export function init(
   let currentCartList = [];
   let currentCartCount = 0;
   let paymentInProgress = false;
-  let addingVariantLock = false;
 
 
   /* ==========================================================
@@ -1132,7 +1049,6 @@ export function init(
      ========================================================== */
 
   window.dakproAjouterVariantePanier = async function(cartKey, variantIndex) {
-    if (addingVariantLock) return;
     const entry = currentCartItems[cartKey];
     if (!entry || !Array.isArray(entry.variantesDisponibles)) return;
     const variant = entry.variantesDisponibles[variantIndex];
@@ -1144,7 +1060,6 @@ export function init(
       return;
     }
 
-    addingVariantLock = true;
     const prixVar = Number(variant.prix) > 0 ? Number(variant.prix) : Number(entry.prixUnitaire || 0);
     const poidsVar = Number(variant.poidsGr) > 0 ? Number(variant.poidsGr) : (Number(entry.poidsGr) || 250);
     const varKey = `${cartKey}_var_${String(variant.id || variantIndex).replace(/[^a-zA-Z0-9_-]/g, "")}`;
@@ -1183,8 +1098,6 @@ export function init(
     } catch (err) {
       console.error("Erreur ajout variante panier :", err);
       showStatus("Impossible d'ajouter cette variante.", "error");
-    } finally {
-      addingVariantLock = false;
     }
   };
 
@@ -1332,7 +1245,7 @@ export function init(
               <strong>${escapeHTML(it.nom)}</strong>
               <div class="dak-item-meta">
                 <span class="dak-pill">
-                  <span style="width:7px;height:7px;border-radius:50%;background:${escapeAttr(it.couleurHex)};display:inline-block;margin-right:4px;"></span>
+                  <span style="width:7px;height:7px;border-radius:50%;background:${escapeAttr(vColorOrHex(it.couleurHex))};display:inline-block;margin-right:4px;"></span>
                   ${escapeHTML(it.variante)} (${escapeHTML(it.couleurChoisie)})
                 </span>
                 <span class="dak-pill" style="color:${it.stockEpuise ? "#f87171" : "#4ade80"};">
@@ -1354,6 +1267,10 @@ export function init(
           ${varButtonsHTML}
         </div>
       `;
+    }
+
+    function vColorOrHex(hex) {
+      return hex || "#d4af37";
     }
 
     let html = "";
@@ -1410,7 +1327,7 @@ export function init(
     const d = currentLogisticsDetails || calculerLogistiquePanier([]);
 
     if (checkoutItemsCount) {
-      checkoutItemsCount.textContent = currentCartCount;
+      checkoutItemsCount.textContent = String(currentCartCount);
     }
 
     if (checkoutWeightSummary) {
@@ -1480,7 +1397,7 @@ export function init(
 
 
   /* ==========================================================
-     4 — PAIEMENT FEDAPAY (OUVERTURE DOUCE & VÉRIFICATION JETON)
+     4 — PAIEMENT FEDAPAY
      ========================================================== */
 
   executePaymentBtn
@@ -1489,15 +1406,6 @@ export function init(
 
       if (currentCartTotalFCFA <= 0 || Object.keys(currentCartItems).length === 0) {
         showStatus("Votre panier est vide.", "error");
-        return;
-      }
-
-      const tokenCheck = validateFedaPayTokenConfig();
-      if (!tokenCheck.ok) {
-        showStatus(
-          `❌ Configuration du jeton FedaPay invalide : ${tokenCheck.reason}`,
-          "error"
-        );
         return;
       }
 
@@ -1532,13 +1440,13 @@ export function init(
       paymentInProgress = true;
       executePaymentBtn.disabled = true;
 
-      showStatus("Vérification du jeton et chargement du formulaire...", "info");
+      showStatus("Préparation de votre paiement sécurisé...", "info");
 
       try {
         const FedaPay = await loadFedaPayScript();
         const orderId = generateOrderId();
         const paymentReference = generatePaymentReference(orderId);
-        const amount = Math.max(100, Math.round(currentCartTotalFCFA));
+        const amount = Math.round(currentCartTotalFCFA);
         const name = splitName(clientName);
         const d = currentLogisticsDetails;
         const formattedPhone = cleanPhone(clientPhone);
@@ -1562,7 +1470,7 @@ export function init(
           poidsGr: d.poidsGr,
           poidsKg: d.poidsKg,
           montantTotal: amount,
-          devise: FEDAPAY_CONFIG.defaultCurrency,
+          devise: "XOF",
           date: Date.now(),
           client: {
             nom: clientName,
@@ -1579,7 +1487,7 @@ export function init(
           moyenPaiement: {
             fournisseur: "FedaPay",
             type: "Checkout",
-            environnement: tokenCheck.environment,
+            environnement: FEDAPAY_ENVIRONMENT,
             reference: paymentReference
           },
           paiement: {
@@ -1602,9 +1510,9 @@ export function init(
         );
 
         const checkoutOptions = {
-          public_key: tokenCheck.publicKey,
-          environment: tokenCheck.environment,
-          locale: FEDAPAY_CONFIG.defaultLocale,
+          public_key: FEDAPAY_PUBLIC_KEY,
+          environment: FEDAPAY_ENVIRONMENT,
+          locale: "fr",
           transaction: {
             amount: amount,
             description: `Commande DAKPRO ÉLITE ${paymentReference}`,
@@ -1615,7 +1523,7 @@ export function init(
             }
           },
           currency: {
-            iso: FEDAPAY_CONFIG.defaultCurrency
+            iso: "XOF"
           },
           customer: {
             email: clientEmail,
@@ -1625,7 +1533,7 @@ export function init(
               ? {
                   phone_number: {
                     number: formattedPhone,
-                    country: FEDAPAY_CONFIG.defaultPhoneCountry
+                    country: "bj"
                   }
                 }
               : {})
@@ -1674,28 +1582,11 @@ export function init(
         }
 
         showStatus(
-          `Ouverture douce du formulaire de paiement (${formatCFA(amount)})...`,
+          `Ouverture du paiement — montant réel : ${formatCFA(amount)}`,
           "info"
         );
 
-        setTimeout(() => {
-          try {
-            widget.open();
-          } catch (openErr) {
-            console.error("Erreur widget.open() :", openErr);
-            paymentInProgress = false;
-            executePaymentBtn.disabled = false;
-            showStatus(
-              "❌ Impossible d'ouvrir le formulaire FedaPay. Vérifiez votre jeton public dans votre compte FedaPay.",
-              "error"
-            );
-          } finally {
-            setTimeout(() => {
-              paymentInProgress = false;
-              executePaymentBtn.disabled = false;
-            }, 1500);
-          }
-        }, 300);
+        widget.open();
       } catch (error) {
         console.error("Erreur paiement :", error);
 
@@ -1703,7 +1594,7 @@ export function init(
         executePaymentBtn.disabled = false;
 
         showStatus(
-          "❌ Impossible d'ouvrir le paiement. Vérifiez votre jeton FedaPay ou votre connexion.",
+          "❌ Impossible d'ouvrir le paiement. Vérifiez votre connexion ou la configuration.",
           "error"
         );
       }
