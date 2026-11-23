@@ -24,7 +24,7 @@ import {
 
 
 /* ============================================================
-   CONFIGURATION
+   CONFIGURATION FEDAPAY & LOGISTIQUE
    ============================================================ */
 
 const FEDAPAY_PUBLIC_KEY =
@@ -270,10 +270,10 @@ function extraireVariantesProduit(p = {}, fallbackPrix = 0, fallbackPoidsGr = 25
   return list;
 }
 
-// Paliers de remise : 10 articles -> 3%, 50 articles et plus -> 5%
+// Paliers de remise : 10 articles -> 1%, 50 articles et plus -> 2%
 function obtenirRemiseVolume(totalArticles) {
-  if (totalArticles >= 50) return { pourcent: 5, palier: 50 };
-  if (totalArticles >= 10) return { pourcent: 3, palier: 10 };
+  if (totalArticles >= 50) return { pourcent: 2, palier: 50 };
+  if (totalArticles >= 10) return { pourcent: 1, palier: 10 };
   return { pourcent: 0, palier: 0 };
 }
 
@@ -417,7 +417,7 @@ function loadFedaPayScript() {
 
 
 /* ============================================================
-   INTERFACE
+   INTERFACE DANS #dashboard-container
    ============================================================ */
 
 export function init(
@@ -426,7 +426,11 @@ export function init(
   auth,
   userId
 ) {
-  if (!container || !db) {
+  const targetContainer =
+    container ||
+    document.getElementById("dashboard-container");
+
+  if (!targetContainer || !db) {
     console.error(
       "DAKPRO : paiement impossible à initialiser."
     );
@@ -442,14 +446,14 @@ export function init(
     );
 
   if (!currentUid) {
-    container.innerHTML = `
+    targetContainer.innerHTML = `
       <div style="
         padding:45px 20px;
         text-align:center;
         background:#0a0d14;
         border-radius:15px;
         color:#fff;
-        font-family:Poppins,Arial,sans-serif;
+        font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
       ">
         <div style="font-size:48px;margin-bottom:15px;">🔐</div>
         <h2 style="color:#d4af37;">Connexion nécessaire</h2>
@@ -459,17 +463,25 @@ export function init(
     return;
   }
 
-
-  /* ==========================================================
-     INTERFACE COMPLETE
-     ========================================================== */
-
-  container.innerHTML = `
+  targetContainer.innerHTML = `
     <style>
+      .dak-payment,
+      .dak-payment *,
+      .dak-payment *::before,
+      .dak-payment *::after {
+        box-sizing:border-box;
+        touch-action:manipulation;
+        animation:none !important;
+        transition:none !important;
+      }
+
       .dak-payment {
         width:100%;
-        color:#fff;
-        font-family:Poppins,Arial,sans-serif;
+        max-width:100%;
+        overflow:hidden;
+        color:#f5f5f7;
+        font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+        transform:none !important;
       }
 
       .dak-payment-title {
@@ -480,7 +492,7 @@ export function init(
         flex-wrap:wrap;
         padding-bottom:14px;
         margin-bottom:20px;
-        border-bottom:1px solid #292d37;
+        border-bottom:1px solid #2a2a32;
         color:#d4af37;
         font-size:21px;
         font-weight:800;
@@ -488,13 +500,16 @@ export function init(
 
       .dak-payment-grid {
         display:grid;
-        grid-template-columns:minmax(280px,0.9fr) minmax(320px,1.1fr);
+        grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);
         gap:20px;
+        width:100%;
       }
 
       .dak-box {
+        width:100%;
+        min-width:0;
         background:#0a0d14;
-        border:1px solid #252932;
+        border:1px solid #2a2a32;
         border-radius:15px;
         padding:20px;
         box-shadow:0 10px 35px rgba(0,0,0,.18);
@@ -518,12 +533,12 @@ export function init(
 
       .dak-input {
         width:100%;
-        box-sizing:border-box;
         padding:12px;
         border-radius:8px;
         border:1px solid #333;
         background:#12161f;
         color:#fff;
+        font-size:14px;
         outline:none;
       }
 
@@ -561,7 +576,7 @@ export function init(
         background:#ffffff;
         border-radius:8px;
         padding:6px 4px;
-        min-height:36px;
+        height:36px;
         display:flex;
         flex-direction:column;
         align-items:center;
@@ -604,8 +619,10 @@ export function init(
       }
 
       .dak-cart {
-        max-height:420px;
+        height:320px;
+        max-height:320px;
         overflow-y:auto;
+        overflow-x:hidden;
         margin-bottom:15px;
       }
 
@@ -671,11 +688,6 @@ export function init(
         gap:5px;
       }
 
-      .dak-var-pill:hover {
-        border-color:#d4af37;
-        color:#d4af37;
-      }
-
       .dak-var-pill.active {
         border-color:#22c55e;
         color:#86efac;
@@ -703,19 +715,19 @@ export function init(
 
       .dak-pay-button {
         width:100%;
+        height:52px;
         margin-top:18px;
-        padding:15px;
+        padding:0 15px;
         border:0;
         border-radius:9px;
         background:#d4af37;
         color:#000;
-        font-size:16px;
+        font-size:15px;
         font-weight:900;
         cursor:pointer;
-      }
-
-      .dak-pay-button:hover {
-        background:#f3e5ab;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
       }
 
       .dak-pay-button:disabled {
@@ -729,6 +741,7 @@ export function init(
         color:#ef4444;
         padding:8px 12px;
         border-radius:7px;
+        font-size:12px;
         cursor:pointer;
       }
 
@@ -756,7 +769,7 @@ export function init(
           grid-template-columns:1fr;
         }
         .dak-methods-grid {
-          grid-template-columns:repeat(4, minmax(0, 1fr));
+          grid-template-columns:repeat(3, minmax(0, 1fr));
         }
       }
     </style>
@@ -765,7 +778,7 @@ export function init(
 
       <div class="dak-payment-title">
         <span>💳 DAKPRO ÉLITE — Paiement sécurisé</span>
-        <button id="btnClearCart" class="dak-clear">🗑️ Vider le panier</button>
+        <button type="button" id="btnClearCart" class="dak-clear">🗑️ Vider le panier</button>
       </div>
 
       <div class="dak-payment-grid">
@@ -868,12 +881,12 @@ export function init(
           </div>
 
           <div style="display:flex;gap:10px;">
-            <div class="dak-field" style="flex:1;">
+            <div class="dak-field" style="flex:1;min-width:0;">
               <label class="dak-label">Ville</label>
               <input id="shippingCity" class="dak-input" type="text" placeholder="Cotonou">
             </div>
 
-            <div class="dak-field" style="flex:1;">
+            <div class="dak-field" style="flex:1;min-width:0;">
               <label class="dak-label">Pays</label>
               <input id="shippingCountry" class="dak-input" type="text" value="Bénin">
             </div>
@@ -903,7 +916,7 @@ export function init(
           </div>
 
           <div class="dak-summary">
-            <span id="checkoutDiscountLabel">Remise volume (10+ : -3% • 50+ : -5%)</span>
+            <span id="checkoutDiscountLabel">Remise volume (10+ : -1% • 50+ : -2%)</span>
             <strong id="checkoutDiscountAmount" style="color:#70e090;">-0 FCFA</strong>
           </div>
 
@@ -922,7 +935,7 @@ export function init(
             <span id="checkoutTotalAmount">0 FCFA</span>
           </div>
 
-          <button id="btnExecutePayment" class="dak-pay-button">
+          <button type="button" id="btnExecutePayment" class="dak-pay-button">
             ⚡ Payer maintenant
           </button>
 
@@ -937,7 +950,7 @@ export function init(
 
 
   /* ==========================================================
-     VARIABLES
+     VARIABLES & DOM
      ========================================================== */
 
   let currentCartTotalFCFA = 0;
@@ -947,34 +960,29 @@ export function init(
   let currentCartCount = 0;
   let paymentInProgress = false;
 
+  const customerName = targetContainer.querySelector("#payCustomerName");
+  const customerEmail = targetContainer.querySelector("#payCustomerEmail");
+  const customerPhone = targetContainer.querySelector("#payCustomerPhone");
 
-  /* ==========================================================
-     DOM
-     ========================================================== */
+  const shippingName = targetContainer.querySelector("#shippingName");
+  const shippingPhone = targetContainer.querySelector("#shippingPhone");
+  const shippingAddress = targetContainer.querySelector("#shippingAddress");
+  const shippingCity = targetContainer.querySelector("#shippingCity");
+  const shippingCountry = targetContainer.querySelector("#shippingCountry");
 
-  const customerName = document.getElementById("payCustomerName");
-  const customerEmail = document.getElementById("payCustomerEmail");
-  const customerPhone = document.getElementById("payCustomerPhone");
+  const cartItemsContainer = targetContainer.querySelector("#cartItemsContainer");
+  const checkoutItemsCount = targetContainer.querySelector("#checkoutItemsCount");
+  const checkoutWeightSummary = targetContainer.querySelector("#checkoutWeightSummary");
+  const checkoutSubtotalAmount = targetContainer.querySelector("#checkoutSubtotalAmount");
+  const checkoutDiscountLabel = targetContainer.querySelector("#checkoutDiscountLabel");
+  const checkoutDiscountAmount = targetContainer.querySelector("#checkoutDiscountAmount");
+  const checkoutShippingKg = targetContainer.querySelector("#checkoutShippingKg");
+  const checkoutShippingAmount = targetContainer.querySelector("#checkoutShippingAmount");
+  const checkoutCustomsAmount = targetContainer.querySelector("#checkoutCustomsAmount");
+  const checkoutTotalAmount = targetContainer.querySelector("#checkoutTotalAmount");
 
-  const shippingName = document.getElementById("shippingName");
-  const shippingPhone = document.getElementById("shippingPhone");
-  const shippingAddress = document.getElementById("shippingAddress");
-  const shippingCity = document.getElementById("shippingCity");
-  const shippingCountry = document.getElementById("shippingCountry");
-
-  const cartItemsContainer = document.getElementById("cartItemsContainer");
-  const checkoutItemsCount = document.getElementById("checkoutItemsCount");
-  const checkoutWeightSummary = document.getElementById("checkoutWeightSummary");
-  const checkoutSubtotalAmount = document.getElementById("checkoutSubtotalAmount");
-  const checkoutDiscountLabel = document.getElementById("checkoutDiscountLabel");
-  const checkoutDiscountAmount = document.getElementById("checkoutDiscountAmount");
-  const checkoutShippingKg = document.getElementById("checkoutShippingKg");
-  const checkoutShippingAmount = document.getElementById("checkoutShippingAmount");
-  const checkoutCustomsAmount = document.getElementById("checkoutCustomsAmount");
-  const checkoutTotalAmount = document.getElementById("checkoutTotalAmount");
-
-  const executePaymentBtn = document.getElementById("btnExecutePayment");
-  const payStatusMessage = document.getElementById("payStatusMessage");
+  const executePaymentBtn = targetContainer.querySelector("#btnExecutePayment");
+  const payStatusMessage = targetContainer.querySelector("#payStatusMessage");
 
 
   /* ==========================================================
@@ -1012,7 +1020,7 @@ export function init(
       if (!snapshot.exists()) return;
       const user = snapshot.val() || {};
 
-      const fullName = user.nom || user.displayName || user.name || "";
+      const fullName = `${user.prenom || ""} ${user.nom || ""}`.trim() || user.displayName || user.name || "";
       const email = user.email || (auth && auth.currentUser ? auth.currentUser.email : "") || "";
       const phone = user.telephone || user.phone || "";
 
@@ -1308,7 +1316,7 @@ export function init(
     const d = currentLogisticsDetails || calculerLogistiquePanier([]);
 
     if (checkoutItemsCount) {
-      checkoutItemsCount.textContent = currentCartCount;
+      checkoutItemsCount.textContent = String(currentCartCount);
     }
 
     if (checkoutWeightSummary) {
@@ -1322,7 +1330,7 @@ export function init(
     if (checkoutDiscountLabel) {
       checkoutDiscountLabel.textContent = d.remisePourcent > 0
         ? `🎉 Remise volume active (-${d.remisePourcent}% • ${currentCartCount} art.)`
-        : "Remise volume (10+ : -3% • 50+ : -5%)";
+        : "Remise volume (10+ : -1% • 50+ : -2%)";
     }
 
     if (checkoutDiscountAmount) {
@@ -1357,8 +1365,8 @@ export function init(
      3 — VIDER LE PANIER
      ========================================================== */
 
-  document
-    .getElementById("btnClearCart")
+  targetContainer
+    .querySelector("#btnClearCart")
     ?.addEventListener("click", async () => {
       if (!confirm("Voulez-vous vraiment vider votre panier ?")) return;
 
@@ -1378,7 +1386,7 @@ export function init(
 
 
   /* ==========================================================
-     4 — PAIEMENT
+     4 — PAIEMENT FEDAPAY
      ========================================================== */
 
   executePaymentBtn
@@ -1467,7 +1475,7 @@ export function init(
           moyenPaiement: {
             fournisseur: "FedaPay",
             type: "Checkout",
-            environnement: "live",
+            environnement: FEDAPAY_ENVIRONMENT,
             reference: paymentReference
           },
           paiement: {
@@ -1610,7 +1618,10 @@ export function init(
           );
 
           setTimeout(() => {
-            if (typeof window.chargerModule === "function") {
+            const commandesCard = document.querySelector('.nav-card[data-module="commandes"]');
+            if (commandesCard) {
+              commandesCard.click();
+            } else if (typeof window.chargerModule === "function") {
               window.chargerModule("commandes");
             }
           }, 1500);
