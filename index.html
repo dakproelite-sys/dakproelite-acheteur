@@ -61,7 +61,6 @@ display:flex !important;align-items:center !important;justify-content:center !im
 background:radial-gradient(circle at 35% 30%, #1d222b, #030406) !important;
 box-shadow:inset 0 2px 6px rgba(0,0,0,0.9), inset 0 -1px 2px rgba(212,175,55,0.35), 0 1px 2px rgba(255,255,255,0.12) !important;
 user-select:none !important;-webkit-user-select:none !important;pointer-events:none !important;
-transform:none !important;transition:none !important;animation:none !important;
 }
 .logo-container::after{
 content:"";
@@ -74,15 +73,29 @@ display:block !important;width:100% !important;height:100% !important;object-fit
 background:transparent !important;
 filter:contrast(1.08) brightness(0.96) drop-shadow(0 1px 1px rgba(0,0,0,0.9)) !important;
 user-select:none !important;-webkit-user-select:none !important;pointer-events:none !important;
-transform:none !important;transition:none !important;animation:none !important;
 }
 
-.search-container{flex:1;min-width:0;display:flex;align-items:center;}
+.search-container{
+position:relative;flex:1;min-width:0;display:flex;align-items:center;
+}
 #searchBar{
 width:100%;height:40px;border:1px solid var(--gold);border-radius:20px;
-background:#000;color:#fff;padding:0 14px;outline:none;font-size:12px;
+background:#000;color:#fff;padding:0 34px 0 14px;outline:none;font-size:12px;
+transition:border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#searchBar:focus{
+border-color:var(--gold-light);
+box-shadow:0 0 0 2px rgba(212,175,55,0.22);
 }
 #searchBar::placeholder{color:#888;font-size:11px;}
+#searchBar::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;}
+.search-clear-btn{
+position:absolute;right:10px;top:50%;transform:translateY(-50%);
+background:rgba(212,175,55,0.16);color:var(--gold);border:none;
+width:20px;height:20px;border-radius:50%;font-size:11px;line-height:1;
+cursor:pointer;display:none;align-items:center;justify-content:center;
+}
+.search-clear-btn.visible{display:inline-flex;}
 
 .nav-icons{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .nav-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:9px;cursor:pointer;}
@@ -129,19 +142,6 @@ gap: 6px;
 box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-/* BANNIÈRE MISE À JOUR SERVICE WORKER */
-.sw-update-banner{
-display:none;
-width:96%;max-width:1400px;margin:8px auto 0 auto;
-background:#16202a;border:1px solid var(--gold);border-radius:10px;
-padding:10px 14px;align-items:center;justify-content:space-between;gap:10px;
-}
-.sw-update-banner span{font-size:11px;color:var(--gold-light);font-weight:600;}
-.btn-sw-refresh{
-background:var(--gold);color:#000;border:none;padding:6px 12px;
-border-radius:16px;font-size:10.5px;font-weight:800;cursor:pointer;white-space:nowrap;
-}
-
 /* BANNIÈRES */
 .banner-container{
 display:none;position:relative;width:94%;max-width:1400px;margin:12px auto;
@@ -159,63 +159,29 @@ overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:var(-
 .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;}
 .dot.active{background:var(--gold);}
 
-/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES EXACTES SUR UNE SEULE LIGNE) */
+/* BARRE DE NAVIGATION (MÉTIERS + CATÉGORIES SUR LA MÊME LIGNE, SCROLL GAUCHE/DROITE) */
 .navigation-bar-container{
-position:sticky;top:70px;z-index:4000;
-width:100%;padding:8px 12px;display:flex;flex-wrap:nowrap;gap:8px;align-items:center;
-background:#0b0e13;border-bottom:1px solid rgba(212,175,55,0.25);
-overflow-x:auto;overflow-y:hidden;
--webkit-overflow-scrolling:touch;
-touch-action:pan-x pan-y;
-transform:translateZ(0);
+width:100%;padding:8px 12px;display:flex;flex-wrap:nowrap;gap:10px;align-items:center;
+background:rgba(11,14,19,0.95);border-bottom:1px solid rgba(212,175,55,0.25);
+overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
 }
-.navigation-bar-container::-webkit-scrollbar{display:none;}
+.navigation-bar-container::-webkit-scrollbar{height:4px;}
+.navigation-bar-container::-webkit-scrollbar-thumb{background:var(--gold);border-radius:4px;}
 .btn-metiers-special{
-flex:0 0 auto;padding:8px 13px;border:1px solid var(--gold);border-radius:20px;
+flex:0 0 auto;padding:8px 14px;border:1px solid var(--gold);border-radius:20px;
 background:linear-gradient(135deg, #d4af37, #aa8c2c);color:#000;cursor:pointer;
 white-space:nowrap;font-size:11px;font-weight:800;text-decoration:none;
 display:inline-flex;align-items:center;gap:4px;
 }
-.cat-scroll{
-display:flex;flex:1 1 auto;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;
--webkit-overflow-scrolling:touch;align-items:center;
-touch-action:pan-x pan-y;padding-right:24px;
-}
-.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-scroll{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;align-items:center;flex:1;min-width:0;}
+.cat-scroll::-webkit-scrollbar{height:4px;}
+.cat-scroll::-webkit-scrollbar-thumb{background:rgba(212,175,55,0.65);border-radius:4px;}
 .cat-btn{
-flex:0 0 auto;padding:8px 13px;border:1px solid var(--gold);border-radius:16px;
-background:rgba(19,25,33,0.95);color:#fff;cursor:pointer;white-space:nowrap;font-size:11px;
-display:inline-flex;align-items:center;gap:5px;user-select:none;
-transition:background 0.15s ease, color 0.15s ease;
+flex:0 0 auto;padding:7px 12px;border:1px solid var(--gold);border-radius:16px;
+background:transparent;color:#fff;cursor:pointer;white-space:nowrap;font-size:11px;
+display:inline-flex;align-items:center;gap:4px;
 }
 .cat-btn.active{background:var(--gold);color:#000;font-weight:800;}
-
-/* BLOCS CATALOGUES / CATÉGORIES SÉPARÉS */
-.catalog-groups-stack{
-display:flex;flex-direction:column;gap:14px;width:100%;
-}
-.catalog-group-block{
-background:#ffffff;border-radius:10px;padding:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid #e6decb;
-}
-.catalog-group-header{
-display:flex;align-items:center;justify-content:space-between;gap:8px;
-padding-bottom:8px;margin-bottom:8px;border-bottom:1.5px solid var(--gold);
-}
-.catalog-group-title{
-color:var(--black);font-size:12px;font-weight:800;
-display:flex;align-items:center;gap:6px;flex-wrap:wrap;
-}
-.catalog-group-count{
-font-size:10px;color:#475569;background:#f1f5f9;padding:2px 8px;border-radius:10px;font-weight:700;
-}
-.btn-choose-catalog{
-background:#131921;color:var(--gold);border:1px solid var(--gold);
-padding:4px 10px;border-radius:14px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;
-}
-.btn-choose-catalog.selected{
-background:var(--gold);color:#000;font-weight:800;
-}
 
 /* SECTIONS AMAZON */
 .amazon-section{
@@ -226,68 +192,50 @@ border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);
 font-size:13px;font-weight:700;color:var(--black);margin-bottom:10px;
 display:flex;align-items:center;justify-content:space-between;gap:6px;border-bottom:2px solid var(--gold);padding-bottom:5px;
 }
-.flash-cat-badge{
-background:#131921;color:var(--gold);border:1px solid var(--gold);
-font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap;
-}
 .amazon-carousel{
 display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;
-scroll-snap-type:x mandatory;padding-bottom:8px;min-height:220px;
+scroll-snap-type:x mandatory;padding-bottom:8px;min-height:240px;
 }
 .amazon-carousel::-webkit-scrollbar{height:6px;}
 .amazon-carousel::-webkit-scrollbar-thumb{background:var(--gold);border-radius:8px;}
 
-/* PANNEAU ROULANT GRAVÉ SUR PAPIER EN CONTINU */
+/* PANNEAU GRAVÉ STABLE POUR RECOMMANDÉS & SPONSORISÉS */
 .marquee-viewport{
-overflow:hidden;
-position:relative;
-width:100%;
-padding:4px 0 8px;
-min-height:220px;
+overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+position:relative;width:100%;padding:6px 2px 10px;min-height:240px;
+background:linear-gradient(180deg,#f8fafc,#eef2f6);
+border:1px solid #cbd5e1;border-radius:8px;
+box-shadow:inset 0 2px 5px rgba(15,23,42,0.12), inset 0 -1px 2px rgba(255,255,255,0.8);
 }
+.marquee-viewport::-webkit-scrollbar{height:6px;}
+.marquee-viewport::-webkit-scrollbar-thumb{background:var(--gold);border-radius:8px;}
 .marquee-track{
-display:flex;
-gap:10px;
-width:max-content;
-animation:dakproMarqueeScroll var(--marquee-duration, 32s) linear infinite;
-will-change:transform;
-}
-.marquee-viewport:hover .marquee-track,
-.marquee-viewport:active .marquee-track{
-animation-play-state:paused;
+display:flex;gap:10px;width:max-content;
 }
 .marquee-track .card{
-flex:0 0 160px;
-min-width:160px;
-width:160px;
+flex:0 0 160px;min-width:160px;width:160px;
+border:1px solid #cbd5e1;
+box-shadow:inset 0 1px 2px rgba(255,255,255,0.9), 0 1px 3px rgba(15,23,42,0.08);
 }
 @media(min-width:400px){
-.marquee-track .card{
-flex:0 0 180px;
-min-width:180px;
-width:180px;
-}
-}
-@keyframes dakproMarqueeScroll{
-0%{transform:translate3d(0, 0, 0);}
-100%{transform:translate3d(-50%, 0, 0);}
+.marquee-track .card{flex:0 0 180px;min-width:180px;width:180px;}
 }
 
 /* CATALOGUE GÉNÉRAL EN GRILLE OPTIMISÉ */
 .products{
-width:100%;margin:0 auto;padding:4px;background:#ffffff;
+width:100%;margin:0 auto;padding:8px;background:#ffffff;
 display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;align-items:stretch;
 }
-@media(min-width:600px){.products{grid-template-columns:repeat(3, 1fr);gap:12px;padding:6px;}}
-@media(min-width:900px){.products{grid-template-columns:repeat(4, 1fr);gap:14px;padding:8px;}}
-@media(min-width:1200px){.products{grid-template-columns:repeat(6, 1fr);gap:16px;}}
+@media(min-width:600px){.products{grid-template-columns:repeat(3, 1fr);gap:12px;padding:12px;}}
+@media(min-width:900px){.products{grid-template-columns:repeat(4, 1fr);gap:16px;padding:16px;}}
+@media(min-width:1200px){.products{grid-template-columns:repeat(6, 1fr);gap:18px;}}
 
-/* CARTE PRODUIT LÉGÈRE - STYLE GRAVÉ SUR PAPIER */
+/* CARTE PRODUIT LÉGÈRE */
 .card{
 position:relative;display:flex;flex-direction:column;justify-content:space-between;
-width:100%;background:#fdfbf7;border:1px solid #d6cbb7;border-radius:8px;
-padding:8px;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.7), 0 2px 6px rgba(0,0,0,.06);
-overflow:hidden;height:100%;scroll-snap-align:start;
+width:100%;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;
+padding:8px;box-shadow:0 2px 8px rgba(0,0,0,.04);overflow:hidden;height:100%;
+scroll-snap-align:start;
 }
 .amazon-carousel .card{flex:0 0 160px;min-width:160px;}
 @media(min-width:400px){.amazon-carousel .card{flex:0 0 180px;min-width:180px;}}
@@ -297,16 +245,13 @@ overflow:hidden;height:100%;scroll-snap-align:start;
 
 .media-container{
 width:100%;height:140px;position:relative;border-radius:6px;overflow:hidden;
-background:#f5f0e6;display:flex;align-items:center;justify-content:center;margin-bottom:8px;border:1px solid #e2d7c3;
+background:#f8fafc;display:flex;align-items:center;justify-content:center;margin-bottom:8px;border:1px solid #f1f5f9;
 cursor:pointer;
 }
-.product-img-link{
-display:flex;align-items:center;justify-content:center;width:100%;height:100%;text-decoration:none;
-}
-.card img{width:100%;height:100%;object-fit:contain;display:block;}
+.card img{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;}
 .card video{width:100%;height:100%;object-fit:contain;display:block;}
 
-/* ESPACE VARIANTES + ANIMATION ZOOM SUR OFFRES FLASH */
+/* OFFRES FLASH : GRANDE IMAGE + VARIANTES EN PETIT À CÔTÉ (ROTATION TOUTES LES 5 MINUTES) */
 .flash-media-layout{
 display:flex;
 align-items:center;
@@ -326,20 +271,14 @@ background:#fff;
 display:flex;
 align-items:center;
 justify-content:center;
+cursor:pointer;
 }
 .flash-main-stage img{
 width:100%;
 height:100%;
 object-fit:contain;
 transform:scale(1);
-transition:transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
-}
-.flash-main-stage.is-zooming img{
-animation:flashStagePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-@keyframes flashStagePop{
-0%{transform:scale(0.82);opacity:0.75;}
-100%{transform:scale(1);opacity:1;}
+transition:transform 0.35s ease;
 }
 .flash-variants-pane{
 width:34px;
@@ -364,23 +303,23 @@ border-radius:4px;
 border:1px solid #cbd5e1;
 background:#fff;
 transform:scale(0.75);
-opacity:0.65;
-transition:transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+opacity:0.72;
+transition:transform 0.35s ease, opacity 0.35s ease, border-color 0.35s ease;
 cursor:pointer;
 position:relative;
 z-index:1;
 }
 .flash-variant-thumb.is-selecting{
-transform:scale(1.35);
+transform:scale(1.25);
 opacity:1;
 border:1.5px solid var(--gold);
-box-shadow:0 3px 8px rgba(212, 175, 55, 0.45);
 z-index:10;
 }
 
 .card h3{
 margin:2px 0 4px;font-size:11.5px;font-weight:600;line-height:1.3;
 color:var(--card-text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px;
+cursor:pointer;
 }
 .card .description-complete{
 font-size:9.5px;color:var(--gray);line-height:1.3;margin-bottom:6px;
@@ -429,7 +368,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 .lang-option:hover{background:var(--gold);color:#000;font-weight:700;}
 
 .footer-bottom-bar{padding:12px;background:#000;text-align:center;color:#777;font-size:9px;}
-.loading-message,.empty-message{grid-column:1 / -1;padding:24px 10px;text-align:center;color:#64748b;font-size:12px;}
+.loading-message,.empty-message{grid-column:1 / -1;padding:30px 10px;text-align:center;color:#64748b;font-size:12px;}
 </style>
 </head>
 
@@ -441,17 +380,12 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 </div>
 <div class="search-container">
 <input type="search" id="searchBar" autocomplete="off" placeholder="Rechercher des produits...">
+<button type="button" class="search-clear-btn" id="btnClearSearch" aria-label="Effacer la recherche">✕</button>
 </div>
 <div class="nav-icons">
 <a href="profil-acheteur.html" class="nav-item"><span>👤</span><span data-i18n="navAccount">Compte</span></a>
 </div>
 </header>
-
-<!-- BANNIÈRE MISE À JOUR CACHE / SERVICE WORKER -->
-<div class="sw-update-banner" id="swUpdateBanner">
-<span>🔄 Nouvelle version prête — ancien cache nettoyé</span>
-<button type="button" class="btn-sw-refresh" id="btnSwRefresh">Actualiser</button>
-</div>
 
 <!-- BANNIÈRE / BOUTON D'INSTALLATION DE L'APPLICATION (PUISSANT & PROFESSIONNEL) -->
 <div class="install-app-banner" id="installAppBanner">
@@ -478,8 +412,8 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <div class="banner-dots" id="bannerDots"></div>
 </section>
 
-<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES EXACTES SUR UNE SEULE LIGNE) -->
-<div class="navigation-bar-container" id="navigationBar">
+<!-- BARRE DE NAVIGATION (MÉTIERS + CATÉGORIES) -->
+<div class="navigation-bar-container">
 <a href="metiers.html" class="btn-metiers-special"><span data-i18n="allTrades">🛠️ Métiers</span></a>
 <div class="cat-scroll" id="catMenu"></div>
 </div>
@@ -488,20 +422,20 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <section class="amazon-section">
   <div class="amazon-section-title">
     <span data-i18n="flashOffers">🔥 Offres Flash &amp; Promos</span>
-    <span class="flash-cat-badge" id="flashActiveCatLabel"></span>
+    <small style="color:#666; font-weight:400; font-size:10px;" data-i18n="swipeHint">Glisser →</small>
   </div>
   <div class="amazon-carousel" id="carouselPromos"></div>
 </section>
 
-<!-- 2. CATALOGUE & CATÉGORIES -->
+<!-- 2. CATALOGUE COMPLET & CATÉGORIES -->
 <section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
   <div class="amazon-section-title" style="background:#fff; padding:10px; border-radius:6px;">
     <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
-    <small id="activeCatalogCatBadge" style="color:#666; font-weight:700; font-size:10px;"></small>
+    <small id="searchResultCount" style="color:#555; font-weight:600; font-size:10px;"></small>
   </div>
-  <div class="catalog-groups-stack" id="products">
+  <main class="products" id="products">
     <div class="loading-message" data-i18n="loadingArticles">Chargement des articles...</div>
-  </div>
+  </main>
 </section>
 
 <!-- 3. PRODUITS RECOMMANDÉS & SPONSORISÉS -->
@@ -589,77 +523,6 @@ const auth = firebase.auth();
 
 window.dakproFirebase = { db, auth };
 
-// SERVICE WORKER + NETTOYAGE ANCIEN CACHE À L'INSTALLATION
-const APP_CACHE_VERSION = "dakpro-v2026-11-25";
-const SW_VERSION_STORAGE_KEY = "dakpro_sw_version";
-const SW_RELOAD_GUARD_KEY = "dakpro_sw_reloaded_" + APP_CACHE_VERSION;
-
-async function cleanLegacyBrowserCaches(){
-try{
-const prevVer = localStorage.getItem(SW_VERSION_STORAGE_KEY);
-if(prevVer && prevVer !== APP_CACHE_VERSION){
-localStorage.removeItem("dakpro_cached_products");
-localStorage.removeItem("dakpro_categories_5m_cache");
-}
-localStorage.setItem(SW_VERSION_STORAGE_KEY, APP_CACHE_VERSION);
-
-if("caches" in window){
-const keys = await caches.keys();
-await Promise.all(
-keys
-.filter(k => k !== APP_CACHE_VERSION)
-.map(k => caches.delete(k))
-);
-}
-}catch(e){}
-}
-
-function registerServiceWorkerAndUpdate(){
-cleanLegacyBrowserCaches();
-if(!("serviceWorker" in navigator)) return;
-
-let waitingWorker = null;
-const swBanner = document.getElementById("swUpdateBanner");
-const swRefreshBtn = document.getElementById("btnSwRefresh");
-
-navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(reg => {
-reg.update().catch(() => {});
-
-if(reg.waiting){
-waitingWorker = reg.waiting;
-if(swBanner) swBanner.style.display = "flex";
-}
-
-reg.addEventListener("updatefound", () => {
-const newWorker = reg.installing;
-if(!newWorker) return;
-newWorker.addEventListener("statechange", () => {
-if(newWorker.state === "installed" && navigator.serviceWorker.controller){
-waitingWorker = newWorker;
-if(swBanner) swBanner.style.display = "flex";
-}
-});
-});
-}).catch(() => {});
-
-swRefreshBtn?.addEventListener("click", () => {
-cleanLegacyBrowserCaches().then(() => {
-if(waitingWorker){
-waitingWorker.postMessage({ type: "SKIP_WAITING" });
-}
-window.location.reload();
-});
-});
-
-navigator.serviceWorker.addEventListener("controllerchange", () => {
-if(sessionStorage.getItem(SW_RELOAD_GUARD_KEY)) return;
-sessionStorage.setItem(SW_RELOAD_GUARD_KEY, "1");
-window.location.reload();
-});
-}
-
-registerServiceWorkerAndUpdate();
-
 // GESTION DE L'INSTALLATION PWA (BOUTON TÉLÉCHARGER / INSTALLER)
 let deferredPrompt = null;
 const installBanner = document.getElementById("installAppBanner");
@@ -684,38 +547,33 @@ btnInstallApp?.addEventListener("click", async () => {
   }
 });
 
-// CACHE LOCAL PRODUITS + CACHE CATALOGUES 5 MIN + ROTATION OFFRES FLASH 2 MIN
-const CATEGORY_CACHE_TTL_MS = 5 * 60 * 1000;
-const CATEGORY_CACHE_KEY = "dakpro_categories_5m_cache";
-const FLASH_ROTATION_MS = 2 * 60 * 1000;
-// Limite initiale par bloc pour ne pas charger tous les produits d'un seul bloc
-const INITIAL_PREVIEW_PER_CATALOG = 4;
+// Afficher par défaut si non installé et non en mode standalone
+if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
+  setTimeout(() => {
+    if(installBanner && installBanner.style.display !== "flex") {
+      installBanner.style.display = "flex";
+    }
+  }, 1000);
+}
 
+// CHARGEMENT INSTANTANÉ EN CACHE LOCAL
 let cachedProducts = localStorage.getItem("dakpro_cached_products");
 window.allProductsData = cachedProducts ? JSON.parse(cachedProducts) : [];
 
 const siteContext = { currentUser: null };
-// "" = aperçu séparé des catégories/catalogues ; sinon nom exact de la catégorie choisie
-let selectedCategoryName = "";
-let exactCategoriesList = [];
-let catalogBucketsList = [];
-let flashCategoryIndex = 0;
-let flashCategoryTimer = null;
+let currentCat = ""; 
 let currentIndex = 0;
 let totalSlides = 0;
 let autoPlay = null;
 let announcementDataCache = null;
 let flashVariantTimer = null;
-let lastRenderedProductsSig = "";
-let lastRenderedCarouselsSig = "";
-let lastCategoriesSig = "";
+const FLASH_CYCLE_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
 const categoryIconsMap = {
 "Voitures": "🚗", "Smartphones": "📱", "Vêtements": "👕", "Chaussures": "👟",
 "Montres": "⌚", "Bijoux": "💍", "Parfums": "🌸", "Meubles": "🛋️",
 "Cuisine": "🍳", "Jouets": "🧸", "Sport": "⚽", "Santé": "🩺",
-"Livres": "📚", "Outils": "🔨", "Agriculture": "🌱", "Alimentation": "🍚",
-"Robe": "👗", "Robes": "👗", "Moto": "🏍️", "Motos": "🏍️"
+"Livres": "📚", "Outils": "🔨", "Agriculture": "🌱", "Alimentation": "🍚"
 };
 
 function getCategoryIcon(catName){
@@ -724,61 +582,6 @@ for(let key in categoryIconsMap){
 if(catName.toLowerCase().includes(key.toLowerCase())) return categoryIconsMap[key];
 }
 return "📦";
-}
-
-function normalizeLabel(raw){
-return String(raw ?? "").trim().replace(/\s+/g, " ");
-}
-
-function isProductActive(product){
-if(!product || typeof product !== "object") return false;
-if(product.actif === false || product.active === false) return false;
-if(String(product.actif || "").toLowerCase() === "false") return false;
-if(String(product.statut || "").toLowerCase() === "inactif") return false;
-return true;
-}
-
-function getExactProductCategory(product){
-if(!product || typeof product !== "object") return "";
-const raw = product.categorie ?? product.category ?? product.cat ?? product.catalogue ?? product.catalog ?? product.type ?? "";
-if(typeof raw === "string") return normalizeLabel(raw);
-if(raw && typeof raw === "object") return normalizeLabel(raw.nom || raw.name || raw.titre || raw.title || raw.label || "");
-return "";
-}
-
-function getProductCatalogKey(product){
-const rawCat = getExactProductCategory(product) || "Catalogue";
-const batchId = normalizeLabel(product.catalogueId || product.catalogId || product.lotId || product.sourceId || product.vendeurId || product.sellerId || "");
-const catSlug = rawCat.toLowerCase().replace(/[^a-z0-9]+/g, "_");
-return batchId ? `${catSlug}__${batchId}` : `${catSlug}__${String(product.id || "item")}`;
-}
-
-function getCategoryCache(){
-try{
-const raw = localStorage.getItem(CATEGORY_CACHE_KEY);
-if(!raw) return null;
-const parsed = JSON.parse(raw);
-if(!parsed || !Array.isArray(parsed.categories) || !parsed.savedAt) return null;
-if((Date.now() - Number(parsed.savedAt)) > CATEGORY_CACHE_TTL_MS){
-return null;
-}
-return {
-categories: parsed.categories,
-buckets: Array.isArray(parsed.buckets) ? parsed.buckets : []
-};
-}catch(e){
-return null;
-}
-}
-
-function saveCategoryCache(categories, buckets){
-try{
-localStorage.setItem(CATEGORY_CACHE_KEY, JSON.stringify({
-savedAt: Date.now(),
-categories,
-buckets: Array.isArray(buckets) ? buckets : []
-}));
-}catch(e){}
 }
 
 /* DICTIONNAIRE DE TRADUCTION COMPLET */
@@ -802,9 +605,7 @@ rulesAndLegal: "Légal", internalRules: "Règlement", privacyPolicy: "Confidenti
 earnMoney: "Gagner", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Vendeur",
 installAppTitle: "Installer DAKPROÉLITE",
 installAppDesc: "Accédez plus rapidement à la marketplace depuis votre écran d'accueil.",
-installAppBtn: "Installer",
-selectCatalogBtn: "Voir tout",
-selectedCatalogBtn: "✓ Tout voir"
+installAppBtn: "Installer"
 },
 en: {
 name: "English", currency: "USD", rate: 1 / 600,
@@ -825,9 +626,7 @@ rulesAndLegal: "Rules & Legal", internalRules: "Internal Rules", privacyPolicy: 
 earnMoney: "Earn Money", ambassadorProgram: "Ambassador Program", becomeSeller: "🛍️ Become Seller",
 installAppTitle: "Install DAKPROÉLITE",
 installAppDesc: "Get quick access to the marketplace directly from your home screen.",
-installAppBtn: "Install",
-selectCatalogBtn: "Show all",
-selectedCatalogBtn: "✓ Shown"
+installAppBtn: "Install"
 },
 es: {
 name: "Español", currency: "EUR", rate: 1 / 655.957,
@@ -848,9 +647,7 @@ rulesAndLegal: "Normas y Legal", internalRules: "Reglamento", privacyPolicy: "Po
 earnMoney: "Ganar Dinero", ambassadorProgram: "Programa Embajador", becomeSeller: "🛍️ Ser Vendedor",
 installAppTitle: "Instalar DAKPROÉLITE",
 installAppDesc: "Accede más rápido a la tienda desde tu pantalla de inicio.",
-installAppBtn: "Instalar",
-selectCatalogBtn: "Ver todo",
-selectedCatalogBtn: "✓ Visible"
+installAppBtn: "Instalar"
 },
 zh: {
 name: "中文", currency: "CNY", rate: 1 / 85,
@@ -871,9 +668,7 @@ rulesAndLegal: "规则与法律", internalRules: "内部规则", privacyPolicy: 
 earnMoney: "赚钱", ambassadorProgram: "大使计划", becomeSeller: "🛍️ 成为卖家",
 installAppTitle: "安装 DAKPROÉLITE",
 installAppDesc: "从主屏幕快速访问市场。",
-installAppBtn: "安装",
-selectCatalogBtn: "查看全部",
-selectedCatalogBtn: "✓ 已显示"
+installAppBtn: "安装"
 },
 bn: {
 name: "বাংলা", currency: "BDT", rate: 1 / 5,
@@ -894,9 +689,7 @@ rulesAndLegal: "নিয়মাবলী", internalRules: "অভ্যন্ত
 earnMoney: "আয় করুন", ambassadorProgram: "অ্যাম্বাসেডর প্রোগ্রাম", becomeSeller: "🛍️ বিক্রেতা হন",
 installAppTitle: "DAKPROÉLITE ইনস্টল করুন",
 installAppDesc: "আপনার হোম স্ক্রিন থেকে দ্রুত মার্কেটপ্লেসে প্রবেশ করুন।",
-installAppBtn: "ইনস্টল",
-selectCatalogBtn: "সব দেখুন",
-selectedCatalogBtn: "✓ দৃশ্যমান"
+installAppBtn: "ইনস্টল"
 },
 yo: {
 name: "Yorùbá", currency: "NGN", rate: 1.2,
@@ -917,9 +710,7 @@ rulesAndLegal: "Ofin", internalRules: "Awọn Ofin", privacyPolicy: "Asiri",
 earnMoney: "Gba Owo", ambassadorProgram: "Eto Aṣoju", becomeSeller: "🛍️ Di Olutaja",
 installAppTitle: "Fi DAKPROÉLITE sori ẹrọ",
 installAppDesc: "Wọle si ọja ni iyara lati iboju ile rẹ.",
-installAppBtn: "Fi sori ẹrọ",
-selectCatalogBtn: "Fi gbogbo han",
-selectedCatalogBtn: "✓ Ti han"
+installAppBtn: "Fi sori ẹrọ"
 },
 fon: {
 name: "Fɔ̀ngbè", currency: "FCFA", rate: 1,
@@ -940,9 +731,7 @@ rulesAndLegal: "Sɛ́n", internalRules: "Sɛ́n Xó", privacyPolicy: "Nǔ Gudo",
 earnMoney: "Ba Akuɛ", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Zɔ̌watɔ́",
 installAppTitle: "Tɛ́n DAKPROÉLITE ɖó",
 installAppDesc: "Kpɔ́n nǔ lɛ wě wě ɖò kɔ̀ tɔn mɛ.",
-installAppBtn: "Tɛ́n ɖó",
-selectCatalogBtn: "XLɛ́ bǐ",
-selectedCatalogBtn: "✓ XLɛ́ ɖò"
+installAppBtn: "Tɛ́n ɖó"
 }
 };
 
@@ -986,8 +775,6 @@ if(langLabel) langLabel.textContent = translations[lang].name;
 
 if(announcementDataCache) applyAnnouncement(announcementDataCache);
 
-lastRenderedProductsSig = "";
-lastRenderedCarouselsSig = "";
 filterProducts();
 renderCarousels(window.allProductsData);
 }
@@ -1014,20 +801,10 @@ menu?.classList.remove("show");
 
 setLanguage(currentLang);
 
-const cachedPack = getCategoryCache();
-if(cachedPack){
-  if(Array.isArray(cachedPack.categories) && cachedPack.categories.length > 0){
-    exactCategoriesList = cachedPack.categories;
-  }
-  if(Array.isArray(cachedPack.buckets) && cachedPack.buckets.length > 0){
-    catalogBucketsList = cachedPack.buckets;
-  }
-}
-
 if(window.allProductsData.length > 0){
-  buildCategories();
-  filterProducts();
-  renderCarousels(window.allProductsData);
+buildCategories();
+filterProducts();
+renderCarousels(window.allProductsData);
 }
 });
 
@@ -1040,12 +817,12 @@ return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>
 }
 function escapeAttribute(value){ return escapeHTML(value); }
 
-function getProductUrl(productId){
+function getProductDetailUrl(productId){
 return `produit.html?id=${encodeURIComponent(String(productId || ""))}`;
 }
 
-// Extraction des URLs de variantes depuis les champs Firebase (CJdropshipping / publications)
-function extractProductVariants(product, mainImage){
+// Extraction intelligente des images/variantes (inclut la dernière image affichée dans publication et autres publications)
+function extractProductVariants(product, mainImage, allProducts){
 const candidates = [];
 const rawSources = [
 product.variantes,
@@ -1079,288 +856,197 @@ if(u) candidates.push(u);
 }
 });
 
-const cleaned = [...new Set(candidates.map(u => String(u || "").trim()).filter(u => u && !/\.(mp4|webm|ogg)(\?|$)/i.test(u)))];
-if(mainImage && !/\.(mp4|webm|ogg)(\?|$)/i.test(mainImage) && !cleaned.includes(mainImage)){
-cleaned.unshift(mainImage);
+if(mainImage) candidates.push(mainImage);
+
+// Compléter intelligemment avec les images des publications récentes / boostées si moins de 4 variantes
+if(Array.isArray(allProducts) && allProducts.length > 0){
+const pool = allProducts.filter(p => p && p.id !== product.id);
+for(const p of pool){
+if(candidates.length >= 4) break;
+const pImg = p.image || p.imageUrl || p.photo || p.img || "";
+if(pImg) candidates.push(pImg);
 }
+}
+
+const cleaned = [...new Set(candidates.map(u => String(u || "").trim()).filter(u => u && !/\.(mp4|webm|ogg)(\?|$)/i.test(u)))];
 return cleaned.slice(0, 4);
 }
 
-// Récupère les catégories exactes publiées (depuis produits et/ou nœud Firebase categories)
-function extractExactCategories(products, extraCategories = []){
-const seen = new Map();
+// Sélection intelligente pour Offres Flash : récupère promos/boost + dernières images publiées
+function selectSmartFlashProducts(allProducts){
+if(!Array.isArray(allProducts) || allProducts.length === 0) return [];
 
-const addCat = (val) => {
-  const clean = normalizeLabel(val);
-  if(!clean) return;
-  const key = clean.toLowerCase();
-  if(!seen.has(key)){
-    seen.set(key, clean);
-  }
-};
+const recentProducts = allProducts.slice(-8).reverse();
+const latestImages = recentProducts
+  .map(p => p.image || p.imageUrl || p.photo || p.img || "")
+  .filter(u => u && !/\.(mp4|webm|ogg)(\?|$)/i.test(u));
 
-(Array.isArray(extraCategories) ? extraCategories : []).forEach(addCat);
-(Array.isArray(products) ? products : []).forEach(p => {
-  if(!isProductActive(p)) return;
-  addCat(getExactProductCategory(p));
+const flagged = allProducts.filter(p => Boolean(p.isFlash || p.prixPromo || p.promoPrice || p.boost || p.isRecommande));
+const baseList = flagged.length > 0 ? flagged : allProducts.slice(-6).reverse();
+
+return baseList.slice(0, 12).map((p, idx) => {
+  const ownImg = p.image || p.imageUrl || p.photo || p.img || "";
+  const smartLatestImg = latestImages[idx % Math.max(1, latestImages.length)] || ownImg;
+  const chosenMainImage = (idx === 0 && latestImages.length > 0) ? latestImages[0] : (ownImg || smartLatestImg);
+  return {
+    ...p,
+    boost: true,
+    __flashMainImage: chosenMainImage
+  };
 });
-
-return Array.from(seen.values());
-}
-
-// Regroupe chaque catalogue/lot séparément sans écraser deux catalogues portant le même nom
-function extractCatalogBuckets(products){
-const bucketsMap = new Map();
-
-(Array.isArray(products) ? products : []).forEach((p, idx) => {
-  if(!isProductActive(p)) return;
-  const rawName = getExactProductCategory(p) || "Catalogue";
-  const key = getProductCatalogKey(p);
-  const batchTag = normalizeLabel(p.catalogueNom || p.catalogName || p.lotNom || p.vendeurNom || p.sellerName || "");
-
-  if(!bucketsMap.has(key)){
-    bucketsMap.set(key, {
-      key,
-      name: rawName,
-      batchTag,
-      orderIndex: idx,
-      items: []
-    });
-  }
-  bucketsMap.get(key).items.push(p);
-});
-
-return Array.from(bucketsMap.values());
-}
-
-// Rotation automatique toutes les 2 minutes sur les catégories exactes dans Offres Flash
-function ensureFlashCategoryRotation(categories){
-if(!Array.isArray(categories) || categories.length === 0) return;
-if(flashCategoryIndex >= categories.length){
-flashCategoryIndex = 0;
-}
-if(!flashCategoryTimer && categories.length > 1){
-flashCategoryTimer = setInterval(() => {
-const cats = extractExactCategories(window.allProductsData, exactCategoriesList);
-if(cats.length > 1){
-flashCategoryIndex = (flashCategoryIndex + 1) % cats.length;
-lastRenderedCarouselsSig = "";
-renderCarousels(window.allProductsData);
-}
-}, FLASH_ROTATION_MS);
-}
-}
-
-function hydrateFromPublicationsSnapshot(data){
-if(!data || typeof data !== "object") return;
-
-const parsedList = Object.entries(data)
-  .map(([id, product]) => ({ id, ...(product && typeof product === "object" ? product : {}) }))
-  .filter(product => isProductActive(product));
-
-window.allProductsData = parsedList;
-localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
-
-const freshCats = extractExactCategories(window.allProductsData, exactCategoriesList);
-const freshBuckets = extractCatalogBuckets(window.allProductsData);
-
-if(freshCats.length > 0){
-  exactCategoriesList = freshCats;
-}
-if(freshBuckets.length > 0){
-  catalogBucketsList = freshBuckets;
-}
-if(freshCats.length > 0 || freshBuckets.length > 0){
-  saveCategoryCache(exactCategoriesList, catalogBucketsList);
-  ensureFlashCategoryRotation(exactCategoriesList);
-}
-
-buildCategories();
-filterProducts();
-renderCarousels(window.allProductsData);
-checkUrlForSharedProduct();
-}
-
-function loadFirebaseCategoriesNode(){
-if(!db || typeof db.ref !== "function") return;
-db.ref("categories").once("value").then(snap => {
-  const val = snap.val();
-  if(!val) return;
-  const fromNode = [];
-  if(Array.isArray(val)){
-    val.forEach(item => {
-      if(typeof item === "string") fromNode.push(item);
-      else if(item && typeof item === "object") fromNode.push(item.nom || item.name || item.titre || item.title || item.categorie || "");
-    });
-  } else if(typeof val === "object"){
-    Object.entries(val).forEach(([k, item]) => {
-      if(typeof item === "string") fromNode.push(item);
-      else if(item && typeof item === "object") fromNode.push(item.nom || item.name || item.titre || item.title || item.categorie || k);
-    });
-  }
-  const merged = extractExactCategories(window.allProductsData, [...exactCategoriesList, ...fromNode]);
-  if(merged.length > 0){
-    exactCategoriesList = merged;
-    saveCategoryCache(exactCategoriesList, catalogBucketsList);
-    lastCategoriesSig = "";
-    buildCategories();
-  }
-}).catch(() => {});
 }
 
 function loadProducts() {
   const localData = localStorage.getItem("dakpro_cached_products");
   if (localData) {
     try {
-      const parsed = JSON.parse(localData);
-      if(Array.isArray(parsed) && parsed.length > 0){
-        window.allProductsData = parsed;
-        exactCategoriesList = extractExactCategories(window.allProductsData, exactCategoriesList);
-        catalogBucketsList = extractCatalogBuckets(window.allProductsData);
-        buildCategories();
-        filterProducts();
-        renderCarousels(window.allProductsData);
-      }
+      window.allProductsData = JSON.parse(localData);
+      buildCategories();
+      filterProducts();
+      renderCarousels(window.allProductsData);
     } catch(e) {}
   }
 
-  loadFirebaseCategoriesNode();
-
-  db.ref("publications").on("value", snapshot => {
+  db.ref("publications").once("value").then(snapshot => {
     const data = snapshot.val();
-    if (!data) {
-      buildCategories();
-      filterProducts();
-      return;
-    }
-    hydrateFromPublicationsSnapshot(data);
-  }, err => {
+    if (!data) return;
+
+    window.allProductsData = Object.entries(data)
+      .map(([id, product]) => ({ id, ...product }))
+      .filter(product => product && product.actif !== false);
+
+    localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
+
+    buildCategories();
+    filterProducts();
+    renderCarousels(window.allProductsData);
+    checkUrlForSharedProduct();
+  }).catch(err => {
     console.error("Erreur Firebase:", err);
   });
 }
 
-// Affiche toutes les catégories exactes sur une seule ligne à côté de 🛠️ Métiers
 function buildCategories(){
+const categories = [...new Set(window.allProductsData.map(p => p.categorie || p.category).filter(Boolean))];
 const menu = document.getElementById("catMenu");
 if(!menu) return;
 
-const categories = extractExactCategories(window.allProductsData, exactCategoriesList);
-if(categories.length > 0){
-  exactCategoriesList = categories;
-  saveCategoryCache(categories, catalogBucketsList);
-  ensureFlashCategoryRotation(categories);
+if(!currentCat && categories.length > 0){
+currentCat = categories[0];
 }
 
-const nextSig = `${selectedCategoryName}::${categories.join("||")}`;
-if(nextSig === lastCategoriesSig && menu.children.length > 0) return;
-lastCategoriesSig = nextSig;
+const searchActive = Boolean((document.getElementById("searchBar")?.value || "").trim());
 
-const allBtn = `<button type="button" class="cat-btn ${!selectedCategoryName ? "active" : ""}" data-category=""><span>✨</span> <span>Tout</span></button>`;
-const catButtons = categories.map(category => {
-  const safe = escapeAttribute(category);
-  const icon = getCategoryIcon(category);
-  const isSelected = selectedCategoryName && category.toLowerCase() === selectedCategoryName.toLowerCase();
-  return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
+menu.innerHTML = categories.map(category => {
+const safe = escapeHTML(category);
+const icon = getCategoryIcon(category);
+const isActive = !searchActive && category === currentCat;
+return `<button type="button" class="cat-btn ${isActive ? "active" : ""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
 }).join("");
 
-menu.innerHTML = allBtn + catButtons;
-
 menu.querySelectorAll(".cat-btn").forEach(button => {
-  button.addEventListener("click", (e) => {
-    e.preventDefault();
-    selectedCategoryName = normalizeLabel(button.dataset.category || "");
-    lastCategoriesSig = "";
-    menu.querySelectorAll(".cat-btn").forEach(item => {
-      const itemCat = normalizeLabel(item.dataset.category || "");
-      item.classList.toggle("active", itemCat.toLowerCase() === selectedCategoryName.toLowerCase());
-    });
-    lastRenderedProductsSig = "";
-    filterProducts();
-  });
+button.addEventListener("click", () => {
+const searchInput = document.getElementById("searchBar");
+if(searchInput && searchInput.value.trim()){
+searchInput.value = "";
+syncSearchClearBtn();
+}
+currentCat = button.dataset.category;
+menu.querySelectorAll(".cat-btn").forEach(item => item.classList.remove("active"));
+button.classList.add("active");
+filterProducts();
+});
 });
 }
 
-document.getElementById("searchBar")?.addEventListener("input", filterProducts);
+function syncSearchClearBtn(){
+const searchInput = document.getElementById("searchBar");
+const clearBtn = document.getElementById("btnClearSearch");
+if(!searchInput || !clearBtn) return;
+clearBtn.classList.toggle("visible", searchInput.value.trim().length > 0);
+}
 
-function getCatalogSectionsToRender(){
+const searchBarEl = document.getElementById("searchBar");
+const clearSearchBtnEl = document.getElementById("btnClearSearch");
+
+searchBarEl?.addEventListener("input", () => {
+syncSearchClearBtn();
+buildCategories();
+filterProducts();
+});
+
+searchBarEl?.addEventListener("keydown", (e) => {
+if(e.key === "Enter"){
+e.preventDefault();
+filterProducts();
+document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+});
+
+clearSearchBtnEl?.addEventListener("click", () => {
+if(!searchBarEl) return;
+searchBarEl.value = "";
+syncSearchClearBtn();
+buildCategories();
+filterProducts();
+searchBarEl.focus();
+});
+
+function getFilteredProducts(){
 const search = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
-const chosenCatLower = normalizeLabel(selectedCategoryName).toLowerCase();
 
-const allBuckets = extractCatalogBuckets(window.allProductsData);
-if(allBuckets.length > 0){
-  catalogBucketsList = allBuckets;
-}
-const sourceBuckets = allBuckets.length > 0 ? allBuckets : catalogBucketsList;
+if(search.length > 0){
+const terms = search.split(/\s+/).filter(Boolean);
+return window.allProductsData.filter(product => {
+const haystack = [
+product.nom,
+product.title,
+product.name,
+product.description,
+product.description_en,
+product.description_es,
+product.categorie,
+product.category,
+product.vendeur,
+product.vendeurNom,
+product.sellerName,
+product.marque,
+product.brand
+].map(v => String(v ?? "")).join(" ").toLowerCase();
 
-const filteredBuckets = sourceBuckets.map((bucket, idx) => {
-  const bucketCatLower = normalizeLabel(bucket.name).toLowerCase();
-  if(chosenCatLower && bucketCatLower !== chosenCatLower){
-    return null;
-  }
-
-  const matchingItems = bucket.items.filter(product => {
-    if(!search) return true;
-    const name = String(product.nom || product.title || product.name || "").toLowerCase();
-    const description = String(product.description || "").toLowerCase();
-    const catName = String(bucket.name || "").toLowerCase();
-    return name.includes(search) || description.includes(search) || catName.includes(search);
-  });
-
-  if(matchingItems.length === 0) return null;
-
-  return {
-    ...bucket,
-    displayIndex: idx,
-    filteredItems: matchingItems
-  };
-}).filter(Boolean);
-
-if(chosenCatLower){
-  return {
-    isSingleCategorySelected: true,
-    buckets: filteredBuckets.map(b => ({
-      ...b,
-      visibleItems: b.filteredItems
-    }))
-  };
+return terms.every(term => haystack.includes(term));
+});
 }
 
-// Aperçu séparé par bloc catalogue/catégorie sans tout charger d'un seul bloc
-return {
-  isSingleCategorySelected: false,
-  buckets: filteredBuckets.map(b => ({
-    ...b,
-    visibleItems: search ? b.filteredItems.slice(0, 6) : b.filteredItems.slice(0, INITIAL_PREVIEW_PER_CATALOG)
-  }))
-};
+return window.allProductsData.filter(product => {
+const productCategory = product.categorie || product.category || "";
+return productCategory === currentCat;
+});
 }
 
 function filterProducts(){
-const badge = document.getElementById("activeCatalogCatBadge");
 const search = (document.getElementById("searchBar")?.value || "").trim();
-const renderState = getCatalogSectionsToRender();
-
-if(badge){
-  if(search){
-    badge.textContent = `🔍 "${search}"`;
-  } else if(selectedCategoryName){
-    const totalCount = renderState.buckets.reduce((acc, b) => acc + b.visibleItems.length, 0);
-    badge.textContent = `${getCategoryIcon(selectedCategoryName)} ${selectedCategoryName} (${totalCount})`;
-  } else {
-    badge.textContent = `${exactCategoriesList.length || renderState.buckets.length} catégorie(s)`;
-  }
+const list = getFilteredProducts();
+const countEl = document.getElementById("searchResultCount");
+if(countEl){
+if(search.length > 0){
+countEl.textContent = `${list.length} résultat(s) pour "${search}"`;
+} else {
+countEl.textContent = currentCat ? `${currentCat} (${list.length})` : "";
 }
-
-renderProducts(renderState);
+}
+renderProducts(list);
 }
 
 function generateCardHTML(product, options = {}){
 const isFlashCard = Boolean(options.isFlashCard);
 const uniqueSuffix = options.uniqueSuffix || "";
 const cardDomId = `${product.id || "prod"}${uniqueSuffix}`;
-const productUrl = getProductUrl(product.id || "");
+const productUrl = getProductDetailUrl(product.id || "");
 
-const image = product.image || product.imageUrl || product.photo || product.img || "";
+const image = isFlashCard
+  ? (product.__flashMainImage || product.image || product.imageUrl || product.photo || product.img || "")
+  : (product.image || product.imageUrl || product.photo || product.img || "");
 const video = product.video || product.videoUrl || "";
 const documentUrl = product.document || product.documentUrl || "";
 
@@ -1392,47 +1078,46 @@ let mediaHTML = "";
 const t = translations[currentLang];
 
 if(isFlashCard && !isVideo && !documentUrl){
-const variantsList = extractProductVariants(product, image);
-const mainDisplaySrc = variantsList[0] || image || "";
-const thumbsPool = variantsList.length > 0 ? variantsList : (mainDisplaySrc ? [mainDisplaySrc] : []);
-const thumbsHTML = thumbsPool.map((vUrl, idx) => `
+const variantsList = extractProductVariants(product, image, window.allProductsData);
+const mainDisplaySrc = image || variantsList[0] || "";
+const thumbsHTML = variantsList.map((vUrl, idx) => `
 <img src="${escapeAttribute(vUrl)}"
      alt="Variante ${idx + 1}"
      class="flash-variant-thumb ${idx === 0 ? "is-selecting" : ""}"
      data-var-index="${idx}"
      data-var-src="${escapeAttribute(vUrl)}"
-     loading="eager"
-     decoding="sync">
+     loading="lazy"
+     decoding="async">
 `).join("");
 
 mediaHTML = `
 <div class="flash-media-layout" data-flash-animator="true">
-  <a href="${escapeAttribute(productUrl)}" class="flash-main-stage" title="${safeName}">
-    <img src="${escapeAttribute(mainDisplaySrc)}" alt="${safeName}" class="flash-stage-img" loading="eager" decoding="sync">
-  </a>
+  <div class="flash-main-stage" data-product-link="${escapeAttribute(productUrl)}">
+    <img src="${escapeAttribute(mainDisplaySrc)}" alt="${safeName}" class="flash-stage-img" loading="lazy" decoding="async">
+  </div>
   <div class="flash-variants-pane" data-variants-pane="true">
     ${thumbsHTML}
   </div>
 </div>
 `;
 }else if(isVideo && mediaSrc){
-mediaHTML = `<a href="${escapeAttribute(productUrl)}" class="product-img-link" title="${safeName}"><video src="${escapeAttribute(mediaSrc)}" preload="metadata" muted></video></a>`;
+mediaHTML = `<video src="${escapeAttribute(mediaSrc)}" controls preload="metadata"></video>`;
 }else if(documentUrl){
-mediaHTML = `<a href="${escapeAttribute(productUrl)}" class="product-img-link" title="${safeName}"><div class="doc-box"><span>📄</span><p>Document</p></div></a>`;
+mediaHTML = `<a href="${escapeAttribute(documentUrl)}" target="_blank" rel="noopener noreferrer" class="doc-box"><span>📄</span><p>Document</p></a>`;
 }else if(image){
-mediaHTML = `<a href="${escapeAttribute(productUrl)}" class="product-img-link" title="${safeName}"><img src="${escapeAttribute(image)}" alt="${safeName}" loading="eager" decoding="sync"></a>`;
+mediaHTML = `<img src="${escapeAttribute(image)}" alt="${safeName}" data-product-link="${escapeAttribute(productUrl)}" loading="lazy" decoding="async">`;
 }else{
-mediaHTML = `<a href="${escapeAttribute(productUrl)}" class="product-img-link" title="${safeName}"><div class="product-no-image"><strong>📦</strong><span>${t.imageUnavailable}</span></div></a>`;
+mediaHTML = `<div class="product-no-image" data-product-link="${escapeAttribute(productUrl)}"><strong>📦</strong><span>${t.imageUnavailable}</span></div>`;
 }
 
 return `
-<article class="card" data-product-id="${escapeAttribute(cardDomId)}">
+<article class="card" data-product-id="${escapeAttribute(cardDomId)}" data-product-url="${escapeAttribute(productUrl)}">
 ${product.isRecommande || product.boost ? `<span class="badge-boost">HOT</span>` : ""}
 ${discountBadgeHTML}
-<div class="media-container">${mediaHTML}</div>
+<div class="media-container" data-product-link="${escapeAttribute(productUrl)}">${mediaHTML}</div>
 <div>
 <div class="market-tags"><span class="tag-express">DAKPROÉLITE</span></div>
-<h3><a href="${escapeAttribute(productUrl)}" style="text-decoration:none;color:inherit;">${safeName}</a></h3>
+<h3 data-product-link="${escapeAttribute(productUrl)}">${safeName}</h3>
 ${safeShortDesc ? `<div class="description-complete">${safeShortDesc}</div>` : `<div class="description-complete">${t.selectedArticle}</div>`}
 </div>
 <div>
@@ -1445,19 +1130,7 @@ ${oldPriceHTML}
 `;
 }
 
-function triggerStageZoom(stageLink, stageImg, newSrc){
-if(!stageImg) return;
-if(newSrc && stageImg.getAttribute("src") !== newSrc){
-stageImg.setAttribute("src", newSrc);
-}
-if(stageLink){
-stageLink.classList.remove("is-zooming");
-void stageLink.offsetWidth;
-stageLink.classList.add("is-zooming");
-}
-}
-
-// Animation en boucle : la variante sélectionnée passe en grand sur l'image principale
+// Changement synchronisé des images sur Offres Flash toutes les 5 minutes (300 000 ms)
 function startFlashVariantsAnimation(container){
 if(flashVariantTimer){
 clearInterval(flashVariantTimer);
@@ -1468,20 +1141,20 @@ if(!container) return;
 const animators = Array.from(container.querySelectorAll('[data-flash-animator="true"]')).map(box => {
 const thumbs = Array.from(box.querySelectorAll('.flash-variant-thumb'));
 const stageImg = box.querySelector('.flash-stage-img');
-const stageLink = box.querySelector('.flash-main-stage');
 
 thumbs.forEach((thumb, idx) => {
 thumb.addEventListener('click', (e) => {
-e.preventDefault();
 e.stopPropagation();
 thumbs.forEach(item => item.classList.remove('is-selecting'));
 thumb.classList.add('is-selecting');
-triggerStageZoom(stageLink, stageImg, thumb.dataset.varSrc);
+if(stageImg && thumb.dataset.varSrc){
+stageImg.src = thumb.dataset.varSrc;
+}
 box.dataset.currentVarIndex = String(idx);
 });
 });
 
-return { box, thumbs, stageImg, stageLink, index: 0 };
+return { box, thumbs, stageImg, index: 0 };
 }).filter(item => item.thumbs.length > 0);
 
 if(animators.length === 0) return;
@@ -1489,8 +1162,6 @@ if(animators.length === 0) return;
 flashVariantTimer = setInterval(() => {
 animators.forEach(item => {
 if(!item.box.isConnected) return;
-if(item.thumbs.length <= 1) return;
-
 const manualIdx = parseInt(item.box.dataset.currentVarIndex || "", 10);
 if(!isNaN(manualIdx)){
 item.index = manualIdx;
@@ -1504,59 +1175,25 @@ thumb.classList.toggle('is-selecting', i === item.index);
 });
 
 const activeThumb = item.thumbs[item.index];
-if(activeThumb && activeThumb.dataset.varSrc){
-triggerStageZoom(item.stageLink, item.stageImg, activeThumb.dataset.varSrc);
+if(item.stageImg && activeThumb && activeThumb.dataset.varSrc){
+item.stageImg.src = activeThumb.dataset.varSrc;
 }
 });
-}, 1150);
-}
-
-function getFlashProductsByRotatingCategory(allProducts){
-const categories = extractExactCategories(allProducts, exactCategoriesList);
-if(categories.length === 0){
-return { categoryName: "", products: allProducts.slice(0, 8) };
-}
-const safeIdx = flashCategoryIndex % categories.length;
-const chosenCat = categories[safeIdx];
-const matching = allProducts.filter(p => getExactProductCategory(p).toLowerCase() === chosenCat.toLowerCase());
-return {
-categoryName: chosenCat,
-products: matching.length > 0 ? matching.slice(0, 8) : allProducts.slice(0, 8)
-};
+}, FLASH_CYCLE_INTERVAL_MS);
 }
 
 function renderCarousels(allProducts){
 const containerRelated = document.getElementById("carouselRelated");
 const containerPromos = document.getElementById("carouselPromos");
-const flashBadge = document.getElementById("flashActiveCatLabel");
 
 if(!allProducts || allProducts.length === 0) return;
 
-const flashSelection = getFlashProductsByRotatingCategory(allProducts);
-const flashProducts = flashSelection.products;
-const activeFlashCat = flashSelection.categoryName;
-
-if(flashBadge){
-flashBadge.textContent = activeFlashCat ? `${getCategoryIcon(activeFlashCat)} ${activeFlashCat} · 2min` : "2min";
-}
-
-const promoIds = new Set(flashProducts.map(p => p.id));
-const nonPromoProducts = allProducts.filter(p => !promoIds.has(p.id));
-const listToDisplay = (nonPromoProducts.length > 0 ? nonPromoProducts : allProducts).slice(0, 20);
-
-const nextSig = JSON.stringify({
-lang: currentLang,
-flashCat: activeFlashCat,
-flashIds: flashProducts.map(p => `${p.id}_${p.prix}_${p.prixPromo}_${p.image || p.imageUrl || ""}`),
-relIds: listToDisplay.map(p => `${p.id}_${p.prix}_${p.prixPromo}_${p.image || p.imageUrl || ""}`)
-});
-
-if(nextSig === lastRenderedCarouselsSig) return;
-lastRenderedCarouselsSig = nextSig;
+const promoProducts = selectSmartFlashProducts(allProducts);
 
 if(containerPromos){
-if(flashProducts.length > 0){
-containerPromos.innerHTML = flashProducts.map((product, idx) => generateCardHTML(product, { isFlashCard: true, uniqueSuffix: `_flash_${idx}` })).join("");
+if(promoProducts.length > 0){
+containerPromos.innerHTML = promoProducts.map((product, idx) => generateCardHTML(product, { isFlashCard: true, uniqueSuffix: `_flash_${idx}` })).join("");
+attachCardEvents(containerPromos);
 startFlashVariantsAnimation(containerPromos);
 } else {
 if(flashVariantTimer){ clearInterval(flashVariantTimer); flashVariantTimer = null; }
@@ -1565,81 +1202,48 @@ containerPromos.innerHTML = `<div class="empty-message" style="padding:10px;">${
 }
 
 if(containerRelated){
+const listToDisplay = allProducts.slice(0, 50);
 if(listToDisplay.length > 0){
-const firstSetHTML = listToDisplay.map((product, idx) => generateCardHTML(product, { uniqueSuffix: `_rel_a_${idx}` })).join("");
-const secondSetHTML = listToDisplay.map((product, idx) => generateCardHTML(product, { uniqueSuffix: `_rel_b_${idx}` })).join("");
-const durationSec = Math.max(20, listToDisplay.length * 4);
+const cardsHTML = listToDisplay.map((product, idx) => generateCardHTML(product, { uniqueSuffix: `_rel_${idx}` })).join("");
 
 containerRelated.innerHTML = `
 <div class="marquee-viewport">
-  <div class="marquee-track" style="--marquee-duration:${durationSec}s;">
-    ${firstSetHTML}
-    ${secondSetHTML}
+  <div class="marquee-track">
+    ${cardsHTML}
   </div>
 </div>
 `;
+attachCardEvents(containerRelated);
 } else {
 containerRelated.innerHTML = `<div class="empty-message" style="padding:10px;">${translations[currentLang].emptyCategory}</div>`;
 }
 }
 }
 
-function renderProducts(renderState){
+function attachCardEvents(container){
+container.querySelectorAll("[data-product-link]").forEach(el => {
+el.addEventListener("click", (event) => {
+if(event.target.closest(".flash-variant-thumb") || event.target.closest("video") || event.target.closest("a")) return;
+const url = el.getAttribute("data-product-link") || el.closest("[data-product-url]")?.getAttribute("data-product-url");
+if(url){
+window.location.href = url;
+}
+});
+});
+}
+
+function renderProducts(list){
 const container = document.getElementById("products");
 if(!container) return;
 const t = translations[currentLang];
-const buckets = renderState && Array.isArray(renderState.buckets) ? renderState.buckets : [];
 
-if(buckets.length === 0){
-lastRenderedProductsSig = `empty_${currentLang}_${selectedCategoryName}`;
-container.innerHTML = `<div class="catalog-group-block"><div class="empty-message">${t.emptyCategory}</div></div>`;
+if(!Array.isArray(list) || list.length === 0){
+container.innerHTML = `<div class="empty-message">${t.emptyCategory}</div>`;
 return;
 }
 
-const nextSig = `${currentLang}_${selectedCategoryName}_${renderState.isSingleCategorySelected}_` + buckets.map(b =>
-  `${b.key}:${b.visibleItems.map(p => `${p.id}_${p.prix}_${p.prixPromo}_${p.image || p.imageUrl || ""}`).join(",")}`
-).join("|");
-
-if(nextSig === lastRenderedProductsSig) return;
-lastRenderedProductsSig = nextSig;
-
-container.innerHTML = buckets.map((bucket, idx) => {
-  const isCatActive = selectedCategoryName && bucket.name.toLowerCase() === selectedCategoryName.toLowerCase();
-  const actionLabel = isCatActive ? t.selectedCatalogBtn : t.selectCatalogBtn;
-  const targetCat = isCatActive ? "" : bucket.name;
-  const subLabel = bucket.batchTag ? ` · ${escapeHTML(bucket.batchTag)}` : "";
-  const cardsHTML = bucket.visibleItems.map((product, pIdx) =>
-    generateCardHTML(product, { uniqueSuffix: `_cat_${idx}_${pIdx}` })
-  ).join("");
-
-  return `
-    <div class="catalog-group-block" data-catalog-block="${escapeAttribute(bucket.key)}">
-      <div class="catalog-group-header">
-        <div class="catalog-group-title">
-          <span>${getCategoryIcon(bucket.name)}</span>
-          <span>${escapeHTML(bucket.name)}${subLabel}</span>
-          <span class="catalog-group-count">${bucket.visibleItems.length}/${bucket.filteredItems.length}</span>
-        </div>
-        <button type="button" class="btn-choose-catalog ${isCatActive ? "selected" : ""}" data-select-category="${escapeAttribute(targetCat)}">
-          ${escapeHTML(actionLabel)}
-        </button>
-      </div>
-      <div class="products">${cardsHTML}</div>
-    </div>
-  `;
-}).join("");
-
-container.querySelectorAll("[data-select-category]").forEach(btn => {
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    selectedCategoryName = normalizeLabel(btn.dataset.selectCategory || "");
-    lastCategoriesSig = "";
-    lastRenderedProductsSig = "";
-    buildCategories();
-    filterProducts();
-    document.getElementById("navigationBar")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  });
-});
+container.innerHTML = list.map(product => generateCardHTML(product)).join("");
+attachCardEvents(container);
 }
 
 function checkUrlForSharedProduct(){
@@ -1659,14 +1263,11 @@ const hasPromo = promoVal !== null && !isNaN(promoVal) && promoVal > 0 && promoV
 const effectivePrice = hasPromo ? promoVal : priceVal;
 const productName = product.nom || product.title || "Article";
 const productDesc = getLocalizedText(product, 'description', currentLang);
-const productUrl = getProductUrl(product.id || "");
 
 modalContainer.innerHTML = `
 <div class="modal-overlay">
 <div class="modal-content">
-<a href="${escapeAttribute(productUrl)}">
 <img src="${escapeAttribute(product.image || product.imageUrl || "")}" alt="Produit" style="width:100%;height:auto;max-height:180px;object-fit:contain;background:#080b10;border-radius:8px;margin-bottom:10px;">
-</a>
 <h2 style="color:var(--gold);margin-bottom:6px;font-size:16px;">${escapeHTML(productName)}</h2>
 <div class="price-container" style="margin-bottom:10px;">
 <span class="price" style="font-size:16px;">${formatPrice(effectivePrice)}</span>
@@ -1674,8 +1275,8 @@ ${hasPromo ? `<span class="price-old">${formatPrice(priceVal)}</span>` : ""}
 </div>
 <p style="color:#ccc;font-size:12px;line-height:1.4;margin-bottom:12px;">${escapeHTML(productDesc)}</p>
 <div style="display:flex;gap:8px;">
-<a href="${escapeAttribute(productUrl)}" class="btn-action" style="background:var(--blue);color:#fff;padding:8px;border-radius:5px;text-decoration:none;flex:1;text-align:center;font-size:11px;font-weight:700;">${t.modalBuy}</a>
-<button type="button" class="btn-action" id="btnModalClose" style="background:#222;color:#fff;padding:8px;border-radius:5px;border:none;flex:1;font-size:11px;font-weight:700;cursor:pointer;">${t.modalClose}</button>
+<a href="${escapeAttribute(getProductDetailUrl(product.id))}" style="background:var(--blue);color:#fff;padding:8px;border-radius:5px;text-decoration:none;text-align:center;flex:1;font-size:11px;font-weight:700;">${t.modalBuy}</a>
+<button type="button" id="btnModalClose" style="background:#222;color:#fff;padding:8px;border-radius:5px;border:none;flex:1;font-size:11px;font-weight:700;cursor:pointer;">${t.modalClose}</button>
 </div>
 </div>
 </div>
