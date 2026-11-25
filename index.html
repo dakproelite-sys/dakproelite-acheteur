@@ -503,6 +503,47 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <script src="support-rapide.js"></script>
 
 <script>
+// RÉINITIALISATION & MISE À JOUR INSTANTANÉE DU SERVICE WORKER SUR TOUTES LES WEB APP / PWA
+(function initDakproServiceWorker(){
+  if (!("serviceWorker" in navigator)) return;
+
+  let isReloadingForSw = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (isReloadingForSw) return;
+    isReloadingForSw = true;
+    window.location.reload();
+  });
+
+  navigator.serviceWorker.addEventListener("message", event => {
+    if (event.data && event.data.type === "CACHE_UPDATED") {
+      localStorage.removeItem("dakpro_cached_products");
+      if (typeof window.loadProducts === "function") {
+        window.loadProducts(true);
+      }
+    }
+  });
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" })
+      .then(reg => {
+        reg.update().catch(() => {});
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: "SKIP_WAITING" });
+        }
+        reg.addEventListener("updatefound", () => {
+          const worker = reg.installing;
+          if (!worker) return;
+          worker.addEventListener("statechange", () => {
+            if (worker.state === "installed" && navigator.serviceWorker.controller) {
+              worker.postMessage({ type: "SKIP_WAITING" });
+            }
+          });
+        });
+      })
+      .catch(err => console.warn("SW non enregistré:", err));
+  });
+})();
+
 // CONFIGURATION FIREBASE COMPATIBILITÉ UNIVERSELLE
 const firebaseConfig = {
 apiKey: "AIzaSyDR7INHKaazaqZt-xIcjk10JFiy58uXKO8",
@@ -872,22 +913,32 @@ const cleaned = [...new Set(candidates.map(u => String(u || "").trim()).filter(u
 return cleaned.slice(0, 4);
 }
 
-// Sélection intelligente pour Offres Flash : récupère promos/boost + dernières images publiées
+// Sélection intelligente pour Offres Flash : produits boost + derniers produits publiés dans publications
 function selectSmartFlashProducts(allProducts){
 if(!Array.isArray(allProducts) || allProducts.length === 0) return [];
 
-const recentProducts = allProducts.slice(-8).reverse();
-const latestImages = recentProducts
+const latestPublished = allProducts.slice(-8).reverse();
+const boostedProducts = allProducts.filter(p => Boolean(p.boost || p.isBoost || p.isRecommande || p.isFlash || p.prixPromo || p.promoPrice));
+
+const merged = [];
+const seenIds = new Set();
+
+// Priorité aux produits boostés puis aux derniers produits publiés dans Realtime Database
+[...boostedProducts.slice().reverse(), ...latestPublished].forEach(item => {
+  if (!item || seenIds.has(item.id)) return;
+  seenIds.add(item.id);
+  merged.push(item);
+});
+
+const sourceList = merged.length > 0 ? merged : latestPublished;
+const latestImages = latestPublished
   .map(p => p.image || p.imageUrl || p.photo || p.img || "")
   .filter(u => u && !/\.(mp4|webm|ogg)(\?|$)/i.test(u));
 
-const flagged = allProducts.filter(p => Boolean(p.isFlash || p.prixPromo || p.promoPrice || p.boost || p.isRecommande));
-const baseList = flagged.length > 0 ? flagged : allProducts.slice(-6).reverse();
-
-return baseList.slice(0, 12).map((p, idx) => {
+return sourceList.slice(0, 12).map((p, idx) => {
   const ownImg = p.image || p.imageUrl || p.photo || p.img || "";
-  const smartLatestImg = latestImages[idx % Math.max(1, latestImages.length)] || ownImg;
-  const chosenMainImage = (idx === 0 && latestImages.length > 0) ? latestImages[0] : (ownImg || smartLatestImg);
+  const latestImg = latestImages[idx % Math.max(1, latestImages.length)] || ownImg;
+  const chosenMainImage = (idx === 0 && latestImages.length > 0) ? latestImages[0] : (ownImg || latestImg);
   return {
     ...p,
     boost: true,
@@ -907,7 +958,7 @@ function loadProducts() {
     } catch(e) {}
   }
 
-  db.ref("publications").once("value").then(snapshot => {
+  db.ref("publications").on("value", snapshot => {
     const data = snapshot.val();
     if (!data) return;
 
@@ -921,10 +972,10 @@ function loadProducts() {
     filterProducts();
     renderCarousels(window.allProductsData);
     checkUrlForSharedProduct();
-  }).catch(err => {
-    console.error("Erreur Firebase:", err);
   });
 }
+
+window.loadProducts = loadProducts;
 
 function buildCategories(){
 const categories = [...new Set(window.allProductsData.map(p => p.categorie || p.category).filter(Boolean))];

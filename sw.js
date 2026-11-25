@@ -1,4 +1,5 @@
-const CACHE_NAME = "dakpro-v2026-11-25";
+const CACHE_VERSION = "2026-11-25-v2";
+const CACHE_NAME = `dakproelite-cache-${CACHE_VERSION}`;
 
 const APP_FILES = [
   "./",
@@ -33,7 +34,6 @@ const PAYMENT_AND_AUTH_PATTERNS = [
 function isBypassRequest(request, url) {
   if (request.method !== "GET") return true;
   if (url.origin !== self.location.origin) return true;
-
   const fullPath = `${url.pathname}${url.search}`.toLowerCase();
   return PAYMENT_AND_AUTH_PATTERNS.some(pattern => pattern.test(fullPath));
 }
@@ -52,7 +52,7 @@ self.addEventListener("install", event => {
       .then(cache => {
         return Promise.all(
           APP_FILES.map(file =>
-            cache.add(file).catch(() => null)
+            cache.add(new Request(file, { cache: "reload" })).catch(() => null)
           )
         );
       })
@@ -60,7 +60,7 @@ self.addEventListener("install", event => {
   );
 });
 
-/* ACTIVATION : NETTOYAGE DES ANCIENS CACHES SANS TOUCHER AUX PAIEMENTS */
+/* ACTIVATION : NETTOYAGE COMPLET DES ANCIENS CACHES & NOTIFICATION DES CLIENTS PWA */
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
@@ -90,7 +90,6 @@ self.addEventListener("activate", event => {
 /* RÉSEAU D'ABORD + CACHE DE SECOURS (PASSERAIES DE PAIEMENT TOUJOURS EN DIRECT) */
 self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
-
   if (isBypassRequest(event.request, url)) {
     return;
   }
