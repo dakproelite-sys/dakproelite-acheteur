@@ -146,10 +146,10 @@ overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:var(-
 .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;}
 .dot.active{background:var(--gold);}
 
-/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES DÉROULABLES SUR UNE SEULE LIGNE) */
+/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES DÉROULABLES GAUCHE/DROITE) */
 .navigation-bar-container{
 position:sticky;top:70px;z-index:4000;
-width:100%;padding:8px 12px;display:flex;flex-wrap:nowrap;gap:10px;align-items:center;
+width:100%;padding:8px 12px;display:flex;gap:10px;align-items:center;
 background:#0b0e13;border-bottom:1px solid rgba(212,175,55,0.25);
 overflow-x:auto;overflow-y:hidden;
 -webkit-overflow-scrolling:touch;
@@ -164,9 +164,9 @@ white-space:nowrap;font-size:11px;font-weight:800;text-decoration:none;
 display:inline-flex;align-items:center;gap:4px;
 }
 .cat-scroll{
-display:flex;flex:0 0 auto;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;
+display:flex;flex:1 1 auto;gap:8px;overflow-x:auto;overflow-y:hidden;
 -webkit-overflow-scrolling:touch;align-items:center;
-touch-action:pan-x pan-y;padding-right:20px;
+touch-action:pan-x pan-y;padding-right:16px;
 }
 .cat-scroll::-webkit-scrollbar{display:none;}
 .cat-btn{
@@ -175,7 +175,7 @@ background:rgba(19,25,33,0.9);color:#fff;cursor:pointer;white-space:nowrap;font-
 display:inline-flex;align-items:center;gap:5px;user-select:none;
 transition:background 0.15s ease, color 0.15s ease;
 }
-.cat-btn:hover,.cat-btn.active{background:var(--gold);color:#000;font-weight:800;}
+.cat-btn.active{background:var(--gold);color:#000;font-weight:800;}
 
 /* SECTIONS AMAZON */
 .amazon-section{
@@ -432,7 +432,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <div class="banner-dots" id="bannerDots"></div>
 </section>
 
-<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES SUR UNE SEULE LIGNE) -->
+<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES) -->
 <div class="navigation-bar-container" id="navigationBar">
 <a href="metiers.html" class="btn-metiers-special"><span data-i18n="allTrades">🛠️ Métiers</span></a>
 <div class="cat-scroll" id="catMenu"></div>
@@ -451,7 +451,6 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
   <div class="amazon-section-title" style="background:#fff; padding:10px; border-radius:6px;">
     <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
-    <small id="activeCatalogCatBadge" style="color:#666; font-weight:600; font-size:10px;"></small>
   </div>
   <main class="products" id="products">
     <div class="loading-message" data-i18n="loadingArticles">Chargement des articles...</div>
@@ -996,7 +995,6 @@ function loadProducts() {
   });
 }
 
-// Barre de catégories stable : tous les noms restent affichés sur une seule ligne, cliquables sans provoquer de 404
 function buildCategories(){
 const menu = document.getElementById("catMenu");
 if(!menu) return;
@@ -1024,10 +1022,10 @@ if(nextSig === lastCategoriesSig && menu.children.length > 0) return;
 lastCategoriesSig = nextSig;
 
 menu.innerHTML = categories.map(category => {
-const safeCat = escapeAttribute(category);
+const safe = escapeAttribute(category);
 const icon = getCategoryIcon(category);
 const isSelected = category.toLowerCase() === String(currentCat || "").toLowerCase();
-return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-category="${safeCat}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
+return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
 }).join("");
 
 menu.querySelectorAll(".cat-btn").forEach(button => {
@@ -1068,11 +1066,6 @@ return categoryLower === activeCatLower;
 }
 
 function filterProducts(){
-const badge = document.getElementById("activeCatalogCatBadge");
-const search = (document.getElementById("searchBar")?.value || "").trim();
-if(badge){
-badge.textContent = search ? `🔍 "${search}"` : (currentCat ? `${getCategoryIcon(currentCat)} ${currentCat}` : "");
-}
 renderProducts(getFilteredProducts());
 }
 
