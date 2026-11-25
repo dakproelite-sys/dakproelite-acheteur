@@ -129,6 +129,19 @@ gap: 6px;
 box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
+/* BANNIÈRE MISE À JOUR SERVICE WORKER */
+.sw-update-banner{
+display:none;
+width:96%;max-width:1400px;margin:8px auto 0 auto;
+background:#16202a;border:1px solid var(--gold);border-radius:10px;
+padding:10px 14px;align-items:center;justify-content:space-between;gap:10px;
+}
+.sw-update-banner span{font-size:11px;color:var(--gold-light);font-weight:600;}
+.btn-sw-refresh{
+background:var(--gold);color:#000;border:none;padding:6px 12px;
+border-radius:16px;font-size:10.5px;font-weight:800;cursor:pointer;white-space:nowrap;
+}
+
 /* BANNIÈRES */
 .banner-container{
 display:none;position:relative;width:94%;max-width:1400px;margin:12px auto;
@@ -146,10 +159,10 @@ overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:var(-
 .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;}
 .dot.active{background:var(--gold);}
 
-/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES DÉROULABLES GAUCHE/DROITE) */
+/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES DÉROULABLES SUR UNE SEULE LIGNE) */
 .navigation-bar-container{
 position:sticky;top:70px;z-index:4000;
-width:100%;padding:8px 12px;display:flex;gap:10px;align-items:center;
+width:100%;padding:8px 12px;display:flex;flex-wrap:nowrap;gap:10px;align-items:center;
 background:#0b0e13;border-bottom:1px solid rgba(212,175,55,0.25);
 overflow-x:auto;overflow-y:hidden;
 -webkit-overflow-scrolling:touch;
@@ -164,9 +177,9 @@ white-space:nowrap;font-size:11px;font-weight:800;text-decoration:none;
 display:inline-flex;align-items:center;gap:4px;
 }
 .cat-scroll{
-display:flex;flex:1 1 auto;gap:8px;overflow-x:auto;overflow-y:hidden;
+display:flex;flex:1 1 auto;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;
 -webkit-overflow-scrolling:touch;align-items:center;
-touch-action:pan-x pan-y;padding-right:16px;
+touch-action:pan-x pan-y;padding-right:20px;
 }
 .cat-scroll::-webkit-scrollbar{display:none;}
 .cat-btn{
@@ -407,6 +420,12 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 </div>
 </header>
 
+<!-- BANNIÈRE MISE À JOUR CACHE / SERVICE WORKER -->
+<div class="sw-update-banner" id="swUpdateBanner">
+<span>🔄 Nouvelle version prête — ancien cache nettoyé</span>
+<button type="button" class="btn-sw-refresh" id="btnSwRefresh">Actualiser</button>
+</div>
+
 <!-- BANNIÈRE / BOUTON D'INSTALLATION DE L'APPLICATION (PUISSANT & PROFESSIONNEL) -->
 <div class="install-app-banner" id="installAppBanner">
 <div class="install-app-info">
@@ -432,7 +451,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <div class="banner-dots" id="bannerDots"></div>
 </section>
 
-<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES) -->
+<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES DÉROULABLES SUR UNE SEULE LIGNE) -->
 <div class="navigation-bar-container" id="navigationBar">
 <a href="metiers.html" class="btn-metiers-special"><span data-i18n="allTrades">🛠️ Métiers</span></a>
 <div class="cat-scroll" id="catMenu"></div>
@@ -451,6 +470,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
   <div class="amazon-section-title" style="background:#fff; padding:10px; border-radius:6px;">
     <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
+    <small id="activeCatalogCatBadge" style="color:#666; font-weight:600; font-size:10px;"></small>
   </div>
   <main class="products" id="products">
     <div class="loading-message" data-i18n="loadingArticles">Chargement des articles...</div>
@@ -541,6 +561,77 @@ const db = firebase.database();
 const auth = firebase.auth();
 
 window.dakproFirebase = { db, auth };
+
+// SERVICE WORKER + NETTOYAGE ANCIEN CACHE À L'INSTALLATION
+const APP_CACHE_VERSION = "dakpro-v2026-11-25";
+const SW_VERSION_STORAGE_KEY = "dakpro_sw_version";
+
+async function cleanLegacyBrowserCaches(){
+try{
+const prevVer = localStorage.getItem(SW_VERSION_STORAGE_KEY);
+if(prevVer && prevVer !== APP_CACHE_VERSION){
+localStorage.removeItem("dakpro_cached_products");
+localStorage.removeItem("dakpro_categories_5m_cache");
+}
+localStorage.setItem(SW_VERSION_STORAGE_KEY, APP_CACHE_VERSION);
+
+if("caches" in window){
+const keys = await caches.keys();
+await Promise.all(
+keys
+.filter(k => k !== APP_CACHE_VERSION)
+.map(k => caches.delete(k))
+);
+}
+}catch(e){}
+}
+
+function registerServiceWorkerAndUpdate(){
+cleanLegacyBrowserCaches();
+if(!("serviceWorker" in navigator)) return;
+
+let waitingWorker = null;
+const swBanner = document.getElementById("swUpdateBanner");
+const swRefreshBtn = document.getElementById("btnSwRefresh");
+
+navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(reg => {
+reg.update().catch(() => {});
+
+if(reg.waiting){
+waitingWorker = reg.waiting;
+if(swBanner) swBanner.style.display = "flex";
+}
+
+reg.addEventListener("updatefound", () => {
+const newWorker = reg.installing;
+if(!newWorker) return;
+newWorker.addEventListener("statechange", () => {
+if(newWorker.state === "installed" && navigator.serviceWorker.controller){
+waitingWorker = newWorker;
+if(swBanner) swBanner.style.display = "flex";
+}
+});
+});
+}).catch(() => {});
+
+swRefreshBtn?.addEventListener("click", () => {
+cleanLegacyBrowserCaches().then(() => {
+if(waitingWorker){
+waitingWorker.postMessage({ type: "SKIP_WAITING" });
+}
+window.location.reload();
+});
+});
+
+let refreshing = false;
+navigator.serviceWorker.addEventListener("controllerchange", () => {
+if(refreshing) return;
+refreshing = true;
+window.location.reload();
+});
+}
+
+registerServiceWorkerAndUpdate();
 
 // GESTION DE L'INSTALLATION PWA (BOUTON TÉLÉCHARGER / INSTALLER)
 let deferredPrompt = null;
@@ -995,6 +1086,7 @@ function loadProducts() {
   });
 }
 
+// Barre de catégories stable : toutes les catégories de publications sur une seule ligne, défilables gauche/droite
 function buildCategories(){
 const menu = document.getElementById("catMenu");
 if(!menu) return;
@@ -1011,32 +1103,29 @@ if(categories.length > 0){
   ensureFlashCategoryRotation(categories);
 }
 
-if(!currentCat && categories.length > 0){
-  currentCat = categories[0];
-} else if(currentCat && categories.length > 0 && !categories.some(c => c.toLowerCase() === currentCat.toLowerCase())){
-  currentCat = categories[0];
-}
-
 const nextSig = `${currentCat}::${categories.join("||")}`;
 if(nextSig === lastCategoriesSig && menu.children.length > 0) return;
 lastCategoriesSig = nextSig;
 
-menu.innerHTML = categories.map(category => {
+const allBtn = `<button type="button" class="cat-btn ${!currentCat ? "active" : ""}" data-category=""><span>✨</span> <span>Tout</span></button>`;
+const catButtons = categories.map(category => {
 const safe = escapeAttribute(category);
 const icon = getCategoryIcon(category);
-const isSelected = category.toLowerCase() === String(currentCat || "").toLowerCase();
+const isSelected = currentCat && category.toLowerCase() === String(currentCat).toLowerCase();
 return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
 }).join("");
+
+menu.innerHTML = allBtn + catButtons;
 
 menu.querySelectorAll(".cat-btn").forEach(button => {
 button.addEventListener("click", (e) => {
 e.preventDefault();
 const chosen = normalizeCategoryName(button.dataset.category || "");
-if(!chosen) return;
 currentCat = chosen;
 lastCategoriesSig = "";
 menu.querySelectorAll(".cat-btn").forEach(item => {
-item.classList.toggle("active", normalizeCategoryName(item.dataset.category || "").toLowerCase() === chosen.toLowerCase());
+const itemCat = normalizeCategoryName(item.dataset.category || "");
+item.classList.toggle("active", itemCat.toLowerCase() === chosen.toLowerCase());
 });
 lastRenderedProductsSig = "";
 filterProducts();
@@ -1066,6 +1155,11 @@ return categoryLower === activeCatLower;
 }
 
 function filterProducts(){
+const badge = document.getElementById("activeCatalogCatBadge");
+const search = (document.getElementById("searchBar")?.value || "").trim();
+if(badge){
+badge.textContent = search ? `🔍 "${search}"` : (currentCat ? `${getCategoryIcon(currentCat)} ${currentCat}` : "");
+}
 renderProducts(getFilteredProducts());
 }
 
