@@ -1,4 +1,4 @@
-const CACHE_VERSION = "2026-11-25-v2";
+const CACHE_VERSION = "2026-11-25-v3";
 const CACHE_NAME = `dakproelite-cache-${CACHE_VERSION}`;
 
 const APP_FILES = [
@@ -47,16 +47,16 @@ self.addEventListener("message", event => {
 
 /* INSTALLATION : MISE EN CACHE SÉCURISÉE DES FICHIERS DE BASE */
 self.addEventListener("install", event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         return Promise.all(
           APP_FILES.map(file =>
-            cache.add(new Request(file, { cache: "reload" })).catch(() => null)
+            cache.add(new Request(`${file}?v=${CACHE_VERSION}`, { cache: "reload" })).catch(() => null)
           )
         );
       })
-      .then(() => self.skipWaiting())
   );
 });
 
@@ -80,6 +80,7 @@ self.addEventListener("activate", event => {
           client.postMessage({
             type: "CACHE_UPDATED",
             cacheName: CACHE_NAME,
+            version: CACHE_VERSION,
             preservePaymentData: true
           });
         });
@@ -95,7 +96,7 @@ self.addEventListener("fetch", event => {
   }
 
   event.respondWith(
-    fetch(event.request)
+    fetch(new Request(event.request, { cache: "no-store" }))
       .then(response => {
         if (
           response &&
