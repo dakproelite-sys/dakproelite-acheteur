@@ -159,7 +159,7 @@ overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:var(-
 .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;}
 .dot.active{background:var(--gold);}
 
-/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES DÉROULABLES SUR UNE SEULE LIGNE) */
+/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATALOGUES SÉPARÉS SUR UNE SEULE LIGNE) */
 .navigation-bar-container{
 position:sticky;top:70px;z-index:4000;
 width:100%;padding:8px 12px;display:flex;flex-wrap:nowrap;gap:10px;align-items:center;
@@ -189,6 +189,36 @@ display:inline-flex;align-items:center;gap:5px;user-select:none;
 transition:background 0.15s ease, color 0.15s ease;
 }
 .cat-btn.active{background:var(--gold);color:#000;font-weight:800;}
+
+/* BLOCS CATALOGUES INDIVIDUELS SÉPARÉS */
+.catalog-groups-stack{
+display:flex;flex-direction:column;gap:14px;width:100%;
+}
+.catalog-group-block{
+background:#ffffff;border-radius:10px;padding:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1px solid #e6decb;
+}
+.catalog-group-header{
+display:flex;align-items:center;justify-content:space-between;gap:8px;
+padding-bottom:8px;margin-bottom:8px;border-bottom:1.5px solid var(--gold);
+}
+.catalog-group-title{
+color:var(--black);font-size:12px;font-weight:800;
+display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+}
+.catalog-group-count{
+font-size:10px;color:#475569;background:#f1f5f9;padding:2px 8px;border-radius:10px;font-weight:700;
+}
+.catalog-group-actions{
+display:flex;align-items:center;gap:6px;
+}
+.btn-choose-catalog{
+background:#131921;color:var(--gold);border:1px solid var(--gold);
+padding:4px 10px;border-radius:14px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;
+}
+.btn-choose-catalog.selected{
+background:var(--gold);color:#000;font-weight:800;
+}
 
 /* SECTIONS AMAZON */
 .amazon-section{
@@ -248,12 +278,12 @@ width:180px;
 
 /* CATALOGUE GÉNÉRAL EN GRILLE OPTIMISÉ */
 .products{
-width:100%;margin:0 auto;padding:8px;background:#ffffff;
+width:100%;margin:0 auto;padding:4px;background:#ffffff;
 display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;align-items:stretch;
 }
-@media(min-width:600px){.products{grid-template-columns:repeat(3, 1fr);gap:12px;padding:12px;}}
-@media(min-width:900px){.products{grid-template-columns:repeat(4, 1fr);gap:16px;padding:16px;}}
-@media(min-width:1200px){.products{grid-template-columns:repeat(6, 1fr);gap:18px;}}
+@media(min-width:600px){.products{grid-template-columns:repeat(3, 1fr);gap:12px;padding:6px;}}
+@media(min-width:900px){.products{grid-template-columns:repeat(4, 1fr);gap:14px;padding:8px;}}
+@media(min-width:1200px){.products{grid-template-columns:repeat(6, 1fr);gap:16px;}}
 
 /* CARTE PRODUIT LÉGÈRE - STYLE GRAVÉ SUR PAPIER */
 .card{
@@ -402,7 +432,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 .lang-option:hover{background:var(--gold);color:#000;font-weight:700;}
 
 .footer-bottom-bar{padding:12px;background:#000;text-align:center;color:#777;font-size:9px;}
-.loading-message,.empty-message{grid-column:1 / -1;padding:30px 10px;text-align:center;color:#64748b;font-size:12px;}
+.loading-message,.empty-message{grid-column:1 / -1;padding:24px 10px;text-align:center;color:#64748b;font-size:12px;}
 </style>
 </head>
 
@@ -451,7 +481,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <div class="banner-dots" id="bannerDots"></div>
 </section>
 
-<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES DÉROULABLES SUR UNE SEULE LIGNE) -->
+<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATALOGUES SÉPARÉS SUR UNE SEULE LIGNE) -->
 <div class="navigation-bar-container" id="navigationBar">
 <a href="metiers.html" class="btn-metiers-special"><span data-i18n="allTrades">🛠️ Métiers</span></a>
 <div class="cat-scroll" id="catMenu"></div>
@@ -466,15 +496,15 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
   <div class="amazon-carousel" id="carouselPromos"></div>
 </section>
 
-<!-- 2. CATALOGUE COMPLET & CATÉGORIES -->
+<!-- 2. CATALOGUES SÉPARÉS & SÉLECTEUR D'AFFICHAGE -->
 <section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
   <div class="amazon-section-title" style="background:#fff; padding:10px; border-radius:6px;">
-    <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
-    <small id="activeCatalogCatBadge" style="color:#666; font-weight:600; font-size:10px;"></small>
+    <span data-i18n="fullCatalog">📦 Catalogues</span>
+    <small id="activeCatalogCatBadge" style="color:#666; font-weight:700; font-size:10px;"></small>
   </div>
-  <main class="products" id="products">
-    <div class="loading-message" data-i18n="loadingArticles">Chargement des articles...</div>
-  </main>
+  <div class="catalog-groups-stack" id="products">
+    <div class="loading-message" data-i18n="loadingArticles">Chargement des catalogues...</div>
+  </div>
 </section>
 
 <!-- 3. PRODUITS RECOMMANDÉS & SPONSORISÉS -->
@@ -657,17 +687,20 @@ btnInstallApp?.addEventListener("click", async () => {
   }
 });
 
-// CACHE LOCAL PRODUITS + CACHE CATÉGORIES DE 5 MINUTES (300 000 ms) + ROTATION OFFRES FLASH 2 MINUTES (120 000 ms)
+// CACHE LOCAL PRODUITS + CACHE CATALOGUES 5 MIN + ROTATION OFFRES FLASH 2 MIN
 const CATEGORY_CACHE_TTL_MS = 5 * 60 * 1000;
 const CATEGORY_CACHE_KEY = "dakpro_categories_5m_cache";
 const FLASH_ROTATION_MS = 2 * 60 * 1000;
+// Limite initiale par bloc catalogue pour ne pas charger tous les produits d'un seul bloc
+const INITIAL_PREVIEW_PER_CATALOG = 4;
 
 let cachedProducts = localStorage.getItem("dakpro_cached_products");
 window.allProductsData = cachedProducts ? JSON.parse(cachedProducts) : [];
 
 const siteContext = { currentUser: null };
-let currentCat = "";
-let activeCategoriesList = [];
+// Identifiant unique du catalogue sélectionné ("ALL_PREVIEW" = aperçu séparé de chaque catalogue)
+let selectedCatalogKey = "ALL_PREVIEW";
+let catalogBucketsList = [];
 let flashCategoryIndex = 0;
 let flashCategoryTimer = null;
 let currentIndex = 0;
@@ -694,8 +727,16 @@ if(catName.toLowerCase().includes(key.toLowerCase())) return categoryIconsMap[ke
 return "📦";
 }
 
-function normalizeCategoryName(raw){
+function normalizeCatalogName(raw){
 return String(raw ?? "").trim().replace(/\s+/g, " ");
+}
+
+// Clé unique pour séparer chaque catalogue même s'il porte le même nom qu'un autre lot/catalogue
+function getProductCatalogKey(product){
+const rawCat = normalizeCatalogName(product.categorie || product.category || product.cat || product.catalogue || "Catalogue");
+const batchId = normalizeCatalogName(product.catalogueId || product.catalogId || product.lotId || product.sourceId || product.vendeurId || product.sellerId || "");
+const catSlug = (rawCat || "catalogue").toLowerCase().replace(/[^a-z0-9]+/g, "_");
+return batchId ? `${catSlug}__${batchId}` : `${catSlug}__${String(product.id || "item")}`;
 }
 
 function getCategoryCache(){
@@ -703,21 +744,21 @@ try{
 const raw = localStorage.getItem(CATEGORY_CACHE_KEY);
 if(!raw) return null;
 const parsed = JSON.parse(raw);
-if(!parsed || !Array.isArray(parsed.categories) || !parsed.savedAt) return null;
+if(!parsed || !Array.isArray(parsed.buckets) || !parsed.savedAt) return null;
 if((Date.now() - Number(parsed.savedAt)) > CATEGORY_CACHE_TTL_MS){
 return null;
 }
-return parsed.categories;
+return parsed.buckets;
 }catch(e){
 return null;
 }
 }
 
-function saveCategoryCache(categories){
+function saveCategoryCache(buckets){
 try{
 localStorage.setItem(CATEGORY_CACHE_KEY, JSON.stringify({
 savedAt: Date.now(),
-categories
+buckets
 }));
 }catch(e){}
 }
@@ -728,13 +769,13 @@ fr: {
 name: "Français", currency: "FCFA", rate: 1,
 searchPlaceholder: "Rechercher des produits...",
 navAccount: "Compte", allTrades: "🛠️ Métiers",
-loadingArticles: "Chargement des articles...",
+loadingArticles: "Chargement des catalogues...",
 emptyCategory: "Aucun article trouvé.",
 officialAnnouncement: "⚡ Annonce Officielle",
 welcomeText: "Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !",
 sponsoredTitle: "⭐ Recommandés & Sponsorisés",
 flashOffers: "🔥 Offres Flash & Promos",
-fullCatalog: "📦 Catalogue & Catégories",
+fullCatalog: "📦 Catalogues",
 swipeHint: "Glisser →",
 imageUnavailable: "Indisponible",
 selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalBuy: "💳 Acheter", modalClose: "Fermer",
@@ -743,19 +784,21 @@ rulesAndLegal: "Légal", internalRules: "Règlement", privacyPolicy: "Confidenti
 earnMoney: "Gagner", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Vendeur",
 installAppTitle: "Installer DAKPROÉLITE",
 installAppDesc: "Accédez plus rapidement à la marketplace depuis votre écran d'accueil.",
-installAppBtn: "Installer"
+installAppBtn: "Installer",
+selectCatalogBtn: "Afficher ce catalogue",
+selectedCatalogBtn: "✓ Affiché"
 },
 en: {
 name: "English", currency: "USD", rate: 1 / 600,
 searchPlaceholder: "Search products...",
 navAccount: "Account", allTrades: "🛠️ Trades",
-loadingArticles: "Loading items...",
+loadingArticles: "Loading catalogs...",
 emptyCategory: "No items found.",
 officialAnnouncement: "⚡ Official Announcement",
 welcomeText: "Welcome to DAKPROÉLITE, your international benchmark marketplace!",
 sponsoredTitle: "⭐ Recommended & Sponsored",
 flashOffers: "🔥 Flash Offers",
-fullCatalog: "📦 Catalog & Categories",
+fullCatalog: "📦 Catalogs",
 swipeHint: "Swipe →",
 imageUnavailable: "Unavailable",
 selectedArticle: "Selected item on DAKPROÉLITE.", modalBuy: "💳 Buy Now", modalClose: "Close",
@@ -764,19 +807,21 @@ rulesAndLegal: "Rules & Legal", internalRules: "Internal Rules", privacyPolicy: 
 earnMoney: "Earn Money", ambassadorProgram: "Ambassador Program", becomeSeller: "🛍️ Become Seller",
 installAppTitle: "Install DAKPROÉLITE",
 installAppDesc: "Get quick access to the marketplace directly from your home screen.",
-installAppBtn: "Install"
+installAppBtn: "Install",
+selectCatalogBtn: "Show catalog",
+selectedCatalogBtn: "✓ Shown"
 },
 es: {
 name: "Español", currency: "EUR", rate: 1 / 655.957,
 searchPlaceholder: "Buscar productos...",
 navAccount: "Cuenta", allTrades: "🛠️ Oficios",
-loadingArticles: "Cargando artículos...",
+loadingArticles: "Cargando catálogos...",
 emptyCategory: "No se encontraron artículos.",
 officialAnnouncement: "⚡ Anuncio Oficial",
 welcomeText: "¡Bienvenido a DAKPROÉLITE, su plataforma internacional de referencia!",
 sponsoredTitle: "⭐ Recomendados y patrocinados",
 flashOffers: "🔥 Ofertas flash",
-fullCatalog: "📦 Catálogo y categorías",
+fullCatalog: "📦 Catálogos",
 swipeHint: "Deslizar →",
 imageUnavailable: "No disponible",
 selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalBuy: "💳 Comprar", modalClose: "Cerrar",
@@ -785,19 +830,21 @@ rulesAndLegal: "Normas y Legal", internalRules: "Reglamento", privacyPolicy: "Po
 earnMoney: "Ganar Dinero", ambassadorProgram: "Programa Embajador", becomeSeller: "🛍️ Ser Vendedor",
 installAppTitle: "Instalar DAKPROÉLITE",
 installAppDesc: "Accede más rápido a la tienda desde tu pantalla de inicio.",
-installAppBtn: "Instalar"
+installAppBtn: "Instalar",
+selectCatalogBtn: "Ver catálogo",
+selectedCatalogBtn: "✓ Visible"
 },
 zh: {
 name: "中文", currency: "CNY", rate: 1 / 85,
 searchPlaceholder: "搜索产品...",
 navAccount: "账户", allTrades: "🛠️ 行业",
-loadingArticles: "正在加载商品...",
+loadingArticles: "正在加载目录...",
 emptyCategory: "暂无商品。",
 officialAnnouncement: "⚡ 官方公告",
 welcomeText: "欢迎来到 DAKPROÉLITE，您的国际基准市场！",
 sponsoredTitle: "⭐ 推荐与赞助",
 flashOffers: "🔥 限时特惠",
-fullCatalog: "📦 目录与分类",
+fullCatalog: "📦 目录",
 swipeHint: "滑动 →",
 imageUnavailable: "不可用",
 selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalBuy: "💳 购买", modalClose: "关闭",
@@ -806,7 +853,9 @@ rulesAndLegal: "规则与法律", internalRules: "内部规则", privacyPolicy: 
 earnMoney: "赚钱", ambassadorProgram: "大使计划", becomeSeller: "🛍️ 成为卖家",
 installAppTitle: "安装 DAKPROÉLITE",
 installAppDesc: "从主屏幕快速访问市场。",
-installAppBtn: "安装"
+installAppBtn: "安装",
+selectCatalogBtn: "显示目录",
+selectedCatalogBtn: "✓ 已显示"
 },
 bn: {
 name: "বাংলা", currency: "BDT", rate: 1 / 5,
@@ -827,7 +876,9 @@ rulesAndLegal: "নিয়মাবলী", internalRules: "অভ্যন্ত
 earnMoney: "আয় করুন", ambassadorProgram: "অ্যাম্বাসেডর প্রোগ্রাম", becomeSeller: "🛍️ বিক্রেতা হন",
 installAppTitle: "DAKPROÉLITE ইনস্টল করুন",
 installAppDesc: "আপনার হোম স্ক্রিন থেকে দ্রুত মার্কেটপ্লেসে প্রবেশ করুন।",
-installAppBtn: "ইনস্টল"
+installAppBtn: "ইনস্টল",
+selectCatalogBtn: "দেখুন",
+selectedCatalogBtn: "✓ দৃশ্যমান"
 },
 yo: {
 name: "Yorùbá", currency: "NGN", rate: 1.2,
@@ -848,7 +899,9 @@ rulesAndLegal: "Ofin", internalRules: "Awọn Ofin", privacyPolicy: "Asiri",
 earnMoney: "Gba Owo", ambassadorProgram: "Eto Aṣoju", becomeSeller: "🛍️ Di Olutaja",
 installAppTitle: "Fi DAKPROÉLITE sori ẹrọ",
 installAppDesc: "Wọle si ọja ni iyara lati iboju ile rẹ.",
-installAppBtn: "Fi sori ẹrọ"
+installAppBtn: "Fi sori ẹrọ",
+selectCatalogBtn: "Fi han",
+selectedCatalogBtn: "✓ Ti han"
 },
 fon: {
 name: "Fɔ̀ngbè", currency: "FCFA", rate: 1,
@@ -869,7 +922,9 @@ rulesAndLegal: "Sɛ́n", internalRules: "Sɛ́n Xó", privacyPolicy: "Nǔ Gudo",
 earnMoney: "Ba Akuɛ", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Zɔ̌watɔ́",
 installAppTitle: "Tɛ́n DAKPROÉLITE ɖó",
 installAppDesc: "Kpɔ́n nǔ lɛ wě wě ɖò kɔ̀ tɔn mɛ.",
-installAppBtn: "Tɛ́n ɖó"
+installAppBtn: "Tɛ́n ɖó",
+selectCatalogBtn: "XLɛ́",
+selectedCatalogBtn: "✓ XLɛ́ ɖò"
 }
 };
 
@@ -941,9 +996,9 @@ menu?.classList.remove("show");
 
 setLanguage(currentLang);
 
-const cachedCats = getCategoryCache();
-if(Array.isArray(cachedCats) && cachedCats.length > 0){
-activeCategoriesList = cachedCats;
+const cachedBuckets = getCategoryCache();
+if(Array.isArray(cachedBuckets) && cachedBuckets.length > 0){
+catalogBucketsList = cachedBuckets;
 }
 
 if(window.allProductsData.length > 0){
@@ -1008,30 +1063,42 @@ cleaned.unshift(mainImage);
 return cleaned.slice(0, 4);
 }
 
-function extractCategoriesFromProducts(products){
-const seen = new Map();
-(Array.isArray(products) ? products : []).forEach(p => {
+// Regroupe chaque catalogue séparément sans fusionner deux catalogues différents portant le même nom
+function extractCatalogBuckets(products){
+const bucketsMap = new Map();
+
+(Array.isArray(products) ? products : []).forEach((p, idx) => {
 if(!p || p.actif === false) return;
-const rawCat = normalizeCategoryName(p.categorie || p.category || p.cat || "");
-if(!rawCat) return;
-const key = rawCat.toLowerCase();
-if(!seen.has(key)){
-seen.set(key, rawCat);
-}
+const rawName = normalizeCatalogName(p.categorie || p.category || p.cat || p.catalogue || "Catalogue");
+if(!rawName) return;
+const key = getProductCatalogKey(p);
+const batchTag = normalizeCatalogName(p.catalogueNom || p.catalogName || p.lotNom || p.vendeurNom || p.sellerName || "");
+
+if(!bucketsMap.has(key)){
+bucketsMap.set(key, {
+key,
+name: rawName,
+batchTag,
+orderIndex: idx,
+items: []
 });
-return Array.from(seen.values());
+}
+bucketsMap.get(key).items.push(p);
+});
+
+return Array.from(bucketsMap.values());
 }
 
-// Rotation automatique toutes les 2 minutes sur les catégories de publications dans Offres Flash
-function ensureFlashCategoryRotation(categories){
-if(!Array.isArray(categories) || categories.length === 0) return;
-if(flashCategoryIndex >= categories.length){
+// Rotation automatique toutes les 2 minutes sur les catalogues dans Offres Flash
+function ensureFlashCategoryRotation(buckets){
+if(!Array.isArray(buckets) || buckets.length === 0) return;
+if(flashCategoryIndex >= buckets.length){
 flashCategoryIndex = 0;
 }
-if(!flashCategoryTimer && categories.length > 1){
+if(!flashCategoryTimer && buckets.length > 1){
 flashCategoryTimer = setInterval(() => {
-const cats = extractCategoriesFromProducts(window.allProductsData);
-const pool = cats.length > 0 ? cats : activeCategoriesList;
+const currentBuckets = extractCatalogBuckets(window.allProductsData);
+const pool = currentBuckets.length > 0 ? currentBuckets : catalogBucketsList;
 if(pool.length > 1){
 flashCategoryIndex = (flashCategoryIndex + 1) % pool.length;
 lastRenderedCarouselsSig = "";
@@ -1062,11 +1129,11 @@ function loadProducts() {
 
     localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
 
-    const freshCats = extractCategoriesFromProducts(window.allProductsData);
-    if(freshCats.length > 0){
-      activeCategoriesList = freshCats;
-      saveCategoryCache(freshCats);
-      ensureFlashCategoryRotation(freshCats);
+    const freshBuckets = extractCatalogBuckets(window.allProductsData);
+    if(freshBuckets.length > 0){
+      catalogBucketsList = freshBuckets;
+      saveCategoryCache(freshBuckets);
+      ensureFlashCategoryRotation(freshBuckets);
     }
 
     buildCategories();
@@ -1078,33 +1145,34 @@ function loadProducts() {
   });
 }
 
-// Barre de catégories stable : toutes les catégories de publications sur une seule ligne, défilables gauche/droite
+// Barre supérieure : permet de choisir un catalogue précis ou de revenir à l'aperçu séparé de chaque catalogue
 function buildCategories(){
 const menu = document.getElementById("catMenu");
 if(!menu) return;
 
-const fromProducts = extractCategoriesFromProducts(window.allProductsData);
-const cachedCats = getCategoryCache();
-const categories = fromProducts.length > 0
+const fromProducts = extractCatalogBuckets(window.allProductsData);
+const cachedBuckets = getCategoryCache();
+const buckets = fromProducts.length > 0
   ? fromProducts
-  : (activeCategoriesList.length > 0 ? activeCategoriesList : (cachedCats || []));
+  : (catalogBucketsList.length > 0 ? catalogBucketsList : (cachedBuckets || []));
 
-if(categories.length > 0){
-  activeCategoriesList = categories;
-  saveCategoryCache(categories);
-  ensureFlashCategoryRotation(categories);
+if(buckets.length > 0){
+  catalogBucketsList = buckets;
+  saveCategoryCache(buckets);
+  ensureFlashCategoryRotation(buckets);
 }
 
-const nextSig = `${currentCat}::${categories.join("||")}`;
+const nextSig = `${selectedCatalogKey}::${buckets.map(b => `${b.key}:${b.items.length}`).join("||")}`;
 if(nextSig === lastCategoriesSig && menu.children.length > 0) return;
 lastCategoriesSig = nextSig;
 
-const allBtn = `<button type="button" class="cat-btn ${!currentCat ? "active" : ""}" data-category=""><span>✨</span> <span>Tout</span></button>`;
-const catButtons = categories.map(category => {
-const safe = escapeAttribute(category);
-const icon = getCategoryIcon(category);
-const isSelected = currentCat && category.toLowerCase() === String(currentCat).toLowerCase();
-return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
+const allBtn = `<button type="button" class="cat-btn ${selectedCatalogKey === "ALL_PREVIEW" ? "active" : ""}" data-catalog-key="ALL_PREVIEW"><span>✨</span> <span>Aperçu</span></button>`;
+const catButtons = buckets.map((bucket, index) => {
+const safeKey = escapeAttribute(bucket.key);
+const icon = getCategoryIcon(bucket.name);
+const labelSuffix = bucket.batchTag ? ` · ${bucket.batchTag}` : ` #${index + 1}`;
+const isSelected = selectedCatalogKey === bucket.key;
+return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-catalog-key="${safeKey}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(bucket.name)}${escapeHTML(labelSuffix)}</span></button>`;
 }).join("");
 
 menu.innerHTML = allBtn + catButtons;
@@ -1112,12 +1180,10 @@ menu.innerHTML = allBtn + catButtons;
 menu.querySelectorAll(".cat-btn").forEach(button => {
 button.addEventListener("click", (e) => {
 e.preventDefault();
-const chosen = normalizeCategoryName(button.dataset.category || "");
-currentCat = chosen;
+selectedCatalogKey = button.dataset.catalogKey || "ALL_PREVIEW";
 lastCategoriesSig = "";
 menu.querySelectorAll(".cat-btn").forEach(item => {
-const itemCat = normalizeCategoryName(item.dataset.category || "");
-item.classList.toggle("active", itemCat.toLowerCase() === chosen.toLowerCase());
+item.classList.toggle("active", (item.dataset.catalogKey || "ALL_PREVIEW") === selectedCatalogKey);
 });
 lastRenderedProductsSig = "";
 filterProducts();
@@ -1127,32 +1193,68 @@ filterProducts();
 
 document.getElementById("searchBar")?.addEventListener("input", filterProducts);
 
-function getFilteredProducts(){
+function getCatalogSectionsToRender(){
 const search = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
-const activeCatLower = normalizeCategoryName(currentCat).toLowerCase();
+const allBuckets = extractCatalogBuckets(window.allProductsData);
+if(allBuckets.length > 0){
+  catalogBucketsList = allBuckets;
+}
+const sourceBuckets = allBuckets.length > 0 ? allBuckets : catalogBucketsList;
 
-return window.allProductsData.filter(product => {
-const name = String(product.nom || product.title || product.name || "").toLowerCase();
-const description = String(product.description || "").toLowerCase();
-const productCategory = normalizeCategoryName(product.categorie || product.category || product.cat || "");
-const categoryLower = productCategory.toLowerCase();
+const filteredBuckets = sourceBuckets.map((bucket, idx) => {
+  const matchingItems = bucket.items.filter(product => {
+    if(!search) return true;
+    const name = String(product.nom || product.title || product.name || "").toLowerCase();
+    const description = String(product.description || "").toLowerCase();
+    const catName = String(bucket.name || "").toLowerCase();
+    return name.includes(search) || description.includes(search) || catName.includes(search);
+  });
 
-if(search.length > 0){
-return name.includes(search) || description.includes(search) || categoryLower.includes(search);
+  return {
+    ...bucket,
+    displayIndex: idx,
+    filteredItems: matchingItems
+  };
+}).filter(bucket => bucket.filteredItems.length > 0);
+
+if(selectedCatalogKey && selectedCatalogKey !== "ALL_PREVIEW"){
+  const chosenOnly = filteredBuckets.filter(b => b.key === selectedCatalogKey);
+  return {
+    isSingleCatalogSelected: true,
+    buckets: chosenOnly.map(b => ({
+      ...b,
+      visibleItems: b.filteredItems
+    }))
+  };
 }
 
-if(!activeCatLower) return true;
-return categoryLower === activeCatLower;
-});
+// Par défaut : chaque catalogue est affiché à part avec un aperçu limité pour ne pas tout charger d'un coup
+return {
+  isSingleCatalogSelected: false,
+  buckets: filteredBuckets.map(b => ({
+    ...b,
+    visibleItems: search ? b.filteredItems.slice(0, 6) : b.filteredItems.slice(0, INITIAL_PREVIEW_PER_CATALOG)
+  }))
+};
 }
 
 function filterProducts(){
 const badge = document.getElementById("activeCatalogCatBadge");
 const search = (document.getElementById("searchBar")?.value || "").trim();
+const renderState = getCatalogSectionsToRender();
+
 if(badge){
-badge.textContent = search ? `🔍 "${search}"` : (currentCat ? `${getCategoryIcon(currentCat)} ${currentCat}` : "");
+  if(search){
+    badge.textContent = `🔍 "${search}"`;
+  } else if(renderState.isSingleCatalogSelected && renderState.buckets[0]){
+    const b = renderState.buckets[0];
+    badge.textContent = `${getCategoryIcon(b.name)} ${b.name} (${b.visibleItems.length})`;
+  } else {
+    badge.textContent = `${renderState.buckets.length} catalogue(s)`;
+  }
 }
-renderProducts(getFilteredProducts());
+
+renderProducts(renderState);
 }
 
 function generateCardHTML(product, options = {}){
@@ -1313,16 +1415,15 @@ triggerStageZoom(item.stageLink, item.stageImg, activeThumb.dataset.varSrc);
 }
 
 function getFlashProductsByRotatingCategory(allProducts){
-const categories = extractCategoriesFromProducts(allProducts);
-if(categories.length === 0){
-return { categoryName: "", products: allProducts.slice(0, 12) };
+const buckets = extractCatalogBuckets(allProducts);
+if(buckets.length === 0){
+return { categoryName: "", products: allProducts.slice(0, 8) };
 }
-const safeIdx = flashCategoryIndex % categories.length;
-const chosenCat = categories[safeIdx];
-const matching = allProducts.filter(p => normalizeCategoryName(p.categorie || p.category || p.cat || "").toLowerCase() === chosenCat.toLowerCase());
+const safeIdx = flashCategoryIndex % buckets.length;
+const chosenBucket = buckets[safeIdx];
 return {
-categoryName: chosenCat,
-products: matching.length > 0 ? matching : allProducts.slice(0, 12)
+categoryName: chosenBucket.name,
+products: chosenBucket.items.slice(0, 8)
 };
 }
 
@@ -1343,7 +1444,7 @@ flashBadge.textContent = activeFlashCat ? `${getCategoryIcon(activeFlashCat)} ${
 
 const promoIds = new Set(flashProducts.map(p => p.id));
 const nonPromoProducts = allProducts.filter(p => !promoIds.has(p.id));
-const listToDisplay = (nonPromoProducts.length > 0 ? nonPromoProducts : allProducts).slice(0, 50);
+const listToDisplay = (nonPromoProducts.length > 0 ? nonPromoProducts : allProducts).slice(0, 20);
 
 const nextSig = JSON.stringify({
 lang: currentLang,
@@ -1385,22 +1486,64 @@ containerRelated.innerHTML = `<div class="empty-message" style="padding:10px;">$
 }
 }
 
-function renderProducts(list){
+function renderProducts(renderState){
 const container = document.getElementById("products");
 if(!container) return;
 const t = translations[currentLang];
+const buckets = renderState && Array.isArray(renderState.buckets) ? renderState.buckets : [];
 
-if(!Array.isArray(list) || list.length === 0){
-lastRenderedProductsSig = `empty_${currentLang}_${currentCat}`;
-container.innerHTML = `<div class="empty-message">${t.emptyCategory}</div>`;
+if(buckets.length === 0){
+lastRenderedProductsSig = `empty_${currentLang}_${selectedCatalogKey}`;
+container.innerHTML = `<div class="catalog-group-block"><div class="empty-message">${t.emptyCategory}</div></div>`;
 return;
 }
 
-const nextSig = `${currentLang}_${currentCat}_` + list.map(p => `${p.id}_${p.prix}_${p.prixPromo}_${p.image || p.imageUrl || ""}`).join("|");
+const nextSig = `${currentLang}_${selectedCatalogKey}_${renderState.isSingleCatalogSelected}_` + buckets.map(b =>
+  `${b.key}:${b.visibleItems.map(p => `${p.id}_${p.prix}_${p.prixPromo}_${p.image || p.imageUrl || ""}`).join(",")}`
+).join("|");
+
 if(nextSig === lastRenderedProductsSig) return;
 lastRenderedProductsSig = nextSig;
 
-container.innerHTML = list.map(product => generateCardHTML(product)).join("");
+container.innerHTML = buckets.map((bucket, idx) => {
+  const isSelected = renderState.isSingleCatalogSelected && selectedCatalogKey === bucket.key;
+  const actionLabel = isSelected ? t.selectedCatalogBtn : t.selectCatalogBtn;
+  const targetKey = isSelected ? "ALL_PREVIEW" : bucket.key;
+  const subLabel = bucket.batchTag ? ` · ${escapeHTML(bucket.batchTag)}` : ` #${idx + 1}`;
+  const cardsHTML = bucket.visibleItems.map((product, pIdx) =>
+    generateCardHTML(product, { uniqueSuffix: `_cat_${idx}_${pIdx}` })
+  ).join("");
+
+  return `
+    <div class="catalog-group-block" data-catalog-block="${escapeAttribute(bucket.key)}">
+      <div class="catalog-group-header">
+        <div class="catalog-group-title">
+          <span>${getCategoryIcon(bucket.name)}</span>
+          <span>${escapeHTML(bucket.name)}${subLabel}</span>
+          <span class="catalog-group-count">${bucket.visibleItems.length}/${bucket.filteredItems.length}</span>
+        </div>
+        <div class="catalog-group-actions">
+          <button type="button" class="btn-choose-catalog ${isSelected ? "selected" : ""}" data-select-catalog="${escapeAttribute(targetKey)}">
+            ${escapeHTML(actionLabel)}
+          </button>
+        </div>
+      </div>
+      <div class="products">${cardsHTML}</div>
+    </div>
+  `;
+}).join("");
+
+container.querySelectorAll("[data-select-catalog]").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    selectedCatalogKey = btn.dataset.selectCatalog || "ALL_PREVIEW";
+    lastCategoriesSig = "";
+    lastRenderedProductsSig = "";
+    buildCategories();
+    filterProducts();
+    document.getElementById("navigationBar")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+});
 }
 
 function checkUrlForSharedProduct(){
