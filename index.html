@@ -159,10 +159,10 @@ overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:var(-
 .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;}
 .dot.active{background:var(--gold);}
 
-/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATALOGUES SÉPARÉS SUR UNE SEULE LIGNE) */
+/* BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES EXACTES SUR UNE SEULE LIGNE) */
 .navigation-bar-container{
 position:sticky;top:70px;z-index:4000;
-width:100%;padding:8px 12px;display:flex;flex-wrap:nowrap;gap:10px;align-items:center;
+width:100%;padding:8px 12px;display:flex;flex-wrap:nowrap;gap:8px;align-items:center;
 background:#0b0e13;border-bottom:1px solid rgba(212,175,55,0.25);
 overflow-x:auto;overflow-y:hidden;
 -webkit-overflow-scrolling:touch;
@@ -171,7 +171,7 @@ transform:translateZ(0);
 }
 .navigation-bar-container::-webkit-scrollbar{display:none;}
 .btn-metiers-special{
-flex:0 0 auto;padding:8px 14px;border:1px solid var(--gold);border-radius:20px;
+flex:0 0 auto;padding:8px 13px;border:1px solid var(--gold);border-radius:20px;
 background:linear-gradient(135deg, #d4af37, #aa8c2c);color:#000;cursor:pointer;
 white-space:nowrap;font-size:11px;font-weight:800;text-decoration:none;
 display:inline-flex;align-items:center;gap:4px;
@@ -179,18 +179,18 @@ display:inline-flex;align-items:center;gap:4px;
 .cat-scroll{
 display:flex;flex:1 1 auto;flex-wrap:nowrap;gap:8px;overflow-x:auto;overflow-y:hidden;
 -webkit-overflow-scrolling:touch;align-items:center;
-touch-action:pan-x pan-y;padding-right:20px;
+touch-action:pan-x pan-y;padding-right:24px;
 }
 .cat-scroll::-webkit-scrollbar{display:none;}
 .cat-btn{
 flex:0 0 auto;padding:8px 13px;border:1px solid var(--gold);border-radius:16px;
-background:rgba(19,25,33,0.9);color:#fff;cursor:pointer;white-space:nowrap;font-size:11px;
+background:rgba(19,25,33,0.95);color:#fff;cursor:pointer;white-space:nowrap;font-size:11px;
 display:inline-flex;align-items:center;gap:5px;user-select:none;
 transition:background 0.15s ease, color 0.15s ease;
 }
 .cat-btn.active{background:var(--gold);color:#000;font-weight:800;}
 
-/* BLOCS CATALOGUES INDIVIDUELS SÉPARÉS */
+/* BLOCS CATALOGUES / CATÉGORIES SÉPARÉS */
 .catalog-groups-stack{
 display:flex;flex-direction:column;gap:14px;width:100%;
 }
@@ -208,9 +208,6 @@ display:flex;align-items:center;gap:6px;flex-wrap:wrap;
 }
 .catalog-group-count{
 font-size:10px;color:#475569;background:#f1f5f9;padding:2px 8px;border-radius:10px;font-weight:700;
-}
-.catalog-group-actions{
-display:flex;align-items:center;gap:6px;
 }
 .btn-choose-catalog{
 background:#131921;color:var(--gold);border:1px solid var(--gold);
@@ -481,7 +478,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <div class="banner-dots" id="bannerDots"></div>
 </section>
 
-<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATALOGUES SÉPARÉS SUR UNE SEULE LIGNE) -->
+<!-- BARRE DE NAVIGATION STABLE (MÉTIERS + CATÉGORIES EXACTES SUR UNE SEULE LIGNE) -->
 <div class="navigation-bar-container" id="navigationBar">
 <a href="metiers.html" class="btn-metiers-special"><span data-i18n="allTrades">🛠️ Métiers</span></a>
 <div class="cat-scroll" id="catMenu"></div>
@@ -496,14 +493,14 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
   <div class="amazon-carousel" id="carouselPromos"></div>
 </section>
 
-<!-- 2. CATALOGUES SÉPARÉS & SÉLECTEUR D'AFFICHAGE -->
+<!-- 2. CATALOGUE & CATÉGORIES -->
 <section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
   <div class="amazon-section-title" style="background:#fff; padding:10px; border-radius:6px;">
-    <span data-i18n="fullCatalog">📦 Catalogues</span>
+    <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
     <small id="activeCatalogCatBadge" style="color:#666; font-weight:700; font-size:10px;"></small>
   </div>
   <div class="catalog-groups-stack" id="products">
-    <div class="loading-message" data-i18n="loadingArticles">Chargement des catalogues...</div>
+    <div class="loading-message" data-i18n="loadingArticles">Chargement des articles...</div>
   </div>
 </section>
 
@@ -691,15 +688,16 @@ btnInstallApp?.addEventListener("click", async () => {
 const CATEGORY_CACHE_TTL_MS = 5 * 60 * 1000;
 const CATEGORY_CACHE_KEY = "dakpro_categories_5m_cache";
 const FLASH_ROTATION_MS = 2 * 60 * 1000;
-// Limite initiale par bloc catalogue pour ne pas charger tous les produits d'un seul bloc
+// Limite initiale par bloc pour ne pas charger tous les produits d'un seul bloc
 const INITIAL_PREVIEW_PER_CATALOG = 4;
 
 let cachedProducts = localStorage.getItem("dakpro_cached_products");
 window.allProductsData = cachedProducts ? JSON.parse(cachedProducts) : [];
 
 const siteContext = { currentUser: null };
-// Identifiant unique du catalogue sélectionné ("ALL_PREVIEW" = aperçu séparé de chaque catalogue)
-let selectedCatalogKey = "ALL_PREVIEW";
+// "" = aperçu séparé des catégories/catalogues ; sinon nom exact de la catégorie choisie
+let selectedCategoryName = "";
+let exactCategoriesList = [];
 let catalogBucketsList = [];
 let flashCategoryIndex = 0;
 let flashCategoryTimer = null;
@@ -716,7 +714,8 @@ const categoryIconsMap = {
 "Voitures": "🚗", "Smartphones": "📱", "Vêtements": "👕", "Chaussures": "👟",
 "Montres": "⌚", "Bijoux": "💍", "Parfums": "🌸", "Meubles": "🛋️",
 "Cuisine": "🍳", "Jouets": "🧸", "Sport": "⚽", "Santé": "🩺",
-"Livres": "📚", "Outils": "🔨", "Agriculture": "🌱", "Alimentation": "🍚"
+"Livres": "📚", "Outils": "🔨", "Agriculture": "🌱", "Alimentation": "🍚",
+"Robe": "👗", "Robes": "👗", "Moto": "🏍️", "Motos": "🏍️"
 };
 
 function getCategoryIcon(catName){
@@ -727,15 +726,30 @@ if(catName.toLowerCase().includes(key.toLowerCase())) return categoryIconsMap[ke
 return "📦";
 }
 
-function normalizeCatalogName(raw){
+function normalizeLabel(raw){
 return String(raw ?? "").trim().replace(/\s+/g, " ");
 }
 
-// Clé unique pour séparer chaque catalogue même s'il porte le même nom qu'un autre lot/catalogue
+function isProductActive(product){
+if(!product || typeof product !== "object") return false;
+if(product.actif === false || product.active === false) return false;
+if(String(product.actif || "").toLowerCase() === "false") return false;
+if(String(product.statut || "").toLowerCase() === "inactif") return false;
+return true;
+}
+
+function getExactProductCategory(product){
+if(!product || typeof product !== "object") return "";
+const raw = product.categorie ?? product.category ?? product.cat ?? product.catalogue ?? product.catalog ?? product.type ?? "";
+if(typeof raw === "string") return normalizeLabel(raw);
+if(raw && typeof raw === "object") return normalizeLabel(raw.nom || raw.name || raw.titre || raw.title || raw.label || "");
+return "";
+}
+
 function getProductCatalogKey(product){
-const rawCat = normalizeCatalogName(product.categorie || product.category || product.cat || product.catalogue || "Catalogue");
-const batchId = normalizeCatalogName(product.catalogueId || product.catalogId || product.lotId || product.sourceId || product.vendeurId || product.sellerId || "");
-const catSlug = (rawCat || "catalogue").toLowerCase().replace(/[^a-z0-9]+/g, "_");
+const rawCat = getExactProductCategory(product) || "Catalogue";
+const batchId = normalizeLabel(product.catalogueId || product.catalogId || product.lotId || product.sourceId || product.vendeurId || product.sellerId || "");
+const catSlug = rawCat.toLowerCase().replace(/[^a-z0-9]+/g, "_");
 return batchId ? `${catSlug}__${batchId}` : `${catSlug}__${String(product.id || "item")}`;
 }
 
@@ -744,21 +758,25 @@ try{
 const raw = localStorage.getItem(CATEGORY_CACHE_KEY);
 if(!raw) return null;
 const parsed = JSON.parse(raw);
-if(!parsed || !Array.isArray(parsed.buckets) || !parsed.savedAt) return null;
+if(!parsed || !Array.isArray(parsed.categories) || !parsed.savedAt) return null;
 if((Date.now() - Number(parsed.savedAt)) > CATEGORY_CACHE_TTL_MS){
 return null;
 }
-return parsed.buckets;
+return {
+categories: parsed.categories,
+buckets: Array.isArray(parsed.buckets) ? parsed.buckets : []
+};
 }catch(e){
 return null;
 }
 }
 
-function saveCategoryCache(buckets){
+function saveCategoryCache(categories, buckets){
 try{
 localStorage.setItem(CATEGORY_CACHE_KEY, JSON.stringify({
 savedAt: Date.now(),
-buckets
+categories,
+buckets: Array.isArray(buckets) ? buckets : []
 }));
 }catch(e){}
 }
@@ -769,13 +787,13 @@ fr: {
 name: "Français", currency: "FCFA", rate: 1,
 searchPlaceholder: "Rechercher des produits...",
 navAccount: "Compte", allTrades: "🛠️ Métiers",
-loadingArticles: "Chargement des catalogues...",
+loadingArticles: "Chargement des articles...",
 emptyCategory: "Aucun article trouvé.",
 officialAnnouncement: "⚡ Annonce Officielle",
 welcomeText: "Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !",
 sponsoredTitle: "⭐ Recommandés & Sponsorisés",
 flashOffers: "🔥 Offres Flash & Promos",
-fullCatalog: "📦 Catalogues",
+fullCatalog: "📦 Catalogue & Catégories",
 swipeHint: "Glisser →",
 imageUnavailable: "Indisponible",
 selectedArticle: "Article sélectionné sur DAKPROÉLITE.", modalBuy: "💳 Acheter", modalClose: "Fermer",
@@ -785,20 +803,20 @@ earnMoney: "Gagner", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ Ve
 installAppTitle: "Installer DAKPROÉLITE",
 installAppDesc: "Accédez plus rapidement à la marketplace depuis votre écran d'accueil.",
 installAppBtn: "Installer",
-selectCatalogBtn: "Afficher ce catalogue",
-selectedCatalogBtn: "✓ Affiché"
+selectCatalogBtn: "Voir tout",
+selectedCatalogBtn: "✓ Tout voir"
 },
 en: {
 name: "English", currency: "USD", rate: 1 / 600,
 searchPlaceholder: "Search products...",
 navAccount: "Account", allTrades: "🛠️ Trades",
-loadingArticles: "Loading catalogs...",
+loadingArticles: "Loading items...",
 emptyCategory: "No items found.",
 officialAnnouncement: "⚡ Official Announcement",
 welcomeText: "Welcome to DAKPROÉLITE, your international benchmark marketplace!",
 sponsoredTitle: "⭐ Recommended & Sponsored",
 flashOffers: "🔥 Flash Offers",
-fullCatalog: "📦 Catalogs",
+fullCatalog: "📦 Catalog & Categories",
 swipeHint: "Swipe →",
 imageUnavailable: "Unavailable",
 selectedArticle: "Selected item on DAKPROÉLITE.", modalBuy: "💳 Buy Now", modalClose: "Close",
@@ -808,20 +826,20 @@ earnMoney: "Earn Money", ambassadorProgram: "Ambassador Program", becomeSeller: 
 installAppTitle: "Install DAKPROÉLITE",
 installAppDesc: "Get quick access to the marketplace directly from your home screen.",
 installAppBtn: "Install",
-selectCatalogBtn: "Show catalog",
+selectCatalogBtn: "Show all",
 selectedCatalogBtn: "✓ Shown"
 },
 es: {
 name: "Español", currency: "EUR", rate: 1 / 655.957,
 searchPlaceholder: "Buscar productos...",
 navAccount: "Cuenta", allTrades: "🛠️ Oficios",
-loadingArticles: "Cargando catálogos...",
+loadingArticles: "Cargando artículos...",
 emptyCategory: "No se encontraron artículos.",
 officialAnnouncement: "⚡ Anuncio Oficial",
 welcomeText: "¡Bienvenido a DAKPROÉLITE, su plataforma internacional de referencia!",
 sponsoredTitle: "⭐ Recomendados y patrocinados",
 flashOffers: "🔥 Ofertas flash",
-fullCatalog: "📦 Catálogos",
+fullCatalog: "📦 Catálogo y categorías",
 swipeHint: "Deslizar →",
 imageUnavailable: "No disponible",
 selectedArticle: "Artículo seleccionado en DAKPROÉLITE.", modalBuy: "💳 Comprar", modalClose: "Cerrar",
@@ -831,20 +849,20 @@ earnMoney: "Ganar Dinero", ambassadorProgram: "Programa Embajador", becomeSeller
 installAppTitle: "Instalar DAKPROÉLITE",
 installAppDesc: "Accede más rápido a la tienda desde tu pantalla de inicio.",
 installAppBtn: "Instalar",
-selectCatalogBtn: "Ver catálogo",
+selectCatalogBtn: "Ver todo",
 selectedCatalogBtn: "✓ Visible"
 },
 zh: {
 name: "中文", currency: "CNY", rate: 1 / 85,
 searchPlaceholder: "搜索产品...",
 navAccount: "账户", allTrades: "🛠️ 行业",
-loadingArticles: "正在加载目录...",
+loadingArticles: "正在加载商品...",
 emptyCategory: "暂无商品。",
 officialAnnouncement: "⚡ 官方公告",
 welcomeText: "欢迎来到 DAKPROÉLITE，您的国际基准市场！",
 sponsoredTitle: "⭐ 推荐与赞助",
 flashOffers: "🔥 限时特惠",
-fullCatalog: "📦 目录",
+fullCatalog: "📦 目录与分类",
 swipeHint: "滑动 →",
 imageUnavailable: "不可用",
 selectedArticle: "在 DAKPROÉLITE 上选定的商品。", modalBuy: "💳 购买", modalClose: "关闭",
@@ -854,7 +872,7 @@ earnMoney: "赚钱", ambassadorProgram: "大使计划", becomeSeller: "🛍️ �
 installAppTitle: "安装 DAKPROÉLITE",
 installAppDesc: "从主屏幕快速访问市场。",
 installAppBtn: "安装",
-selectCatalogBtn: "显示目录",
+selectCatalogBtn: "查看全部",
 selectedCatalogBtn: "✓ 已显示"
 },
 bn: {
@@ -877,7 +895,7 @@ earnMoney: "আয় করুন", ambassadorProgram: "অ্যাম্বা�
 installAppTitle: "DAKPROÉLITE ইনস্টল করুন",
 installAppDesc: "আপনার হোম স্ক্রিন থেকে দ্রুত মার্কেটপ্লেসে প্রবেশ করুন।",
 installAppBtn: "ইনস্টল",
-selectCatalogBtn: "দেখুন",
+selectCatalogBtn: "সব দেখুন",
 selectedCatalogBtn: "✓ দৃশ্যমান"
 },
 yo: {
@@ -900,7 +918,7 @@ earnMoney: "Gba Owo", ambassadorProgram: "Eto Aṣoju", becomeSeller: "🛍️ D
 installAppTitle: "Fi DAKPROÉLITE sori ẹrọ",
 installAppDesc: "Wọle si ọja ni iyara lati iboju ile rẹ.",
 installAppBtn: "Fi sori ẹrọ",
-selectCatalogBtn: "Fi han",
+selectCatalogBtn: "Fi gbogbo han",
 selectedCatalogBtn: "✓ Ti han"
 },
 fon: {
@@ -923,7 +941,7 @@ earnMoney: "Ba Akuɛ", ambassadorProgram: "Ambassadeur", becomeSeller: "🛍️ 
 installAppTitle: "Tɛ́n DAKPROÉLITE ɖó",
 installAppDesc: "Kpɔ́n nǔ lɛ wě wě ɖò kɔ̀ tɔn mɛ.",
 installAppBtn: "Tɛ́n ɖó",
-selectCatalogBtn: "XLɛ́",
+selectCatalogBtn: "XLɛ́ bǐ",
 selectedCatalogBtn: "✓ XLɛ́ ɖò"
 }
 };
@@ -996,15 +1014,20 @@ menu?.classList.remove("show");
 
 setLanguage(currentLang);
 
-const cachedBuckets = getCategoryCache();
-if(Array.isArray(cachedBuckets) && cachedBuckets.length > 0){
-catalogBucketsList = cachedBuckets;
+const cachedPack = getCategoryCache();
+if(cachedPack){
+  if(Array.isArray(cachedPack.categories) && cachedPack.categories.length > 0){
+    exactCategoriesList = cachedPack.categories;
+  }
+  if(Array.isArray(cachedPack.buckets) && cachedPack.buckets.length > 0){
+    catalogBucketsList = cachedPack.buckets;
+  }
 }
 
 if(window.allProductsData.length > 0){
-buildCategories();
-filterProducts();
-renderCarousels(window.allProductsData);
+  buildCategories();
+  filterProducts();
+  renderCarousels(window.allProductsData);
 }
 });
 
@@ -1063,44 +1086,64 @@ cleaned.unshift(mainImage);
 return cleaned.slice(0, 4);
 }
 
-// Regroupe chaque catalogue séparément sans fusionner deux catalogues différents portant le même nom
+// Récupère les catégories exactes publiées (depuis produits et/ou nœud Firebase categories)
+function extractExactCategories(products, extraCategories = []){
+const seen = new Map();
+
+const addCat = (val) => {
+  const clean = normalizeLabel(val);
+  if(!clean) return;
+  const key = clean.toLowerCase();
+  if(!seen.has(key)){
+    seen.set(key, clean);
+  }
+};
+
+(Array.isArray(extraCategories) ? extraCategories : []).forEach(addCat);
+(Array.isArray(products) ? products : []).forEach(p => {
+  if(!isProductActive(p)) return;
+  addCat(getExactProductCategory(p));
+});
+
+return Array.from(seen.values());
+}
+
+// Regroupe chaque catalogue/lot séparément sans écraser deux catalogues portant le même nom
 function extractCatalogBuckets(products){
 const bucketsMap = new Map();
 
 (Array.isArray(products) ? products : []).forEach((p, idx) => {
-if(!p || p.actif === false) return;
-const rawName = normalizeCatalogName(p.categorie || p.category || p.cat || p.catalogue || "Catalogue");
-if(!rawName) return;
-const key = getProductCatalogKey(p);
-const batchTag = normalizeCatalogName(p.catalogueNom || p.catalogName || p.lotNom || p.vendeurNom || p.sellerName || "");
+  if(!isProductActive(p)) return;
+  const rawName = getExactProductCategory(p) || "Catalogue";
+  const key = getProductCatalogKey(p);
+  const batchTag = normalizeLabel(p.catalogueNom || p.catalogName || p.lotNom || p.vendeurNom || p.sellerName || "");
 
-if(!bucketsMap.has(key)){
-bucketsMap.set(key, {
-key,
-name: rawName,
-batchTag,
-orderIndex: idx,
-items: []
-});
-}
-bucketsMap.get(key).items.push(p);
+  if(!bucketsMap.has(key)){
+    bucketsMap.set(key, {
+      key,
+      name: rawName,
+      batchTag,
+      orderIndex: idx,
+      items: []
+    });
+  }
+  bucketsMap.get(key).items.push(p);
 });
 
 return Array.from(bucketsMap.values());
 }
 
-// Rotation automatique toutes les 2 minutes sur les catalogues dans Offres Flash
-function ensureFlashCategoryRotation(buckets){
-if(!Array.isArray(buckets) || buckets.length === 0) return;
-if(flashCategoryIndex >= buckets.length){
+// Rotation automatique toutes les 2 minutes sur les catégories exactes dans Offres Flash
+function ensureFlashCategoryRotation(categories){
+if(!Array.isArray(categories) || categories.length === 0) return;
+if(flashCategoryIndex >= categories.length){
 flashCategoryIndex = 0;
 }
-if(!flashCategoryTimer && buckets.length > 1){
+if(!flashCategoryTimer && categories.length > 1){
 flashCategoryTimer = setInterval(() => {
-const currentBuckets = extractCatalogBuckets(window.allProductsData);
-const pool = currentBuckets.length > 0 ? currentBuckets : catalogBucketsList;
-if(pool.length > 1){
-flashCategoryIndex = (flashCategoryIndex + 1) % pool.length;
+const cats = extractExactCategories(window.allProductsData, exactCategoriesList);
+if(cats.length > 1){
+flashCategoryIndex = (flashCategoryIndex + 1) % cats.length;
 lastRenderedCarouselsSig = "";
 renderCarousels(window.allProductsData);
 }
@@ -1108,86 +1151,132 @@ renderCarousels(window.allProductsData);
 }
 }
 
+function hydrateFromPublicationsSnapshot(data){
+if(!data || typeof data !== "object") return;
+
+const parsedList = Object.entries(data)
+  .map(([id, product]) => ({ id, ...(product && typeof product === "object" ? product : {}) }))
+  .filter(product => isProductActive(product));
+
+window.allProductsData = parsedList;
+localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
+
+const freshCats = extractExactCategories(window.allProductsData, exactCategoriesList);
+const freshBuckets = extractCatalogBuckets(window.allProductsData);
+
+if(freshCats.length > 0){
+  exactCategoriesList = freshCats;
+}
+if(freshBuckets.length > 0){
+  catalogBucketsList = freshBuckets;
+}
+if(freshCats.length > 0 || freshBuckets.length > 0){
+  saveCategoryCache(exactCategoriesList, catalogBucketsList);
+  ensureFlashCategoryRotation(exactCategoriesList);
+}
+
+buildCategories();
+filterProducts();
+renderCarousels(window.allProductsData);
+checkUrlForSharedProduct();
+}
+
+function loadFirebaseCategoriesNode(){
+if(!db || typeof db.ref !== "function") return;
+db.ref("categories").once("value").then(snap => {
+  const val = snap.val();
+  if(!val) return;
+  const fromNode = [];
+  if(Array.isArray(val)){
+    val.forEach(item => {
+      if(typeof item === "string") fromNode.push(item);
+      else if(item && typeof item === "object") fromNode.push(item.nom || item.name || item.titre || item.title || item.categorie || "");
+    });
+  } else if(typeof val === "object"){
+    Object.entries(val).forEach(([k, item]) => {
+      if(typeof item === "string") fromNode.push(item);
+      else if(item && typeof item === "object") fromNode.push(item.nom || item.name || item.titre || item.title || item.categorie || k);
+    });
+  }
+  const merged = extractExactCategories(window.allProductsData, [...exactCategoriesList, ...fromNode]);
+  if(merged.length > 0){
+    exactCategoriesList = merged;
+    saveCategoryCache(exactCategoriesList, catalogBucketsList);
+    lastCategoriesSig = "";
+    buildCategories();
+  }
+}).catch(() => {});
+}
+
 function loadProducts() {
   const localData = localStorage.getItem("dakpro_cached_products");
   if (localData) {
     try {
-      window.allProductsData = JSON.parse(localData);
-      buildCategories();
-      filterProducts();
-      renderCarousels(window.allProductsData);
+      const parsed = JSON.parse(localData);
+      if(Array.isArray(parsed) && parsed.length > 0){
+        window.allProductsData = parsed;
+        exactCategoriesList = extractExactCategories(window.allProductsData, exactCategoriesList);
+        catalogBucketsList = extractCatalogBuckets(window.allProductsData);
+        buildCategories();
+        filterProducts();
+        renderCarousels(window.allProductsData);
+      }
     } catch(e) {}
   }
 
-  db.ref("publications").once("value").then(snapshot => {
+  loadFirebaseCategoriesNode();
+
+  db.ref("publications").on("value", snapshot => {
     const data = snapshot.val();
-    if (!data) return;
-
-    window.allProductsData = Object.entries(data)
-      .map(([id, product]) => ({ id, ...product }))
-      .filter(product => product && product.actif !== false);
-
-    localStorage.setItem("dakpro_cached_products", JSON.stringify(window.allProductsData));
-
-    const freshBuckets = extractCatalogBuckets(window.allProductsData);
-    if(freshBuckets.length > 0){
-      catalogBucketsList = freshBuckets;
-      saveCategoryCache(freshBuckets);
-      ensureFlashCategoryRotation(freshBuckets);
+    if (!data) {
+      buildCategories();
+      filterProducts();
+      return;
     }
-
-    buildCategories();
-    filterProducts();
-    renderCarousels(window.allProductsData);
-    checkUrlForSharedProduct();
-  }).catch(err => {
+    hydrateFromPublicationsSnapshot(data);
+  }, err => {
     console.error("Erreur Firebase:", err);
   });
 }
 
-// Barre supérieure : permet de choisir un catalogue précis ou de revenir à l'aperçu séparé de chaque catalogue
+// Affiche toutes les catégories exactes sur une seule ligne à côté de 🛠️ Métiers
 function buildCategories(){
 const menu = document.getElementById("catMenu");
 if(!menu) return;
 
-const fromProducts = extractCatalogBuckets(window.allProductsData);
-const cachedBuckets = getCategoryCache();
-const buckets = fromProducts.length > 0
-  ? fromProducts
-  : (catalogBucketsList.length > 0 ? catalogBucketsList : (cachedBuckets || []));
-
-if(buckets.length > 0){
-  catalogBucketsList = buckets;
-  saveCategoryCache(buckets);
-  ensureFlashCategoryRotation(buckets);
+const categories = extractExactCategories(window.allProductsData, exactCategoriesList);
+if(categories.length > 0){
+  exactCategoriesList = categories;
+  saveCategoryCache(categories, catalogBucketsList);
+  ensureFlashCategoryRotation(categories);
 }
 
-const nextSig = `${selectedCatalogKey}::${buckets.map(b => `${b.key}:${b.items.length}`).join("||")}`;
+const nextSig = `${selectedCategoryName}::${categories.join("||")}`;
 if(nextSig === lastCategoriesSig && menu.children.length > 0) return;
 lastCategoriesSig = nextSig;
 
-const allBtn = `<button type="button" class="cat-btn ${selectedCatalogKey === "ALL_PREVIEW" ? "active" : ""}" data-catalog-key="ALL_PREVIEW"><span>✨</span> <span>Aperçu</span></button>`;
-const catButtons = buckets.map((bucket, index) => {
-const safeKey = escapeAttribute(bucket.key);
-const icon = getCategoryIcon(bucket.name);
-const labelSuffix = bucket.batchTag ? ` · ${bucket.batchTag}` : ` #${index + 1}`;
-const isSelected = selectedCatalogKey === bucket.key;
-return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-catalog-key="${safeKey}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(bucket.name)}${escapeHTML(labelSuffix)}</span></button>`;
+const allBtn = `<button type="button" class="cat-btn ${!selectedCategoryName ? "active" : ""}" data-category=""><span>✨</span> <span>Tout</span></button>`;
+const catButtons = categories.map(category => {
+  const safe = escapeAttribute(category);
+  const icon = getCategoryIcon(category);
+  const isSelected = selectedCategoryName && category.toLowerCase() === selectedCategoryName.toLowerCase();
+  return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-category="${safe}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
 }).join("");
 
 menu.innerHTML = allBtn + catButtons;
 
 menu.querySelectorAll(".cat-btn").forEach(button => {
-button.addEventListener("click", (e) => {
-e.preventDefault();
-selectedCatalogKey = button.dataset.catalogKey || "ALL_PREVIEW";
-lastCategoriesSig = "";
-menu.querySelectorAll(".cat-btn").forEach(item => {
-item.classList.toggle("active", (item.dataset.catalogKey || "ALL_PREVIEW") === selectedCatalogKey);
-});
-lastRenderedProductsSig = "";
-filterProducts();
-});
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+    selectedCategoryName = normalizeLabel(button.dataset.category || "");
+    lastCategoriesSig = "";
+    menu.querySelectorAll(".cat-btn").forEach(item => {
+      const itemCat = normalizeLabel(item.dataset.category || "");
+      item.classList.toggle("active", itemCat.toLowerCase() === selectedCategoryName.toLowerCase());
+    });
+    lastRenderedProductsSig = "";
+    filterProducts();
+  });
 });
 }
 
@@ -1195,6 +1284,8 @@ document.getElementById("searchBar")?.addEventListener("input", filterProducts);
 
 function getCatalogSectionsToRender(){
 const search = (document.getElementById("searchBar")?.value || "").toLowerCase().trim();
+const chosenCatLower = normalizeLabel(selectedCategoryName).toLowerCase();
+
 const allBuckets = extractCatalogBuckets(window.allProductsData);
 if(allBuckets.length > 0){
   catalogBucketsList = allBuckets;
@@ -1202,6 +1293,11 @@ if(allBuckets.length > 0){
 const sourceBuckets = allBuckets.length > 0 ? allBuckets : catalogBucketsList;
 
 const filteredBuckets = sourceBuckets.map((bucket, idx) => {
+  const bucketCatLower = normalizeLabel(bucket.name).toLowerCase();
+  if(chosenCatLower && bucketCatLower !== chosenCatLower){
+    return null;
+  }
+
   const matchingItems = bucket.items.filter(product => {
     if(!search) return true;
     const name = String(product.nom || product.title || product.name || "").toLowerCase();
@@ -1210,27 +1306,28 @@ const filteredBuckets = sourceBuckets.map((bucket, idx) => {
     return name.includes(search) || description.includes(search) || catName.includes(search);
   });
 
+  if(matchingItems.length === 0) return null;
+
   return {
     ...bucket,
     displayIndex: idx,
     filteredItems: matchingItems
   };
-}).filter(bucket => bucket.filteredItems.length > 0);
+}).filter(Boolean);
 
-if(selectedCatalogKey && selectedCatalogKey !== "ALL_PREVIEW"){
-  const chosenOnly = filteredBuckets.filter(b => b.key === selectedCatalogKey);
+if(chosenCatLower){
   return {
-    isSingleCatalogSelected: true,
-    buckets: chosenOnly.map(b => ({
+    isSingleCategorySelected: true,
+    buckets: filteredBuckets.map(b => ({
       ...b,
       visibleItems: b.filteredItems
     }))
   };
 }
 
-// Par défaut : chaque catalogue est affiché à part avec un aperçu limité pour ne pas tout charger d'un coup
+// Aperçu séparé par bloc catalogue/catégorie sans tout charger d'un seul bloc
 return {
-  isSingleCatalogSelected: false,
+  isSingleCategorySelected: false,
   buckets: filteredBuckets.map(b => ({
     ...b,
     visibleItems: search ? b.filteredItems.slice(0, 6) : b.filteredItems.slice(0, INITIAL_PREVIEW_PER_CATALOG)
@@ -1246,11 +1343,11 @@ const renderState = getCatalogSectionsToRender();
 if(badge){
   if(search){
     badge.textContent = `🔍 "${search}"`;
-  } else if(renderState.isSingleCatalogSelected && renderState.buckets[0]){
-    const b = renderState.buckets[0];
-    badge.textContent = `${getCategoryIcon(b.name)} ${b.name} (${b.visibleItems.length})`;
+  } else if(selectedCategoryName){
+    const totalCount = renderState.buckets.reduce((acc, b) => acc + b.visibleItems.length, 0);
+    badge.textContent = `${getCategoryIcon(selectedCategoryName)} ${selectedCategoryName} (${totalCount})`;
   } else {
-    badge.textContent = `${renderState.buckets.length} catalogue(s)`;
+    badge.textContent = `${exactCategoriesList.length || renderState.buckets.length} catégorie(s)`;
   }
 }
 
@@ -1415,15 +1512,16 @@ triggerStageZoom(item.stageLink, item.stageImg, activeThumb.dataset.varSrc);
 }
 
 function getFlashProductsByRotatingCategory(allProducts){
-const buckets = extractCatalogBuckets(allProducts);
-if(buckets.length === 0){
+const categories = extractExactCategories(allProducts, exactCategoriesList);
+if(categories.length === 0){
 return { categoryName: "", products: allProducts.slice(0, 8) };
 }
-const safeIdx = flashCategoryIndex % buckets.length;
-const chosenBucket = buckets[safeIdx];
+const safeIdx = flashCategoryIndex % categories.length;
+const chosenCat = categories[safeIdx];
+const matching = allProducts.filter(p => getExactProductCategory(p).toLowerCase() === chosenCat.toLowerCase());
 return {
-categoryName: chosenBucket.name,
-products: chosenBucket.items.slice(0, 8)
+categoryName: chosenCat,
+products: matching.length > 0 ? matching.slice(0, 8) : allProducts.slice(0, 8)
 };
 }
 
@@ -1493,12 +1591,12 @@ const t = translations[currentLang];
 const buckets = renderState && Array.isArray(renderState.buckets) ? renderState.buckets : [];
 
 if(buckets.length === 0){
-lastRenderedProductsSig = `empty_${currentLang}_${selectedCatalogKey}`;
+lastRenderedProductsSig = `empty_${currentLang}_${selectedCategoryName}`;
 container.innerHTML = `<div class="catalog-group-block"><div class="empty-message">${t.emptyCategory}</div></div>`;
 return;
 }
 
-const nextSig = `${currentLang}_${selectedCatalogKey}_${renderState.isSingleCatalogSelected}_` + buckets.map(b =>
+const nextSig = `${currentLang}_${selectedCategoryName}_${renderState.isSingleCategorySelected}_` + buckets.map(b =>
   `${b.key}:${b.visibleItems.map(p => `${p.id}_${p.prix}_${p.prixPromo}_${p.image || p.imageUrl || ""}`).join(",")}`
 ).join("|");
 
@@ -1506,10 +1604,10 @@ if(nextSig === lastRenderedProductsSig) return;
 lastRenderedProductsSig = nextSig;
 
 container.innerHTML = buckets.map((bucket, idx) => {
-  const isSelected = renderState.isSingleCatalogSelected && selectedCatalogKey === bucket.key;
-  const actionLabel = isSelected ? t.selectedCatalogBtn : t.selectCatalogBtn;
-  const targetKey = isSelected ? "ALL_PREVIEW" : bucket.key;
-  const subLabel = bucket.batchTag ? ` · ${escapeHTML(bucket.batchTag)}` : ` #${idx + 1}`;
+  const isCatActive = selectedCategoryName && bucket.name.toLowerCase() === selectedCategoryName.toLowerCase();
+  const actionLabel = isCatActive ? t.selectedCatalogBtn : t.selectCatalogBtn;
+  const targetCat = isCatActive ? "" : bucket.name;
+  const subLabel = bucket.batchTag ? ` · ${escapeHTML(bucket.batchTag)}` : "";
   const cardsHTML = bucket.visibleItems.map((product, pIdx) =>
     generateCardHTML(product, { uniqueSuffix: `_cat_${idx}_${pIdx}` })
   ).join("");
@@ -1522,21 +1620,19 @@ container.innerHTML = buckets.map((bucket, idx) => {
           <span>${escapeHTML(bucket.name)}${subLabel}</span>
           <span class="catalog-group-count">${bucket.visibleItems.length}/${bucket.filteredItems.length}</span>
         </div>
-        <div class="catalog-group-actions">
-          <button type="button" class="btn-choose-catalog ${isSelected ? "selected" : ""}" data-select-catalog="${escapeAttribute(targetKey)}">
-            ${escapeHTML(actionLabel)}
-          </button>
-        </div>
+        <button type="button" class="btn-choose-catalog ${isCatActive ? "selected" : ""}" data-select-category="${escapeAttribute(targetCat)}">
+          ${escapeHTML(actionLabel)}
+        </button>
       </div>
       <div class="products">${cardsHTML}</div>
     </div>
   `;
 }).join("");
 
-container.querySelectorAll("[data-select-catalog]").forEach(btn => {
+container.querySelectorAll("[data-select-category]").forEach(btn => {
   btn.addEventListener("click", (e) => {
     e.preventDefault();
-    selectedCatalogKey = btn.dataset.selectCatalog || "ALL_PREVIEW";
+    selectedCategoryName = normalizeLabel(btn.dataset.selectCategory || "");
     lastCategoriesSig = "";
     lastRenderedProductsSig = "";
     buildCategories();
