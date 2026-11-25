@@ -565,6 +565,7 @@ window.dakproFirebase = { db, auth };
 // SERVICE WORKER + NETTOYAGE ANCIEN CACHE À L'INSTALLATION
 const APP_CACHE_VERSION = "dakpro-v2026-11-25";
 const SW_VERSION_STORAGE_KEY = "dakpro_sw_version";
+const SW_RELOAD_GUARD_KEY = "dakpro_sw_reloaded_" + APP_CACHE_VERSION;
 
 async function cleanLegacyBrowserCaches(){
 try{
@@ -623,10 +624,9 @@ window.location.reload();
 });
 });
 
-let refreshing = false;
 navigator.serviceWorker.addEventListener("controllerchange", () => {
-if(refreshing) return;
-refreshing = true;
+if(sessionStorage.getItem(SW_RELOAD_GUARD_KEY)) return;
+sessionStorage.setItem(SW_RELOAD_GUARD_KEY, "1");
 window.location.reload();
 });
 }
@@ -656,14 +656,6 @@ btnInstallApp?.addEventListener("click", async () => {
     alert(currentLang === 'en' ? "To install, use your browser menu and select 'Add to Home Screen'." : "Pour installer l'application, ouvrez le menu de votre navigateur et sélectionnez 'Ajouter à l'écran d'accueil'.");
   }
 });
-
-if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
-  setTimeout(() => {
-    if(installBanner && installBanner.style.display !== "flex") {
-      installBanner.style.display = "flex";
-    }
-  }, 1000);
-}
 
 // CACHE LOCAL PRODUITS + CACHE CATÉGORIES DE 5 MINUTES (300 000 ms) + ROTATION OFFRES FLASH 2 MINUTES (120 000 ms)
 const CATEGORY_CACHE_TTL_MS = 5 * 60 * 1000;
