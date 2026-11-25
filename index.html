@@ -172,7 +172,6 @@ touch-action:pan-x pan-y;padding-right:20px;
 .cat-btn{
 flex:0 0 auto;padding:8px 13px;border:1px solid var(--gold);border-radius:16px;
 background:rgba(19,25,33,0.9);color:#fff;cursor:pointer;white-space:nowrap;font-size:11px;
-text-decoration:none;
 display:inline-flex;align-items:center;gap:5px;user-select:none;
 transition:background 0.15s ease, color 0.15s ease;
 }
@@ -452,6 +451,7 @@ text-align:left;font-size:11px;cursor:pointer;display:flex;align-items:center;ga
 <section class="amazon-section" style="background:transparent; box-shadow:none; padding:0;">
   <div class="amazon-section-title" style="background:#fff; padding:10px; border-radius:6px;">
     <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
+    <small id="activeCatalogCatBadge" style="color:#666; font-weight:600; font-size:10px;"></small>
   </div>
   <main class="products" id="products">
     <div class="loading-message" data-i18n="loadingArticles">Chargement des articles...</div>
@@ -614,10 +614,6 @@ return "📦";
 
 function normalizeCategoryName(raw){
 return String(raw ?? "").trim().replace(/\s+/g, " ");
-}
-
-function getCategoryPageUrl(categoryName){
-return `categorie.html?cat=${encodeURIComponent(normalizeCategoryName(categoryName))}`;
 }
 
 function getCategoryCache(){
@@ -1000,7 +996,7 @@ function loadProducts() {
   });
 }
 
-// Construction de toutes les catégories sur une seule ligne avec lien vers la page dédiée de chaque catégorie
+// Barre de catégories stable : tous les noms restent affichés sur une seule ligne, cliquables sans provoquer de 404
 function buildCategories(){
 const menu = document.getElementById("catMenu");
 if(!menu) return;
@@ -1017,16 +1013,37 @@ if(categories.length > 0){
   ensureFlashCategoryRotation(categories);
 }
 
-const nextSig = categories.join("||");
+if(!currentCat && categories.length > 0){
+  currentCat = categories[0];
+} else if(currentCat && categories.length > 0 && !categories.some(c => c.toLowerCase() === currentCat.toLowerCase())){
+  currentCat = categories[0];
+}
+
+const nextSig = `${currentCat}::${categories.join("||")}`;
 if(nextSig === lastCategoriesSig && menu.children.length > 0) return;
 lastCategoriesSig = nextSig;
 
 menu.innerHTML = categories.map(category => {
 const safeCat = escapeAttribute(category);
-const href = escapeAttribute(getCategoryPageUrl(category));
 const icon = getCategoryIcon(category);
-return `<a href="${href}" class="cat-btn" data-category="${safeCat}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></a>`;
+const isSelected = category.toLowerCase() === String(currentCat || "").toLowerCase();
+return `<button type="button" class="cat-btn ${isSelected ? "active" : ""}" data-category="${safeCat}"><span class="cat-ico">${icon}</span> <span>${escapeHTML(category)}</span></button>`;
 }).join("");
+
+menu.querySelectorAll(".cat-btn").forEach(button => {
+button.addEventListener("click", (e) => {
+e.preventDefault();
+const chosen = normalizeCategoryName(button.dataset.category || "");
+if(!chosen) return;
+currentCat = chosen;
+lastCategoriesSig = "";
+menu.querySelectorAll(".cat-btn").forEach(item => {
+item.classList.toggle("active", normalizeCategoryName(item.dataset.category || "").toLowerCase() === chosen.toLowerCase());
+});
+lastRenderedProductsSig = "";
+filterProducts();
+});
+});
 }
 
 document.getElementById("searchBar")?.addEventListener("input", filterProducts);
@@ -1051,6 +1068,11 @@ return categoryLower === activeCatLower;
 }
 
 function filterProducts(){
+const badge = document.getElementById("activeCatalogCatBadge");
+const search = (document.getElementById("searchBar")?.value || "").trim();
+if(badge){
+badge.textContent = search ? `🔍 "${search}"` : (currentCat ? `${getCategoryIcon(currentCat)} ${currentCat}` : "");
+}
 renderProducts(getFilteredProducts());
 }
 
