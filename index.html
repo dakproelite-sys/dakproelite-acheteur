@@ -11,13 +11,19 @@
 
 <title>DAKPROÉLITE | La Référence Marketplace Internationale</title>
 
+<link rel="preconnect" href="https://dakproelite-default-rtdb.firebaseio.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://i.postimg.cc" crossorigin>
+
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" fetchpriority="high">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <style>
 :root{
@@ -36,10 +42,11 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:#050505}
 body{
 min-height:100vh;background:var(--black);color:var(--white);
-font-family:Poppins,sans-serif;display:flex;flex-direction:column;
+font-family:Poppins,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+display:flex;flex-direction:column;
 overflow-x:hidden;
 }
 button,input{font-family:inherit}
@@ -54,7 +61,7 @@ background:linear-gradient(to bottom,#131921,#050505);
 border-bottom:2px solid var(--gold);
 }
 
-/* LOGO GRAVÉ */
+/* LOGO GRAVÉ INSTANTANÉ */
 .logo-container{
 width:50px;height:50px;min-width:50px;flex:0 0 50px;
 border-radius:50%;
@@ -72,6 +79,7 @@ inset 0 -3px 6px rgba(0,0,0,.85),
 }
 .logo{
 width:100%;height:100%;object-fit:contain;display:block;
+opacity:1;
 filter:contrast(1.06) drop-shadow(0 1px 1px rgba(0,0,0,.75));
 }
 
@@ -111,16 +119,52 @@ border-radius:20px;font-weight:800;font-size:11px;
 cursor:pointer;white-space:nowrap;
 }
 
-/* BANNIÈRE FIXE : AUCUNE ANIMATION */
+/* BANNIÈRE PUBLICITAIRE DÉROULANTE EN HAUT + CONTRÔLES */
 .banner-container{
 display:none;position:relative;width:94%;max-width:1400px;
 margin:12px auto;overflow:hidden;
 border:1px solid var(--gold);border-radius:12px;
 background:var(--soft-dark);
 }
-.banner-slide{width:100%;position:relative}
+.banner-toolbar{
+display:flex;align-items:center;justify-content:space-between;
+gap:8px;padding:7px 10px;
+background:rgba(10,13,18,.94);
+border-bottom:1px solid rgba(212,175,55,.28);
+}
+.banner-toolbar-label{
+color:var(--gold);font-size:11px;font-weight:700;
+display:inline-flex;align-items:center;gap:5px;
+}
+.banner-controls{
+display:inline-flex;align-items:center;gap:5px;
+}
+.banner-ctrl-btn{
+display:inline-flex;align-items:center;justify-content:center;
+height:24px;padding:0 9px;border-radius:14px;
+border:1px solid var(--gold);background:#050505;color:var(--gold);
+font-size:10.5px;font-weight:700;cursor:pointer;
+transition:background .15s ease,color .15s ease;
+}
+.banner-ctrl-btn:hover{
+background:var(--gold);color:#000;
+}
+.banner-ctrl-btn.is-paused{
+background:var(--red);border-color:var(--red);color:#fff;
+}
+.banner-scroll-track{
+display:flex;
+overflow-x:auto;
+-webkit-overflow-scrolling:touch;
+scrollbar-width:none;
+}
+.banner-scroll-track::-webkit-scrollbar{display:none}
+.banner-slide{
+flex:0 0 100%;width:100%;min-width:100%;
+position:relative;
+}
 .banner-slide img{
-width:100%;height:180px;display:block;object-fit:cover;
+width:100%;height:185px;display:block;object-fit:cover;
 }
 .banner-content{
 position:absolute;left:0;right:0;bottom:0;padding:12px;
@@ -160,14 +204,14 @@ background:#fff;border-radius:10px;
 box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 .amazon-section-title{
-font-family:Poppins,sans-serif;
+font-family:inherit;
 font-size:13px;font-weight:700;color:#050505;
 margin-bottom:10px;display:flex;align-items:center;
-justify-content:space-between;gap:6px;
+justify-content:space-between;gap:6px;flex-wrap:wrap;
 border-bottom:2px solid var(--gold);padding-bottom:5px;
 }
 .amazon-section-title small{
-font-family:Poppins,sans-serif;
+font-family:inherit;
 color:#666;font-weight:500;font-size:10px;
 }
 
@@ -176,7 +220,7 @@ color:#666;font-weight:500;font-size:10px;
 display:flex;gap:10px;overflow-x:auto;
 -webkit-overflow-scrolling:touch;
 scroll-snap-type:x proximity;padding-bottom:8px;
-min-height:240px;
+min-height:210px;
 }
 .amazon-carousel::-webkit-scrollbar{height:5px}
 .amazon-carousel::-webkit-scrollbar-thumb{
@@ -205,7 +249,7 @@ width:100%;background:#fff;border:1px solid #e2e8f0;
 border-radius:10px;padding:8px;
 box-shadow:0 2px 8px rgba(0,0,0,.04);
 overflow:hidden;min-width:0;scroll-snap-align:start;
-font-family:Poppins,sans-serif;
+font-family:inherit;
 }
 .amazon-carousel .card{
 flex:0 0 172px;min-width:172px;
@@ -360,7 +404,7 @@ overflow-x:auto;
 -webkit-overflow-scrolling:touch;
 scrollbar-width:none;
 padding-bottom:6px;
-min-height:240px;
+min-height:210px;
 }
 .sponsored-scroll-track::-webkit-scrollbar{display:none}
 .sponsored-scroll-track .card{
@@ -461,8 +505,8 @@ padding:12px;background:#000;text-align:center;
 color:#777;font-size:9px;
 }
 .loading-message,.empty-message{
-grid-column:1/-1;padding:30px 10px;
-text-align:center;color:#64748b;font-size:12px;
+grid-column:1/-1;padding:18px 10px;
+text-align:center;color:#64748b;font-size:11.5px;
 }
 .error-message{color:#b91c1c}
 @media(max-width:380px){
@@ -480,7 +524,7 @@ text-align:center;color:#64748b;font-size:12px;
 <img class="logo"
 src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png"
 alt="Logo DAKPROÉLITE"
-loading="eager" fetchpriority="high">
+loading="eager" fetchpriority="high" decoding="sync">
 </div>
 
 <div class="search-container">
@@ -510,9 +554,17 @@ placeholder="Rechercher des produits...">
 </button>
 </div>
 
-<!-- BANNIÈRE FIXE -->
+<!-- BANNIÈRE PUBLICITAIRE DÉROULANTE EN HAUT -->
 <section class="banner-container" id="bannerContainer">
-<div id="bannerContent"></div>
+<div class="banner-toolbar">
+<span class="banner-toolbar-label">📣 <span data-i18n="promoPanelTitle">Panneau Publicitaire</span></span>
+<div class="banner-controls" aria-label="Contrôles du panneau publicitaire">
+<button type="button" class="banner-ctrl-btn" id="btnBannerLeft" title="Aller à gauche">◀</button>
+<button type="button" class="banner-ctrl-btn" id="btnBannerToggle" title="Arrêter ou reprendre">⏸ Arrêter</button>
+<button type="button" class="banner-ctrl-btn" id="btnBannerRight" title="Aller à droite">▶</button>
+</div>
+</div>
+<div class="banner-scroll-track" id="bannerContent"></div>
 </section>
 
 <!-- NAVIGATION -->
@@ -529,9 +581,7 @@ placeholder="Rechercher des produits...">
 <span data-i18n="flashOffers">🔥 Offres Flash &amp; Promos</span>
 <small data-i18n="swipeHint">Glisser ← / →</small>
 </div>
-<div class="amazon-carousel" id="carouselPromos">
-<div class="loading-message">Chargement des offres Flash...</div>
-</div>
+<div class="amazon-carousel" id="carouselPromos"></div>
 </section>
 
 <!-- CATALOGUE -->
@@ -539,11 +589,7 @@ placeholder="Rechercher des produits...">
 <div class="amazon-section-title" style="background:#fff;padding:10px;border-radius:6px">
 <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
 </div>
-<main class="products" id="products">
-<div class="loading-message" data-i18n="loadingArticles">
-Chargement des articles...
-</div>
-</main>
+<main class="products" id="products"></main>
 <div class="load-more-container" id="loadMoreContainer" style="display:none">
 <button type="button" class="btn-load-more" id="btnLoadMoreCatalog">
 Voir plus
@@ -557,9 +603,7 @@ Voir plus
 <span data-i18n="sponsoredTitle">⭐ Produits sponsorisés</span>
 <small>Glisser ← / → • Allure très douce</small>
 </div>
-<div id="carouselRelated">
-<div class="loading-message">Chargement des produits...</div>
-</div>
+<div id="carouselRelated"></div>
 </section>
 
 <div id="productModalContainer"></div>
@@ -625,7 +669,7 @@ Bienvenue sur DAKPROÉLITE !
 </div>
 </footer>
 
-<script src="support-rapide.js"></script>
+<script defer src="support-rapide.js"></script>
 
 <script>
 /* CONFIGURATION FIREBASE */
@@ -642,17 +686,23 @@ appId:"1:580591769206:web:4f67f8aadbf3d051087157"
 let db = null;
 let firebaseReady = false;
 
+function initFirebaseApp(){
+if(firebaseReady && db) return true;
 try{
 if(typeof firebase !== "undefined"){
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 db = firebase.database();
 firebaseReady = true;
+window.dakproFirebase = {db};
+return true;
 }
 }catch(error){
 console.error("Initialisation Firebase impossible :",error);
 }
+return false;
+}
 
-window.dakproFirebase = {db};
+window.dakproFirebase = {db:null};
 
 /* INSTALLATION PWA */
 let deferredPrompt = null;
@@ -704,6 +754,11 @@ if(!Array.isArray(window.allProductsData)){
 window.allProductsData=[];
 }
 
+let cachedBannersData=safeLocalJSON("dakpro_cached_banners",[]);
+if(!Array.isArray(cachedBannersData)){
+cachedBannersData=[];
+}
+
 const CATALOG_PAGE_SIZE = 12;
 let catalogVisibleCount = CATALOG_PAGE_SIZE;
 
@@ -712,6 +767,8 @@ let announcementDataCache=null;
 let flashTimer=null;
 let flashImageIndexes={};
 let sponsoredAnimId=null;
+let bannerAnimId=null;
+let bannerManualPaused=false;
 
 const categoryIconsMap={
 "Voitures":"🚗","Smartphones":"📱","Vêtements":"👕",
@@ -741,6 +798,7 @@ loadingArticles:"Chargement des articles...",
 emptyCategory:"Aucun article trouvé.",
 officialAnnouncement:"⚡ Annonce Officielle",
 welcomeText:"Bienvenue sur DAKPROÉLITE, votre plateforme internationale de référence !",
+promoPanelTitle:"Panneau Publicitaire",
 sponsoredTitle:"⭐ Produits sponsorisés",
 flashOffers:"🔥 Offres Flash & Promos",
 fullCatalog:"📦 Catalogue & Catégories",
@@ -755,7 +813,9 @@ becomeSeller:"🛍️ Vendeur",
 installAppTitle:"Installer DAKPROÉLITE",
 installAppDesc:"Accédez plus rapidement à la marketplace depuis votre écran d'accueil.",
 installAppBtn:"Installer",
-seeMore:"Voir plus"
+seeMore:"Voir plus",
+pauseBtn:"⏸ Arrêter",
+playBtn:"▶ Défiler"
 },
 en:{
 name:"English",currency:"USD",rate:1/600,
@@ -765,6 +825,7 @@ loadingArticles:"Loading items...",
 emptyCategory:"No items found.",
 officialAnnouncement:"⚡ Official Announcement",
 welcomeText:"Welcome to DAKPROÉLITE!",
+promoPanelTitle:"Ad Banner",
 sponsoredTitle:"⭐ Sponsored Products",
 flashOffers:"🔥 Flash Offers",
 fullCatalog:"📦 Catalog & Categories",
@@ -778,7 +839,9 @@ becomeSeller:"🛍️ Become Seller",
 installAppTitle:"Install DAKPROÉLITE",
 installAppDesc:"Access the marketplace from your home screen.",
 installAppBtn:"Install",
-seeMore:"See more"
+seeMore:"See more",
+pauseBtn:"⏸ Stop",
+playBtn:"▶ Play"
 },
 es:{
 name:"Español",currency:"EUR",rate:1/655.957,
@@ -788,20 +851,23 @@ loadingArticles:"Cargando artículos...",
 emptyCategory:"No se encontraron artículos.",
 officialAnnouncement:"⚡ Anuncio Oficial",
 welcomeText:"¡Bienvenido a DAKPROÉLITE!",
+promoPanelTitle:"Panel Publicitario",
 sponsoredTitle:"⭐ Productos patrocinados",
 flashOffers:"🔥 Ofertas flash",
 fullCatalog:"📦 Catálogo y categorías",
 swipeHint:"Deslizar ← / →",selectedArticle:"Artículo seleccionado.",
 imageUnavailable:"No disponible",
-navAndHelp:"Ayuda",quickSupport:"Soporte",
-helpCenter:"Centro de Ayuda",myAccount:"Mi Cuenta",
-rulesAndLegal:"Legal",internalRules:"Reglamento",
-privacyPolicy:"Privacidad",earnMoney:"Ganar",
-ambassadorProgram:"Embajador",becomeSeller:"🛍️ Vendedor",
+navAndHelp:"Ayuda",quickSupport:"Soporte",helpCenter:"Centro de Ayuda",
+myAccount:"Mi Cuenta",rulesAndLegal:"Legal",
+internalRules:"Reglamento",privacyPolicy:"Privacidad",
+earnMoney:"Ganar",ambassadorProgram:"Embajador",
+becomeSeller:"🛍️ Vendedor",
 installAppTitle:"Instalar DAKPROÉLITE",
 installAppDesc:"Accede rápidamente al mercado.",
 installAppBtn:"Instalar",
-seeMore:"Ver más"
+seeMore:"Ver más",
+pauseBtn:"⏸ Parar",
+playBtn:"▶ Seguir"
 },
 zh:{
 name:"中文",currency:"CNY",rate:1/85,
@@ -809,6 +875,7 @@ searchPlaceholder:"搜索产品...",navAccount:"账户",
 allTrades:"🛠️ 行业",loadingArticles:"正在加载商品...",
 emptyCategory:"暂无商品。",officialAnnouncement:"⚡ 官方公告",
 welcomeText:"欢迎来到 DAKPROÉLITE！",
+promoPanelTitle:"广告横幅",
 sponsoredTitle:"⭐ 赞助商品",flashOffers:"🔥 限时特惠",
 fullCatalog:"📦 目录与分类",swipeHint:"滑动 ← / →",
 selectedArticle:"已选商品。",imageUnavailable:"不可用",
@@ -820,7 +887,9 @@ becomeSeller:"🛍️ 成为卖家",
 installAppTitle:"安装 DAKPROÉLITE",
 installAppDesc:"从主屏幕快速访问市场。",
 installAppBtn:"安装",
-seeMore:"查看更多"
+seeMore:"查看更多",
+pauseBtn:"⏸ 停止",
+playBtn:"▶ 播放"
 },
 bn:{
 name:"বাংলা",currency:"BDT",rate:1/5,
@@ -829,6 +898,7 @@ allTrades:"🛠️ পেশা",loadingArticles:"লোড হচ্ছে...",
 emptyCategory:"কোনো আইটেম পাওয়া যায়নি।",
 officialAnnouncement:"⚡ অফিসিয়াল ঘোষণা",
 welcomeText:"DAKPROÉLITE-এ স্বাগতম!",
+promoPanelTitle:"বিজ্ঞাপন প্যানেল",
 sponsoredTitle:"⭐ স্পনসর পণ্য",flashOffers:"🔥 ফ্ল্যাশ অফার",
 fullCatalog:"📦 ক্যাটালগ",swipeHint:"সোয়াইপ ← / →",
 selectedArticle:"নির্বাচিত পণ্য।",imageUnavailable:"নেই",
@@ -840,7 +910,9 @@ ambassadorProgram:"অ্যাম্বাসেডর",becomeSeller:"🛍️ �
 installAppTitle:"DAKPROÉLITE ইনস্টল করুন",
 installAppDesc:"দ্রুত মার্কেটপ্লেসে প্রবেশ করুন।",
 installAppBtn:"ইনস্টল",
-seeMore:"আরও দেখুন"
+seeMore:"আরও দেখুন",
+pauseBtn:"⏸ থামুন",
+playBtn:"▶ চালু"
 },
 yo:{
 name:"Yorùbá",currency:"NGN",rate:1.2,
@@ -848,6 +920,7 @@ searchPlaceholder:"Wa awọn ọja...",navAccount:"Àsántì",
 allTrades:"🛠️ Iṣẹ",loadingArticles:"N ṣe agbega...",
 emptyCategory:"Ko si ọja.",officialAnnouncement:"⚡ Ikede Oṣiṣẹ",
 welcomeText:"Kaabọ si DAKPROÉLITE!",
+promoPanelTitle:"Pánẹ́lì Ìpolówó",
 sponsoredTitle:"⭐ Àwọn ọjà onígbọ̀wọ́",
 flashOffers:"🔥 Awọn ipese",fullCatalog:"📦 Awọn Ọja",
 swipeHint:"Ra ← / →",selectedArticle:"Ọja ti a yan.",
@@ -860,7 +933,9 @@ becomeSeller:"🛍️ Di Olutaja",
 installAppTitle:"Fi DAKPROÉLITE sori ẹrọ",
 installAppDesc:"Wọle si ọja ni iyara.",
 installAppBtn:"Fi sori ẹrọ",
-seeMore:"Wo diẹ sii"
+seeMore:"Wo diẹ sii",
+pauseBtn:"⏸ Dúró",
+playBtn:"▶ Bẹ̀rẹ̀"
 },
 fon:{
 name:"Fɔ̀ngbè",currency:"FCFA",rate:1,
@@ -869,6 +944,7 @@ allTrades:"🛠️ Azɔ̌",loadingArticles:"E ɖò nǔ lɛ ɖè wɛ...",
 emptyCategory:"Nǔ ɖebǔ mɛ ǎ.",
 officialAnnouncement:"⚡ Gbeɖéɖé",
 welcomeText:"Wɛkɛ ɖò DAKPROÉLITE!",
+promoPanelTitle:"Wema Gbɛ̀tɔ́ Gbɛ́",
 sponsoredTitle:"⭐ Nǔ e sɔ́",flashOffers:"🔥 Hwenu ɖagbe",
 fullCatalog:"📦 Nǔ bǐ",swipeHint:"Sɔ́ ← / →",
 selectedArticle:"Nǔ e ɖò DAKPROÉLITE.",
@@ -881,7 +957,9 @@ becomeSeller:"🛍️ Zɔ̌watɔ́",
 installAppTitle:"Tɛ́n DAKPROÉLITE ɖó",
 installAppDesc:"Kpɔ́n nǔ lɛ wě wě ɖò kɔ̀ tɔn mɛ.",
 installAppBtn:"Tɛ́n ɖó",
-seeMore:"Kpɔ́n hú mɔ̌"
+seeMore:"Kpɔ́n hú mɔ̌",
+pauseBtn:"⏸ Nɔte",
+playBtn:"▶ Yì"
 }
 };
 
@@ -1004,6 +1082,19 @@ if(!Array.isArray(list))return [];
 return [...list].sort((a,b)=>getProductTimestamp(b)-getProductTimestamp(a));
 }
 
+function updateBannerToggleBtn(){
+const btn=document.getElementById("btnBannerToggle");
+if(!btn)return;
+const t=translations[currentLang]||translations.fr;
+if(bannerManualPaused){
+btn.textContent=t.playBtn||"▶ Défiler";
+btn.classList.add("is-paused");
+}else{
+btn.textContent=t.pauseBtn||"⏸ Arrêter";
+btn.classList.remove("is-paused");
+}
+}
+
 function setLanguage(lang){
 if(!translations[lang])return;
 currentLang=lang;
@@ -1019,6 +1110,8 @@ if(moreBtn&&translations[lang].seeMore){
 moreBtn.textContent=translations[lang].seeMore;
 }
 
+updateBannerToggleBtn();
+
 const search=document.getElementById("searchBar");
 if(search)search.placeholder=translations[lang].searchPlaceholder;
 
@@ -1027,8 +1120,14 @@ if(label)label.textContent=translations[lang].name;
 
 if(announcementDataCache)applyAnnouncement(announcementDataCache);
 
+if(cachedBannersData.length){
+renderBannerSlides(cachedBannersData);
+}
+
+if(window.allProductsData.length){
 filterProducts();
 renderCarousels(window.allProductsData);
+}
 }
 
 document.getElementById("langMainBtn")?.addEventListener("click",e=>{
@@ -1285,6 +1384,122 @@ applyFlashVariantIndex(card,slides,nextIndex);
 },2500);
 }
 
+/* DÉFILEMENT DU PANNEAU PUBLICITAIRE EN HAUT + CONTRÔLES GAUCHE / ARRÊT / DROITE */
+function startBannerScroll(track){
+if(bannerAnimId){
+cancelAnimationFrame(bannerAnimId);
+bannerAnimId=null;
+}
+if(!track)return;
+
+let touchPaused=false;
+let lastTime=null;
+let carryPx=0;
+const speedPxPerSec=36;
+
+const pauseTouch=()=>{touchPaused=true;};
+const resumeTouch=()=>{touchPaused=false;lastTime=null;};
+
+track.addEventListener("pointerdown",pauseTouch,{passive:true});
+track.addEventListener("pointerup",resumeTouch,{passive:true});
+track.addEventListener("pointercancel",resumeTouch,{passive:true});
+track.addEventListener("mouseenter",pauseTouch);
+track.addEventListener("mouseleave",resumeTouch);
+track.addEventListener("touchstart",pauseTouch,{passive:true});
+track.addEventListener("touchend",resumeTouch,{passive:true});
+
+function step(now){
+if(lastTime===null)lastTime=now;
+const dt=Math.min((now-lastTime)/1000,0.1);
+lastTime=now;
+
+if(!bannerManualPaused && !touchPaused && track.scrollWidth>track.clientWidth){
+carryPx+=speedPxPerSec*dt;
+if(carryPx>=1){
+const move=Math.floor(carryPx);
+track.scrollLeft+=move;
+carryPx-=move;
+}
+const half=track.scrollWidth/2;
+if(half>0 && track.scrollLeft>=half){
+track.scrollLeft-=half;
+}
+}
+bannerAnimId=requestAnimationFrame(step);
+}
+
+bannerAnimId=requestAnimationFrame(step);
+}
+
+function setupBannerControls(){
+const btnLeft=document.getElementById("btnBannerLeft");
+const btnRight=document.getElementById("btnBannerRight");
+const btnToggle=document.getElementById("btnBannerToggle");
+
+btnToggle?.addEventListener("click",()=>{
+bannerManualPaused=!bannerManualPaused;
+updateBannerToggleBtn();
+});
+
+btnLeft?.addEventListener("click",()=>{
+const track=document.getElementById("bannerContent");
+if(!track)return;
+const stepWidth=track.clientWidth||320;
+const half=track.scrollWidth/2;
+if(half>0 && track.scrollLeft<=10){
+track.scrollLeft+=half;
+}
+track.scrollBy({left:-stepWidth,behavior:"smooth"});
+});
+
+btnRight?.addEventListener("click",()=>{
+const track=document.getElementById("bannerContent");
+if(!track)return;
+const stepWidth=track.clientWidth||320;
+const half=track.scrollWidth/2;
+if(half>0 && track.scrollLeft>=half){
+track.scrollLeft-=half;
+}
+track.scrollBy({left:stepWidth,behavior:"smooth"});
+});
+}
+
+function renderBannerSlides(banners){
+const container=document.getElementById("bannerContainer");
+const track=document.getElementById("bannerContent");
+if(!container||!track)return;
+
+const validBanners=Array.isArray(banners)?banners.filter(b=>b&&b.image):[];
+if(!validBanners.length){
+container.style.display="none";
+return;
+}
+
+const slidesHTML=validBanners.map(banner=>{
+const title=banner.titre?escapeHTML(getLocalizedText(banner,"titre",currentLang)):"";
+const desc=banner.description?escapeHTML(getLocalizedText(banner,"description",currentLang)):"";
+const img=escapeHTML(banner.image);
+const alt=title||"DAKPROÉLITE";
+return `
+<div class="banner-slide">
+${banner.lien?`<a href="${escapeHTML(banner.lien)}" style="display:block">`:""}
+<img src="${img}" alt="${alt}" loading="eager" decoding="async">
+${banner.lien?"</a>":""}
+${(title||desc)?`
+<div class="banner-content">
+${title?`<h3>${title}</h3>`:""}
+${desc?`<p>${desc}</p>`:""}
+</div>`:""}
+</div>`;
+}).join("");
+
+track.innerHTML=validBanners.length>1?(slidesHTML+slidesHTML):slidesHTML;
+container.style.display="block";
+if(validBanners.length>1){
+startBannerScroll(track);
+}
+}
+
 /* DÉFILEMENT TRÈS DOUX DU PANNEAU SPONSORISÉ (~15 px/s) + GLISSER GAUCHE/DROITE */
 function startGentleSponsoredScroll(track){
 if(sponsoredAnimId){
@@ -1411,7 +1626,7 @@ filterProducts();
 renderCarousels(window.allProductsData);
 }
 
-if(!firebaseReady||!db){
+if(!initFirebaseApp()||!db){
 if(!window.allProductsData.length&&container){
 container.innerHTML=`<div class="empty-message error-message">Connexion à Firebase indisponible. Vérifiez votre connexion Internet.</div>`;
 }
@@ -1499,15 +1714,18 @@ modalContainer.innerHTML="";
 });
 }
 
-/* BANNIÈRE FIXE : UNE SEULE IMAGE, SANS DÉFILEMENT */
+/* BANNIÈRE PUBLICITAIRE DÉROULANTE EN HAUT */
 function loadBanners(){
-if(!firebaseReady||!db)return;
+if(cachedBannersData.length){
+renderBannerSlides(cachedBannersData);
+}
+
+if(!initFirebaseApp()||!db)return;
 
 db.ref("bannieres").once("value").then(snapshot=>{
 const data=snapshot.val();
 const container=document.getElementById("bannerContainer");
-const content=document.getElementById("bannerContent");
-if(!container||!content)return;
+if(!container)return;
 
 if(!data||typeof data!=="object"){
 container.style.display="none";
@@ -1523,24 +1741,12 @@ container.style.display="none";
 return;
 }
 
-const banner=banners[0];
+cachedBannersData=banners;
+try{
+localStorage.setItem("dakpro_cached_banners",JSON.stringify(banners));
+}catch(e){}
 
-content.innerHTML=`
-<div class="banner-slide">
-${banner.lien?
-`<a href="${escapeHTML(banner.lien)}" style="display:block">`:""}
-<img src="${escapeHTML(banner.image)}"
-alt="${escapeHTML(banner.titre||"DAKPROÉLITE")}"
-loading="eager">
-${banner.lien?"</a>":""}
-${banner.titre||banner.description?
-`<div class="banner-content">
-${banner.titre?`<h3>${escapeHTML(getLocalizedText(banner,"titre",currentLang))}</h3>`:""}
-${banner.description?`<p>${escapeHTML(getLocalizedText(banner,"description",currentLang))}</p>`:""}
-</div>`:""}
-</div>`;
-
-container.style.display="block";
+renderBannerSlides(banners);
 }).catch(error=>{
 console.error("Erreur bannière :",error);
 });
@@ -1569,7 +1775,7 @@ text.textContent=cleanText;
 }
 
 function loadAnnouncement(){
-if(!firebaseReady||!db)return;
+if(!initFirebaseApp()||!db)return;
 
 db.ref("annonces/faya_buzz").on("value",snapshot=>{
 announcementDataCache=snapshot.val();
@@ -1579,20 +1785,47 @@ console.error("Erreur annonce :",error);
 });
 }
 
-/* INITIALISATION */
-document.addEventListener("DOMContentLoaded",()=>{
-setLanguage(currentLang);
-});
+/* INITIALISATION INSTANTANÉE DÈS LA SECONDE 0 */
+setupBannerControls();
+buildCategories();
+
+if(cachedBannersData.length){
+renderBannerSlides(cachedBannersData);
+}
 
 if(window.allProductsData.length){
-buildCategories();
 filterProducts();
 renderCarousels(window.allProductsData);
 }
 
+function startLiveFirebaseSync(){
+if(initFirebaseApp()){
 loadProducts();
 loadBanners();
 loadAnnouncement();
+return;
+}
+let tries=0;
+const waitSdk=setInterval(()=>{
+tries++;
+if(initFirebaseApp()||tries>=50){
+clearInterval(waitSdk);
+loadProducts();
+loadBanners();
+loadAnnouncement();
+}
+},25);
+}
+
+if(document.readyState==="loading"){
+document.addEventListener("DOMContentLoaded",()=>{
+setLanguage(currentLang);
+startLiveFirebaseSync();
+});
+}else{
+setLanguage(currentLang);
+startLiveFirebaseSync();
+}
 </script>
 
 </body>
