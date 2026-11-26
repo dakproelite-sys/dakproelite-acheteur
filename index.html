@@ -144,7 +144,7 @@ display:inline-flex;align-items:center;justify-content:center;
 height:24px;padding:0 9px;border-radius:14px;
 border:1px solid var(--gold);background:#050505;color:var(--gold);
 font-size:10.5px;font-weight:700;cursor:pointer;
-transition:background .15s ease,color .15s ease;
+transition:background .1s ease,color .1s ease;
 }
 .banner-ctrl-btn:hover{
 background:var(--gold);color:#000;
@@ -194,6 +194,11 @@ text-decoration:none;
 flex:0 0 auto;padding:7px 12px;border:1px solid var(--gold);
 border-radius:16px;background:transparent;color:#fff;
 cursor:pointer;white-space:nowrap;font-size:11px;
+opacity:0;transform:translateX(8px);
+transition:opacity .35s ease,transform .35s ease,background .1s ease,color .1s ease;
+}
+.cat-btn.cat-visible{
+opacity:1;transform:translateX(0);
 }
 .cat-btn.active{background:var(--gold);color:#000;font-weight:800}
 
@@ -250,6 +255,7 @@ border-radius:10px;padding:8px;
 box-shadow:0 2px 8px rgba(0,0,0,.04);
 overflow:hidden;min-width:0;scroll-snap-align:start;
 font-family:inherit;
+opacity:1;
 }
 .amazon-carousel .card{
 flex:0 0 172px;min-width:172px;
@@ -282,7 +288,8 @@ text-decoration:none;
 }
 .card img,.card video{
 width:100%;height:100%;object-fit:contain;display:block;
-transition:opacity .18s ease;
+opacity:1;
+transition:opacity .08s ease;
 }
 
 /* VARIANTES EN OFFRES FLASH : PETITES VIGNETTES + AFFICHAGE GRAND SI PEU DE VARIANTES */
@@ -306,7 +313,7 @@ object-fit:contain;
 background:#fff;
 cursor:pointer;
 opacity:.78;
-transition:transform .16s ease,border-color .16s ease,opacity .16s ease,box-shadow .16s ease;
+transition:transform .1s ease,border-color .1s ease,opacity .1s ease,box-shadow .1s ease;
 }
 .flash-variant-thumb.active{
 border-color:var(--gold);
@@ -386,7 +393,7 @@ padding:14px 10px 4px;background:#fff;
 padding:9px 22px;border:1px solid var(--gold);
 border-radius:22px;background:linear-gradient(135deg,#131921,#1d2633);
 color:var(--gold);font-size:11.5px;font-weight:700;
-cursor:pointer;transition:transform .15s ease,background .15s ease;
+cursor:pointer;transition:transform .12s ease,background .12s ease;
 }
 .btn-load-more:hover{
 background:var(--gold);color:#000;transform:translateY(-1px);
@@ -769,6 +776,8 @@ let flashImageIndexes={};
 let sponsoredAnimId=null;
 let bannerAnimId=null;
 let bannerManualPaused=false;
+let categoryRevealTimers=[];
+let renderedCategoryKey="";
 
 const categoryIconsMap={
 "Voitures":"🚗","Smartphones":"📱","Vêtements":"👕",
@@ -1146,7 +1155,12 @@ document.getElementById("langMenu")?.classList.remove("show");
 });
 });
 
-/* CATÉGORIES */
+/* CATÉGORIES (SANS "TOUS" + APPARITION LENTE PROGRESSIVE) */
+function clearCategoryTimers(){
+categoryRevealTimers.forEach(t=>clearTimeout(t));
+categoryRevealTimers=[];
+}
+
 function buildCategories(){
 const menu=document.getElementById("catMenu");
 if(!menu)return;
@@ -1157,24 +1171,44 @@ window.allProductsData
 .filter(Boolean)
 )];
 
-let html=`<button type="button" class="cat-btn ${currentCat===""?"active":""}" data-category="">📦 Tous</button>`;
+if(currentCat && !categories.includes(currentCat)){
+currentCat="";
+}
 
-html+=categories.map(category=>{
-return `<button type="button" class="cat-btn ${category===currentCat?"active":""}" data-category="${escapeHTML(category)}">
+const nextKey=categories.join("|");
+const existingButtons=[...menu.querySelectorAll(".cat-btn")];
+
+if(nextKey===renderedCategoryKey && existingButtons.length===categories.length){
+existingButtons.forEach(btn=>{
+btn.classList.toggle("active",(btn.dataset.category||"")===currentCat);
+});
+return;
+}
+
+clearCategoryTimers();
+renderedCategoryKey=nextKey;
+
+menu.innerHTML=categories.map(category=>{
+const isActive=category===currentCat?"active":"";
+return `<button type="button" class="cat-btn ${isActive}" data-category="${escapeHTML(category)}">
 ${getCategoryIcon(category)} ${escapeHTML(category)}
 </button>`;
 }).join("");
 
-menu.innerHTML=html;
-
-menu.querySelectorAll(".cat-btn").forEach(button=>{
+const buttons=[...menu.querySelectorAll(".cat-btn")];
+buttons.forEach((button,idx)=>{
 button.addEventListener("click",()=>{
-currentCat=button.dataset.category||"";
+const clickedCat=button.dataset.category||"";
+currentCat=currentCat===clickedCat?"":clickedCat;
 catalogVisibleCount=CATALOG_PAGE_SIZE;
-menu.querySelectorAll(".cat-btn").forEach(b=>b.classList.remove("active"));
-button.classList.add("active");
+buttons.forEach(b=>b.classList.toggle("active",(b.dataset.category||"")===currentCat));
 filterProducts();
 });
+
+const timer=setTimeout(()=>{
+button.classList.add("cat-visible");
+},idx*260);
+categoryRevealTimers.push(timer);
 });
 }
 
@@ -1333,11 +1367,8 @@ flashImageIndexes[id]=safeIndex;
 
 const image=card.querySelector(".main-product-image");
 if(image){
-image.style.opacity="0";
-setTimeout(()=>{
 image.src=slides[safeIndex];
 image.style.opacity="1";
-},140);
 }
 
 card.querySelectorAll(".flash-variant-thumb").forEach((thumb,i)=>{
@@ -1349,7 +1380,7 @@ dot.classList.toggle("active",i===safeIndex);
 });
 }
 
-/* OFFRES FLASH : CHANGEMENT AUTOMATIQUE + SÉLECTION MANUELLE DES VARIANTES */
+/* OFFRES FLASH : CHANGEMENT RAPIDE (~0,9s) + SÉLECTION MANUELLE DES VARIANTES */
 function startFlashVariantRotation(){
 if(flashTimer)clearInterval(flashTimer);
 
@@ -1381,7 +1412,7 @@ if(slides.length<2)return;
 const nextIndex=((flashImageIndexes[id]||0)+1)%slides.length;
 applyFlashVariantIndex(card,slides,nextIndex);
 });
-},2500);
+},900);
 }
 
 /* DÉFILEMENT DU PANNEAU PUBLICITAIRE EN HAUT + CONTRÔLES GAUCHE / ARRÊT / DROITE */
@@ -1395,7 +1426,7 @@ if(!track)return;
 let touchPaused=false;
 let lastTime=null;
 let carryPx=0;
-const speedPxPerSec=36;
+const speedPxPerSec=65;
 
 const pauseTouch=()=>{touchPaused=true;};
 const resumeTouch=()=>{touchPaused=false;lastTime=null;};
@@ -1449,7 +1480,7 @@ const half=track.scrollWidth/2;
 if(half>0 && track.scrollLeft<=10){
 track.scrollLeft+=half;
 }
-track.scrollBy({left:-stepWidth,behavior:"smooth"});
+track.scrollBy({left:-stepWidth,behavior:"auto"});
 });
 
 btnRight?.addEventListener("click",()=>{
@@ -1460,7 +1491,7 @@ const half=track.scrollWidth/2;
 if(half>0 && track.scrollLeft>=half){
 track.scrollLeft-=half;
 }
-track.scrollBy({left:stepWidth,behavior:"smooth"});
+track.scrollBy({left:stepWidth,behavior:"auto"});
 });
 }
 
@@ -1639,6 +1670,7 @@ const data=snapshot.val();
 
 if(!data||typeof data!=="object"){
 window.allProductsData=[];
+buildCategories();
 renderProducts([]);
 renderCarousels([]);
 return;
@@ -1786,6 +1818,7 @@ console.error("Erreur annonce :",error);
 }
 
 /* INITIALISATION INSTANTANÉE DÈS LA SECONDE 0 */
+setLanguage(currentLang);
 setupBannerControls();
 buildCategories();
 
@@ -1814,18 +1847,10 @@ loadProducts();
 loadBanners();
 loadAnnouncement();
 }
-},25);
+},10);
 }
 
-if(document.readyState==="loading"){
-document.addEventListener("DOMContentLoaded",()=>{
-setLanguage(currentLang);
 startLiveFirebaseSync();
-});
-}else{
-setLanguage(currentLang);
-startLiveFirebaseSync();
-}
 </script>
 
 </body>
