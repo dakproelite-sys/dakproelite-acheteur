@@ -29,6 +29,7 @@
 :root{
 --gold:#d4af37;
 --gold-light:#f3e5ab;
+--gold-deep:#9e7b1f;
 --black:#050505;
 --dark:#0b0e13;
 --soft-dark:#12161f;
@@ -53,101 +54,135 @@ button,input{font-family:inherit}
 button,a{-webkit-tap-highlight-color:transparent}
 a{color:inherit}
 
-/* EN-TÊTE FIXE */
+/* EN-TÊTE FIXE LUXE */
 .header{
-position:sticky;top:0;z-index:5000;width:100%;min-height:70px;
-display:flex;align-items:center;gap:10px;padding:10px 12px;
-background:linear-gradient(to bottom,#131921,#050505);
+position:sticky;top:0;z-index:5000;width:100%;min-height:76px;
+display:flex;align-items:center;gap:11px;padding:10px 13px;
+background:linear-gradient(180deg,#18212e 0%,#0b0e14 58%,#050505 100%);
 border-bottom:2px solid var(--gold);
+box-shadow:0 4px 20px rgba(0,0,0,.72);
 }
 
-/* LOGO GRAVÉ INSTANTANÉ */
+/* LOGO AGRANDI ET GRAVÉ */
 .logo-container{
-width:50px;height:50px;min-width:50px;flex:0 0 50px;
+width:58px;height:58px;min-width:58px;flex:0 0 58px;
 border-radius:50%;
 border:2px solid var(--gold);
-outline:1px solid rgba(243,229,171,.35);
+outline:1.5px solid rgba(243,229,171,.5);
 outline-offset:-4px;
 overflow:hidden;display:flex;align-items:center;
 justify-content:center;
-background:radial-gradient(circle at 30% 30%,#1b222c,#040507 75%);
+background:radial-gradient(circle at 30% 25%,#253040,#05070a 78%);
 box-shadow:
-inset 0 2px 5px rgba(255,255,255,.14),
-inset 0 -3px 6px rgba(0,0,0,.85),
-0 0 0 1px rgba(212,175,55,.25),
-0 3px 10px rgba(0,0,0,.65);
+inset 0 2px 6px rgba(255,255,255,.2),
+inset 0 -4px 8px rgba(0,0,0,.9),
+0 0 14px rgba(212,175,55,.32),
+0 4px 12px rgba(0,0,0,.75);
+transition:transform .2s ease,box-shadow .2s ease;
+}
+.logo-container:hover{
+transform:scale(1.03);
+box-shadow:
+inset 0 2px 6px rgba(255,255,255,.24),
+inset 0 -4px 8px rgba(0,0,0,.9),
+0 0 18px rgba(212,175,55,.45),
+0 4px 14px rgba(0,0,0,.8);
 }
 .logo{
 width:100%;height:100%;object-fit:contain;display:block;
 opacity:1;
-filter:contrast(1.06) drop-shadow(0 1px 1px rgba(0,0,0,.75));
+filter:contrast(1.08) saturate(1.06) drop-shadow(0 1px 2px rgba(0,0,0,.85));
 }
 
 .search-container{flex:1;min-width:0}
 #searchBar{
-width:100%;height:40px;border:1px solid var(--gold);
-border-radius:20px;background:#000;color:#fff;
-padding:0 14px;outline:none;font-size:12px;
+width:100%;height:42px;border:1.5px solid rgba(212,175,55,.85);
+border-radius:21px;background:rgba(8,11,16,.94);color:#fff;
+padding:0 15px;outline:none;font-size:12px;
+box-shadow:inset 0 1px 4px rgba(0,0,0,.65);
+transition:border-color .15s ease,box-shadow .15s ease;
 }
-#searchBar::placeholder{color:#888;font-size:11px}
+#searchBar:focus{
+border-color:var(--gold-light);
+box-shadow:0 0 0 2px rgba(212,175,55,.24);
+}
+#searchBar::placeholder{color:#94a3b8;font-size:11px}
 
 .nav-icons{display:flex;align-items:center;gap:12px;flex-shrink:0}
 .nav-item{
 display:flex;flex-direction:column;align-items:center;
 justify-content:center;color:#fff;text-decoration:none;
-font-size:9px;white-space:nowrap;
+font-size:9.5px;font-weight:500;white-space:nowrap;
+padding:4px 6px;border-radius:8px;
+transition:background .15s ease,color .15s ease;
 }
-.nav-item>span:first-child{font-size:18px;line-height:20px}
+.nav-item:hover{
+background:rgba(212,175,55,.12);
+color:var(--gold-light);
+}
+.nav-item>span:first-child{font-size:19px;line-height:21px}
 
 /* INSTALLATION */
 .install-app-banner{
-display:none;width:96%;max-width:1400px;margin:10px auto 0;
-background:linear-gradient(135deg,#131921,#1a222d);
-border:2px solid var(--gold);border-radius:12px;
+display:none;width:95%;max-width:1400px;margin:10px auto 0;
+background:linear-gradient(135deg,#141b24,#1d2633);
+border:1.5px solid var(--gold);border-radius:14px;
 padding:12px 16px;align-items:center;
 justify-content:space-between;gap:12px;
-box-shadow:0 4px 15px rgba(212,175,55,.2);
+box-shadow:0 6px 18px rgba(212,175,55,.18);
 }
 .install-app-info{display:flex;align-items:center;gap:10px}
 .install-app-icon{font-size:26px}
 .install-app-text h4{color:var(--gold);font-size:13px;margin-bottom:2px}
-.install-app-text p{color:#ccc;font-size:10px}
+.install-app-text p{color:#cbd5e1;font-size:10px}
 .btn-install-app{
-background:linear-gradient(135deg,var(--gold),#aa8c2c);
+background:linear-gradient(135deg,var(--gold-light),var(--gold) 55%,#aa8c2c);
 color:#000;border:none;padding:8px 16px;
 border-radius:20px;font-weight:800;font-size:11px;
 cursor:pointer;white-space:nowrap;
+box-shadow:0 2px 8px rgba(212,175,55,.3);
 }
 
-/* BANNIÈRE PUBLICITAIRE DÉROULANTE EN HAUT + CONTRÔLES */
+/* PANNEAU DÉROULANT LUXUEUX EN HAUT */
 .banner-container{
-display:none;position:relative;width:94%;max-width:1400px;
-margin:12px auto;overflow:hidden;
-border:1px solid var(--gold);border-radius:12px;
-background:var(--soft-dark);
+display:none;position:relative;width:95%;max-width:1400px;
+margin:14px auto 8px;overflow:hidden;
+border:1.5px solid var(--gold);
+border-radius:18px;
+background:linear-gradient(165deg,#192230 0%,#0c1017 55%,#07090d 100%);
+box-shadow:
+0 0 0 1px rgba(243,229,171,.2),
+0 12px 28px rgba(0,0,0,.78),
+0 0 26px rgba(212,175,55,.18);
 }
 .banner-toolbar{
 display:flex;align-items:center;justify-content:space-between;
-gap:8px;padding:7px 10px;
-background:rgba(10,13,18,.94);
-border-bottom:1px solid rgba(212,175,55,.28);
+gap:8px;padding:9px 14px;
+background:linear-gradient(90deg,rgba(212,175,55,.2),rgba(12,16,23,.97) 42%,rgba(212,175,55,.16));
+border-bottom:1px solid rgba(212,175,55,.4);
 }
 .banner-toolbar-label{
-color:var(--gold);font-size:11px;font-weight:700;
-display:inline-flex;align-items:center;gap:5px;
+color:var(--gold-light);font-size:11px;font-weight:700;letter-spacing:.03em;
+display:inline-flex;align-items:center;gap:7px;
+}
+.banner-vip-tag{
+padding:2px 7px;border-radius:999px;
+background:rgba(212,175,55,.16);border:1px solid rgba(243,229,171,.45);
+color:var(--gold-light);font-size:8.5px;font-weight:800;letter-spacing:.06em;
+text-transform:uppercase;
 }
 .banner-controls{
 display:inline-flex;align-items:center;gap:5px;
 }
 .banner-ctrl-btn{
 display:inline-flex;align-items:center;justify-content:center;
-height:24px;padding:0 9px;border-radius:14px;
-border:1px solid var(--gold);background:#050505;color:var(--gold);
+height:25px;padding:0 10px;border-radius:14px;
+border:1px solid rgba(212,175,55,.85);background:#070a0f;color:var(--gold);
 font-size:10.5px;font-weight:700;cursor:pointer;
-transition:background .1s ease,color .1s ease;
+transition:background .12s ease,color .12s ease,transform .12s ease;
 }
 .banner-ctrl-btn:hover{
-background:var(--gold);color:#000;
+background:var(--gold);color:#000;transform:translateY(-1px);
 }
 .banner-ctrl-btn.is-paused{
 background:var(--red);border-color:var(--red);color:#fff;
@@ -162,86 +197,112 @@ scrollbar-width:none;
 .banner-slide{
 flex:0 0 100%;width:100%;min-width:100%;
 position:relative;
+padding:8px;
+}
+.banner-slide-inner{
+position:relative;border-radius:13px;overflow:hidden;
+border:1px solid rgba(243,229,171,.28);
+box-shadow:inset 0 0 0 1px rgba(212,175,55,.15);
 }
 .banner-slide img{
-width:100%;height:185px;display:block;object-fit:cover;
+width:100%;height:205px;display:block;object-fit:cover;
+}
+@media(min-width:768px){
+.banner-slide img{height:255px}
 }
 .banner-content{
-position:absolute;left:0;right:0;bottom:0;padding:12px;
-background:linear-gradient(to top,rgba(0,0,0,.9),transparent);
+position:absolute;left:0;right:0;bottom:0;padding:16px 18px;
+background:linear-gradient(to top,rgba(5,7,11,.95) 18%,rgba(5,7,11,.62) 68%,transparent);
 }
-.banner-content h3{color:var(--gold);font-size:13px}
-.banner-content p{color:#ddd;font-size:10px}
+.banner-content h3{
+color:var(--gold-light);font-size:14px;font-weight:700;
+margin-bottom:3px;text-shadow:0 1px 4px rgba(0,0,0,.9);
+}
+.banner-content p{color:#e2e8f0;font-size:10.5px;line-height:1.4}
+.banner-dots-bar{
+display:flex;align-items:center;justify-content:center;gap:6px;
+padding:7px 12px 9px;
+background:rgba(7,10,15,.92);
+border-top:1px solid rgba(212,175,55,.18);
+}
+.banner-dot{
+width:7px;height:7px;border-radius:999px;border:none;
+background:rgba(243,229,171,.28);cursor:pointer;
+transition:width .18s ease,background .18s ease;
+}
+.banner-dot.active{
+width:18px;background:linear-gradient(90deg,var(--gold),var(--gold-light));
+}
 
 /* NAVIGATION */
 .navigation-bar-container{
-width:100%;padding:8px 12px;display:flex;gap:10px;
-align-items:center;background:rgba(11,14,19,.95);
-border-bottom:1px solid rgba(212,175,55,.2);
+width:100%;padding:9px 12px;display:flex;gap:10px;
+align-items:center;background:rgba(11,14,19,.96);
+border-bottom:1px solid rgba(212,175,55,.25);
 overflow-x:auto;-webkit-overflow-scrolling:touch;
 }
 .navigation-bar-container::-webkit-scrollbar,
 .cat-scroll::-webkit-scrollbar{display:none}
 
 .btn-metiers-special{
-flex:0 0 auto;padding:8px 14px;border:1px solid var(--gold);
-border-radius:20px;background:linear-gradient(135deg,#d4af37,#aa8c2c);
+flex:0 0 auto;padding:8px 14px;border:1px solid var(--gold-light);
+border-radius:20px;background:linear-gradient(135deg,var(--gold-light),var(--gold) 55%,#aa8c2c);
 color:#000;white-space:nowrap;font-size:11px;font-weight:800;
-text-decoration:none;
+text-decoration:none;box-shadow:0 2px 8px rgba(212,175,55,.22);
 }
 .cat-scroll{display:flex;gap:8px;overflow-x:auto;align-items:center}
 .cat-btn{
-flex:0 0 auto;padding:7px 12px;border:1px solid var(--gold);
-border-radius:16px;background:transparent;color:#fff;
+flex:0 0 auto;padding:7px 12px;border:1px solid rgba(212,175,55,.75);
+border-radius:16px;background:rgba(18,22,31,.75);color:#f1f5f9;
 cursor:pointer;white-space:nowrap;font-size:11px;
 opacity:0;transform:translateX(8px);
-transition:opacity .35s ease,transform .35s ease,background .1s ease,color .1s ease;
+transition:opacity .35s ease,transform .35s ease,background .12s ease,color .12s ease;
 }
 .cat-btn.cat-visible{
 opacity:1;transform:translateX(0);
 }
-.cat-btn.active{background:var(--gold);color:#000;font-weight:800}
+.cat-btn.active{background:var(--gold);color:#000;font-weight:800;border-color:var(--gold-light)}
 
 /* SECTIONS */
 .amazon-section{
 width:96%;max-width:1800px;margin:12px auto;padding:12px;
-background:#fff;border-radius:10px;
-box-shadow:0 2px 10px rgba(0,0,0,.1);
+background:#fff;border-radius:12px;
+box-shadow:0 4px 14px rgba(0,0,0,.14);
 }
 .amazon-section-title{
 font-family:inherit;
 font-size:13px;font-weight:700;color:#050505;
 margin-bottom:10px;display:flex;align-items:center;
 justify-content:space-between;gap:6px;flex-wrap:wrap;
-border-bottom:2px solid var(--gold);padding-bottom:5px;
+border-bottom:2px solid var(--gold);padding-bottom:6px;
 }
 .amazon-section-title small{
 font-family:inherit;
-color:#666;font-weight:500;font-size:10px;
+color:#64748b;font-weight:500;font-size:10px;
 }
 
-/* SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4 AU DÉFILEMENT) */
+/* SECTIONS PAR CATÉGORIE */
 .category-sections-wrapper{
 width:96%;max-width:1800px;margin:12px auto;
 display:flex;flex-direction:column;gap:12px;
 }
 .category-section-card{
-background:#fff;border-radius:10px;padding:12px;
-box-shadow:0 2px 10px rgba(0,0,0,.1);
-border:1px solid #f1f5f9;
+background:#fff;border-radius:12px;padding:12px;
+box-shadow:0 4px 14px rgba(0,0,0,.12);
+border:1px solid #e2e8f0;
 }
 .category-section-head{
 display:flex;align-items:center;justify-content:space-between;
 gap:8px;flex-wrap:wrap;margin-bottom:10px;
-padding-bottom:5px;border-bottom:2px solid var(--gold);
+padding-bottom:6px;border-bottom:2px solid var(--gold);
 }
 .category-section-title{
 font-size:13px;font-weight:700;color:#050505;
 }
 .category-section-btn{
 border:1px solid var(--gold);background:#131921;color:var(--gold);
-font-size:10px;font-weight:700;padding:4px 10px;border-radius:14px;
-cursor:pointer;
+font-size:10px;font-weight:700;padding:4px 11px;border-radius:14px;
+cursor:pointer;transition:background .12s ease,color .12s ease;
 }
 .category-section-btn:hover{
 background:var(--gold);color:#000;
@@ -275,6 +336,7 @@ background:var(--gold);border-radius:8px;
 /* CARTES */
 .products{
 width:100%;margin:0 auto;padding:8px;background:#fff;
+border-radius:10px;
 display:grid;grid-template-columns:repeat(2,1fr);
 gap:10px;align-items:stretch;
 }
@@ -296,6 +358,12 @@ box-shadow:0 2px 8px rgba(0,0,0,.04);
 overflow:hidden;min-width:0;scroll-snap-align:start;
 font-family:inherit;
 opacity:1;
+transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease;
+}
+.card:hover{
+transform:translateY(-2px);
+box-shadow:0 6px 16px rgba(0,0,0,.08);
+border-color:rgba(212,175,55,.55);
 }
 .amazon-carousel .card{
 flex:0 0 172px;min-width:172px;
@@ -332,7 +400,7 @@ opacity:1;
 transition:opacity .08s ease;
 }
 
-/* VARIANTES EN OFFRES FLASH : PETITES VIGNETTES + AFFICHAGE GRAND SI PEU DE VARIANTES */
+/* VARIANTES EN OFFRES FLASH */
 .flash-variants-strip{
 display:flex;
 align-items:center;
@@ -362,7 +430,6 @@ transform:scale(1.12);
 box-shadow:0 0 0 1.5px rgba(212,175,55,.45);
 }
 
-/* Quand le produit a peu de variantes (<= 4), on les affiche plus grandes en même temps */
 .flash-variants-strip.few-variants{
 gap:6px;
 padding:5px;
@@ -427,7 +494,8 @@ background:#cbd5e1;
 /* BOUTON VOIR PLUS CATALOGUE */
 .load-more-container{
 width:100%;display:flex;justify-content:center;
-padding:14px 10px 4px;background:#fff;
+padding:14px 10px 6px;background:#fff;
+border-radius:0 0 10px 10px;
 }
 .btn-load-more{
 padding:9px 22px;border:1px solid var(--gold);
@@ -439,10 +507,10 @@ cursor:pointer;transition:transform .12s ease,background .12s ease;
 background:var(--gold);color:#000;transform:translateY(-1px);
 }
 
-/* PANNEAU ROULANT SPONSORISÉ : ALLURE TRÈS LENTE (~15 px/s) + GLISSER GAUCHE/DROITE */
+/* PANNEAU ROULANT SPONSORISÉ */
 .sponsored-section{
 overflow:hidden;position:relative;
-border:1px solid rgba(212,175,55,.35);
+border:1px solid rgba(212,175,55,.4);
 }
 .sponsored-scroll-track{
 display:flex;
@@ -520,6 +588,7 @@ text-transform:uppercase;
 .footer-column ul{list-style:none}
 .footer-column li{margin-bottom:6px}
 .footer-column a{color:#aaa;text-decoration:none}
+.footer-column a:hover{color:var(--gold-light)}
 
 .footer-language-container{
 display:flex;justify-content:center;align-items:center;
@@ -557,7 +626,7 @@ text-align:center;color:#64748b;font-size:11.5px;
 }
 .error-message{color:#b91c1c}
 @media(max-width:380px){
-.logo-container{width:43px;height:43px;min-width:43px;flex-basis:43px}
+.logo-container{width:48px;height:48px;min-width:48px;flex-basis:48px}
 .nav-icons{gap:7px}
 .nav-item{font-size:8px}
 }
@@ -601,10 +670,14 @@ placeholder="Rechercher des produits...">
 </button>
 </div>
 
-<!-- BANNIÈRE PUBLICITAIRE DÉROULANTE EN HAUT -->
+<!-- PANNEAU DÉROULANT LUXUEUX EN HAUT -->
 <section class="banner-container" id="bannerContainer">
 <div class="banner-toolbar">
-<span class="banner-toolbar-label">📣 <span data-i18n="promoPanelTitle">Panneau Publicitaire</span></span>
+<span class="banner-toolbar-label">
+<span>📣</span>
+<span data-i18n="promoPanelTitle">Panneau Publicitaire</span>
+<span class="banner-vip-tag">DAKPROÉLITE • VIP</span>
+</span>
 <div class="banner-controls" aria-label="Contrôles du panneau publicitaire">
 <button type="button" class="banner-ctrl-btn" id="btnBannerLeft" title="Aller à gauche">◀</button>
 <button type="button" class="banner-ctrl-btn" id="btnBannerToggle" title="Arrêter ou reprendre">⏸ Arrêter</button>
@@ -612,6 +685,7 @@ placeholder="Rechercher des produits...">
 </div>
 </div>
 <div class="banner-scroll-track" id="bannerContent"></div>
+<div class="banner-dots-bar" id="bannerDots"></div>
 </section>
 
 <!-- NAVIGATION -->
@@ -633,7 +707,7 @@ placeholder="Rechercher des produits...">
 
 <!-- CATALOGUE -->
 <section class="amazon-section" style="background:transparent;box-shadow:none;padding:0">
-<div class="amazon-section-title" style="background:#fff;padding:10px;border-radius:6px">
+<div class="amazon-section-title" style="background:#fff;padding:10px 12px;border-radius:10px 10px 0 0;margin-bottom:0">
 <span data-i18n="fullCatalog">📦 Catalogue &amp; Catégories</span>
 </div>
 <main class="products" id="products"></main>
@@ -644,7 +718,7 @@ Voir plus
 </div>
 </section>
 
-<!-- SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4 AU DÉFILEMENT OU BOUTON) -->
+<!-- SECTIONS PAR CATÉGORIE -->
 <div id="categorySectionsContainer" class="category-sections-wrapper"></div>
 <div id="categoryLoadFooter" class="category-load-footer" style="display:none">
 <div id="categoryScrollSentinel" class="category-sentinel-text">
@@ -794,19 +868,20 @@ installBanner.style.display="flex";
 },1000);
 }
 
-/* CACHE SÉCURISÉ ET CHARGEMENT PROGRESSIF PAR LOTS */
-const MAX_CACHED_PRODUCTS = 24;
-const INITIAL_FETCH_LIMIT = 40;
-const EXTRA_FETCH_STEP = 28;
+/* CACHE LÉGER ET CHARGEMENT SOBRE EN BANDE PASSANTE */
+const MAX_CACHED_PRODUCTS = 12;
+const INITIAL_FETCH_LIMIT = 12;
+const EXTRA_FETCH_STEP = 10;
 const CATALOG_PAGE_SIZE = 12;
 const CATEGORIES_PER_GROUP = 4;
 const ITEMS_PER_CATEGORY = 4;
-const CATEGORY_QUERY_LIMIT = 8;
+const CATEGORY_QUERY_LIMIT = 4;
 
-/* LISTE COMPLÈTE DES CATÉGORIES CJDROPSHIPPING (ANCIENNES REMPLACÉES) */
+/* LISTE COMPLÈTE DES CATÉGORIES CJDROPSHIPPING (EXISTANTES CONSERVÉES + COMPLÉMENTS) */
 const DEFAULT_CATEGORIES = [
 "Habits Femme","Robes & Jupes","Hauts & Blouses","Jeans & Pantalons Femme",
 "Manteaux & Vestes Femme","Lingerie & Shapewear","Maillots de Bain & Plage",
+"Pulls, Cardigans & Sweats Femme","Combinaisons & Ensembles Femme",
 "Habits Homme","T-Shirts & Polos","Chemises & Costumes",
 "Pantalons & Survêtements","Blousons & Vestes Homme","Sous-Vêtements & Chaussettes",
 "Casquettes, Chapeaux & Ceintures",
@@ -821,11 +896,11 @@ const DEFAULT_CATEGORIES = [
 "Perruques & Mèches Naturelles","Maquillage & Rouge à Lèvres",
 "Soins Visage & Corps","Onglerie & Faux Ongles",
 "Parfums & Déodorants","Tondeuses, Sèche-Cheveux & Lisseurs",
-"Santé, Massage & Bien-être",
+"Santé, Massage & Bien-être","Compléments & Soins Bien-être",
 "Puériculture & Biberons","Vêtements Bébé & Enfant",
 "Chaussures & Chaussons Bébé","Poussettes, Porte-Bébés & Lits",
 "Jouets Éducatifs & Peluches","Voitures Télécommandées & Drones",
-"Dessins Animés & Figurines",
+"Dessins Animés & Figurines","Jeux de Société & Loisirs Créatifs",
 "Smartphones & Téléphones","Coques, Films & Supports Téléphone",
 "Chargeurs Rapides, Câbles & PowerBank","Écouteurs & Casques Bluetooth",
 "Enceintes Bluetooth & Audio","Ordinateurs Portables & Tablettes",
@@ -838,10 +913,11 @@ const DEFAULT_CATEGORIES = [
 "Accessoires Intérieur/Extérieur Auto","Pièces Détachées Auto & Moto",
 "Échappement & Silencieux","Freins & Amortisseurs",
 "Moteur, Carburateur & Bougie","Autoradio Android, GPS & Caméra",
-"Pneus, Jantes & Compresseurs",
+"Pneus, Jantes & Compresseurs","Nettoyage & Entretien Auto",
 "Ustensiles de Cuisine & Marmites","Petit Électroménager (Blender, Air Fryer)",
-"Cafetières, Bouilloires & Mixeurs","Meubles & Rangement Maison",
-"Draps, Couettes & Rideaux","Décoration Murale & Horloges",
+"Cafetières, Bouilloires & Mixeurs","Rangement, Organisation & Bocaux",
+"Meubles & Rangement Maison","Draps, Couettes & Rideaux",
+"Décoration Murale & Horloges","Lampes, Veilleuses & Éclairage Ambiance",
 "Aspirateurs & Nettoyage Maison","Salle de Bain & Robinetterie",
 "Panneaux, Onduleurs & Kits Solaires","Projecteurs, Lampadaires & Ampoules LED",
 "Perceuses & Outils Électriques","Coffrets à Outils & Quincaillerie",
@@ -850,7 +926,8 @@ const DEFAULT_CATEGORIES = [
 "Vélos & Accessoires Cyclisme","Camping, Tentes & Randonnée",
 "Pêche & Chasse","Instruments de Musique & Studio",
 "Jardinage, Arrosage & Agriculture","Accessoires Chiens, Chats & Animaux",
-"Fournitures Scolaires & Bureau","Équipements Commerce & Emballage"
+"Toilettage & Gamelles Animaux","Fournitures Scolaires & Bureau",
+"Équipements Commerce & Emballage","Impression à la Demande (POD) & Cadeaux"
 ];
 
 function safeLocalJSON(key,fallback){
@@ -860,20 +937,19 @@ if(!raw)return fallback;
 const parsed=JSON.parse(raw);
 return parsed ?? fallback;
 }catch(error){
-console.warn("Cache local invalide :",error);
 return fallback;
 }
 }
 
 function compactProductForCache(product){
 if(!product||typeof product!=="object")return null;
-const variants=getVariantList(product).slice(0,4);
+const variants=getVariantList(product).slice(0,2);
 return {
 id:product.id,
 nom:product.nom,
 title:product.title,
 name:product.name,
-description:String(product.description||"").slice(0,140),
+description:String(product.description||"").slice(0,100),
 categorie:product.categorie,
 category:product.category,
 prix:product.prix,
@@ -904,9 +980,7 @@ const compact=(Array.isArray(products)?products:[])
 .map(compactProductForCache)
 .filter(Boolean);
 localStorage.setItem("dakpro_cached_products",JSON.stringify(compact));
-}catch(cacheError){
-console.warn("Cache produits non enregistré :",cacheError);
-}
+}catch(cacheError){}
 }
 
 window.allProductsData=safeLocalJSON("dakpro_cached_products",[]);
@@ -935,6 +1009,7 @@ let flashImageIndexes={};
 let sponsoredAnimId=null;
 let bannerAnimId=null;
 let bannerManualPaused=false;
+let bannerSlideCount=0;
 let categoryRevealTimers=[];
 let renderedCategoryKey="";
 
@@ -947,15 +1022,15 @@ if(n.includes("sac")||n.includes("valise")||n.includes("portefeuille"))return "�
 if(n.includes("montre"))return "⌚";
 if(n.includes("bijou")||n.includes("bague")||n.includes("collier")||n.includes("boucle"))return "💍";
 if(n.includes("lunette"))return "🕶️";
-if(n.includes("perruque")||n.includes("mèche")||n.includes("maquillage")||n.includes("soin")||n.includes("ongle")||n.includes("parfum")||n.includes("tondeuse")||n.includes("santé"))return "💄";
-if(n.includes("jouet")||n.includes("dessin")||n.includes("voiture télécommandée"))return "🧸";
+if(n.includes("perruque")||n.includes("mèche")||n.includes("maquillage")||n.includes("soin")||n.includes("ongle")||n.includes("parfum")||n.includes("tondeuse")||n.includes("santé")||n.includes("complément"))return "💄";
+if(n.includes("jouet")||n.includes("dessin")||n.includes("voiture télécommandée")||n.includes("jeux de société"))return "🧸";
 if(n.includes("smartphone")||n.includes("téléphone")||n.includes("coque")||n.includes("chargeur")||n.includes("écouteur")||n.includes("enceinte")||n.includes("ordinateur")||n.includes("souris")||n.includes("routeur")||n.includes("caméra")||n.includes("tv")||n.includes("console")||n.includes("photo"))return "📱";
 if(n.includes("moto")||n.includes("scooter")||n.includes("auto")||n.includes("frein")||n.includes("moteur")||n.includes("autoradio")||n.includes("pneu")||n.includes("échappement"))return "🏍️";
-if(n.includes("cuisine")||n.includes("meuble")||n.includes("drap")||n.includes("décoration")||n.includes("aspirateur")||n.includes("bain"))return "🏠";
+if(n.includes("cuisine")||n.includes("meuble")||n.includes("drap")||n.includes("décoration")||n.includes("aspirateur")||n.includes("bain")||n.includes("rangement")||n.includes("lampes"))return "🏠";
 if(n.includes("solaire")||n.includes("projecteur")||n.includes("perceuse")||n.includes("outil")||n.includes("serrure"))return "☀️";
 if(n.includes("football")||n.includes("fitness")||n.includes("vélo")||n.includes("camping")||n.includes("pêche")||n.includes("musique"))return "⚽";
-if(n.includes("jardin")||n.includes("chien")||n.includes("bureau")||n.includes("commerce"))return "🌱";
-if(n.includes("robe")||n.includes("haut")||n.includes("jean")||n.includes("manteau")||n.includes("lingerie")||n.includes("maillot")||n.includes("t-shirt")||n.includes("chemise")||n.includes("pantalon")||n.includes("blouson")||n.includes("habit"))return "👗";
+if(n.includes("jardin")||n.includes("chien")||n.includes("animaux")||n.includes("bureau")||n.includes("commerce")||n.includes("impression"))return "🌱";
+if(n.includes("robe")||n.includes("haut")||n.includes("jean")||n.includes("manteau")||n.includes("lingerie")||n.includes("maillot")||n.includes("t-shirt")||n.includes("chemise")||n.includes("pantalon")||n.includes("blouson")||n.includes("habit")||n.includes("pulls"))return "👗";
 return "📦";
 }
 
@@ -1369,7 +1444,7 @@ document.getElementById("langMenu")?.classList.remove("show");
 });
 });
 
-/* LISTE COMPLÈTE DES CATÉGORIES (CJDROPSHIPPING + PRODUITS CHARGÉS) */
+/* LISTE COMPLÈTE DES CATÉGORIES */
 function getAllCategoriesList(){
 const loadedCats=window.allProductsData
 .map(p=>p.categorie||p.category)
@@ -1407,7 +1482,7 @@ window.allProductsData=sortProductsNewestFirst(Array.from(byId.values()));
 saveCompactProductsCache(window.allProductsData);
 }
 
-/* CHARGEMENT CIBLÉ D'UNE CATÉGORIE AU CLIC OU À L'AFFICHAGE */
+/* CHARGEMENT CIBLÉ D'UNE CATÉGORIE UNIQUEMENT AU CLIC */
 async function loadSingleCategory(catName,limit=CATEGORY_QUERY_LIMIT){
 const cleanName=String(catName||"").trim();
 if(!cleanName||!initFirebaseApp()||!db)return [];
@@ -1418,18 +1493,12 @@ return window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim
 
 loadingCategories.add(key);
 try{
-const [snap1,snap2]=await Promise.all([
-db.ref("publications").orderByChild("categorie").equalTo(cleanName).limitToLast(limit).once("value").catch(()=>null),
-db.ref("publications").orderByChild("category").equalTo(cleanName).limitToLast(limit).once("value").catch(()=>null)
-]);
-
+const snap1=await db.ref("publications").orderByChild("categorie").equalTo(cleanName).limitToLast(limit).once("value").catch(()=>null);
 const items=[];
-for(const snap of [snap1,snap2]){
-if(snap && snap.exists() && snap.val() && typeof snap.val()==="object"){
-for(const [k,val] of Object.entries(snap.val())){
+if(snap1 && snap1.exists() && snap1.val() && typeof snap1.val()==="object"){
+for(const [k,val] of Object.entries(snap1.val())){
 if(val && typeof val==="object" && val.actif!==false){
 items.push({...val,id:val.id||k});
-}
 }
 }
 }
@@ -1446,7 +1515,7 @@ loadingCategories.delete(key);
 }
 }
 
-/* CATÉGORIES (SANS "TOUS" + APPARITION LENTE PROGRESSIVE + CHARGEMENT CIBLÉ AU CLIC) */
+/* CATÉGORIES */
 function clearCategoryTimers(){
 categoryRevealTimers.forEach(t=>clearTimeout(t));
 categoryRevealTimers=[];
@@ -1502,7 +1571,7 @@ await loadSingleCategory(currentCat,CATEGORY_QUERY_LIMIT);
 
 const timer=setTimeout(()=>{
 button.classList.add("cat-visible");
-},idx*180);
+},idx*120);
 categoryRevealTimers.push(timer);
 });
 }
@@ -1537,7 +1606,7 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, 4 GROUPES PAR DÉFILEMENT OU BOUTON) */
+/* SECTIONS PAR CATÉGORIE (ZERO REQUÊTE AUTOMATIQUE EN BOUCLE) */
 function renderCategorySections(){
 const wrapper=document.getElementById("categorySectionsContainer");
 const footerBox=document.getElementById("categoryLoadFooter");
@@ -1602,7 +1671,7 @@ ${cardsHTML}
 }).join("");
 
 wrapper.querySelectorAll(".category-section-btn").forEach(btn=>{
-btn.addEventListener("click",()=>{
+btn.addEventListener("click",async()=>{
 const selected=btn.dataset.filterCat||"";
 currentCat=currentCat===selected?"":selected;
 catalogVisibleCount=CATALOG_PAGE_SIZE;
@@ -1612,6 +1681,9 @@ b.classList.toggle("active",(b.dataset.category||"")===currentCat);
 filterProducts();
 renderCategorySections();
 window.scrollTo({top:0,behavior:"smooth"});
+if(currentCat){
+await loadSingleCategory(currentCat,CATEGORY_QUERY_LIMIT);
+}
 });
 });
 
@@ -1625,14 +1697,6 @@ sentinel.textContent=t.scrollForMoreCats||"Défilez vers le bas pour afficher le
 if(moreCatsBtn){
 moreCatsBtn.textContent=t.moreCategoriesBtn||"Afficher plus de catégories";
 }
-
-visibleCats.forEach(catName=>{
-const lower=catName.toLowerCase();
-const currentCount=window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===lower).length;
-if(currentCount<ITEMS_PER_CATEGORY && !fetchedCategories.has(lower)){
-loadSingleCategory(catName,CATEGORY_QUERY_LIMIT);
-}
-});
 }
 
 function revealNextCategoryGroup(){
@@ -1658,7 +1722,7 @@ if(entry.isIntersecting && !currentCat){
 revealNextCategoryGroup();
 }
 });
-},{rootMargin:"240px"});
+},{rootMargin:"180px"});
 
 observer.observe(sentinel);
 }
@@ -1802,7 +1866,7 @@ dot.classList.toggle("active",i===safeIndex);
 });
 }
 
-/* OFFRES FLASH : CHANGEMENT RAPIDE (~0,9s) + SÉLECTION MANUELLE DES VARIANTES */
+/* OFFRES FLASH */
 function startFlashVariantRotation(){
 if(flashTimer)clearInterval(flashTimer);
 
@@ -1834,10 +1898,20 @@ if(slides.length<2)return;
 const nextIndex=((flashImageIndexes[id]||0)+1)%slides.length;
 applyFlashVariantIndex(card,slides,nextIndex);
 });
-},900);
+},950);
 }
 
-/* DÉFILEMENT DU PANNEAU PUBLICITAIRE EN HAUT + CONTRÔLES GAUCHE / ARRÊT / DROITE */
+/* DÉFILEMENT DU PANNEAU DÉROULANT LUXUEUX + POINTS INDICATEURS */
+function syncBannerDots(track){
+const dotsContainer=document.getElementById("bannerDots");
+if(!dotsContainer||!track||bannerSlideCount<2)return;
+const stepWidth=track.clientWidth||1;
+const activeIdx=Math.round((track.scrollLeft% (stepWidth*bannerSlideCount))/stepWidth)%bannerSlideCount;
+dotsContainer.querySelectorAll(".banner-dot").forEach((dot,i)=>{
+dot.classList.toggle("active",i===activeIdx);
+});
+}
+
 function startBannerScroll(track){
 if(bannerAnimId){
 cancelAnimationFrame(bannerAnimId);
@@ -1848,7 +1922,7 @@ if(!track)return;
 let touchPaused=false;
 let lastTime=null;
 let carryPx=0;
-const speedPxPerSec=65;
+const speedPxPerSec=58;
 
 const pauseTouch=()=>{touchPaused=true;};
 const resumeTouch=()=>{touchPaused=false;lastTime=null;};
@@ -1860,6 +1934,7 @@ track.addEventListener("mouseenter",pauseTouch);
 track.addEventListener("mouseleave",resumeTouch);
 track.addEventListener("touchstart",pauseTouch,{passive:true});
 track.addEventListener("touchend",resumeTouch,{passive:true});
+track.addEventListener("scroll",()=>syncBannerDots(track),{passive:true});
 
 function step(now){
 if(lastTime===null)lastTime=now;
@@ -1920,6 +1995,7 @@ track.scrollBy({left:stepWidth,behavior:"auto"});
 function renderBannerSlides(banners){
 const container=document.getElementById("bannerContainer");
 const track=document.getElementById("bannerContent");
+const dotsBar=document.getElementById("bannerDots");
 if(!container||!track)return;
 
 const validBanners=Array.isArray(banners)?banners.filter(b=>b&&b.image):[];
@@ -1928,6 +2004,8 @@ container.style.display="none";
 return;
 }
 
+bannerSlideCount=validBanners.length;
+
 const slidesHTML=validBanners.map(banner=>{
 const title=banner.titre?escapeHTML(getLocalizedText(banner,"titre",currentLang)):"";
 const desc=banner.description?escapeHTML(getLocalizedText(banner,"description",currentLang)):"";
@@ -1935,6 +2013,7 @@ const img=escapeHTML(banner.image);
 const alt=title||"DAKPROÉLITE";
 return `
 <div class="banner-slide">
+<div class="banner-slide-inner">
 ${banner.lien?`<a href="${escapeHTML(banner.lien)}" style="display:block">`:""}
 <img src="${img}" alt="${alt}" loading="lazy" decoding="async">
 ${banner.lien?"</a>":""}
@@ -1943,17 +2022,36 @@ ${(title||desc)?`
 ${title?`<h3>${title}</h3>`:""}
 ${desc?`<p>${desc}</p>`:""}
 </div>`:""}
+</div>
 </div>`;
 }).join("");
 
 track.innerHTML=validBanners.length>1?(slidesHTML+slidesHTML):slidesHTML;
+
+if(dotsBar){
+if(validBanners.length>1){
+dotsBar.style.display="flex";
+dotsBar.innerHTML=validBanners.map((_,i)=>`
+<button type="button" class="banner-dot ${i===0?"active":""}" data-slide-idx="${i}" aria-label="Slide ${i+1}"></button>
+`).join("");
+dotsBar.querySelectorAll(".banner-dot").forEach(dot=>{
+dot.addEventListener("click",()=>{
+const idx=Number(dot.dataset.slideIdx||0);
+track.scrollTo({left:idx*(track.clientWidth||0),behavior:"smooth"});
+});
+});
+}else{
+dotsBar.style.display="none";
+}
+}
+
 container.style.display="block";
 if(validBanners.length>1){
 startBannerScroll(track);
 }
 }
 
-/* DÉFILEMENT TRÈS DOUX DU PANNEAU SPONSORISÉ (~15 px/s) + GLISSER GAUCHE/DROITE */
+/* DÉFILEMENT TRÈS DOUX DU PANNEAU SPONSORISÉ (~15 px/s) */
 function startGentleSponsoredScroll(track){
 if(sponsoredAnimId){
 cancelAnimationFrame(sponsoredAnimId);
@@ -2004,7 +2102,7 @@ if(!Array.isArray(allProducts))return;
 const sortedNewest=sortProductsNewestFirst(allProducts);
 
 const todayFlash=sortedNewest.filter(p=>isPublishedToday(p));
-const flashProducts=(todayFlash.length?todayFlash:sortedNewest).slice(0,12);
+const flashProducts=(todayFlash.length?todayFlash:sortedNewest).slice(0,8);
 
 if(flashContainer){
 if(flashProducts.length){
@@ -2017,7 +2115,7 @@ flashContainer.innerHTML=`<div class="empty-message">Aucune offre Flash disponib
 }
 
 if(sponsoredContainer){
-const sponsoredSlice=sortedNewest.slice(0,16);
+const sponsoredSlice=sortedNewest.slice(0,8);
 if(sponsoredSlice.length){
 const cards=sponsoredSlice.map(product=>generateCardHTML(product)).join("");
 sponsoredContainer.innerHTML=`
@@ -2033,7 +2131,7 @@ sponsoredContainer.innerHTML=`<div class="empty-message">Aucun produit disponibl
 startFlashVariantRotation();
 }
 
-/* CATALOGUE GÉNÉRAL (12 PAR PAGE + BOUTON VOIR PLUS PROGRESSIF) */
+/* CATALOGUE GÉNÉRAL */
 function updateLoadMoreButton(totalFilteredCount){
 const loadMoreContainer=document.getElementById("loadMoreContainer");
 const moreBtn=document.getElementById("btnLoadMoreCatalog");
@@ -2080,7 +2178,7 @@ container.innerHTML=visibleList.map(product=>generateCardHTML(product)).join("")
 updateLoadMoreButton(list.length);
 }
 
-/* CHARGEMENT PROGRESSIF FIREBASE : publications PAR LOTS RÉCENTS */
+/* CHARGEMENT PROGRESSIF FIREBASE : publications PAR PETITS LOTS RÉCENTS */
 function parsePublicationsSnapshot(data,requestedLimit){
 if(!data||typeof data!=="object"){
 hasMoreInFirebase=false;
@@ -2204,13 +2302,13 @@ renderBannerSlides(cachedBannersData);
 
 if(!initFirebaseApp()||!db)return;
 
-db.ref("bannieres").limitToLast(10).once("value").then(snapshot=>{
+db.ref("bannieres").limitToLast(4).once("value").then(snapshot=>{
 const data=snapshot.val();
 const container=document.getElementById("bannerContainer");
 if(!container)return;
 
 if(!data||typeof data!=="object"){
-container.style.display="none";
+if(!cachedBannersData.length)container.style.display="none";
 return;
 }
 
@@ -2219,22 +2317,20 @@ const banners=Object.entries(data)
 .filter(banner=>banner&&banner.actif!==false&&banner.image);
 
 if(!banners.length){
-container.style.display="none";
+if(!cachedBannersData.length)container.style.display="none";
 return;
 }
 
 cachedBannersData=banners;
 try{
-localStorage.setItem("dakpro_cached_banners",JSON.stringify(banners.slice(0,6)));
+localStorage.setItem("dakpro_cached_banners",JSON.stringify(banners.slice(0,3)));
 }catch(e){}
 
 renderBannerSlides(banners);
-}).catch(error=>{
-console.error("Erreur bannière :",error);
-});
+}).catch(()=>{});
 }
 
-/* ANNONCE FOOTER PROFESSIONNELLE */
+/* ANNONCE FOOTER PROFESSIONNELLE (LECTURE PONCTUELLE ÉCONOME) */
 function applyAnnouncement(data){
 const title=document.getElementById("fayaBuzzTitle");
 const text=document.getElementById("fayaBuzzText");
@@ -2259,12 +2355,10 @@ text.textContent=cleanText;
 function loadAnnouncement(){
 if(!initFirebaseApp()||!db)return;
 
-db.ref("annonces/faya_buzz").on("value",snapshot=>{
+db.ref("annonces/faya_buzz").once("value").then(snapshot=>{
 announcementDataCache=snapshot.val();
 applyAnnouncement(announcementDataCache);
-},error=>{
-console.error("Erreur annonce :",error);
-});
+}).catch(()=>{});
 }
 
 /* INITIALISATION INSTANTANÉE DÈS LA SECONDE 0 */
