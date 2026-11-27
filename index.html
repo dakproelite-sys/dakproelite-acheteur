@@ -220,41 +220,44 @@ font-family:inherit;
 color:#666;font-weight:500;font-size:10px;
 }
 
-/* SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4) */
-.category-group-wrapper{
+/* SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4 AU DÉFILEMENT) */
+.category-sections-wrapper{
 width:96%;max-width:1800px;margin:12px auto;
 display:flex;flex-direction:column;gap:12px;
 }
-.category-block{
+.category-section-card{
 background:#fff;border-radius:10px;padding:12px;
 box-shadow:0 2px 10px rgba(0,0,0,.1);
 border:1px solid #f1f5f9;
 }
-.category-block-header{
+.category-section-head{
 display:flex;align-items:center;justify-content:space-between;
 gap:8px;flex-wrap:wrap;margin-bottom:10px;
 padding-bottom:5px;border-bottom:2px solid var(--gold);
 }
-.category-block-title{
+.category-section-title{
 font-size:13px;font-weight:700;color:#050505;
 }
-.category-filter-trigger{
+.category-section-btn{
 border:1px solid var(--gold);background:#131921;color:var(--gold);
 font-size:10px;font-weight:700;padding:4px 10px;border-radius:14px;
 cursor:pointer;
 }
-.category-filter-trigger:hover{
+.category-section-btn:hover{
 background:var(--gold);color:#000;
 }
-.category-grid-4{
+.category-four-grid{
 display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
 }
 @media(min-width:768px){
-.category-grid-4{grid-template-columns:repeat(4,1fr);gap:12px}
+.category-four-grid{grid-template-columns:repeat(4,1fr);gap:12px}
 }
-.category-scroll-sentinel{
-width:96%;max-width:1800px;margin:10px auto;padding:10px;
-text-align:center;color:#d4af37;font-size:11px;font-weight:600;
+.category-load-footer{
+width:96%;max-width:1800px;margin:8px auto 12px;
+display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.category-sentinel-text{
+color:#cbd5e1;font-size:10.5px;text-align:center;
 }
 
 /* OFFRES FLASH */
@@ -641,10 +644,15 @@ Voir plus
 </div>
 </section>
 
-<!-- SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4 AU DÉFILEMENT) -->
-<div id="categorySectionsContainer" class="category-group-wrapper"></div>
-<div id="categoryScrollSentinel" class="category-scroll-sentinel" style="display:none">
-Défilez pour afficher plus de catégories...
+<!-- SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4 AU DÉFILEMENT OU BOUTON) -->
+<div id="categorySectionsContainer" class="category-sections-wrapper"></div>
+<div id="categoryLoadFooter" class="category-load-footer" style="display:none">
+<div id="categoryScrollSentinel" class="category-sentinel-text">
+Défilez vers le bas pour afficher les catégories suivantes...
+</div>
+<button type="button" class="btn-load-more" id="btnLoadMoreCategories">
+Afficher plus de catégories
+</button>
 </div>
 
 <!-- SPONSORISÉS -->
@@ -792,14 +800,57 @@ const INITIAL_FETCH_LIMIT = 40;
 const EXTRA_FETCH_STEP = 28;
 const CATALOG_PAGE_SIZE = 12;
 const CATEGORIES_PER_GROUP = 4;
-const ITEMS_PER_CATEGORY_SECTION = 4;
-const PER_CATEGORY_QUERY_LIMIT = 8;
+const ITEMS_PER_CATEGORY = 4;
+const CATEGORY_QUERY_LIMIT = 8;
 
-const DEFAULT_CATEGORY_NAMES = [
-"Voitures","Smartphones","Vêtements","Chaussures",
-"Montres","Bijoux","Parfums","Meubles",
-"Cuisine","Jouets","Sport","Santé",
-"Livres","Outils","Agriculture","Alimentation"
+/* LISTE COMPLÈTE DES CATÉGORIES CJDROPSHIPPING (ANCIENNES REMPLACÉES) */
+const DEFAULT_CATEGORIES = [
+"Habits Femme","Robes & Jupes","Hauts & Blouses","Jeans & Pantalons Femme",
+"Manteaux & Vestes Femme","Lingerie & Shapewear","Maillots de Bain & Plage",
+"Habits Homme","T-Shirts & Polos","Chemises & Costumes",
+"Pantalons & Survêtements","Blousons & Vestes Homme","Sous-Vêtements & Chaussettes",
+"Casquettes, Chapeaux & Ceintures",
+"Chaussures Bébé","Chaussures Enfants","Baskets & Sneakers Homme/Femme",
+"Talons, Sandales & Escarpins","Mocassins & Chaussures Ville",
+"Bottes & Chaussures Sécurité","Claquettes & Pantoufles",
+"Sacs à Main & Pochettes","Sacs à Dos & Cartables",
+"Valises & Sacs de Voyage","Portefeuilles & Porte-Cartes",
+"Montres Homme & Femme","Montres Connectées (Smartwatch)",
+"Bagues, Colliers & Bracelets","Boucles d'Oreilles & Parures",
+"Lunettes de Soleil & Vue",
+"Perruques & Mèches Naturelles","Maquillage & Rouge à Lèvres",
+"Soins Visage & Corps","Onglerie & Faux Ongles",
+"Parfums & Déodorants","Tondeuses, Sèche-Cheveux & Lisseurs",
+"Santé, Massage & Bien-être",
+"Puériculture & Biberons","Vêtements Bébé & Enfant",
+"Chaussures & Chaussons Bébé","Poussettes, Porte-Bébés & Lits",
+"Jouets Éducatifs & Peluches","Voitures Télécommandées & Drones",
+"Dessins Animés & Figurines",
+"Smartphones & Téléphones","Coques, Films & Supports Téléphone",
+"Chargeurs Rapides, Câbles & PowerBank","Écouteurs & Casques Bluetooth",
+"Enceintes Bluetooth & Audio","Ordinateurs Portables & Tablettes",
+"Souris, Claviers, SSD & Hubs","Routeurs WiFi 4G/5G & Réseau",
+"Caméras Surveillance & Sécurité","TV Box Android & Projecteurs",
+"Consoles & Manettes Jeux Vidéo","Appareils Photo, Trépieds & Ring Light",
+"Motos Électriques","Scooters & Trottinettes",
+"Batteries & Chargeurs Moto","Motos à Carburant",
+"Motos Cross & Quads","Casques & Équipements Moto",
+"Accessoires Intérieur/Extérieur Auto","Pièces Détachées Auto & Moto",
+"Échappement & Silencieux","Freins & Amortisseurs",
+"Moteur, Carburateur & Bougie","Autoradio Android, GPS & Caméra",
+"Pneus, Jantes & Compresseurs",
+"Ustensiles de Cuisine & Marmites","Petit Électroménager (Blender, Air Fryer)",
+"Cafetières, Bouilloires & Mixeurs","Meubles & Rangement Maison",
+"Draps, Couettes & Rideaux","Décoration Murale & Horloges",
+"Aspirateurs & Nettoyage Maison","Salle de Bain & Robinetterie",
+"Panneaux, Onduleurs & Kits Solaires","Projecteurs, Lampadaires & Ampoules LED",
+"Perceuses & Outils Électriques","Coffrets à Outils & Quincaillerie",
+"Serrures Connectées & Alarmes",
+"Football, Basketball & Sports Collectifs","Fitness, Musculation & Yoga",
+"Vélos & Accessoires Cyclisme","Camping, Tentes & Randonnée",
+"Pêche & Chasse","Instruments de Musique & Studio",
+"Jardinage, Arrosage & Agriculture","Accessoires Chiens, Chats & Animaux",
+"Fournitures Scolaires & Bureau","Équipements Commerce & Emballage"
 ];
 
 function safeLocalJSON(key,fallback){
@@ -873,9 +924,9 @@ let hasMoreInFirebase = true;
 let isFetchingMore = false;
 let catalogVisibleCount = CATALOG_PAGE_SIZE;
 
-let visibleCategoryGroupsCount = 1;
-const fetchedCategoriesSet = new Set();
-const loadingCategoriesSet = new Set();
+let visibleCategoryGroups = 1;
+const fetchedCategories = new Set();
+const loadingCategories = new Set();
 
 let currentCat="";
 let announcementDataCache=null;
@@ -887,22 +938,24 @@ let bannerManualPaused=false;
 let categoryRevealTimers=[];
 let renderedCategoryKey="";
 
-const categoryIconsMap={
-"Voitures":"🚗","Smartphones":"📱","Vêtements":"👕",
-"Chaussures":"👟","Montres":"⌚","Bijoux":"💍",
-"Parfums":"🌸","Meubles":"🛋️","Cuisine":"🍳",
-"Jouets":"🧸","Sport":"⚽","Santé":"🩺",
-"Livres":"📚","Outils":"🔨","Agriculture":"🌱",
-"Alimentation":"🍚"
-};
-
 function getCategoryIcon(name){
-if(!name)return "📦";
-for(const key in categoryIconsMap){
-if(name.toLowerCase().includes(key.toLowerCase())){
-return categoryIconsMap[key];
-}
-}
+const n=String(name||"").toLowerCase();
+if(!n)return "📦";
+if(n.includes("bébé")||n.includes("biberon")||n.includes("poussette")||n.includes("enfant"))return "👶";
+if(n.includes("chaussure")||n.includes("basket")||n.includes("talon")||n.includes("mocassin")||n.includes("botte")||n.includes("claquette"))return "👟";
+if(n.includes("sac")||n.includes("valise")||n.includes("portefeuille"))return "👜";
+if(n.includes("montre"))return "⌚";
+if(n.includes("bijou")||n.includes("bague")||n.includes("collier")||n.includes("boucle"))return "💍";
+if(n.includes("lunette"))return "🕶️";
+if(n.includes("perruque")||n.includes("mèche")||n.includes("maquillage")||n.includes("soin")||n.includes("ongle")||n.includes("parfum")||n.includes("tondeuse")||n.includes("santé"))return "💄";
+if(n.includes("jouet")||n.includes("dessin")||n.includes("voiture télécommandée"))return "🧸";
+if(n.includes("smartphone")||n.includes("téléphone")||n.includes("coque")||n.includes("chargeur")||n.includes("écouteur")||n.includes("enceinte")||n.includes("ordinateur")||n.includes("souris")||n.includes("routeur")||n.includes("caméra")||n.includes("tv")||n.includes("console")||n.includes("photo"))return "📱";
+if(n.includes("moto")||n.includes("scooter")||n.includes("auto")||n.includes("frein")||n.includes("moteur")||n.includes("autoradio")||n.includes("pneu")||n.includes("échappement"))return "🏍️";
+if(n.includes("cuisine")||n.includes("meuble")||n.includes("drap")||n.includes("décoration")||n.includes("aspirateur")||n.includes("bain"))return "🏠";
+if(n.includes("solaire")||n.includes("projecteur")||n.includes("perceuse")||n.includes("outil")||n.includes("serrure"))return "☀️";
+if(n.includes("football")||n.includes("fitness")||n.includes("vélo")||n.includes("camping")||n.includes("pêche")||n.includes("musique"))return "⚽";
+if(n.includes("jardin")||n.includes("chien")||n.includes("bureau")||n.includes("commerce"))return "🌱";
+if(n.includes("robe")||n.includes("haut")||n.includes("jean")||n.includes("manteau")||n.includes("lingerie")||n.includes("maillot")||n.includes("t-shirt")||n.includes("chemise")||n.includes("pantalon")||n.includes("blouson")||n.includes("habit"))return "👗";
 return "📦";
 }
 
@@ -934,9 +987,11 @@ seeMore:"Voir plus",
 loadingMore:"Chargement...",
 pauseBtn:"⏸ Arrêter",
 playBtn:"▶ Défiler",
-filterByCat:"Filtrer",
-loadingCatItems:"Chargement de la catégorie...",
-noCatItems:"Aucun article dans cette catégorie pour le moment."
+filterCat:"Filtrer",
+loadingCat:"Chargement de la catégorie...",
+noCatProducts:"Aucun article disponible dans cette catégorie.",
+moreCategoriesBtn:"Afficher plus de catégories",
+scrollForMoreCats:"Défilez vers le bas pour afficher les catégories suivantes..."
 },
 en:{
 name:"English",currency:"USD",rate:1/600,
@@ -964,9 +1019,11 @@ seeMore:"See more",
 loadingMore:"Loading...",
 pauseBtn:"⏸ Stop",
 playBtn:"▶ Play",
-filterByCat:"Filter",
-loadingCatItems:"Loading category...",
-noCatItems:"No items in this category yet."
+filterCat:"Filter",
+loadingCat:"Loading category...",
+noCatProducts:"No items in this category yet.",
+moreCategoriesBtn:"Show more categories",
+scrollForMoreCats:"Scroll down to reveal more categories..."
 },
 es:{
 name:"Español",currency:"EUR",rate:1/655.957,
@@ -994,9 +1051,11 @@ seeMore:"Ver más",
 loadingMore:"Cargando...",
 pauseBtn:"⏸ Parar",
 playBtn:"▶ Seguir",
-filterByCat:"Filtrar",
-loadingCatItems:"Cargando categoría...",
-noCatItems:"No hay artículos en esta categoría."
+filterCat:"Filtrar",
+loadingCat:"Cargando categoría...",
+noCatProducts:"No hay artículos en esta categoría.",
+moreCategoriesBtn:"Mostrar más categorías",
+scrollForMoreCats:"Desplázate hacia abajo para ver más categorías..."
 },
 zh:{
 name:"中文",currency:"CNY",rate:1/85,
@@ -1020,9 +1079,11 @@ seeMore:"查看更多",
 loadingMore:"加载中...",
 pauseBtn:"⏸ 停止",
 playBtn:"▶ 播放",
-filterByCat:"筛选",
-loadingCatItems:"加载分类中...",
-noCatItems:"该分类暂无商品。"
+filterCat:"筛选",
+loadingCat:"加载分类中...",
+noCatProducts:"该分类暂无商品。",
+moreCategoriesBtn:"显示更多分类",
+scrollForMoreCats:"向下滚动以加载更多分类..."
 },
 bn:{
 name:"বাংলা",currency:"BDT",rate:1/5,
@@ -1047,9 +1108,11 @@ seeMore:"আরও দেখুন",
 loadingMore:"লোড হচ্ছে...",
 pauseBtn:"⏸ থামুন",
 playBtn:"▶ চালু",
-filterByCat:"ফিল্টার",
-loadingCatItems:"ক্যাটাগরি লোড হচ্ছে...",
-noCatItems:"এই ক্যাটাগরিতে কোনো পণ্য নেই।"
+filterCat:"ফিল্টার",
+loadingCat:"ক্যাটাগরি লোড হচ্ছে...",
+noCatProducts:"এই ক্যাটাগরিতে কোনো পণ্য নেই।",
+moreCategoriesBtn:"আরও ক্যাটাগরি দেখুন",
+scrollForMoreCats:"আরও ক্যাটাগরি দেখতে নিচে স্ক্রল করুন..."
 },
 yo:{
 name:"Yorùbá",currency:"NGN",rate:1.2,
@@ -1074,9 +1137,11 @@ seeMore:"Wo diẹ sii",
 loadingMore:"N ṣe agbega...",
 pauseBtn:"⏸ Dúró",
 playBtn:"▶ Bẹ̀rẹ̀",
-filterByCat:"Ṣàlẹ̀",
-loadingCatItems:"N gbe ẹka wọle...",
-noCatItems:"Ko si nkan ninu ẹka yii."
+filterCat:"Ṣàlẹ̀",
+loadingCat:"N gbe ẹka wọle...",
+noCatProducts:"Ko si nkan ninu ẹka yii.",
+moreCategoriesBtn:"Fi awọn ẹka diẹ sii han",
+scrollForMoreCats:"Yi lọ si isalẹ lati ri awọn ẹka diẹ sii..."
 },
 fon:{
 name:"Fɔ̀ngbè",currency:"FCFA",rate:1,
@@ -1102,9 +1167,11 @@ seeMore:"Kpɔ́n hú mɔ̌",
 loadingMore:"E ɖò nǔ lɛ ɖè wɛ...",
 pauseBtn:"⏸ Nɔte",
 playBtn:"▶ Yì",
-filterByCat:"Sɔ́",
-loadingCatItems:"E ɖò akpá ɔ́ ɖè wɛ...",
-noCatItems:"Nǔ ɖebǔ ɖò akpá ɔ́ mɛ ǎ."
+filterCat:"Sɔ́",
+loadingCat:"E ɖò akpá ɔ́ ɖè wɛ...",
+noCatProducts:"Nǔ ɖebǔ ɖò akpá ɔ́ mɛ ǎ.",
+moreCategoriesBtn:"XLɛ́ akpá gègě",
+scrollForMoreCats:"Yì dò ɖò akpá ɖevo lɛ jí..."
 }
 };
 
@@ -1255,6 +1322,16 @@ if(moreBtn&&translations[lang].seeMore && !isFetchingMore){
 moreBtn.textContent=translations[lang].seeMore;
 }
 
+const moreCatsBtn=document.getElementById("btnLoadMoreCategories");
+if(moreCatsBtn&&translations[lang].moreCategoriesBtn){
+moreCatsBtn.textContent=translations[lang].moreCategoriesBtn;
+}
+
+const sentinelText=document.getElementById("categoryScrollSentinel");
+if(sentinelText&&translations[lang].scrollForMoreCats){
+sentinelText.textContent=translations[lang].scrollForMoreCats;
+}
+
 updateBannerToggleBtn();
 
 const search=document.getElementById("searchBar");
@@ -1272,7 +1349,7 @@ renderBannerSlides(cachedBannersData);
 if(window.allProductsData.length){
 filterProducts();
 renderCarousels(window.allProductsData);
-renderCategoryGroups();
+renderCategorySections();
 }
 }
 
@@ -1292,78 +1369,80 @@ document.getElementById("langMenu")?.classList.remove("show");
 });
 });
 
-/* LISTE COMPLÈTE DES CATÉGORIES (PRODUITS CHARGÉS + CATÉGORIES DE RÉFÉRENCE) */
-function getAllCategoryNames(){
-const fromProducts=window.allProductsData
+/* LISTE COMPLÈTE DES CATÉGORIES (CJDROPSHIPPING + PRODUITS CHARGÉS) */
+function getAllCategoriesList(){
+const loadedCats=window.allProductsData
 .map(p=>p.categorie||p.category)
 .filter(Boolean);
 
-const merged=[];
+const combined=[];
 const seen=new Set();
 
-for(const cat of [...fromProducts,...DEFAULT_CATEGORY_NAMES]){
-const clean=String(cat).trim();
-if(!clean)continue;
-const key=clean.toLowerCase();
+for(const cat of [...DEFAULT_CATEGORIES,...loadedCats]){
+const trimmed=String(cat).trim();
+if(!trimmed)continue;
+const key=trimmed.toLowerCase();
 if(!seen.has(key)){
 seen.add(key);
-merged.push(clean);
+combined.push(trimmed);
 }
 }
-return merged;
+return combined;
 }
 
-/* CHARGEMENT CIBLÉ D'UNE SEULE CATÉGORIE AU CLIC OU AU DÉFILEMENT */
-function mergeProductsIntoStore(newProducts){
-if(!Array.isArray(newProducts)||!newProducts.length)return;
-const map=new Map();
+/* FUSION SÉCURISÉE DES PRODUITS DANS LE STORE */
+function mergeProducts(newItems){
+if(!Array.isArray(newItems)||!newItems.length)return;
+const byId=new Map();
 for(const p of window.allProductsData){
-if(p&&p.id!==undefined)map.set(String(p.id),p);
+if(p&&p.id!==undefined)byId.set(String(p.id),p);
 }
-for(const p of newProducts){
+for(const p of newItems){
 if(p&&p.id!==undefined){
-const prev=map.get(String(p.id))||{};
-map.set(String(p.id),{...prev,...p});
+const prev=byId.get(String(p.id))||{};
+byId.set(String(p.id),{...prev,...p});
 }
 }
-window.allProductsData=sortProductsNewestFirst(Array.from(map.values()));
+window.allProductsData=sortProductsNewestFirst(Array.from(byId.values()));
 saveCompactProductsCache(window.allProductsData);
 }
 
-async function fetchSingleCategoryProducts(categoryName,limitCount=PER_CATEGORY_QUERY_LIMIT){
-const cleanCat=String(categoryName||"").trim();
-if(!cleanCat||!initFirebaseApp()||!db)return [];
-const lowerKey=cleanCat.toLowerCase();
-if(fetchedCategoriesSet.has(lowerKey)||loadingCategoriesSet.has(lowerKey)){
-return window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===lowerKey);
+/* CHARGEMENT CIBLÉ D'UNE CATÉGORIE AU CLIC OU À L'AFFICHAGE */
+async function loadSingleCategory(catName,limit=CATEGORY_QUERY_LIMIT){
+const cleanName=String(catName||"").trim();
+if(!cleanName||!initFirebaseApp()||!db)return [];
+const key=cleanName.toLowerCase();
+if(fetchedCategories.has(key)||loadingCategories.has(key)){
+return window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===key);
 }
 
-loadingCategoriesSet.add(lowerKey);
+loadingCategories.add(key);
 try{
-const [snapCat,snapCategory]=await Promise.all([
-db.ref("publications").orderByChild("categorie").equalTo(cleanCat).limitToLast(limitCount).once("value").catch(()=>null),
-db.ref("publications").orderByChild("category").equalTo(cleanCat).limitToLast(limitCount).once("value").catch(()=>null)
+const [snap1,snap2]=await Promise.all([
+db.ref("publications").orderByChild("categorie").equalTo(cleanName).limitToLast(limit).once("value").catch(()=>null),
+db.ref("publications").orderByChild("category").equalTo(cleanName).limitToLast(limit).once("value").catch(()=>null)
 ]);
 
-const collected=[];
-for(const snap of [snapCat,snapCategory]){
+const items=[];
+for(const snap of [snap1,snap2]){
 if(snap && snap.exists() && snap.val() && typeof snap.val()==="object"){
 for(const [k,val] of Object.entries(snap.val())){
 if(val && typeof val==="object" && val.actif!==false){
-collected.push({...val,id:val.id||k});
+items.push({...val,id:val.id||k});
 }
 }
 }
 }
-fetchedCategoriesSet.add(lowerKey);
-if(collected.length){
-mergeProductsIntoStore(collected);
+
+fetchedCategories.add(key);
+if(items.length){
+mergeProducts(items);
 filterProducts();
-renderCategoryGroups();
+renderCategorySections();
 }
-return collected;
+return items;
 }finally{
-loadingCategoriesSet.delete(lowerKey);
+loadingCategories.delete(key);
 }
 }
 
@@ -1377,7 +1456,7 @@ function buildCategories(){
 const menu=document.getElementById("catMenu");
 if(!menu)return;
 
-const categories=getAllCategoryNames();
+const categories=getAllCategoriesList();
 
 if(currentCat && !categories.some(c=>c.toLowerCase()===currentCat.toLowerCase())){
 currentCat="";
@@ -1411,12 +1490,12 @@ currentCat=currentCat===clickedCat?"":clickedCat;
 catalogVisibleCount=CATALOG_PAGE_SIZE;
 buttons.forEach(b=>b.classList.toggle("active",(b.dataset.category||"")===currentCat));
 filterProducts();
-renderCategoryGroups();
+renderCategorySections();
 
 if(currentCat){
 const existing=window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===currentCat.toLowerCase());
-if(existing.length<ITEMS_PER_CATEGORY_SECTION){
-await fetchSingleCategoryProducts(currentCat,PER_CATEGORY_QUERY_LIMIT);
+if(existing.length<ITEMS_PER_CATEGORY){
+await loadSingleCategory(currentCat,CATEGORY_QUERY_LIMIT);
 }
 }
 });
@@ -1432,7 +1511,7 @@ categoryRevealTimers.push(timer);
 document.getElementById("searchBar")?.addEventListener("input",()=>{
 catalogVisibleCount=CATALOG_PAGE_SIZE;
 filterProducts();
-renderCategoryGroups();
+renderCategorySections();
 });
 
 function getFilteredProducts(){
@@ -1458,93 +1537,116 @@ function filterProducts(){
 renderProducts(getFilteredProducts());
 }
 
-/* SECTIONS PAR CATÉGORIE : 4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4 AU DÉFILEMENT */
-function renderCategoryGroups(){
-const container=document.getElementById("categorySectionsContainer");
+/* SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, 4 GROUPES PAR DÉFILEMENT OU BOUTON) */
+function renderCategorySections(){
+const wrapper=document.getElementById("categorySectionsContainer");
+const footerBox=document.getElementById("categoryLoadFooter");
 const sentinel=document.getElementById("categoryScrollSentinel");
-if(!container)return;
+const moreCatsBtn=document.getElementById("btnLoadMoreCategories");
+if(!wrapper)return;
 
-const allCategories=getAllCategoryNames();
-const targetCategories=currentCat
-?allCategories.filter(c=>c.toLowerCase()===currentCat.toLowerCase())
-:allCategories;
+const allCats=getAllCategoriesList();
+const targetCats=currentCat
+?allCats.filter(c=>c.toLowerCase()===currentCat.toLowerCase())
+:allCats;
 
-const maxGroups=Math.max(1,Math.ceil(targetCategories.length/CATEGORIES_PER_GROUP));
-const activeGroups=currentCat?maxGroups:Math.min(visibleCategoryGroupsCount,maxGroups);
-const visibleCats=targetCategories.slice(0,activeGroups*CATEGORIES_PER_GROUP);
+const totalGroups=Math.max(1,Math.ceil(targetCats.length/CATEGORIES_PER_GROUP));
+const groupsToShow=currentCat?totalGroups:Math.min(visibleCategoryGroups,totalGroups);
+const visibleCats=targetCats.slice(0,groupsToShow*CATEGORIES_PER_GROUP);
 
 if(!visibleCats.length){
-container.innerHTML="";
-if(sentinel)sentinel.style.display="none";
+wrapper.innerHTML="";
+if(footerBox)footerBox.style.display="none";
 return;
 }
 
 const t=translations[currentLang]||translations.fr;
 const search=(document.getElementById("searchBar")?.value||"").toLowerCase().trim();
 
-container.innerHTML=visibleCats.map(catName=>{
-const catProducts=sortProductsNewestFirst(
+wrapper.innerHTML=visibleCats.map(catName=>{
+const lower=catName.toLowerCase();
+const items=sortProductsNewestFirst(
 window.allProductsData.filter(p=>{
 const pCat=String(p.categorie||p.category||"").trim().toLowerCase();
-if(pCat!==catName.toLowerCase())return false;
+if(pCat!==lower)return false;
 if(!search)return true;
 const name=String(p.nom||p.title||p.name||"").toLowerCase();
 const desc=String(p.description||"").toLowerCase();
 return name.includes(search)||desc.includes(search)||pCat.includes(search);
 })
-).slice(0,ITEMS_PER_CATEGORY_SECTION);
+).slice(0,ITEMS_PER_CATEGORY);
 
-const isFetchingCat=loadingCategoriesSet.has(catName.toLowerCase());
-const isFetchedCat=fetchedCategoriesSet.has(catName.toLowerCase());
+const isLoading=loadingCategories.has(lower);
+const isFetched=fetchedCategories.has(lower);
 
-if(!catProducts.length && !isFetchingCat && isFetchedCat && !currentCat && !search){
+if(!items.length && !isLoading && isFetched && !currentCat && !search){
 return "";
 }
 
-const bodyHTML=catProducts.length
-?catProducts.map(prod=>generateCardHTML(prod)).join("")
-:`<div class="empty-message">${escapeHTML(isFetchingCat?t.loadingCatItems:t.noCatItems)}</div>`;
+const cardsHTML=items.length
+?items.map(item=>generateCardHTML(item)).join("")
+:`<div class="empty-message">${escapeHTML(isLoading?t.loadingCat:t.noCatProducts)}</div>`;
 
 return `
-<section class="category-block" data-category-section="${escapeHTML(catName)}">
-<div class="category-block-header">
-<h2 class="category-block-title">${getCategoryIcon(catName)} ${escapeHTML(catName)}</h2>
-<button type="button" class="category-filter-trigger" data-select-cat="${escapeHTML(catName)}">
-${escapeHTML(t.filterByCat)}
+<section class="category-section-card" data-cat-section="${escapeHTML(catName)}">
+<div class="category-section-head">
+<h2 class="category-section-title">${getCategoryIcon(catName)} ${escapeHTML(catName)}</h2>
+<button type="button" class="category-section-btn" data-filter-cat="${escapeHTML(catName)}">
+${escapeHTML(t.filterCat)}
 </button>
 </div>
-<div class="category-grid-4">
-${bodyHTML}
+<div class="category-four-grid">
+${cardsHTML}
 </div>
 </section>`;
 }).join("");
 
-container.querySelectorAll(".category-filter-trigger").forEach(btn=>{
+wrapper.querySelectorAll(".category-section-btn").forEach(btn=>{
 btn.addEventListener("click",()=>{
-const selected=btn.dataset.selectCat||"";
+const selected=btn.dataset.filterCat||"";
 currentCat=currentCat===selected?"":selected;
 catalogVisibleCount=CATALOG_PAGE_SIZE;
 document.querySelectorAll("#catMenu .cat-btn").forEach(b=>{
 b.classList.toggle("active",(b.dataset.category||"")===currentCat);
 });
 filterProducts();
-renderCategoryGroups();
+renderCategorySections();
 window.scrollTo({top:0,behavior:"smooth"});
 });
 });
 
+const hasMoreGroups=!currentCat && visibleCats.length<targetCats.length;
+if(footerBox){
+footerBox.style.display=hasMoreGroups?"flex":"none";
+}
 if(sentinel){
-sentinel.style.display=(!currentCat && visibleCats.length<targetCategories.length)?"block":"none";
+sentinel.textContent=t.scrollForMoreCats||"Défilez vers le bas pour afficher les catégories suivantes...";
+}
+if(moreCatsBtn){
+moreCatsBtn.textContent=t.moreCategoriesBtn||"Afficher plus de catégories";
 }
 
 visibleCats.forEach(catName=>{
 const lower=catName.toLowerCase();
-const countInStore=window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===lower).length;
-if(countInStore<ITEMS_PER_CATEGORY_SECTION && !fetchedCategoriesSet.has(lower)){
-fetchSingleCategoryProducts(catName,PER_CATEGORY_QUERY_LIMIT);
+const currentCount=window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===lower).length;
+if(currentCount<ITEMS_PER_CATEGORY && !fetchedCategories.has(lower)){
+loadSingleCategory(catName,CATEGORY_QUERY_LIMIT);
 }
 });
 }
+
+function revealNextCategoryGroup(){
+const allCats=getAllCategoriesList();
+const totalGroups=Math.max(1,Math.ceil(allCats.length/CATEGORIES_PER_GROUP));
+if(!currentCat && visibleCategoryGroups<totalGroups){
+visibleCategoryGroups+=1;
+renderCategorySections();
+}
+}
+
+document.getElementById("btnLoadMoreCategories")?.addEventListener("click",()=>{
+revealNextCategoryGroup();
+});
 
 function setupCategoryScrollObserver(){
 const sentinel=document.getElementById("categoryScrollSentinel");
@@ -1553,15 +1655,10 @@ if(!sentinel||typeof IntersectionObserver==="undefined")return;
 const observer=new IntersectionObserver(entries=>{
 entries.forEach(entry=>{
 if(entry.isIntersecting && !currentCat){
-const totalCats=getAllCategoryNames().length;
-const maxGroups=Math.max(1,Math.ceil(totalCats/CATEGORIES_PER_GROUP));
-if(visibleCategoryGroupsCount<maxGroups){
-visibleCategoryGroupsCount+=1;
-renderCategoryGroups();
-}
+revealNextCategoryGroup();
 }
 });
-},{rootMargin:"220px"});
+},{rootMargin:"240px"});
 
 observer.observe(sentinel);
 }
@@ -2016,7 +2113,7 @@ container.innerHTML=`<div class="loading-message">${translations[currentLang].lo
 buildCategories();
 filterProducts();
 renderCarousels(window.allProductsData);
-renderCategoryGroups();
+renderCategorySections();
 }
 
 if(!initFirebaseApp()||!db){
@@ -2038,12 +2135,12 @@ const snapshot=await db
 .once("value");
 
 const parsedProducts=parsePublicationsSnapshot(snapshot.val(),targetLimit);
-mergeProductsIntoStore(parsedProducts);
+mergeProducts(parsedProducts);
 
 buildCategories();
 filterProducts();
 renderCarousels(window.allProductsData);
-renderCategoryGroups();
+renderCategorySections();
 if(!isLoadMore)checkUrlForSharedProduct();
 
 }catch(error){
@@ -2183,7 +2280,7 @@ renderBannerSlides(cachedBannersData);
 if(window.allProductsData.length){
 filterProducts();
 renderCarousels(window.allProductsData);
-renderCategoryGroups();
+renderCategorySections();
 }
 
 function startLiveFirebaseSync(){
