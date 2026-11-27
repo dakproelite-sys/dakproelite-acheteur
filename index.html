@@ -220,6 +220,43 @@ font-family:inherit;
 color:#666;font-weight:500;font-size:10px;
 }
 
+/* SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4) */
+.category-group-wrapper{
+width:96%;max-width:1800px;margin:12px auto;
+display:flex;flex-direction:column;gap:12px;
+}
+.category-block{
+background:#fff;border-radius:10px;padding:12px;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
+border:1px solid #f1f5f9;
+}
+.category-block-header{
+display:flex;align-items:center;justify-content:space-between;
+gap:8px;flex-wrap:wrap;margin-bottom:10px;
+padding-bottom:5px;border-bottom:2px solid var(--gold);
+}
+.category-block-title{
+font-size:13px;font-weight:700;color:#050505;
+}
+.category-filter-trigger{
+border:1px solid var(--gold);background:#131921;color:var(--gold);
+font-size:10px;font-weight:700;padding:4px 10px;border-radius:14px;
+cursor:pointer;
+}
+.category-filter-trigger:hover{
+background:var(--gold);color:#000;
+}
+.category-grid-4{
+display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+}
+@media(min-width:768px){
+.category-grid-4{grid-template-columns:repeat(4,1fr);gap:12px}
+}
+.category-scroll-sentinel{
+width:96%;max-width:1800px;margin:10px auto;padding:10px;
+text-align:center;color:#d4af37;font-size:11px;font-weight:600;
+}
+
 /* OFFRES FLASH */
 .amazon-carousel{
 display:flex;gap:10px;overflow-x:auto;
@@ -604,6 +641,12 @@ Voir plus
 </div>
 </section>
 
+<!-- SECTIONS PAR CATÉGORIE (4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4 AU DÉFILEMENT) -->
+<div id="categorySectionsContainer" class="category-group-wrapper"></div>
+<div id="categoryScrollSentinel" class="category-scroll-sentinel" style="display:none">
+Défilez pour afficher plus de catégories...
+</div>
+
 <!-- SPONSORISÉS -->
 <section class="amazon-section sponsored-section">
 <div class="amazon-section-title">
@@ -743,7 +786,22 @@ installBanner.style.display="flex";
 },1000);
 }
 
-/* CACHE SÉCURISÉ */
+/* CACHE SÉCURISÉ ET CHARGEMENT PROGRESSIF PAR LOTS */
+const MAX_CACHED_PRODUCTS = 24;
+const INITIAL_FETCH_LIMIT = 40;
+const EXTRA_FETCH_STEP = 28;
+const CATALOG_PAGE_SIZE = 12;
+const CATEGORIES_PER_GROUP = 4;
+const ITEMS_PER_CATEGORY_SECTION = 4;
+const PER_CATEGORY_QUERY_LIMIT = 8;
+
+const DEFAULT_CATEGORY_NAMES = [
+"Voitures","Smartphones","Vêtements","Chaussures",
+"Montres","Bijoux","Parfums","Meubles",
+"Cuisine","Jouets","Sport","Santé",
+"Livres","Outils","Agriculture","Alimentation"
+];
+
 function safeLocalJSON(key,fallback){
 try{
 const raw=localStorage.getItem(key);
@@ -753,6 +811,50 @@ return parsed ?? fallback;
 }catch(error){
 console.warn("Cache local invalide :",error);
 return fallback;
+}
+}
+
+function compactProductForCache(product){
+if(!product||typeof product!=="object")return null;
+const variants=getVariantList(product).slice(0,4);
+return {
+id:product.id,
+nom:product.nom,
+title:product.title,
+name:product.name,
+description:String(product.description||"").slice(0,140),
+categorie:product.categorie,
+category:product.category,
+prix:product.prix,
+price:product.price,
+prixPromo:product.prixPromo,
+promoPrice:product.promoPrice,
+image:getProductImage(product),
+variantes:variants,
+isFlash:Boolean(product.isFlash),
+isRecommande:Boolean(product.isRecommande),
+boost:Boolean(product.boost),
+actif:product.actif!==false,
+datePublication:product.datePublication,
+createdAt:product.createdAt,
+timestamp:product.timestamp,
+date_creation:product.date_creation,
+dateCreation:product.dateCreation,
+created_at:product.created_at,
+publishedAt:product.publishedAt,
+date:product.date
+};
+}
+
+function saveCompactProductsCache(products){
+try{
+const compact=(Array.isArray(products)?products:[])
+.slice(0,MAX_CACHED_PRODUCTS)
+.map(compactProductForCache)
+.filter(Boolean);
+localStorage.setItem("dakpro_cached_products",JSON.stringify(compact));
+}catch(cacheError){
+console.warn("Cache produits non enregistré :",cacheError);
 }
 }
 
@@ -766,8 +868,14 @@ if(!Array.isArray(cachedBannersData)){
 cachedBannersData=[];
 }
 
-const CATALOG_PAGE_SIZE = 12;
+let currentFetchLimit = INITIAL_FETCH_LIMIT;
+let hasMoreInFirebase = true;
+let isFetchingMore = false;
 let catalogVisibleCount = CATALOG_PAGE_SIZE;
+
+let visibleCategoryGroupsCount = 1;
+const fetchedCategoriesSet = new Set();
+const loadingCategoriesSet = new Set();
 
 let currentCat="";
 let announcementDataCache=null;
@@ -823,8 +931,12 @@ installAppTitle:"Installer DAKPROÉLITE",
 installAppDesc:"Accédez plus rapidement à la marketplace depuis votre écran d'accueil.",
 installAppBtn:"Installer",
 seeMore:"Voir plus",
+loadingMore:"Chargement...",
 pauseBtn:"⏸ Arrêter",
-playBtn:"▶ Défiler"
+playBtn:"▶ Défiler",
+filterByCat:"Filtrer",
+loadingCatItems:"Chargement de la catégorie...",
+noCatItems:"Aucun article dans cette catégorie pour le moment."
 },
 en:{
 name:"English",currency:"USD",rate:1/600,
@@ -849,8 +961,12 @@ installAppTitle:"Install DAKPROÉLITE",
 installAppDesc:"Access the marketplace from your home screen.",
 installAppBtn:"Install",
 seeMore:"See more",
+loadingMore:"Loading...",
 pauseBtn:"⏸ Stop",
-playBtn:"▶ Play"
+playBtn:"▶ Play",
+filterByCat:"Filter",
+loadingCatItems:"Loading category...",
+noCatItems:"No items in this category yet."
 },
 es:{
 name:"Español",currency:"EUR",rate:1/655.957,
@@ -875,8 +991,12 @@ installAppTitle:"Instalar DAKPROÉLITE",
 installAppDesc:"Accede rápidamente al mercado.",
 installAppBtn:"Instalar",
 seeMore:"Ver más",
+loadingMore:"Cargando...",
 pauseBtn:"⏸ Parar",
-playBtn:"▶ Seguir"
+playBtn:"▶ Seguir",
+filterByCat:"Filtrar",
+loadingCatItems:"Cargando categoría...",
+noCatItems:"No hay artículos en esta categoría."
 },
 zh:{
 name:"中文",currency:"CNY",rate:1/85,
@@ -897,8 +1017,12 @@ installAppTitle:"安装 DAKPROÉLITE",
 installAppDesc:"从主屏幕快速访问市场。",
 installAppBtn:"安装",
 seeMore:"查看更多",
+loadingMore:"加载中...",
 pauseBtn:"⏸ 停止",
-playBtn:"▶ 播放"
+playBtn:"▶ 播放",
+filterByCat:"筛选",
+loadingCatItems:"加载分类中...",
+noCatItems:"该分类暂无商品。"
 },
 bn:{
 name:"বাংলা",currency:"BDT",rate:1/5,
@@ -920,8 +1044,12 @@ installAppTitle:"DAKPROÉLITE ইনস্টল করুন",
 installAppDesc:"দ্রুত মার্কেটপ্লেসে প্রবেশ করুন।",
 installAppBtn:"ইনস্টল",
 seeMore:"আরও দেখুন",
+loadingMore:"লোড হচ্ছে...",
 pauseBtn:"⏸ থামুন",
-playBtn:"▶ চালু"
+playBtn:"▶ চালু",
+filterByCat:"ফিল্টার",
+loadingCatItems:"ক্যাটাগরি লোড হচ্ছে...",
+noCatItems:"এই ক্যাটাগরিতে কোনো পণ্য নেই।"
 },
 yo:{
 name:"Yorùbá",currency:"NGN",rate:1.2,
@@ -943,8 +1071,12 @@ installAppTitle:"Fi DAKPROÉLITE sori ẹrọ",
 installAppDesc:"Wọle si ọja ni iyara.",
 installAppBtn:"Fi sori ẹrọ",
 seeMore:"Wo diẹ sii",
+loadingMore:"N ṣe agbega...",
 pauseBtn:"⏸ Dúró",
-playBtn:"▶ Bẹ̀rẹ̀"
+playBtn:"▶ Bẹ̀rẹ̀",
+filterByCat:"Ṣàlẹ̀",
+loadingCatItems:"N gbe ẹka wọle...",
+noCatItems:"Ko si nkan ninu ẹka yii."
 },
 fon:{
 name:"Fɔ̀ngbè",currency:"FCFA",rate:1,
@@ -967,8 +1099,12 @@ installAppTitle:"Tɛ́n DAKPROÉLITE ɖó",
 installAppDesc:"Kpɔ́n nǔ lɛ wě wě ɖò kɔ̀ tɔn mɛ.",
 installAppBtn:"Tɛ́n ɖó",
 seeMore:"Kpɔ́n hú mɔ̌",
+loadingMore:"E ɖò nǔ lɛ ɖè wɛ...",
 pauseBtn:"⏸ Nɔte",
-playBtn:"▶ Yì"
+playBtn:"▶ Yì",
+filterByCat:"Sɔ́",
+loadingCatItems:"E ɖò akpá ɔ́ ɖè wɛ...",
+noCatItems:"Nǔ ɖebǔ ɖò akpá ɔ́ mɛ ǎ."
 }
 };
 
@@ -1115,7 +1251,7 @@ if(translations[lang][key])el.textContent=translations[lang][key];
 });
 
 const moreBtn=document.getElementById("btnLoadMoreCatalog");
-if(moreBtn&&translations[lang].seeMore){
+if(moreBtn&&translations[lang].seeMore && !isFetchingMore){
 moreBtn.textContent=translations[lang].seeMore;
 }
 
@@ -1136,6 +1272,7 @@ renderBannerSlides(cachedBannersData);
 if(window.allProductsData.length){
 filterProducts();
 renderCarousels(window.allProductsData);
+renderCategoryGroups();
 }
 }
 
@@ -1155,7 +1292,82 @@ document.getElementById("langMenu")?.classList.remove("show");
 });
 });
 
-/* CATÉGORIES (SANS "TOUS" + APPARITION LENTE PROGRESSIVE) */
+/* LISTE COMPLÈTE DES CATÉGORIES (PRODUITS CHARGÉS + CATÉGORIES DE RÉFÉRENCE) */
+function getAllCategoryNames(){
+const fromProducts=window.allProductsData
+.map(p=>p.categorie||p.category)
+.filter(Boolean);
+
+const merged=[];
+const seen=new Set();
+
+for(const cat of [...fromProducts,...DEFAULT_CATEGORY_NAMES]){
+const clean=String(cat).trim();
+if(!clean)continue;
+const key=clean.toLowerCase();
+if(!seen.has(key)){
+seen.add(key);
+merged.push(clean);
+}
+}
+return merged;
+}
+
+/* CHARGEMENT CIBLÉ D'UNE SEULE CATÉGORIE AU CLIC OU AU DÉFILEMENT */
+function mergeProductsIntoStore(newProducts){
+if(!Array.isArray(newProducts)||!newProducts.length)return;
+const map=new Map();
+for(const p of window.allProductsData){
+if(p&&p.id!==undefined)map.set(String(p.id),p);
+}
+for(const p of newProducts){
+if(p&&p.id!==undefined){
+const prev=map.get(String(p.id))||{};
+map.set(String(p.id),{...prev,...p});
+}
+}
+window.allProductsData=sortProductsNewestFirst(Array.from(map.values()));
+saveCompactProductsCache(window.allProductsData);
+}
+
+async function fetchSingleCategoryProducts(categoryName,limitCount=PER_CATEGORY_QUERY_LIMIT){
+const cleanCat=String(categoryName||"").trim();
+if(!cleanCat||!initFirebaseApp()||!db)return [];
+const lowerKey=cleanCat.toLowerCase();
+if(fetchedCategoriesSet.has(lowerKey)||loadingCategoriesSet.has(lowerKey)){
+return window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===lowerKey);
+}
+
+loadingCategoriesSet.add(lowerKey);
+try{
+const [snapCat,snapCategory]=await Promise.all([
+db.ref("publications").orderByChild("categorie").equalTo(cleanCat).limitToLast(limitCount).once("value").catch(()=>null),
+db.ref("publications").orderByChild("category").equalTo(cleanCat).limitToLast(limitCount).once("value").catch(()=>null)
+]);
+
+const collected=[];
+for(const snap of [snapCat,snapCategory]){
+if(snap && snap.exists() && snap.val() && typeof snap.val()==="object"){
+for(const [k,val] of Object.entries(snap.val())){
+if(val && typeof val==="object" && val.actif!==false){
+collected.push({...val,id:val.id||k});
+}
+}
+}
+}
+fetchedCategoriesSet.add(lowerKey);
+if(collected.length){
+mergeProductsIntoStore(collected);
+filterProducts();
+renderCategoryGroups();
+}
+return collected;
+}finally{
+loadingCategoriesSet.delete(lowerKey);
+}
+}
+
+/* CATÉGORIES (SANS "TOUS" + APPARITION LENTE PROGRESSIVE + CHARGEMENT CIBLÉ AU CLIC) */
 function clearCategoryTimers(){
 categoryRevealTimers.forEach(t=>clearTimeout(t));
 categoryRevealTimers=[];
@@ -1165,13 +1377,9 @@ function buildCategories(){
 const menu=document.getElementById("catMenu");
 if(!menu)return;
 
-const categories=[...new Set(
-window.allProductsData
-.map(p=>p.categorie||p.category)
-.filter(Boolean)
-)];
+const categories=getAllCategoryNames();
 
-if(currentCat && !categories.includes(currentCat)){
+if(currentCat && !categories.some(c=>c.toLowerCase()===currentCat.toLowerCase())){
 currentCat="";
 }
 
@@ -1197,17 +1405,25 @@ ${getCategoryIcon(category)} ${escapeHTML(category)}
 
 const buttons=[...menu.querySelectorAll(".cat-btn")];
 buttons.forEach((button,idx)=>{
-button.addEventListener("click",()=>{
+button.addEventListener("click",async()=>{
 const clickedCat=button.dataset.category||"";
 currentCat=currentCat===clickedCat?"":clickedCat;
 catalogVisibleCount=CATALOG_PAGE_SIZE;
 buttons.forEach(b=>b.classList.toggle("active",(b.dataset.category||"")===currentCat));
 filterProducts();
+renderCategoryGroups();
+
+if(currentCat){
+const existing=window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===currentCat.toLowerCase());
+if(existing.length<ITEMS_PER_CATEGORY_SECTION){
+await fetchSingleCategoryProducts(currentCat,PER_CATEGORY_QUERY_LIMIT);
+}
+}
 });
 
 const timer=setTimeout(()=>{
 button.classList.add("cat-visible");
-},idx*260);
+},idx*180);
 categoryRevealTimers.push(timer);
 });
 }
@@ -1216,6 +1432,7 @@ categoryRevealTimers.push(timer);
 document.getElementById("searchBar")?.addEventListener("input",()=>{
 catalogVisibleCount=CATALOG_PAGE_SIZE;
 filterProducts();
+renderCategoryGroups();
 });
 
 function getFilteredProducts(){
@@ -1230,7 +1447,7 @@ const productCategory=product.categorie||product.category||"";
 const matchesSearch=!search||
 name.includes(search)||description.includes(search)||category.includes(search);
 
-const matchesCategory=!currentCat||productCategory===currentCat;
+const matchesCategory=!currentCat||productCategory.toLowerCase()===currentCat.toLowerCase();
 return matchesSearch&&matchesCategory;
 });
 
@@ -1239,6 +1456,114 @@ return sortProductsNewestFirst(filtered);
 
 function filterProducts(){
 renderProducts(getFilteredProducts());
+}
+
+/* SECTIONS PAR CATÉGORIE : 4 ARTICLES PAR CATÉGORIE, GROUPÉES PAR 4 AU DÉFILEMENT */
+function renderCategoryGroups(){
+const container=document.getElementById("categorySectionsContainer");
+const sentinel=document.getElementById("categoryScrollSentinel");
+if(!container)return;
+
+const allCategories=getAllCategoryNames();
+const targetCategories=currentCat
+?allCategories.filter(c=>c.toLowerCase()===currentCat.toLowerCase())
+:allCategories;
+
+const maxGroups=Math.max(1,Math.ceil(targetCategories.length/CATEGORIES_PER_GROUP));
+const activeGroups=currentCat?maxGroups:Math.min(visibleCategoryGroupsCount,maxGroups);
+const visibleCats=targetCategories.slice(0,activeGroups*CATEGORIES_PER_GROUP);
+
+if(!visibleCats.length){
+container.innerHTML="";
+if(sentinel)sentinel.style.display="none";
+return;
+}
+
+const t=translations[currentLang]||translations.fr;
+const search=(document.getElementById("searchBar")?.value||"").toLowerCase().trim();
+
+container.innerHTML=visibleCats.map(catName=>{
+const catProducts=sortProductsNewestFirst(
+window.allProductsData.filter(p=>{
+const pCat=String(p.categorie||p.category||"").trim().toLowerCase();
+if(pCat!==catName.toLowerCase())return false;
+if(!search)return true;
+const name=String(p.nom||p.title||p.name||"").toLowerCase();
+const desc=String(p.description||"").toLowerCase();
+return name.includes(search)||desc.includes(search)||pCat.includes(search);
+})
+).slice(0,ITEMS_PER_CATEGORY_SECTION);
+
+const isFetchingCat=loadingCategoriesSet.has(catName.toLowerCase());
+const isFetchedCat=fetchedCategoriesSet.has(catName.toLowerCase());
+
+if(!catProducts.length && !isFetchingCat && isFetchedCat && !currentCat && !search){
+return "";
+}
+
+const bodyHTML=catProducts.length
+?catProducts.map(prod=>generateCardHTML(prod)).join("")
+:`<div class="empty-message">${escapeHTML(isFetchingCat?t.loadingCatItems:t.noCatItems)}</div>`;
+
+return `
+<section class="category-block" data-category-section="${escapeHTML(catName)}">
+<div class="category-block-header">
+<h2 class="category-block-title">${getCategoryIcon(catName)} ${escapeHTML(catName)}</h2>
+<button type="button" class="category-filter-trigger" data-select-cat="${escapeHTML(catName)}">
+${escapeHTML(t.filterByCat)}
+</button>
+</div>
+<div class="category-grid-4">
+${bodyHTML}
+</div>
+</section>`;
+}).join("");
+
+container.querySelectorAll(".category-filter-trigger").forEach(btn=>{
+btn.addEventListener("click",()=>{
+const selected=btn.dataset.selectCat||"";
+currentCat=currentCat===selected?"":selected;
+catalogVisibleCount=CATALOG_PAGE_SIZE;
+document.querySelectorAll("#catMenu .cat-btn").forEach(b=>{
+b.classList.toggle("active",(b.dataset.category||"")===currentCat);
+});
+filterProducts();
+renderCategoryGroups();
+window.scrollTo({top:0,behavior:"smooth"});
+});
+});
+
+if(sentinel){
+sentinel.style.display=(!currentCat && visibleCats.length<targetCategories.length)?"block":"none";
+}
+
+visibleCats.forEach(catName=>{
+const lower=catName.toLowerCase();
+const countInStore=window.allProductsData.filter(p=>String(p.categorie||p.category||"").trim().toLowerCase()===lower).length;
+if(countInStore<ITEMS_PER_CATEGORY_SECTION && !fetchedCategoriesSet.has(lower)){
+fetchSingleCategoryProducts(catName,PER_CATEGORY_QUERY_LIMIT);
+}
+});
+}
+
+function setupCategoryScrollObserver(){
+const sentinel=document.getElementById("categoryScrollSentinel");
+if(!sentinel||typeof IntersectionObserver==="undefined")return;
+
+const observer=new IntersectionObserver(entries=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting && !currentCat){
+const totalCats=getAllCategoryNames().length;
+const maxGroups=Math.max(1,Math.ceil(totalCats/CATEGORIES_PER_GROUP));
+if(visibleCategoryGroupsCount<maxGroups){
+visibleCategoryGroupsCount+=1;
+renderCategoryGroups();
+}
+}
+});
+},{rootMargin:"220px"});
+
+observer.observe(sentinel);
 }
 
 /* VARIANTES : CHAMP FIREBASE variantes */
@@ -1306,7 +1631,7 @@ badge=`<span class="badge-boost">⭐ DAKPRO</span>`;
 }
 
 const media=image?
-`<img class="main-product-image" src="${escapeHTML(image)}" alt="${safeName}" loading="eager" decoding="async">`:
+`<img class="main-product-image" src="${escapeHTML(image)}" alt="${safeName}" loading="lazy" decoding="async">`:
 `<div style="font-size:30px;color:#999">📦</div>`;
 
 const flashVariantsBlock=options.flash&&flashSlides.length>1?`
@@ -1316,7 +1641,7 @@ ${flashSlides.map((url,i)=>`
 data-variant-index="${i}"
 src="${escapeHTML(url)}"
 alt="${safeName} variante ${i+1}"
-loading="eager" decoding="async">
+loading="lazy" decoding="async">
 `).join("")}
 </div>
 <div class="flash-variant-label">${isFewVariants?"Variantes en aperçu":"Variantes disponibles"}</div>
@@ -1514,7 +1839,7 @@ const alt=title||"DAKPROÉLITE";
 return `
 <div class="banner-slide">
 ${banner.lien?`<a href="${escapeHTML(banner.lien)}" style="display:block">`:""}
-<img src="${img}" alt="${alt}" loading="eager" decoding="async">
+<img src="${img}" alt="${alt}" loading="lazy" decoding="async">
 ${banner.lien?"</a>":""}
 ${(title||desc)?`
 <div class="banner-content">
@@ -1595,8 +1920,9 @@ flashContainer.innerHTML=`<div class="empty-message">Aucune offre Flash disponib
 }
 
 if(sponsoredContainer){
-if(sortedNewest.length){
-const cards=sortedNewest.map(product=>generateCardHTML(product)).join("");
+const sponsoredSlice=sortedNewest.slice(0,16);
+if(sponsoredSlice.length){
+const cards=sponsoredSlice.map(product=>generateCardHTML(product)).join("");
 sponsoredContainer.innerHTML=`
 <div class="sponsored-scroll-track" id="sponsoredScrollTrack">
 ${cards}${cards}
@@ -1610,25 +1936,35 @@ sponsoredContainer.innerHTML=`<div class="empty-message">Aucun produit disponibl
 startFlashVariantRotation();
 }
 
-/* CATALOGUE GÉNÉRAL (12 PAR PAGE + BOUTON VOIR PLUS) */
-function updateLoadMoreButton(totalCount){
+/* CATALOGUE GÉNÉRAL (12 PAR PAGE + BOUTON VOIR PLUS PROGRESSIF) */
+function updateLoadMoreButton(totalFilteredCount){
 const loadMoreContainer=document.getElementById("loadMoreContainer");
 const moreBtn=document.getElementById("btnLoadMoreCatalog");
 if(!loadMoreContainer||!moreBtn)return;
 
-if(translations[currentLang]?.seeMore){
-moreBtn.textContent=translations[currentLang].seeMore;
-}
+moreBtn.disabled=isFetchingMore;
+moreBtn.textContent=isFetchingMore
+?(translations[currentLang]?.loadingMore||"Chargement...")
+:(translations[currentLang]?.seeMore||"Voir plus");
 
-if(totalCount>catalogVisibleCount){
+if(totalFilteredCount>catalogVisibleCount || hasMoreInFirebase){
 loadMoreContainer.style.display="flex";
 }else{
 loadMoreContainer.style.display="none";
 }
 }
 
-document.getElementById("btnLoadMoreCatalog")?.addEventListener("click",()=>{
+document.getElementById("btnLoadMoreCatalog")?.addEventListener("click",async()=>{
+if(isFetchingMore)return;
+const filtered=getFilteredProducts();
 catalogVisibleCount+=CATALOG_PAGE_SIZE;
+
+if(filtered.length<=catalogVisibleCount && hasMoreInFirebase && !currentCat && !(document.getElementById("searchBar")?.value||"").trim()){
+currentFetchLimit+=EXTRA_FETCH_STEP;
+await loadProducts({limit:currentFetchLimit,isLoadMore:true});
+return;
+}
+
 filterProducts();
 });
 
@@ -1647,14 +1983,40 @@ container.innerHTML=visibleList.map(product=>generateCardHTML(product)).join("")
 updateLoadMoreButton(list.length);
 }
 
-/* CHARGEMENT FIREBASE : publications UNIQUEMENT */
-async function loadProducts(){
-const container=document.getElementById("products");
+/* CHARGEMENT PROGRESSIF FIREBASE : publications PAR LOTS RÉCENTS */
+function parsePublicationsSnapshot(data,requestedLimit){
+if(!data||typeof data!=="object"){
+hasMoreInFirebase=false;
+return [];
+}
 
-if(window.allProductsData.length){
+const entries=Object.entries(data);
+if(entries.length<requestedLimit){
+hasMoreInFirebase=false;
+}
+
+return sortProductsNewestFirst(
+entries
+.map(([key,product])=>{
+if(!product||typeof product!=="object")return null;
+return {...product,id:product.id||key};
+})
+.filter(product=>product&&product.actif!==false)
+);
+}
+
+async function loadProducts(options={}){
+const container=document.getElementById("products");
+const targetLimit=options.limit||currentFetchLimit;
+const isLoadMore=Boolean(options.isLoadMore);
+
+if(!window.allProductsData.length && container && !isLoadMore){
+container.innerHTML=`<div class="loading-message">${translations[currentLang].loadingArticles}</div>`;
+}else if(window.allProductsData.length && !isLoadMore){
 buildCategories();
 filterProducts();
 renderCarousels(window.allProductsData);
+renderCategoryGroups();
 }
 
 if(!initFirebaseApp()||!db){
@@ -1664,37 +2026,25 @@ container.innerHTML=`<div class="empty-message error-message">Connexion à Fireb
 return;
 }
 
-try{
-const snapshot=await db.ref("publications").once("value");
-const data=snapshot.val();
-
-if(!data||typeof data!=="object"){
-window.allProductsData=[];
-buildCategories();
-renderProducts([]);
-renderCarousels([]);
-return;
+if(isLoadMore){
+isFetchingMore=true;
+updateLoadMoreButton(getFilteredProducts().length);
 }
 
-window.allProductsData=sortProductsNewestFirst(
-Object.entries(data)
-.map(([key,product])=>{
-if(!product||typeof product!=="object")return null;
-return {...product,id:product.id||key};
-})
-.filter(product=>product&&product.actif!==false)
-);
-
 try{
-localStorage.setItem("dakpro_cached_products",JSON.stringify(window.allProductsData));
-}catch(cacheError){
-console.warn("Impossible d'enregistrer le cache local",cacheError);
-}
+const snapshot=await db
+.ref("publications")
+.limitToLast(targetLimit)
+.once("value");
+
+const parsedProducts=parsePublicationsSnapshot(snapshot.val(),targetLimit);
+mergeProductsIntoStore(parsedProducts);
 
 buildCategories();
 filterProducts();
 renderCarousels(window.allProductsData);
-checkUrlForSharedProduct();
+renderCategoryGroups();
+if(!isLoadMore)checkUrlForSharedProduct();
 
 }catch(error){
 console.error("Erreur de chargement publications :",error);
@@ -1702,6 +2052,9 @@ console.error("Erreur de chargement publications :",error);
 if(!window.allProductsData.length&&container){
 container.innerHTML=`<div class="empty-message error-message">Impossible de charger les articles. Vérifiez les règles Firebase et votre connexion.</div>`;
 }
+}finally{
+isFetchingMore=false;
+updateLoadMoreButton(getFilteredProducts().length);
 }
 }
 
@@ -1754,7 +2107,7 @@ renderBannerSlides(cachedBannersData);
 
 if(!initFirebaseApp()||!db)return;
 
-db.ref("bannieres").once("value").then(snapshot=>{
+db.ref("bannieres").limitToLast(10).once("value").then(snapshot=>{
 const data=snapshot.val();
 const container=document.getElementById("bannerContainer");
 if(!container)return;
@@ -1775,7 +2128,7 @@ return;
 
 cachedBannersData=banners;
 try{
-localStorage.setItem("dakpro_cached_banners",JSON.stringify(banners));
+localStorage.setItem("dakpro_cached_banners",JSON.stringify(banners.slice(0,6)));
 }catch(e){}
 
 renderBannerSlides(banners);
@@ -1821,6 +2174,7 @@ console.error("Erreur annonce :",error);
 setLanguage(currentLang);
 setupBannerControls();
 buildCategories();
+setupCategoryScrollObserver();
 
 if(cachedBannersData.length){
 renderBannerSlides(cachedBannersData);
@@ -1829,11 +2183,12 @@ renderBannerSlides(cachedBannersData);
 if(window.allProductsData.length){
 filterProducts();
 renderCarousels(window.allProductsData);
+renderCategoryGroups();
 }
 
 function startLiveFirebaseSync(){
 if(initFirebaseApp()){
-loadProducts();
+loadProducts({limit:INITIAL_FETCH_LIMIT});
 loadBanners();
 loadAnnouncement();
 return;
@@ -1843,7 +2198,7 @@ const waitSdk=setInterval(()=>{
 tries++;
 if(initFirebaseApp()||tries>=50){
 clearInterval(waitSdk);
-loadProducts();
+loadProducts({limit:INITIAL_FETCH_LIMIT});
 loadBanners();
 loadAnnouncement();
 }
