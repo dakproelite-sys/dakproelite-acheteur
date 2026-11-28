@@ -619,8 +619,8 @@ export function init(
       }
 
       .dak-cart {
-        height:320px;
-        max-height:320px;
+        height:340px;
+        max-height:340px;
         overflow-y:auto;
         overflow-x:hidden;
         margin-bottom:15px;
@@ -647,6 +647,69 @@ export function init(
         gap:12px;
       }
 
+      .dak-item-media-row {
+        display:flex;
+        gap:12px;
+        align-items:flex-start;
+        flex:1;
+        min-width:0;
+      }
+
+      .dak-item-thumb {
+        width:78px;
+        height:78px;
+        flex-shrink:0;
+        border-radius:10px;
+        background:#0a0d14;
+        border:1px solid #334155;
+        overflow:hidden;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+
+      .dak-item-thumb img {
+        width:100%;
+        height:100%;
+        object-fit:contain;
+        display:block;
+      }
+
+      .dak-qty-box {
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        background:#0a0d14;
+        border:1px solid #334155;
+        border-radius:7px;
+        padding:2px 6px;
+        margin-top:8px;
+      }
+
+      .dak-qty-btn {
+        width:24px;
+        height:24px;
+        border-radius:5px;
+        border:1px solid #334155;
+        background:#12161f;
+        color:#d4af37;
+        font-weight:900;
+        font-size:13px;
+        line-height:1;
+        cursor:pointer;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+      }
+
+      .dak-qty-val {
+        min-width:20px;
+        text-align:center;
+        font-weight:800;
+        font-size:12px;
+        color:#fff;
+      }
+
       .dak-item-meta {
         display:flex;
         flex-wrap:wrap;
@@ -664,13 +727,24 @@ export function init(
         font-size:10px;
       }
 
-      .dak-variants-bar {
-        display:flex;
-        gap:6px;
-        overflow-x:auto;
+      .dak-variants-section {
         margin-top:10px;
         padding-top:8px;
         border-top:1px dashed #292f3e;
+      }
+
+      .dak-variants-label {
+        font-size:10px;
+        font-weight:700;
+        color:#94a3b8;
+        margin-bottom:6px;
+      }
+
+      .dak-variants-bar {
+        display:flex;
+        gap:8px;
+        overflow-x:auto;
+        padding-bottom:2px;
       }
 
       .dak-var-pill {
@@ -678,20 +752,40 @@ export function init(
         background:#0a0d14;
         border:1px solid #334155;
         color:#e2e8f0;
-        border-radius:7px;
+        border-radius:8px;
         padding:5px 8px;
         font-size:10px;
         font-weight:700;
         cursor:pointer;
         display:inline-flex;
         align-items:center;
-        gap:5px;
+        gap:6px;
       }
 
       .dak-var-pill.active {
         border-color:#22c55e;
         color:#86efac;
         background:rgba(34,197,94,.08);
+      }
+
+      .dak-var-thumb {
+        width:30px;
+        height:30px;
+        border-radius:6px;
+        background:#12161f;
+        border:1px solid #2c3242;
+        overflow:hidden;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        flex-shrink:0;
+      }
+
+      .dak-var-thumb img {
+        width:100%;
+        height:100%;
+        object-fit:contain;
+        display:block;
       }
 
       .dak-summary {
@@ -853,7 +947,7 @@ export function init(
             <strong style="color:#d4af37;">Comment ça fonctionne ?</strong><br><br>
             1️⃣ Vérifiez vos informations.<br>
             2️⃣ Vérifiez l'aperçu des produits, variantes, poids, transport et douane.<br>
-            3️⃣ Cliquez sur « Payer maintenant ».<br>
+            3️⃣ Ajustez les quantités avec + / - et cliquez sur « Payer maintenant ».<br>
             4️⃣ Choisissez votre moyen de paiement et validez.<br>
             5️⃣ La commande est mise à jour après confirmation serveur.
           </div>
@@ -950,7 +1044,7 @@ export function init(
 
 
   /* ==========================================================
-     VARIABLES & DOM
+     VARIABLES & DOM + CACHE ANTI-BANDE PASSANTE
      ========================================================== */
 
   let currentCartTotalFCFA = 0;
@@ -959,6 +1053,10 @@ export function init(
   let currentCartList = [];
   let currentCartCount = 0;
   let paymentInProgress = false;
+
+  // Cache local des publications pour éviter de relire Firebase à chaque snapshot/clic
+  const publicationCache = new Map();
+  const activePreviewImageByKey = new Map();
 
   const customerName = targetContainer.querySelector("#payCustomerName");
   const customerEmail = targetContainer.querySelector("#payCustomerEmail");
@@ -1038,14 +1136,125 @@ export function init(
 
 
   /* ==========================================================
-     AJOUT / SÉLECTION DE VARIANTE SUR UN PRODUIT DU PANIER
+     RÉCUPÉRATION PUBLICATION AVEC CACHE
      ========================================================== */
+
+  async function getCachedPublication(prodId) {
+    if (!prodId) return null;
+    if (publicationCache.has(prodId)) {
+      return publicationCache.get(prodId);
+    }
+
+    let publication = null;
+    try {
+      let pubSnap = await get(ref(db, `publications/${prodId}`));
+      if (!pubSnap.exists()) {
+        pubSnap = await get(ref(db, `vendeur_publications/${prodId}`));
+      }
+      if (pubSnap.exists()) {
+        publication = pubSnap.val() || {};
+      }
+    } catch (error) {
+      console.warn("Prix publication non disponible :", error);
+    }
+
+    publicationCache.set(prodId, publication);
+    return publication;
+  }
+
+
+  /* ==========================================================
+     APERÇU IMAGE, QUANTITÉ (+ / -) & AJOUT VARIANTE
+     ========================================================== */
+
+  window.dakproApercuImageCarte = function(cartKey, imgUrl) {
+    if (!cartKey || !imgUrl) return;
+    activePreviewImageByKey.set(cartKey, imgUrl);
+    const imgEl = targetContainer.querySelector(`[data-main-img="${CSS.escape(cartKey)}"]`);
+    if (imgEl) {
+      imgEl.src = imgUrl;
+    }
+  };
+
+  window.dakproModifierQuantitePanier = async function(cartKey, delta) {
+    const entry = currentCartItems[cartKey];
+    if (!entry) return;
+
+    const currentQty = parseInt(entry.quantite || 1, 10) || 1;
+    const nextQty = currentQty + Number(delta || 0);
+
+    if (nextQty < 1) {
+      try {
+        const updates = {};
+        if (latestPrimaryCart && Object.prototype.hasOwnProperty.call(latestPrimaryCart, cartKey)) {
+          updates[`users/${currentUid}/panier/${cartKey}`] = null;
+        }
+        if (latestFallbackCart && Object.prototype.hasOwnProperty.call(latestFallbackCart, cartKey)) {
+          updates[`users/${currentUid}/gs/cart/${cartKey}`] = null;
+        }
+        if (Object.keys(updates).length > 0) {
+          await update(ref(db), updates);
+        }
+        showStatus("Article retiré du panier.", "info");
+      } catch (err) {
+        console.error("Erreur suppression article :", err);
+        showStatus("Impossible de retirer l'article.", "error");
+      }
+      return;
+    }
+
+    const stockInfo = formaterStock(entry.stockTexte);
+    if (stockInfo.maxQte !== null && nextQty > stockInfo.maxQte) {
+      showStatus(`Stock maximum disponible : ${stockInfo.maxQte}.`, "error");
+      return;
+    }
+
+    const prixUnit = Number(entry.prixUnitaire || 0);
+    const poidsUnit = Number(entry.poidsGr || 0) || estimerPoidsSecuriteGrammes(entry.publication || entry);
+
+    const payload = {
+      id: entry.id,
+      produitId: entry.id,
+      nom: entry.nom,
+      variante: entry.variante,
+      couleurChoisie: entry.couleurChoisie,
+      sku: entry.sku || "",
+      image: entry.image || "",
+      prixUnitaire: prixUnit,
+      poidsGr: poidsUnit,
+      quantite: nextQty,
+      total: prixUnit * nextQty,
+      updatedAt: Date.now()
+    };
+
+    try {
+      const updates = {};
+      if (latestPrimaryCart && Object.prototype.hasOwnProperty.call(latestPrimaryCart, cartKey)) {
+        updates[`users/${currentUid}/panier/${cartKey}`] = payload;
+      }
+      if (latestFallbackCart && Object.prototype.hasOwnProperty.call(latestFallbackCart, cartKey)) {
+        updates[`users/${currentUid}/gs/cart/${cartKey}`] = payload;
+      }
+      if (Object.keys(updates).length === 0) {
+        updates[`users/${currentUid}/panier/${cartKey}`] = payload;
+      }
+
+      await update(ref(db), updates);
+    } catch (err) {
+      console.error("Erreur modification quantité :", err);
+      showStatus("Impossible de modifier la quantité.", "error");
+    }
+  };
 
   window.dakproAjouterVariantePanier = async function(cartKey, variantIndex) {
     const entry = currentCartItems[cartKey];
     if (!entry || !Array.isArray(entry.variantesDisponibles)) return;
     const variant = entry.variantesDisponibles[variantIndex];
     if (!variant) return;
+
+    if (variant.image) {
+      activePreviewImageByKey.set(cartKey, variant.image);
+    }
 
     const stockInfo = formaterStock(variant.stock);
     if (stockInfo.estEpuise) {
@@ -1058,9 +1267,10 @@ export function init(
     const varKey = `${cartKey}_var_${String(variant.id || variantIndex).replace(/[^a-zA-Z0-9_-]/g, "")}`;
 
     try {
-      const existingSnap = await get(ref(db, `users/${currentUid}/panier/${varKey}`));
-      const existingVal = existingSnap.exists() ? (existingSnap.val() || {}) : null;
-      const nextQty = existingVal ? (parseInt(existingVal.quantite || 1, 10) + 1) : 1;
+      const currentVarEntry = currentCartItems[varKey];
+      const nextQty = currentVarEntry
+        ? (parseInt(currentVarEntry.quantite || 1, 10) + 1)
+        : 1;
 
       if (stockInfo.maxQte !== null && nextQty > stockInfo.maxQte) {
         showStatus(`Stock maximum atteint (${stockInfo.maxQte}).`, "error");
@@ -1083,8 +1293,16 @@ export function init(
       };
 
       const updates = {};
-      updates[`users/${currentUid}/panier/${varKey}`] = payload;
-      updates[`users/${currentUid}/gs/cart/${varKey}`] = payload;
+      if (latestPrimaryCart && Object.prototype.hasOwnProperty.call(latestPrimaryCart, cartKey)) {
+        updates[`users/${currentUid}/panier/${varKey}`] = payload;
+      }
+      if (latestFallbackCart && Object.prototype.hasOwnProperty.call(latestFallbackCart, cartKey)) {
+        updates[`users/${currentUid}/gs/cart/${varKey}`] = payload;
+      }
+      if (Object.keys(updates).length === 0) {
+        updates[`users/${currentUid}/panier/${varKey}`] = payload;
+      }
+
       await update(ref(db), updates);
 
       showStatus(`Variante ajoutée : ${variant.nom} (${variant.couleurExacte})`, "success");
@@ -1112,7 +1330,6 @@ export function init(
     currentCartCount = 0;
 
     if (!cartItemsContainer) return;
-    cartItemsContainer.innerHTML = "";
 
     if (!rawCart || typeof rawCart !== "object" || Object.keys(rawCart).length === 0) {
       currentLogisticsDetails = calculerLogistiquePanier([]);
@@ -1126,6 +1343,7 @@ export function init(
     }
 
     const keys = Object.keys(rawCart);
+    const builtList = [];
 
     for (const key of keys) {
       const item = rawCart[key] || {};
@@ -1135,29 +1353,19 @@ export function init(
       if (!Number.isFinite(qty) || qty < 1) qty = 1;
 
       let realPrice = Number(item.prixUnitaire || item.prix || item.prixNormal || 0);
-      let publication = null;
+      const publication = await getCachedPublication(prodId);
 
-      try {
-        let pubSnap = await get(ref(db, `publications/${prodId}`));
-        if (!pubSnap.exists()) {
-          pubSnap = await get(ref(db, `vendeur_publications/${prodId}`));
+      if (publication) {
+        const normal = Number(publication.prixNormal || publication.prix || 0);
+        const promo = Number(publication.prixPromo || 0);
+
+        if (promo > 0 && normal > 0 && promo < normal) {
+          realPrice = promo;
+        } else if (normal > 0) {
+          realPrice = normal;
+        } else if (promo > 0) {
+          realPrice = promo;
         }
-
-        if (pubSnap.exists()) {
-          publication = pubSnap.val() || {};
-          const normal = Number(publication.prixNormal || publication.prix || 0);
-          const promo = Number(publication.prixPromo || 0);
-
-          if (promo > 0 && normal > 0 && promo < normal) {
-            realPrice = promo;
-          } else if (normal > 0) {
-            realPrice = normal;
-          } else if (promo > 0) {
-            realPrice = promo;
-          }
-        }
-      } catch (error) {
-        console.warn("Prix publication non disponible :", error);
       }
 
       if (!Number.isFinite(realPrice) || realPrice < 0) realPrice = 0;
@@ -1173,10 +1381,30 @@ export function init(
         ? extraireVariantesProduit(publication, realPrice, poidsGr)
         : [];
 
+      const matchedVariant = variantsList.find(v =>
+        String(v.nom || "").toLowerCase() === String(item.variante || item.variantName || "").toLowerCase()
+      );
+
       const couleurInfo = detecterCouleurExacte(
         `${item.variante || item.nom || ""} ${publication?.nom || ""}`,
-        item.couleurChoisie || item.couleur || item.color || ""
+        item.couleurChoisie || item.couleur || item.color || matchedVariant?.couleurExacte || ""
       );
+
+      const mainProductImage = publication?.image
+        || publication?.imageUrl
+        || publication?.bigImage
+        || publication?.photo
+        || item.image
+        || item.imageUrl
+        || matchedVariant?.image
+        || "";
+
+      const activeDisplayImage = activePreviewImageByKey.get(key)
+        || item.image
+        || item.imageUrl
+        || matchedVariant?.image
+        || mainProductImage
+        || "";
 
       const subtotal = realPrice * qty;
       currentCartCount += qty;
@@ -1188,7 +1416,8 @@ export function init(
         couleurChoisie: couleurInfo.couleurExacte,
         couleurHex: couleurInfo.couleurHex,
         sku: item.sku || publication?.sku || "",
-        image: item.image || item.imageUrl || publication?.image || publication?.imageUrl || "",
+        image: activeDisplayImage,
+        mainImage: mainProductImage,
         prixUnitaire: realPrice,
         poidsGr: poidsGr,
         stockTexte: stockInfo.texte,
@@ -1200,9 +1429,10 @@ export function init(
       };
 
       currentCartItems[key] = normalizedItem;
-      currentCartList.push({ cartKey: key, ...normalizedItem });
+      builtList.push({ cartKey: key, ...normalizedItem });
     }
 
+    currentCartList = builtList;
     currentLogisticsDetails = calculerLogistiquePanier(currentCartList);
     currentCartTotalFCFA = currentLogisticsDetails.total;
 
@@ -1210,23 +1440,47 @@ export function init(
     const secondaryItems = currentCartList.slice(1);
 
     function buildItemCardHTML(it, isPrimary) {
-      const varButtonsHTML = Array.isArray(it.variantesDisponibles) && it.variantesDisponibles.length > 0
+      const hasVariants = Array.isArray(it.variantesDisponibles) && it.variantesDisponibles.length > 0;
+
+      const varButtonsHTML = hasVariants
         ? `
-          <div class="dak-variants-bar">
-            ${it.variantesDisponibles.map((v, vIdx) => {
-              const isCurrentVar = String(it.variante || "").toLowerCase() === String(v.nom || "").toLowerCase();
-              return `
+          <div class="dak-variants-section">
+            <div class="dak-variants-label">Variantes &amp; aperçu réel (${it.variantesDisponibles.length}) — cliquer pour ajouter :</div>
+            <div class="dak-variants-bar">
+              ${it.mainImage ? `
                 <button
                   type="button"
-                  class="dak-var-pill ${isCurrentVar ? "active" : ""}"
-                  onclick="window.dakproAjouterVariantePanier('${escapeAttr(it.cartKey)}', ${vIdx})"
-                  title="Ajouter la variante ${escapeAttr(v.nom)}"
+                  class="dak-var-pill"
+                  onclick="window.dakproApercuImageCarte('${escapeAttr(it.cartKey)}', '${escapeAttr(it.mainImage)}')"
+                  title="Voir l'image principale"
                 >
-                  <span style="width:8px;height:8px;border-radius:50%;background:${escapeAttr(v.couleurHex)};display:inline-block;"></span>
-                  <span>+ ${escapeHTML(v.nom)}</span>
+                  <span class="dak-var-thumb">
+                    <img src="${escapeAttr(it.mainImage)}" alt="Principal" loading="lazy" decoding="async">
+                  </span>
+                  <span>Principal</span>
                 </button>
-              `;
-            }).join("")}
+              ` : ""}
+              ${it.variantesDisponibles.map((v, vIdx) => {
+                const isCurrentVar = String(it.variante || "").toLowerCase() === String(v.nom || "").toLowerCase();
+                return `
+                  <button
+                    type="button"
+                    class="dak-var-pill ${isCurrentVar ? "active" : ""}"
+                    onclick="window.dakproAjouterVariantePanier('${escapeAttr(it.cartKey)}', ${vIdx})"
+                    title="Ajouter la variante ${escapeAttr(v.nom)}"
+                  >
+                    ${v.image ? `
+                      <span class="dak-var-thumb">
+                        <img src="${escapeAttr(v.image)}" alt="${escapeAttr(v.nom)}" loading="lazy" decoding="async">
+                      </span>
+                    ` : `
+                      <span style="width:8px;height:8px;border-radius:50%;background:${escapeAttr(v.couleurHex)};display:inline-block;"></span>
+                    `}
+                    <span>+ ${escapeHTML(v.nom)}</span>
+                  </button>
+                `;
+              }).join("")}
+            </div>
           </div>
         `
         : "";
@@ -1234,22 +1488,34 @@ export function init(
       return `
         <div class="dak-cart-item ${isPrimary ? "primary-item" : ""}">
           <div class="dak-item-top">
-            <div style="flex:1;min-width:0;">
-              <strong>${escapeHTML(it.nom)}</strong>
-              <div class="dak-item-meta">
-                <span class="dak-pill">
-                  <span style="width:7px;height:7px;border-radius:50%;background:${escapeAttr(it.couleurHex)};display:inline-block;margin-right:4px;"></span>
-                  ${escapeHTML(it.variante)} (${escapeHTML(it.couleurChoisie)})
-                </span>
-                <span class="dak-pill" style="color:${it.stockEpuise ? "#f87171" : "#4ade80"};">
-                  ${escapeHTML(it.stockTexte)}
-                </span>
-                <span class="dak-pill">
-                  ${it.poidsGr * it.quantite} g
-                </span>
-              </div>
-              <div style="color:#d4af37;font-size:11px;margin-top:6px;">
-                ${formatCFA(it.prixUnitaire)} × ${it.quantite}
+            <div class="dak-item-media-row">
+              ${it.image ? `
+                <div class="dak-item-thumb">
+                  <img data-main-img="${escapeAttr(it.cartKey)}" src="${escapeAttr(it.image)}" alt="${escapeAttr(it.nom)}" loading="lazy" decoding="async">
+                </div>
+              ` : ""}
+              <div style="flex:1;min-width:0;">
+                <strong>${escapeHTML(it.nom)}</strong>
+                <div class="dak-item-meta">
+                  <span class="dak-pill">
+                    <span style="width:7px;height:7px;border-radius:50%;background:${escapeAttr(it.couleurHex)};display:inline-block;margin-right:4px;"></span>
+                    ${escapeHTML(it.variante)} (${escapeHTML(it.couleurChoisie)})
+                  </span>
+                  <span class="dak-pill" style="color:${it.stockEpuise ? "#f87171" : "#4ade80"};">
+                    ${escapeHTML(it.stockTexte)}
+                  </span>
+                  <span class="dak-pill">
+                    ${it.poidsGr * it.quantite} g
+                  </span>
+                </div>
+                <div style="color:#d4af37;font-size:11px;margin-top:6px;">
+                  ${formatCFA(it.prixUnitaire)} × ${it.quantite}
+                </div>
+                <div class="dak-qty-box">
+                  <button type="button" class="dak-qty-btn" onclick="window.dakproModifierQuantitePanier('${escapeAttr(it.cartKey)}', -1)" title="Diminuer">-</button>
+                  <span class="dak-qty-val">${it.quantite}</span>
+                  <button type="button" class="dak-qty-btn" onclick="window.dakproModifierQuantitePanier('${escapeAttr(it.cartKey)}', 1)" title="Augmenter">+</button>
+                </div>
               </div>
             </div>
 
@@ -1371,6 +1637,7 @@ export function init(
       if (!confirm("Voulez-vous vraiment vider votre panier ?")) return;
 
       try {
+        activePreviewImageByKey.clear();
         const updates = {};
         updates[`users/${currentUid}/panier`] = null;
         updates[`users/${currentUid}/gs/cart`] = null;
@@ -1441,7 +1708,7 @@ export function init(
 
         const cleanArticles = {};
         Object.entries(currentCartItems).forEach(([k, v]) => {
-          const { publication, variantesDisponibles, ...rest } = v;
+          const { publication, variantesDisponibles, mainImage, ...rest } = v;
           cleanArticles[k] = rest;
         });
 

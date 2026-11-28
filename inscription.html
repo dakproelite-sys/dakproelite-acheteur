@@ -58,7 +58,7 @@ select option{background:#000;color:#fff;}
 button.submit{width:100%;padding:13px;border:none;border-radius:9px;background:#d4af37;color:#000;font-weight:bold;cursor:pointer;font-size:14px;margin-top:5px;}
 button.submit:disabled{opacity:.6;cursor:not-allowed;}
 
-/* BOUTON GOOGLE SITUÉ TOUT EN BAS */
+/* BOUTON GOOGLE */
 .btn-google{
   width:100%;
   padding:12px;
@@ -79,6 +79,10 @@ button.submit:disabled{opacity:.6;cursor:not-allowed;}
 .btn-google:hover{
   background:#f1f1f1;
   border-color:#d4af37;
+}
+.btn-google:disabled{
+  opacity:0.7;
+  cursor:not-allowed;
 }
 .btn-google img{
   width:18px;
@@ -346,7 +350,7 @@ button.submit:disabled{opacity:.6;cursor:not-allowed;}
   <option value="+963">🇸🇾 +963 Syrie</option>
   <option value="+992">🇹🇯 +992 Tadjikistan</option>
   <option value="+886">🇹🇼 +886 Taïwan</option>
-  <option value="+255">🇹ℤ +255 Tanzanie</option>
+  <option value="+255">🇹🇿 +255 Tanzanie</option>
   <option value="+235">🇹🇩 +235 Tchad</option>
   <option value="+420">🇨🇿 +420 République tchèque</option>
   <option value="+262">🇹🇫 +262 Terres australes et antarctiques françaises</option>
@@ -427,7 +431,18 @@ J’ai lu et j’accepte les <a href="reglement-interieur.html" target="_blank" 
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  setPersistence,
+  browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -442,19 +457,68 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+auth.useDeviceLanguage();
 const db = getDatabase(app);
+
+// Préparer le fournisseur Google dès le chargement (évite tout délai au clic)
+const googleProvider = new GoogleAuthProvider();
+googleProvider.addScope("email");
+googleProvider.addScope("profile");
+googleProvider.setCustomParameters({
+  prompt: "select_account"
+});
+
+setPersistence(auth, browserLocalPersistence).catch(() => {});
 
 const form = document.getElementById("registerForm");
 const button = document.getElementById("registerButton");
 const googleBtn = document.getElementById("googleLoginBtn");
 const message = document.getElementById("message");
 
-const redirectTarget = "index.html";
+const urlParams = new URLSearchParams(window.location.search);
+const rawRedirect = urlParams.get("redirect");
+const redirectTarget = (rawRedirect && !/^https?:\/\//i.test(rawRedirect)) ? rawRedirect : "index.html";
+
+const GOOGLE_BTN_HTML = `<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"> Continuer avec Google`;
+
+function resetGoogleBtn() {
+  googleBtn.disabled = false;
+  googleBtn.innerHTML = GOOGLE_BTN_HTML;
+}
 
 function showMessage(text, type = "error") {
   message.textContent = text;
   message.className = "message " + type;
   message.style.display = "block";
+}
+
+function isEmbeddedInAppBrowser() {
+  const ua = navigator.userAgent || navigator.vendor || "";
+  return /(FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Snapchat|Twitter|WhatsApp)/i.test(ua);
+}
+
+async function ensureGoogleUserProfile(user) {
+  if (!user) return;
+  const userRef = ref(db, "users/" + user.uid);
+  const snapshot = await get(userRef);
+
+  if (!snapshot.exists()) {
+    const now = Date.now();
+    const userData = {
+      uid: user.uid,
+      nom: user.displayName || (user.email ? user.email.split("@")[0] : "Acheteur Google"),
+      email: user.email || "",
+      photoURL: user.photoURL || "",
+      telephone: user.phoneNumber || "",
+      indicatif: "+229",
+      role: "acheteur",
+      provider: "google",
+      actif: true,
+      createdAt: now,
+      updatedAt: now
+    };
+    await set(userRef, userData);
+  }
 }
 
 document.querySelectorAll(".toggle-password").forEach(buttonToggle => {
@@ -465,55 +529,93 @@ document.querySelectorAll(".toggle-password").forEach(buttonToggle => {
   });
 });
 
-let pageAlreadyLoaded = false;
-onAuthStateChanged(auth, user => {
-  if (pageAlreadyLoaded) return;
-  pageAlreadyLoaded = true;
-  if (user) {
-    window.location.replace(redirectTarget);
+let isHandlingAuth = false;
+
+// 1. Récupérer le résultat si l'utilisateur revient d'une redirection Google
+getRedirectResult(auth)
+  .then(async result => {
+    if (result && result.user) {
+      isHandlingAuth = true;
+      googleBtn.disabled = true;
+      googleBtn.textContent = "Finalisation du compte Google...";
+      await ensureGoogleUserProfile(result.user);
+      showMessage("Connexion réussie avec Google !", "success");
+      window.location.replace(redirectTarget);
+    }
+  })
+  .catch(error => {
+    console.error("Erreur retour Google Redirect :", error);
+    if (error && error.code === "auth/unauthorized-domain") {
+      showMessage(`Domaine non autorisé dans Firebase (${window.location.hostname}). Ajoutez-le dans Authentication > Settings > Authorized domains.`);
+    } else if (error && error.code !== "auth/popup-closed-by-user") {
+      showMessage("Impossible de finaliser la connexion Google (" + (error.code || "erreur") + ").");
+    }
+    resetGoogleBtn();
+  });
+
+// 2. Si l'utilisateur est déjà connecté, le rediriger proprement
+onAuthStateChanged(auth, async user => {
+  if (!user || isHandlingAuth) return;
+  isHandlingAuth = true;
+  try {
+    await ensureGoogleUserProfile(user);
+  } catch (e) {
+    console.warn("Vérification profil :", e);
   }
+  window.location.replace(redirectTarget);
 });
 
-// --- GESTION DE LA CONNEXION / INSCRIPTION AVEC GOOGLE ---
+// 3. Clic sur « Continuer avec Google »
 googleBtn.addEventListener("click", async () => {
-  googleBtn.disabled = true;
-  googleBtn.textContent = "Connexion avec Google...";
+  if (isEmbeddedInAppBrowser()) {
+    showMessage("Google bloque la connexion dans les navigateurs intégrés (WhatsApp, Facebook, TikTok). Ouvrez cette page dans Chrome ou Safari.");
+    return;
+  }
+
   message.style.display = "none";
+  googleBtn.disabled = true;
+  googleBtn.textContent = "Ouverture de Google...";
 
   try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
+    // Appel immédiat dans le gestionnaire de clic pour que le navigateur ne bloque jamais la fenêtre
+    const result = await signInWithPopup(auth, googleProvider);
+    isHandlingAuth = true;
+    await ensureGoogleUserProfile(result.user);
+    showMessage("Connexion réussie avec Google !", "success");
+    window.location.replace(redirectTarget);
+  } catch (error) {
+    console.error("Erreur Google Popup :", error);
+    const code = error && error.code ? error.code : "";
 
-    const userRef = ref(db, "users/" + user.uid);
-    const snapshot = await get(userRef);
-
-    if (!snapshot.exists()) {
-      const now = Date.now();
-      const userData = {
-        uid: user.uid,
-        nom: user.displayName || "Acheteur Google",
-        email: user.email,
-        telephone: user.phoneNumber || "",
-        indicatif: "+229",
-        role: "acheteur",
-        actif: true,
-        createdAt: now,
-        updatedAt: now
-      };
-      await set(userRef, userData);
+    // Si le navigateur/téléphone bloque la popup ou la ferme instantanément, bascule vers la redirection pleine page
+    if (
+      code === "auth/popup-blocked" ||
+      code === "auth/operation-not-supported-in-this-environment" ||
+      code === "auth/cancelled-popup-request"
+    ) {
+      googleBtn.textContent = "Redirection vers Google...";
+      try {
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      } catch (redirectError) {
+        console.error("Erreur Google Redirect :", redirectError);
+        showMessage("Impossible d'ouvrir la page Google. Réessayez dans Chrome ou Safari.");
+        resetGoogleBtn();
+        return;
+      }
     }
 
-    showMessage("Connexion réussie avec Google !", "success");
-    setTimeout(() => {
-      window.location.replace(redirectTarget);
-    }, 700);
+    if (code === "auth/popup-closed-by-user") {
+      showMessage("La fenêtre Google a été fermée avant la sélection du compte. Si elle se ferme toute seule, vérifiez que le domaine (" + window.location.hostname + ") est autorisé dans Firebase.");
+    } else if (code === "auth/unauthorized-domain") {
+      showMessage("Domaine non autorisé dans Firebase (" + window.location.hostname + "). Ajoutez-le dans Authentication > Settings > Authorized domains.");
+    } else if (code === "auth/network-request-failed") {
+      showMessage("Erreur réseau. Vérifiez votre connexion Internet et réessayez.");
+    } else {
+      showMessage("Erreur Google : " + (code || "Impossible de continuer avec Google."));
+    }
 
-  } catch (error) {
-    console.error("Erreur Google Auth :", error);
-    showMessage("Impossible de se connecter avec Google.");
-    googleBtn.disabled = false;
-    googleBtn.innerHTML = `<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo"> Continuer avec Google`;
+    resetGoogleBtn();
   }
 });
 
@@ -527,16 +629,13 @@ form.addEventListener("submit", async event => {
   const email = document.getElementById("email").value.trim().toLowerCase();
   const password = document.getElementById("password").value;
   const passwordConfirm = document.getElementById("passwordConfirm").value;
-  
   const termsAccepted = document.getElementById("termsAccepted").checked;
 
-  // VERIFICATION DU FORMULAIRE INCOMPLET
   if (!name || !phone || !email || !password || !passwordConfirm) {
     showMessage("Erreur : Le formulaire n'est pas entièrement rempli. Veuillez compléter tous les champs.");
     return;
   }
 
-  // VERIFICATION DE L'ACCEPTATION DES CONDITIONS ET DE LA POLITIQUE
   if (!termsAccepted) {
     showMessage("Vous devez obligatoirement accepter les Conditions d'Utilisation et la Politique de Confidentialité pour créer votre compte.");
     return;
@@ -546,7 +645,7 @@ form.addEventListener("submit", async event => {
     showMessage("Les deux mots de passe ne correspondent pas.");
     return;
   }
-  
+
   if (password.length < 6) {
     showMessage("Le mot de passe doit contenir au moins 6 caractères.");
     return;
@@ -558,6 +657,7 @@ form.addEventListener("submit", async event => {
   message.style.display = "none";
 
   try {
+    isHandlingAuth = true;
     const credential = await createUserWithEmailAndPassword(auth, email, password);
     const user = credential.user;
 
@@ -582,15 +682,16 @@ form.addEventListener("submit", async event => {
 
     setTimeout(() => {
       window.location.replace(redirectTarget);
-    }, 700);
+    }, 500);
 
   } catch (error) {
+    isHandlingAuth = false;
     console.error("Erreur Firebase :", error);
     let text = "Impossible de créer le compte.";
     if (error.code === "auth/email-already-in-use") text = "Cette adresse e-mail est déjà utilisée.";
     if (error.code === "auth/invalid-email") text = "Format d'adresse e-mail invalide.";
     if (error.code === "auth/weak-password") text = "Le mot de passe est trop faible.";
-    
+
     showMessage(text);
     button.disabled = false;
     button.textContent = "Créer mon compte Acheteur";
