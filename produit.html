@@ -31,10 +31,10 @@
     }
     .dpe-carousel-scroll {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.85rem;
       overflow-x: auto;
       scroll-behavior: smooth;
-      padding-bottom: 0.5rem;
+      padding-bottom: 0.6rem;
       -webkit-overflow-scrolling: touch;
     }
     .dpe-carousel-scroll::-webkit-scrollbar {
@@ -45,7 +45,7 @@
       border-radius: 9999px;
     }
     .dpe-carousel-scroll::-webkit-scrollbar-thumb {
-      background: rgba(212, 175, 55, 0.5);
+      background: rgba(212, 175, 55, 0.55);
       border-radius: 9999px;
     }
   </style>
@@ -66,10 +66,15 @@
         </div>
       </div>
 
-      <a href="index.html" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all flex items-center space-x-1 border border-slate-700">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        <span>Catalogue</span>
-      </a>
+      <div class="flex items-center gap-2">
+        <span id="statutConnexionBadge" class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+          Invité
+        </span>
+        <a href="index.html" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition-all flex items-center space-x-1 border border-slate-700">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          <span>Catalogue</span>
+        </a>
+      </div>
     </div>
   </header>
 
@@ -105,19 +110,22 @@
           <div id="mediaContainer" class="relative rounded-2xl bg-slate-900 border border-slate-800/80 overflow-hidden flex items-center justify-center min-h-[260px] max-h-[600px] h-auto w-full">
             <div id="loaderMedia" class="hidden"></div>
             <img id="produitImageBg" src="" alt="" class="absolute inset-0 w-full h-full object-cover filter blur-xl opacity-30 pointer-events-none hidden">
-            <img id="produitImage" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Photo Produit" class="relative z-1 w-full h-auto max-h-[550px] object-contain rounded-xl transition-opacity duration-150">
+            <img id="produitImage" src="https://i.postimg.cc/WpSc29mX/file-00000000ca8872438c17222eb828bc0c.png" alt="Photo Produit" class="relative z-1 w-full h-auto max-h-[550px] object-contain rounded-xl transition-opacity duration-150" decoding="async">
             <video id="produitVideo" src="" class="relative z-1 w-full h-auto max-h-[550px] object-contain rounded-xl hidden" controls autoplay loop muted></video>
           </div>
 
-          <!-- Bandeau récapitulatif de la variante active sous l'image -->
-          <div id="detailsVarianteSelectionnee" class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 text-xs text-slate-300 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <span id="detailVarColorDot" class="w-3.5 h-3.5 rounded-full border border-white/30 inline-block bg-slate-600"></span>
-              <span><strong>Couleur / Variante :</strong> <span id="detailVarNom" class="text-white font-bold">Standard</span></span>
+          <!-- Bandeau récapitulatif détaillé de la variante active sous l'image -->
+          <div id="detailsVarianteSelectionnee" class="p-4 rounded-2xl bg-slate-900/95 border border-slate-800 text-xs text-slate-300 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span id="detailVarColorDot" class="w-3.5 h-3.5 rounded-full border border-white/30 inline-block bg-slate-600"></span>
+                <span><strong>Variante / Couleur :</strong> <span id="detailVarNom" class="text-white font-bold">Standard</span></span>
+              </div>
+              <span><strong>Stock :</strong> <span id="detailVarStock" class="text-emerald-400 font-bold">Disponible</span></span>
+              <span><strong>Poids unitaire :</strong> <span id="detailVarPoids" class="text-[#d4af37] font-bold">0 g (0.00 kg)</span></span>
+              <span id="detailVarSkuWrap" class="hidden"><strong>SKU :</strong> <span id="detailVarSku" class="text-slate-400"></span></span>
             </div>
-            <span><strong>Stock :</strong> <span id="detailVarStock" class="text-emerald-400 font-bold">Disponible</span></span>
-            <span><strong>Poids unitaire :</strong> <span id="detailVarPoids" class="text-[#d4af37] font-bold">0 g (0.00 kg)</span></span>
-            <span id="detailVarSkuWrap" class="hidden"><strong>SKU :</strong> <span id="detailVarSku" class="text-slate-400"></span></span>
+            <p id="detailVarDescription" class="hidden text-[11px] text-slate-400 pt-1.5 border-t border-slate-800/80 leading-relaxed"></p>
           </div>
 
           <div id="sectionRessources" class="hidden bg-slate-900/90 rounded-2xl p-4 border border-[#d4af37]/25 space-y-2">
@@ -138,7 +146,7 @@
         </div>
       </div>
 
-      <!-- Détails, Carrousel Variantes sous la Description & Formulaire -->
+      <!-- Détails, Carrousel Variantes agrandi sous la Description & Formulaire -->
       <div class="lg:col-span-5 space-y-6">
         <div class="glass-card rounded-3xl p-6 border border-slate-800 shadow-2xl space-y-6">
           <div class="space-y-3 border-b border-slate-800 pb-5">
@@ -159,16 +167,16 @@
             <div id="produitDescription" class="text-xs sm:text-sm text-slate-400 leading-relaxed whitespace-pre-line">Article importé de haute qualité, disponible en plusieurs coloris et tailles.</div>
           </div>
 
-          <!-- CARROUSEL HORIZONTAL DES VARIANTES JUSTE EN BAS DE LA DESCRIPTION -->
+          <!-- CARROUSEL HORIZONTAL DES VARIANTES AGRANDI ET ORGANISÉ -->
           <div id="sectionVariantes" class="pt-3 border-t border-slate-800 space-y-3">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <h4 class="text-xs font-bold uppercase tracking-wider text-[#d4af37]">Choisir une variante / couleur</h4>
-                <p class="text-[10px] text-slate-400">Faites défiler vers la gauche et cliquez sur « Ajouter au panier »</p>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-[#d4af37]">Variantes &amp; Couleurs (Aperçu clair)</h4>
+                <p class="text-[10px] text-slate-400">Cliquez sur une variante pour voir son aperçu net ou ajoutez-la au panier</p>
               </div>
               <div class="flex items-center gap-1.5">
-                <button type="button" onclick="deplacerCarrouselVariantes(-220)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#d4af37] font-bold text-xs flex items-center justify-center border border-slate-700" title="Défiler à gauche">‹</button>
-                <button type="button" onclick="deplacerCarrouselVariantes(220)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#d4af37] font-bold text-xs flex items-center justify-center border border-slate-700" title="Défiler à droite">›</button>
+                <button type="button" onclick="deplacerCarrouselVariantes(-240)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#d4af37] font-bold text-xs flex items-center justify-center border border-slate-700" title="Défiler à gauche">‹</button>
+                <button type="button" onclick="deplacerCarrouselVariantes(240)" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#d4af37] font-bold text-xs flex items-center justify-center border border-slate-700" title="Défiler à droite">›</button>
               </div>
             </div>
 
@@ -227,8 +235,14 @@
             </div>
           </div>
 
-          <!-- Formulaire Client -->
+          <!-- Formulaire Client (affiché dès que connecté ou à l'ouverture) -->
           <div id="formulaireLivraison" class="space-y-4 pt-2 border-t border-slate-800">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase text-slate-300 tracking-wider">Informations de livraison</span>
+              <button type="button" id="btnOuvrirFormulaire" onclick="ouvrirFormulaireApresVerification()" class="text-[11px] font-bold text-[#d4af37] hover:underline">
+                Vérifier mon compte / Remplir
+              </button>
+            </div>
             <div>
               <label class="block text-[11px] font-bold text-slate-400 mb-1">Nom et Prénom *</label>
               <input type="text" id="clientNom" placeholder="Ex: Jean Marc" class="w-full bg-slate-900 border border-slate-700 focus:border-[#d4af37] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none">
@@ -383,16 +397,61 @@
     window.panierVariantes = [];
     window.quantitePanierCount = 1;
     window.produitIdCourant = null;
-    window.currentUserUID = "ANONYMOUS_USER";
+    window.currentUserUID = null;
+    window.estConnecte = false;
     window.parrainAffilie = "aucun";
     window.paiementDejaEffectue = false;
     let paymentModalOpening = false;
 
+    function mettreAJourEtatConnexionUI(user) {
+      const badge = document.getElementById('statutConnexionBadge');
+      const connected = Boolean(user && user.uid);
+      window.estConnecte = connected;
+      window.currentUserUID = connected ? user.uid : null;
+
+      if (badge) {
+        if (connected) {
+          badge.innerText = 'Connecté';
+          badge.className = 'hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+        } else {
+          badge.innerText = 'Connexion requise';
+          badge.className = 'hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30';
+        }
+      }
+    }
+
     onAuthStateChanged(auth, (user) => {
-      if (user) window.currentUserUID = user.uid;
+      mettreAJourEtatConnexionUI(user);
     });
 
-    // Nettoyage des anciens caches d'affichage à la réception de CACHE_UPDATED sans toucher aux paiements/session
+    function exigerConnexionVersPageConnexion() {
+      const returnUrl = encodeURIComponent(window.location.href);
+      afficherToast("Veuillez d'abord vous connecter à votre compte...");
+      setTimeout(() => {
+        window.location.href = `connexion.html?redirect=${returnUrl}`;
+      }, 450);
+    }
+
+    function verifierConnexionUtilisateur() {
+      if (auth.currentUser && auth.currentUser.uid) {
+        mettreAJourEtatConnexionUI(auth.currentUser);
+        return true;
+      }
+      if (window.estConnecte && window.currentUserUID) {
+        return true;
+      }
+      exigerConnexionVersPageConnexion();
+      return false;
+    }
+
+    window.ouvrirFormulaireApresVerification = function() {
+      if (!verifierConnexionUtilisateur()) return;
+      const form = document.getElementById('formulaireLivraison');
+      form?.classList.remove('hidden');
+      document.getElementById('clientNom')?.focus();
+      afficherToast("Compte vérifié : vous pouvez remplir le formulaire.");
+    };
+
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.addEventListener("message", (event) => {
         if (event.data && event.data.type === "CACHE_UPDATED") {
@@ -490,6 +549,7 @@
           list.push({
             id: `var_${idx}`,
             nom: `Modèle ${idx + 1}`,
+            description: '',
             couleurExacte: col.couleurExacte,
             couleurHex: col.couleurHex,
             taille: '',
@@ -509,6 +569,7 @@
           const explicitColor = v.couleur || v.color || v.variantColor || '';
           const explicitSize = v.taille || v.size || v.variantSize || '';
           const rawLabel = v.nom || v.name || v.variantNameEn || v.variantName || v.variantKey || v.variantProperty || '';
+          const varDesc = String(v.description || v.desc || v.details || v.note || '').trim();
 
           let nomAffiche = rawLabel;
           if (!nomAffiche && (explicitColor || explicitSize)) {
@@ -523,6 +584,7 @@
           list.push({
             id: v.vid || v.id || `var_${idx}`,
             nom: nomAffiche,
+            description: varDesc,
             couleurExacte: colInfo.couleurExacte,
             couleurHex: colInfo.couleurHex,
             taille: explicitSize,
@@ -543,6 +605,7 @@
           list.push({
             id: `img_var_${idx}`,
             nom: `Modèle ${idx + 1}`,
+            description: '',
             couleurExacte: col.couleurExacte,
             couleurHex: col.couleurHex,
             taille: '',
@@ -560,6 +623,7 @@
         list.push({
           id: 'var_default',
           nom: p.variantName || 'Modèle Standard',
+          description: '',
           couleurExacte: col.couleurExacte,
           couleurHex: col.couleurHex,
           taille: '',
@@ -821,6 +885,7 @@
       const p = window.produitCourant || {};
       const prodId = window.produitIdCourant || "PROD-DEFAULT";
       const totalMontant = calculDetails.total;
+      const uid = auth.currentUser?.uid || window.currentUserUID;
 
       const couleursChoisies = calculDetails.articles.map(a => `${a.couleurExacte} (${a.nom} x${a.quantite})`).join(', ');
       const couleurPrincipaleExacte = calculDetails.articles[0]?.couleurExacte || window.varianteSelectionnee?.couleurExacte || 'Standard';
@@ -851,7 +916,7 @@
         gateway: "FedaPay",
         timestamp: timestamp,
         total: String(totalMontant),
-        uid: window.currentUserUID
+        uid: uid
       };
 
       try {
@@ -859,16 +924,18 @@
         await set(ref(db, `paiement/${txKey}`), payloadTransaction);
         await set(ref(db, `paiements/${txKey}`), payloadTransaction);
 
-        await set(push(ref(db, `notifications_utilisateurs/${window.currentUserUID}`)), {
-          titre: "Paiement Confirmé !",
-          message: `Commande "${p.nom || p.title || 'Produit'}" — Couleur(s) : ${couleursChoisies} — Total : ${totalMontant.toLocaleString('fr-FR')} FCFA (transport & douane inclus).`,
-          couleurChoisie: couleurPrincipaleExacte,
-          date: new Date().toISOString(),
-          timestamp: timestamp,
-          lu: false,
-          type: "commande_succes",
-          transactionId: txKey
-        });
+        if (uid) {
+          await set(push(ref(db, `notifications_utilisateurs/${uid}`)), {
+            titre: "Paiement Confirmé !",
+            message: `Commande "${p.nom || p.title || 'Produit'}" — Couleur(s) : ${couleursChoisies} — Total : ${totalMontant.toLocaleString('fr-FR')} FCFA (transport & douane inclus).`,
+            couleurChoisie: couleurPrincipaleExacte,
+            date: new Date().toISOString(),
+            timestamp: timestamp,
+            lu: false,
+            type: "commande_succes",
+            transactionId: txKey
+          });
+        }
 
         await set(push(ref(db, "messages_support")), {
           titre: "Nouvelle Commande Validée",
@@ -923,6 +990,14 @@
       return null;
     }
 
+    function produitCompletDansCache(p) {
+      if (!p || typeof p !== "object") return false;
+      const hasName = Boolean(p.nom || p.title || p.name);
+      const hasPrice = Number(p.prixPromo ?? p.prix ?? p.price ?? 0) > 0;
+      const hasMedia = Boolean(p.image || p.imageUrl || p.photo || p.img || p.video);
+      return hasName && hasPrice && hasMedia;
+    }
+
     async function chargerProduitDynamique() {
       const urlParams = new URLSearchParams(window.location.search);
       const produitId = urlParams.get('id');
@@ -936,6 +1011,10 @@
           window.produitIdCourant = String(transmitted.id);
         }
         afficherDonneesProduit(window.produitCourant);
+        // Économie de bande passante : si les données essentielles sont déjà en cache/session, on évite une lecture Firebase complète
+        if (produitCompletDansCache(transmitted)) {
+          return;
+        }
       }
 
       if (!produitId && !transmitted) {
@@ -977,6 +1056,7 @@
       const stockInfo = formaterStock(v ? v.stock : p.stock);
       const poidsVal = Number(v?.poidsGr || parserPoidsEnGrammes(p.poids ?? p.weight ?? p.productWeight) || estimerPoidsSecuriteGrammes(p)) || 0;
       const skuVal = v?.sku || p.sku || '';
+      const varDesc = String(v?.description || '').trim();
 
       document.getElementById('detailVarNom').innerText = v ? `${v.nom} (${v.couleurExacte})` : 'Standard';
       const dot = document.getElementById('detailVarColorDot');
@@ -1000,6 +1080,17 @@
         skuWrap.classList.remove('hidden');
       } else {
         skuWrap.classList.add('hidden');
+      }
+
+      const descEl = document.getElementById('detailVarDescription');
+      if (descEl) {
+        if (varDesc) {
+          descEl.innerText = `Détail variante : ${varDesc}`;
+          descEl.classList.remove('hidden');
+        } else {
+          descEl.innerText = '';
+          descEl.classList.add('hidden');
+        }
       }
 
       if (v && Number(v.prix) > 0) {
@@ -1102,24 +1193,26 @@
         varContainer.innerHTML = window.variantesCourantes.map((v, idx) => {
           const st = formaterStock(v.stock);
           const prixTxt = Number(v.prix) > 0 ? `${Number(v.prix).toLocaleString('fr-FR')} ${devise}` : '';
+          const loadingAttr = idx < 3 ? 'eager' : 'lazy';
           return `
-            <div onclick="window.selectDpeVariant(${idx})" class="dpe-var-card flex-shrink-0 w-[165px] rounded-2xl bg-slate-950 border ${idx === 0 ? 'border-[#d4af37] ring-2 ring-[#d4af37]/40' : 'border-slate-700'} p-2.5 flex flex-col justify-between gap-2 cursor-pointer transition-all">
-              <div>
-                <div class="relative w-full h-24 rounded-xl overflow-hidden bg-slate-900 mb-2">
-                  ${v.image ? `<img src="${escapeAttr(v.image)}" alt="${escapeAttr(v.nom)}" class="w-full h-full object-cover" loading="eager" decoding="sync">` : ''}
-                  <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-slate-950/85 text-[9px] font-bold text-white flex items-center gap-1">
+            <div onclick="window.selectDpeVariant(${idx})" class="dpe-var-card flex-shrink-0 w-[192px] rounded-2xl bg-slate-950 border ${idx === 0 ? 'border-[#d4af37] ring-2 ring-[#d4af37]/40' : 'border-slate-700'} p-3 flex flex-col justify-between gap-2.5 cursor-pointer transition-all">
+              <div class="space-y-1.5">
+                <div class="relative w-full h-32 rounded-xl overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center">
+                  ${v.image ? `<img src="${escapeAttr(v.image)}" alt="${escapeAttr(v.nom)}" class="w-full h-full object-contain p-1" loading="${loadingAttr}" decoding="async">` : ''}
+                  <span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-slate-950/90 border border-white/10 text-[9px] font-bold text-white flex items-center gap-1">
                     <span class="w-2 h-2 rounded-full inline-block" style="background:${escapeAttr(v.couleurHex)};"></span>
                     ${escapeHtml(v.couleurExacte)}
                   </span>
                 </div>
-                <div class="text-[11px] font-extrabold text-white truncate" title="${escapeAttr(v.nom)}">${escapeHtml(v.nom)}</div>
-                <div class="flex items-center justify-between text-[10px] mt-0.5">
+                <div class="text-xs font-extrabold text-white leading-snug line-clamp-2" title="${escapeAttr(v.nom)}">${escapeHtml(v.nom)}</div>
+                ${v.description ? `<p class="text-[10px] text-slate-400 leading-snug line-clamp-2">${escapeHtml(v.description)}</p>` : ''}
+                <div class="flex items-center justify-between text-[10px] pt-0.5">
                   <span class="${st.estEpuise ? 'text-rose-400' : 'text-emerald-400'} font-semibold">${escapeHtml(st.texte)}</span>
-                  <span class="text-slate-400">${escapeHtml(v.poidsGr)}g</span>
+                  <span class="text-slate-400 font-medium">${escapeHtml(v.poidsGr)}g</span>
                 </div>
-                ${prixTxt ? `<div class="text-xs font-black text-[#d4af37] mt-1">${escapeHtml(prixTxt)}</div>` : ''}
+                ${prixTxt ? `<div class="text-xs font-black text-[#d4af37]">${escapeHtml(prixTxt)}</div>` : ''}
               </div>
-              <button type="button" onclick="window.ajouterVarianteAuPanier(${idx}, event)" class="dpe-var-add-btn w-full py-1.5 rounded-lg dpe-gold-btn font-extrabold text-[10px] transition-all">
+              <button type="button" onclick="window.ajouterVarianteAuPanier(${idx}, event)" class="dpe-var-add-btn w-full py-2 rounded-lg dpe-gold-btn font-extrabold text-[10px] transition-all">
                 + Ajouter au panier
               </button>
             </div>
@@ -1196,6 +1289,12 @@
 
     window.procederPaiementFedaPay = function() {
       if (paymentModalOpening) return;
+
+      // Vérification obligatoire de la connexion avant tout paiement
+      if (!verifierConnexionUtilisateur()) {
+        return;
+      }
+
       const client = validerFormulaire();
       if (!client) return;
 
@@ -1219,8 +1318,9 @@
       const prenom = splitNom[0] || client.nom;
       const nomFamille = splitNom.slice(1).join(' ') || prenom;
       const telNettoye = client.tel.replace(/[^0-9]/g, '');
-      const customerEmail = (window.currentUserUID && window.currentUserUID !== "ANONYMOUS_USER")
-        ? `${window.currentUserUID.toLowerCase()}@dakproelite.com`
+      const uidActuel = auth.currentUser?.uid || window.currentUserUID;
+      const customerEmail = uidActuel
+        ? `${String(uidActuel).toLowerCase()}@dakproelite.com`
         : "client@dakproelite.com";
 
       paymentModalOpening = true;
